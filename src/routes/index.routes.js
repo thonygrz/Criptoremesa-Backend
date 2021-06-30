@@ -1,7 +1,24 @@
 import Router from "express-promise-router";
-import moduleRouter from "../modules/module/module.routes";
+import authenticationController from "../modules/authentication/controllers/authentication.controller";
+import guard from "../utils/guard";
+
 const router = Router();
 
-router.use('/module', moduleRouter);
+router.post("/login", authenticationController.login);
+
+router.get("/logout", authenticationController.logout);
+
+router.post("/signup", authenticationController.signup);
+
+router.get("/", authenticationController.logout);
+
+router.get(
+  "/protected-route",
+  // guard.verifyAdmin("/protected-route"),
+  authenticationController.protected
+);
+
+// IF YOU WANT TO CREATE MORE ROUTES
+// router.use("/departments", departmentsRouter);
 
 export default router;
