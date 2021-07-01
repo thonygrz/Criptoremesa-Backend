@@ -91,8 +91,9 @@ function addStatusToItems(data) {
 }
 
 function addStatusToItemsClients(data) {
+  console.log("DATA: ", data);
   data = data.map(function (d) {
-    if (d.user_active) {
+    if (d.user_active && d.verif_level_apb) {
       return {
         id_uuid: d.id_uuid,
         first_name: d.first_name,
@@ -121,6 +122,7 @@ function addStatusToItemsClients(data) {
         id_ident_doc_type: d.id_ident_doc_type,
         id_resid_country: d.id_resid_country,
         id_nationality_country: d.id_nationality_country,
+        id_verif_level: d.id_verif_level,
         name_profile: d.name_profile,
         name_service: d.name_service,
         name_services_utype: d.name_services_utype,
@@ -135,8 +137,9 @@ function addStatusToItemsClients(data) {
         user_main_sn_platf: d.user_main_sn_platf,
         date_legacy_reg: d.date_legacy_reg,
         status: "Activo",
+        verif_level_apb: "Verificado",
       };
-    } else {
+    } else if (d.user_active && !d.verif_level_apb) {
       return {
         id_uuid: d.id_uuid,
         first_name: d.first_name,
@@ -165,6 +168,53 @@ function addStatusToItemsClients(data) {
         id_ident_doc_type: d.id_ident_doc_type,
         id_resid_country: d.id_resid_country,
         id_nationality_country: d.id_nationality_country,
+        id_verif_level: d.id_verif_level,
+        name_profile: d.name_profile,
+        name_service: d.name_service,
+        name_services_utype: d.name_services_utype,
+        name_ident_doc_type: d.name_ident_doc_type,
+        name_resid_country: d.name_resid_country,
+        name_nationality_country: d.name_nationality_country,
+        address: d.address,
+        cod_user_serv_public: d.cod_user_serv_public,
+        cod_rank: d.cod_rank,
+        referral_node: d.referral_node,
+        main_sn_platf: d.main_sn_platf,
+        user_main_sn_platf: d.user_main_sn_platf,
+        date_legacy_reg: d.date_legacy_reg,
+        status: "Activo",
+        verif_level_apb: "Pendiente",
+      };
+    } else if (!d.user_active && d.verif_level_apb) {
+      return {
+        id_uuid: d.id_uuid,
+        first_name: d.first_name,
+        second_name: d.second_name,
+        last_name: d.last_name,
+        second_last_name: d.second_last_name,
+        username: d.username,
+        email_user: d.email_user,
+        last_session_reg: d.last_session_reg,
+        last_ip_reg: d.last_ip_reg,
+        last_ip_city_reg: d.last_ip_city_reg,
+        last_id_log_reg: d.last_id_log_reg,
+        date_last_conn: d.date_last_conn,
+        gender: d.gender,
+        date_birth: d.date_birth,
+        ident_doc_number: d.ident_doc_number,
+        main_phone: d.main_phone,
+        second_phone: d.second_phone,
+        delegated_phone: d.delegated_phone,
+        resid_city: d.resid_city,
+        user_active: d.user_active,
+        user_blocked: d.user_blocked,
+        uuid_profile: d.uuid_profile,
+        id_service: d.id_service,
+        id_services_utype: d.id_services_utype,
+        id_ident_doc_type: d.id_ident_doc_type,
+        id_resid_country: d.id_resid_country,
+        id_nationality_country: d.id_nationality_country,
+        id_verif_level: d.id_verif_level,
         name_profile: d.name_profile,
         name_service: d.name_service,
         name_services_utype: d.name_services_utype,
@@ -179,6 +229,53 @@ function addStatusToItemsClients(data) {
         user_main_sn_platf: d.user_main_sn_platf,
         date_legacy_reg: d.date_legacy_reg,
         status: "Inactivo",
+        verif_level_apb: "Verificado",
+      };
+    } else if (!d.user_active && !d.verif_level_apb) {
+      return {
+        id_uuid: d.id_uuid,
+        first_name: d.first_name,
+        second_name: d.second_name,
+        last_name: d.last_name,
+        second_last_name: d.second_last_name,
+        username: d.username,
+        email_user: d.email_user,
+        last_session_reg: d.last_session_reg,
+        last_ip_reg: d.last_ip_reg,
+        last_ip_city_reg: d.last_ip_city_reg,
+        last_id_log_reg: d.last_id_log_reg,
+        date_last_conn: d.date_last_conn,
+        gender: d.gender,
+        date_birth: d.date_birth,
+        ident_doc_number: d.ident_doc_number,
+        main_phone: d.main_phone,
+        second_phone: d.second_phone,
+        delegated_phone: d.delegated_phone,
+        resid_city: d.resid_city,
+        user_active: d.user_active,
+        user_blocked: d.user_blocked,
+        uuid_profile: d.uuid_profile,
+        id_service: d.id_service,
+        id_services_utype: d.id_services_utype,
+        id_ident_doc_type: d.id_ident_doc_type,
+        id_resid_country: d.id_resid_country,
+        id_nationality_country: d.id_nationality_country,
+        id_verif_level: d.id_verif_level,
+        name_profile: d.name_profile,
+        name_service: d.name_service,
+        name_services_utype: d.name_services_utype,
+        name_ident_doc_type: d.name_ident_doc_type,
+        name_resid_country: d.name_resid_country,
+        name_nationality_country: d.name_nationality_country,
+        address: d.address,
+        cod_user_serv_public: d.cod_user_serv_public,
+        cod_rank: d.cod_rank,
+        referral_node: d.referral_node,
+        main_sn_platf: d.main_sn_platf,
+        user_main_sn_platf: d.user_main_sn_platf,
+        date_legacy_reg: d.date_legacy_reg,
+        status: "Inactivo",
+        verif_level_apb: "Pendiente",
       };
     }
   });
@@ -562,6 +659,12 @@ usersService.getusersClient = async (req, res, next) => {
                 key: "name_services_utype",
               },
               {
+                key: "id_verif_level",
+              },
+              {
+                key: "verif_level_apb",
+              },
+              {
                 key: "cod_user_serv_public",
               },
               {
@@ -710,6 +813,16 @@ usersService.getusersClient = async (req, res, next) => {
             parent: "datos_administrativos",
           },
           {
+            name: "Nivel de Verificación",
+            key: "id_verif_level",
+            parent: "datos_administrativos",
+          },
+          {
+            name: "Estatus Nivel de Verificación",
+            key: "verif_level_apb",
+            parent: "datos_administrativos",
+          },
+          {
             name: "Código público",
             key: "cod_user_serv_public",
             parent: "datos_administrativos",
@@ -749,6 +862,13 @@ usersService.getusersClient = async (req, res, next) => {
           colors: {
             Activo: 3,
             Inactivo: 1,
+          },
+        },
+        {
+          key: "verif_level_apb",
+          colors: {
+            Verificado: 2,
+            Pendiente: 1,
           },
         },
       ],
@@ -838,7 +958,7 @@ usersService.createUserClient = async (req, res, next) => {
       password,
       cod_user_serv_public: req.body.cod_user_serv_public,
       cod_rank: req.body.cod_rank,
-      register_ini_apb: req.body.register_ini_apb,
+      verif_level_apb: req.body.verif_level_apb,
       multi_country: req.body.multi_country,
       gender: req.body.gender,
       date_birth: req.body.date_birth,
@@ -1285,7 +1405,7 @@ async function getIdVerifLevelClient(name) {
 //         password: "12345678",
 //         cod_user_serv_public: d.public_code,
 //         cod_rank: d.cod_rank,
-//         register_ini_apb: true,
+//         verif_level_apb: false,
 //         multi_country: true,
 //         gender: d.gender,
 //         date_birth: d.date_birth ? d.date_birth : "9999-12-30",
@@ -1363,7 +1483,7 @@ async function getIdVerifLevelClient(name) {
 //         username: extractUsername(d.email_user),
 //         email_user: d.email_user,
 //         password: "12345678",
-//         register_ini_apb: true,
+//         verif_level_apb: true,
 //         multi_country: true,
 //         gender: d.gender,
 //         date_birth: d.date_birth ? d.date_birth : "9999-12-30",

@@ -68,7 +68,7 @@ usersPGRepository.createUserClient = async (body) => {
       '${body.password}',
       '${body.cod_user_serv_public}',
       '${body.cod_rank}',
-      '${body.register_ini_apb}',
+      '${body.verif_level_apb}',
       '${body.multi_country}',
       '${body.gender}',
       '${body.date_birth}',
