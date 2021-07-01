@@ -1,6 +1,7 @@
 import Router from "express-promise-router";
 import authenticationController from "../modules/authentication/controllers/authentication.controller";
 import guard from "../utils/guard";
+import usersRouter from "../modules/users/users.routes";
 
 const router = Router();
 
@@ -19,6 +20,6 @@ router.get(
 );
 
 // IF YOU WANT TO CREATE MORE ROUTES
-// router.use("/departments", departmentsRouter);
+router.use("/users", usersRouter);
 
 export default router;
