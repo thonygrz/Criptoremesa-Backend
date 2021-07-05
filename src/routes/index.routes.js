@@ -2,6 +2,8 @@ import Router from "express-promise-router";
 import authenticationController from "../modules/authentication/controllers/authentication.controller";
 import guard from "../utils/guard";
 import usersRouter from "../modules/users/users.routes";
+import ip_countriesRouter from "../modules/ip_countries/ip_countries.routes";
+import resid_countriesRouter from "../modules/resid_countries/resid_countries.routes";
 
 const router = Router();
 
@@ -21,5 +23,7 @@ router.get(
 
 // IF YOU WANT TO CREATE MORE ROUTES
 router.use("/users", usersRouter);
+router.use("/ip_countries", ip_countriesRouter);
+router.use("/resid_countries", resid_countriesRouter);
 
 export default router;

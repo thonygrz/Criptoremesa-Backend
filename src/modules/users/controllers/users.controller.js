@@ -50,6 +50,17 @@ usersController.createUserClient = (req, res, next) => {
   }
 };
 
+usersController.createNewClient = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to create new Client`);
+    ObjLog.log(`[${context}]: Sending service to create new Client`);
+
+    usersService.createNewClient(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 usersController.updateUserClient = (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to update user Client`);

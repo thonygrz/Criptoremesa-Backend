@@ -107,6 +107,64 @@ usersPGRepository.createUserClient = async (body) => {
   }
 };
 
+usersPGRepository.createNewClient = async (body) => {
+  try {
+    logger.info(`[${context}]: Inserting new client in db`);
+    ObjLog.log(`[${context}]: Inserting new client in db`);
+
+    console.log("SE ENVIA A LA BD: ", body);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp =
+      await pool.query(`SELECT * FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT_NEW(
+      '${body.first_name}',
+      '${body.second_name}',
+      '${body.last_name}',
+      '${body.second_last_name}',
+      null,
+      '${body.email_user}',
+      '${body.password}',
+      '${body.cod_user_serv_public}',
+      '${body.cod_rank}',
+      '${body.verif_level_apb}',
+      '${body.multi_country}',
+      '${body.gender}',
+      null,
+      null,
+      '${body.main_phone}',
+      '${body.main_phone_wha}',
+      '${body.second_phone}',
+      '${body.second_phone_wha}',
+      '${body.delegated_phone}',
+      '${body.delegated_phone_wha}',
+      null,
+      null,
+      '${body.referral_node}',
+      null,
+      null,
+      '${body.ok_legal_terms}',
+      '${body.date_legacy_reg}',
+      null,
+      null,
+      null,
+      null,
+      null, 
+      '${body.id_resid_country}', 
+      '${body.id_nationality_country}',
+      null,
+      '${body.main_phone_code}',
+      '${body.main_phone_full}',
+      '${body.second_phone_code}',
+      '${body.second_phone_full}',
+      '${body.delegated_phone_code}',
+      '${body.delegated_phone_full}')
+      ;`);
+    console.log("resp: ", resp);
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 usersPGRepository.getUsers = async () => {
   try {
     logger.info(`[${context}]: Getting users from db`);

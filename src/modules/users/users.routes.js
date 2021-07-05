@@ -28,6 +28,12 @@ usersRouter.post(
   usersController.createUserClient
 );
 
+usersRouter.post(
+  "/createNewClient",
+  // guard.verifyAdmin("/login"),
+  usersController.createNewClient
+);
+
 usersRouter.put(
   "/updateClient",
   // guard.verifyAdmin("/login"),
