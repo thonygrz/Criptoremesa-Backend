@@ -91,6 +91,7 @@ passport.use(
             req.clientIp,
             req.sessionID
           );
+          console.log("localstrategy");
 
           let match = await bcrypt.compare(password, user.password);
 
@@ -175,7 +176,19 @@ export default {
       expressObj.res = res;
       expressObj.next = next;
 
-      passport.authenticate("local")(req, res, next);
+      // passport.authenticate("local")(req, res, next);
+      passport.authenticate("local", function (err, user, info) {
+        if (err) {
+          return next(err);
+        }
+        console.log("authenticate");
+        // if (!user) { return res.json( { message: info.message }) }
+        res.json({
+          isAuthenticated: false,
+          loginAttempts: 3,
+          userExists: true,
+        });
+      })(req, res, next);
     } catch (error) {
       next(error);
     }
