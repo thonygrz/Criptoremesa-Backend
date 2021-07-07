@@ -10,11 +10,14 @@ import ObjUserSessionData from "../utils/ObjUserSessionData";
 const LocalStrategy = PassportLocal.Strategy;
 const context = "Authentication module";
 let ip = null;
+let user;
+
 const expressObj = {
   req: null,
   res: null,
   next: null,
   isAuthenticated: false,
+  userExists: false,
 };
 
 // THIS SENDS A CUSTOM RESPONSE IF USER LOGS IN CORRECTLY
@@ -75,16 +78,17 @@ passport.use(
         logger.info(`[${context}]: Checking user`);
         ObjLog.log(`[${context}]: Checking user`);
 
-        let user;
-
         // if (guard.getUsernameField() === "email")
         user = await authenticationPGRepository.getUserByEmail(email);
+        console.log("USER: ", user);
         // else
         //   user = await authenticationPGRepository.getUserByUsername(username);
 
         if (user) {
           logger.info(`[${context}]: User found, checking password`);
           ObjLog.log(`[${context}]: User found, checking password`);
+
+          expressObj.userExists = true;
 
           await authenticationPGRepository.updateIPUser(
             user.id_uuid,
@@ -169,22 +173,29 @@ passport.deserializeUser(async function (id, done) {
 });
 
 export default {
-  verify: (req, res, next) => {
+  verify: async (req, res, next) => {
     try {
       expressObj.req = req;
       expressObj.res = res;
       expressObj.next = next;
 
       // passport.authenticate("local")(req, res, next);
-      passport.authenticate("local", function (err) {
+      passport.authenticate("local", async function (err) {
         if (err) {
           return next(err);
         }
         if (!expressObj.isAuthenticated) {
+          let attempts = null;
+          if (user) {
+            attempts = await authenticationPGRepository.loginFailed(
+              user.id_uuid
+            );
+          }
+
           res.json({
             isAuthenticated: false,
-            loginAttempts: 3,
-            userExists: true,
+            loginAttempts: attempts,
+            userExists: expressObj.userExists,
           });
         }
       })(req, res, next);

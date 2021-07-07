@@ -17,6 +17,18 @@ authenticationPGRepository.getUserById = async (id) => {
   }
 };
 
+authenticationPGRepository.loginFailed = async (uuid) => {
+  try {
+    logger.info(`[${context}]: Checking login failed in db`);
+    ObjLog.log(`[${context}]: Checking login failed in db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(`SELECT * FROM sp_login_failed('${uuid}')`);
+    return resp.rows[0].login_attempts;
+  } catch (error) {
+    throw error;
+  }
+};
+
 authenticationPGRepository.getUserByUsername = async (username) => {
   try {
     logger.info(`[${context}]: Getting user by username from db`);
