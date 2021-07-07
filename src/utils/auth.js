@@ -69,6 +69,8 @@ passport.use(
         // UPDATE IP IN BD
         let countryResp = null;
         let sess = null;
+        expressObj.isAuthenticated = false;
+
 
         await authenticationPGRepository.updateIPSession(
           req.sessionID,
@@ -80,7 +82,6 @@ passport.use(
 
         // if (guard.getUsernameField() === "email")
         user = await authenticationPGRepository.getUserByEmail(email);
-        console.log("USER: ", user);
         // else
         //   user = await authenticationPGRepository.getUserByUsername(username);
 
