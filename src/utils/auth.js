@@ -70,6 +70,7 @@ passport.use(
         let countryResp = null;
         let sess = null;
         expressObj.isAuthenticated = false;
+        expressObj.userExists = false;
 
 
         await authenticationPGRepository.updateIPSession(
