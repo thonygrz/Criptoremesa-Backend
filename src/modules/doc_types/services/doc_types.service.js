@@ -1,20 +1,21 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
-import resid_countriesPGRepository from "../repositories/resid_countries.pg.repository";
+import doc_typesPGRepository from "../repositories/repositories.pg.repository";
 import auth from "../../../utils/auth";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
-const resid_countriesService = {};
-const context = "resid_countries Service";
+const doc_typesService = {};
+const context = "doc_types Service";
 
-resid_countriesService.getresid_countries = async (req, res, next) => {
+doc_typesService.getdoc_types = async (req, res, next) => {
   try {
     let countryResp = null;
     let sess = null;
+
     logger.info(`[${context}]: Searching in DB`);
     ObjLog.log(`[${context}]: Searching in DB`);
 
-    let data = await resid_countriesPGRepository.getresid_countries();
+    let data = await doc_typesPGRepository.getdoc_types();
 
     const resp = authenticationPGRepository.getIpInfo(req.clientIp);
     if (resp) countryResp = resp.country_name;
@@ -27,10 +28,9 @@ resid_countriesService.getresid_countries = async (req, res, next) => {
       failed: false,
       ip: req.clientIp,
       country: countryResp,
-      route: "/resid_countries/getActive",
+      route: "/doc_types/getActive",
       session: sess,
     };
-
     authenticationPGRepository.insertLogMsg(log);
 
     res.status(200).json(data);
@@ -39,14 +39,15 @@ resid_countriesService.getresid_countries = async (req, res, next) => {
   }
 };
 
-resid_countriesService.getresid_countriesClient = async (req, res, next) => {
+doc_typesService.getdoc_typesClient = async (req, res, next) => {
   try {
     let countryResp = null;
     let sess = null;
+
     logger.info(`[${context}]: Searching in DB`);
     ObjLog.log(`[${context}]: Searching in DB`);
 
-    let data = await resid_countriesPGRepository.getresid_countriesClient();
+    let data = await doc_typesPGRepository.getdoc_typesClient();
 
     const resp = authenticationPGRepository.getIpInfo(req.clientIp);
     if (resp) countryResp = resp.country_name;
@@ -59,10 +60,9 @@ resid_countriesService.getresid_countriesClient = async (req, res, next) => {
       failed: false,
       ip: req.clientIp,
       country: countryResp,
-      route: "/resid_countries/getActiveClient",
+      route: "/doc_types/getActiveClient",
       session: sess,
     };
-
     authenticationPGRepository.insertLogMsg(log);
 
     res.status(200).json(data);
@@ -71,18 +71,18 @@ resid_countriesService.getresid_countriesClient = async (req, res, next) => {
   }
 };
 
-resid_countriesService.getid_by_name = async (req, res, next) => {
+doc_typesService.getDocTypesLevelOne = async (req, res, next) => {
   try {
     let countryResp = null;
     let sess = null;
+
     logger.info(`[${context}]: Searching in DB`);
     ObjLog.log(`[${context}]: Searching in DB`);
 
-    let data = await resid_countriesPGRepository.getid_by_name(req.params.id);
+    let data = await doc_typesPGRepository.getDocTypesLevelOne(req.params.id);
 
     const resp = authenticationPGRepository.getIpInfo(req.clientIp);
     if (resp) countryResp = resp.country_name;
-
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
 
@@ -92,7 +92,7 @@ resid_countriesService.getid_by_name = async (req, res, next) => {
       failed: false,
       ip: req.clientIp,
       country: countryResp,
-      route: "/resid_countries/getIdByName/:id",
+      route: "/doc_types/getByIdResidCountry",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
@@ -103,36 +103,4 @@ resid_countriesService.getid_by_name = async (req, res, next) => {
   }
 };
 
-resid_countriesService.getISOCodeById = async (req, res, next) => {
-  try {
-    let countryResp = null;
-    let sess = null;
-    logger.info(`[${context}]: Searching in DB`);
-    ObjLog.log(`[${context}]: Searching in DB`);
-
-    let data = await resid_countriesPGRepository.getISOCodeById(req.params.id);
-
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
-    if (resp) countryResp = resp.country_name;
-
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.clientIp,
-      country: countryResp,
-      route: "/resid_countries/getISOCodeById/:id",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export default resid_countriesService;
+export default doc_typesService;

@@ -13,10 +13,19 @@ let pgSession = require("connect-pg-simple")(session);
 import pgPool from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
+import formidableMiddleware from "express-formidable";
+// import { events } from "../modules/users/services/users.service";
 
 // SETTINGS
 const app = express();
 app.set("port", env.PORT || 3000);
+const opts = {
+  multiples: true,
+  uploadDir:
+    "C:/Users/Thony/OneDrive/Escritorio/CoinGroup/Criptoremesa-Backend/src/assets",
+  maxFileSize: 2 * 1024 * 1024,
+  keepExtensions: true,
+};
 
 // MIDDLEWARES
 app.use(morgan("dev", { stream: logger.stream }));
@@ -43,6 +52,8 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
   })
 );
+// console.log("events", events);
+// app.use(formidableMiddleware(opts, events));
 app.use(requestIP.mw());
 app.use((req, res, next) => {
   logger.info(`[Request]: ${req.method} ${req.originalUrl}`);

@@ -2,6 +2,7 @@ import Router from "express-promise-router";
 import authenticationController from "../modules/authentication/controllers/authentication.controller";
 import guard from "../utils/guard";
 import usersRouter from "../modules/users/users.routes";
+import doc_typesRouter from "../modules/doc_types/doc_types.routes";
 import ip_countriesRouter from "../modules/ip_countries/ip_countries.routes";
 import resid_countriesRouter from "../modules/resid_countries/resid_countries.routes";
 
@@ -25,5 +26,6 @@ router.get(
 router.use("/users", usersRouter);
 router.use("/ip_countries", ip_countriesRouter);
 router.use("/resid_countries", resid_countriesRouter);
+router.use("/doc_types", doc_typesRouter);
 
 export default router;

@@ -39,4 +39,15 @@ resid_countriesController.getid_by_name = (req, res, next) => {
   }
 };
 
+resid_countriesController.getISOCodeById = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get resid_countries`);
+    ObjLog.log(`[${context}]: Sending service to get resid_countries`);
+
+    resid_countriesService.getISOCodeById(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default resid_countriesController;

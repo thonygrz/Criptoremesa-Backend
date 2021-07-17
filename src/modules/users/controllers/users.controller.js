@@ -215,4 +215,26 @@ usersController.approveLevelCero = (req, res, next) => {
   }
 };
 
+usersController.files = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to download file`);
+    ObjLog.log(`[${context}]: Sending service to download file`);
+
+    usersService.files(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.requestLevelOne = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to request level one`);
+    ObjLog.log(`[${context}]: Sending service to request level one`);
+
+    usersService.requestLevelOne(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;

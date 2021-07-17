@@ -72,7 +72,6 @@ passport.use(
         expressObj.isAuthenticated = false;
         expressObj.userExists = false;
 
-
         await authenticationPGRepository.updateIPSession(
           req.sessionID,
           req.clientIp

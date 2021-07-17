@@ -22,4 +22,10 @@ resid_countriesRouter.get(
   resid_countriesController.getid_by_name
 );
 
+resid_countriesRouter.get(
+  "/getISOCodeById/:id",
+  // guard.verifyAdmin("/login"),
+  resid_countriesController.getISOCodeById
+);
+
 export default resid_countriesRouter;

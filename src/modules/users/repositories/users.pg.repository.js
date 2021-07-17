@@ -622,4 +622,30 @@ usersPGRepository.getIdDepartmentByNameEmployee = async (name) => {
   }
 };
 
+usersPGRepository.requestLevelOne = async (body) => {
+  try {
+    logger.info(`[${context}]: Requesting level one in db`);
+    ObjLog.log(`[${context}]: Requesting level one in db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM SP_REQUEST_LEVEL_ONE(
+        '${body.date_birth}',
+        '${body.state_name}',
+        '${body.resid_city}',
+        '${body.pol_exp_per}',
+        '${body.uuid_user}',
+        '${body.id_ident_doc_type}',
+        '${body.ident_doc_number}',
+        '${body.occupation}',
+        '${body.doc_path}',
+        '${body.selfie_path}'
+        )`
+    );
+    if (resp.rows[0]) return resp.rows[0];
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;

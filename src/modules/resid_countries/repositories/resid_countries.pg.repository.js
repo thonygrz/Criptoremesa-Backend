@@ -47,4 +47,18 @@ resid_countriesPGRepository.getid_by_name = async (name) => {
   }
 };
 
+resid_countriesPGRepository.getISOCodeById = async (id) => {
+  try {
+    logger.info(`[${context}]: Getting id from db`);
+    ObjLog.log(`[${context}]: Getting id from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM SP_GET_RESID_COUNTRY_ISO_CODE_BY_ID(${id})`
+    );
+    return resp.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default resid_countriesPGRepository;
