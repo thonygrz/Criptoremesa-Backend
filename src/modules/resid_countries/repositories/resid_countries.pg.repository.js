@@ -25,7 +25,7 @@ resid_countriesPGRepository.getresid_countriesClient = async () => {
     ObjLog.log(`[${context}]: Getting resid_countries from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM sec_cust.v_countries_get_sixmap_active()`
+      `SELECT * FROM sec_cust.v_countries_get_criptoremesa_active()`
     );
     return resp.rows;
   } catch (error) {
