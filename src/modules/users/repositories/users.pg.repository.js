@@ -634,7 +634,7 @@ usersPGRepository.requestLevelOne = async (body) => {
         '${body.resid_city}',
         '${body.pol_exp_per}',
         '${body.uuid_user}',
-        '${body.id_ident_doc_type}',
+        '${body.name_country}',
         '${body.ident_doc_number}',
         '${body.occupation}',
         '${body.doc_path}',

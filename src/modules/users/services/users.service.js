@@ -2011,7 +2011,7 @@ usersService.requestLevelOne = async (req, res, next) => {
             resid_city: fields.resid_city,
             pol_exp_per: fields.pol_exp_per,
             uuid_user: fields.uuid_user,
-            id_ident_doc_type: fields.id_ident_doc_type,
+            name_country: fields.name_country,
             ident_doc_number: fields.ident_doc_number,
             occupation: fields.occupation,
             doc_path: doc_path,
