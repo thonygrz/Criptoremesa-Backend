@@ -17,7 +17,7 @@ doc_typesRouter.get(
 );
 
 doc_typesRouter.get(
-  "/getDocTypesLevelOne/:id",
+  "/getDocTypesLevelOne",
   // guard.verifyAdmin("/login"),
   doc_typesController.getDocTypesLevelOne
 );

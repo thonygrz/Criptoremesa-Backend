@@ -79,7 +79,7 @@ doc_typesService.getDocTypesLevelOne = async (req, res, next) => {
     logger.info(`[${context}]: Searching in DB`);
     ObjLog.log(`[${context}]: Searching in DB`);
 
-    let data = await doc_typesPGRepository.getDocTypesLevelOne(req.params.id);
+    let data = await doc_typesPGRepository.getDocTypesLevelOne();
 
     const resp = authenticationPGRepository.getIpInfo(req.clientIp);
     if (resp) countryResp = resp.country_name;
