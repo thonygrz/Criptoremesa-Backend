@@ -1904,7 +1904,7 @@ usersService.files = async (req, res, next) => {
   }
 };
 
-usersService.requestLevelOne = async (req, res, next) => {
+usersService.requestLevelOne1stQ = async (req, res, next) => {
   try {
     let countryResp = null;
     let sess = null;
@@ -1920,7 +1920,7 @@ usersService.requestLevelOne = async (req, res, next) => {
       failed: false,
       ip: req.clientIp,
       country: countryResp,
-      route: "/users/requestLevelOne",
+      route: "/users/requestLevelOne1stQ",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
@@ -2005,7 +2005,7 @@ usersService.requestLevelOne = async (req, res, next) => {
         if (!fileError) {
           console.log("FILE DOC: ", doc_path);
           console.log("FILE SELFIE: ", selfie_path);
-          await usersPGRepository.requestLevelOne({
+          await usersPGRepository.requestLevelOne1stQ({
             date_birth: fields.date_birth,
             state_name: fields.state_name,
             resid_city: fields.resid_city,
@@ -2030,6 +2030,263 @@ usersService.requestLevelOne = async (req, res, next) => {
     next(error);
   }
 };
+
+usersService.requestLevelOne2ndQ = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.clientIp,
+      country: countryResp,
+      route: "/users/requestLevelOne2ndQ",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    let fileError = false;
+
+    const form = formidable({
+      multiples: true,
+      uploadDir:
+        "C:/Users/Thony/OneDrive/Escritorio/CoinGroup/Criptoremesa-Backend/src/assets",
+      maxFileSize: 5 * 1024 * 1024,
+      keepExtensions: true,
+    });
+
+    form.onPart = (part) => {
+      console.log("part: ", part.mime);
+      if (
+        !fileError &&
+        !(
+          part.mime === "image/png" ||
+          part.mime === "image/jpg" ||
+          part.mime === "image/jpeg" ||
+          part.mime === "image/gif" ||
+          part.mime === "application/pdf" ||
+          part.mime === null
+        )
+      ) {
+        console.log("entro ");
+
+        fileError = true;
+        form.emit("error");
+      } else {
+        form.handlePart(part);
+      }
+    };
+
+    form.on("error", function (err) {
+      if (fileError) {
+        next({
+          message: `Uno o varios archivos no tienen formato permitido`,
+        });
+      } else {
+        fileError = true;
+        console.log("error dentro del formerror: ", err);
+
+        next({
+          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+        });
+      }
+    });
+
+    form.parse(req, async function (err, fields, files) {
+      console.log("fileError ", fileError);
+      console.log("files ", files);
+      console.log("fields ", fields);
+
+      let doc_path = form.uploadDir + `/${fields.uuid_user}__${files.doc.name}`;
+      let selfie_path =
+        form.uploadDir + `/${fields.uuid_user}__${files.selfie.name}`;
+
+      Object.values(files).forEach((f) => {
+        if (
+          f.type === "image/png" ||
+          f.type === "image/jpg" ||
+          f.type === "image/jpeg" ||
+          f.type === "image/gif" ||
+          f.type === "application/pdf"
+        ) {
+          fs.rename(
+            f.path,
+            form.uploadDir + `/${fields.uuid_user}__${f.name}`,
+            (error) => {
+              if (error) {
+                console.log("error dentro del rename: ", error);
+                next(error);
+              }
+            }
+          );
+        }
+      });
+      try {
+        if (!fileError) {
+          console.log("FILE DOC: ", doc_path);
+          console.log("FILE SELFIE: ", selfie_path);
+          await usersPGRepository.requestLevelOne2ndQ({
+            date_birth: fields.date_birth,
+            state_name: fields.state_name,
+            resid_city: fields.resid_city,
+            pol_exp_per: fields.pol_exp_per,
+            uuid_user: fields.uuid_user,
+            id_country: fields.id_country,
+            ident_doc_number: fields.ident_doc_number,
+            occupation: fields.occupation,
+            doc_path: doc_path,
+            selfie_path: selfie_path,
+          });
+
+          res.status(200).json({ message: "Archivos subidos" });
+        }
+      } catch (error) {
+        next(error);
+      }
+    });
+  } catch (error) {
+    console.log("error dentro del catch: ", error);
+
+    next(error);
+  }
+};
+
+
+
+usersService.requestLevelOne3rdQ = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.clientIp,
+      country: countryResp,
+      route: "/users/requestLevelOne3rdQ",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    let fileError = false;
+
+    const form = formidable({
+      multiples: true,
+      uploadDir:
+        "C:/Users/Thony/OneDrive/Escritorio/CoinGroup/Criptoremesa-Backend/src/assets",
+      maxFileSize: 5 * 1024 * 1024,
+      keepExtensions: true,
+    });
+
+    form.onPart = (part) => {
+      console.log("part: ", part.mime);
+      if (
+        !fileError &&
+        !(
+          part.mime === "image/png" ||
+          part.mime === "image/jpg" ||
+          part.mime === "image/jpeg" ||
+          part.mime === "image/gif" ||
+          part.mime === "application/pdf" ||
+          part.mime === null
+        )
+      ) {
+        console.log("entro ");
+
+        fileError = true;
+        form.emit("error");
+      } else {
+        form.handlePart(part);
+      }
+    };
+
+    form.on("error", function (err) {
+      if (fileError) {
+        next({
+          message: `Uno o varios archivos no tienen formato permitido`,
+        });
+      } else {
+        fileError = true;
+        console.log("error dentro del formerror: ", err);
+
+        next({
+          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+        });
+      }
+    });
+
+    form.parse(req, async function (err, fields, files) {
+      console.log("fileError ", fileError);
+      console.log("files ", files);
+      console.log("fields ", fields);
+
+      let doc_path = form.uploadDir + `/${fields.uuid_user}__${files.doc.name}`;
+      let selfie_path =
+        form.uploadDir + `/${fields.uuid_user}__${files.selfie.name}`;
+
+      Object.values(files).forEach((f) => {
+        if (
+          f.type === "image/png" ||
+          f.type === "image/jpg" ||
+          f.type === "image/jpeg" ||
+          f.type === "image/gif" ||
+          f.type === "application/pdf"
+        ) {
+          fs.rename(
+            f.path,
+            form.uploadDir + `/${fields.uuid_user}__${f.name}`,
+            (error) => {
+              if (error) {
+                console.log("error dentro del rename: ", error);
+                next(error);
+              }
+            }
+          );
+        }
+      });
+      try {
+        if (!fileError) {
+          console.log("FILE DOC: ", doc_path);
+          console.log("FILE SELFIE: ", selfie_path);
+          await usersPGRepository.requestLevelOne3rdQ({
+            date_birth: fields.date_birth,
+            state_name: fields.state_name,
+            resid_city: fields.resid_city,
+            pol_exp_per: fields.pol_exp_per,
+            uuid_user: fields.uuid_user,
+            id_country: fields.id_country,
+            ident_doc_number: fields.ident_doc_number,
+            occupation: fields.occupation,
+            doc_path: doc_path,
+            selfie_path: selfie_path,
+          });
+
+          res.status(200).json({ message: "Archivos subidos" });
+        }
+      } catch (error) {
+        next(error);
+      }
+    });
+  } catch (error) {
+    console.log("error dentro del catch: ", error);
+
+    next(error);
+  }
+};
+
 
 export default usersService;
 export { events };

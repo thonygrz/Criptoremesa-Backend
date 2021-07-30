@@ -125,9 +125,21 @@ usersRouter.post(
 );
 
 usersRouter.post(
-  "/requestLevelOne",
+  "/requestLevelOne1stQ",
   // guard.verifyAdmin("/login"),
-  usersController.requestLevelOne
+  usersController.requestLevelOne1stQ
+);
+
+usersRouter.post(
+  "/requestLevelOne2ndQ",
+  // guard.verifyAdmin("/login"),
+  usersController.requestLevelOne2ndQ
+);
+
+usersRouter.post(
+  "/requestLevelOne3rdQ",
+  // guard.verifyAdmin("/login"),
+  usersController.requestLevelOne3rdQ
 );
 
 export default usersRouter;

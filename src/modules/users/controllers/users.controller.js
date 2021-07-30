@@ -226,15 +226,39 @@ usersController.files = (req, res, next) => {
   }
 };
 
-usersController.requestLevelOne = (req, res, next) => {
+usersController.requestLevelOne1stQ = (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to request level one`);
     ObjLog.log(`[${context}]: Sending service to request level one`);
 
-    usersService.requestLevelOne(req, res, next);
+    usersService.requestLevelOne1stQ(req, res, next);
   } catch (error) {
     next(error);
   }
 };
+
+usersController.requestLevelOne2ndQ = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to request level one`);
+    ObjLog.log(`[${context}]: Sending service to request level one`);
+
+    usersService.requestLevelOne2ndQ(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+usersController.requestLevelOne3rdQ = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to request level one`);
+    ObjLog.log(`[${context}]: Sending service to request level one`);
+
+    usersService.requestLevelOne3rdQ(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export default usersController;
