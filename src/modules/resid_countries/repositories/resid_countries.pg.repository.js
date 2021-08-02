@@ -61,4 +61,18 @@ resid_countriesPGRepository.getISOCodeById = async (id) => {
   }
 };
 
+resid_countriesPGRepository.isPolExp = async (id) => {
+  try {
+    logger.info(`[${context}]: Checking country in db`);
+    ObjLog.log(`[${context}]: Checking country in db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM SP_IS_POL_EXP_COUNTRY(${id})`
+    );
+    return resp.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default resid_countriesPGRepository;

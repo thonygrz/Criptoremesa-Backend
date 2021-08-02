@@ -50,4 +50,15 @@ resid_countriesController.getISOCodeById = (req, res, next) => {
   }
 };
 
+resid_countriesController.isPolExp = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get pol exp country`);
+    ObjLog.log(`[${context}]: Sending service to get pol exp country`);
+
+    resid_countriesService.isPolExp(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default resid_countriesController;

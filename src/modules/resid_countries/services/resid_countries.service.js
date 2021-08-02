@@ -135,4 +135,38 @@ resid_countriesService.getISOCodeById = async (req, res, next) => {
   }
 };
 
+
+
+resid_countriesService.isPolExp = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+    logger.info(`[${context}]: Searching in DB`);
+    ObjLog.log(`[${context}]: Searching in DB`);
+
+    let data = await resid_countriesPGRepository.isPolExp(req.params.id);
+
+    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    if (resp) countryResp = resp.country_name;
+
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.clientIp,
+      country: countryResp,
+      route: "/resid_countries/isPolExp",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default resid_countriesService;

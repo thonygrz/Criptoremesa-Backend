@@ -28,4 +28,10 @@ resid_countriesRouter.get(
   resid_countriesController.getISOCodeById
 );
 
+resid_countriesRouter.get(
+  "/isPolExp/:id",
+  // guard.verifyAdmin("/login"),
+  resid_countriesController.isPolExp
+);
+
 export default resid_countriesRouter;
