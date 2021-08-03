@@ -22,7 +22,7 @@ app.set("port", env.PORT || 3000);
 const opts = {
   multiples: true,
   uploadDir:
-    "C:/Users/Thony/OneDrive/Escritorio/CoinGroup/Criptoremesa-Backend/src/assets",
+    env.FILES_DIR,
   maxFileSize: 2 * 1024 * 1024,
   keepExtensions: true,
 };
