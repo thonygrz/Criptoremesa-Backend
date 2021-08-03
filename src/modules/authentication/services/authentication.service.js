@@ -15,7 +15,7 @@ authenticationService.login = async (req, res, next) => {
     ObjLog.log(`[${context}]: Sending module to verify`);
 
     if (!req.body.captcha) {
-      res.status(400).json({
+      res.status(500).json({
         captchaSuccess: false,
         msg: "Ha ocurrido un error. Por favor completa el captcha",
       });
