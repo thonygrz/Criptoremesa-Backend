@@ -1023,7 +1023,7 @@ usersService.createNewClient = async (req, res, next) => {
 
     if (!req.body.captcha) {
       res.status(400).json({
-        success: false,
+        captchaSuccess: false,
         msg: "Ha ocurrido un error. Por favor completa el captcha",
       });
     } else {
@@ -1040,7 +1040,7 @@ usersService.createNewClient = async (req, res, next) => {
       if (body.data.success === false) {
         res
           .status(500)
-          .json({ success: false, msg: "Falló la verificación del Captcha" });
+          .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
       }
       else{
           // If successful
