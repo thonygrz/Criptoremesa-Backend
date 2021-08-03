@@ -7,6 +7,8 @@ import bcrypt from "bcryptjs";
 import formidable from "formidable";
 import fs from "fs";
 // import { table } from "../../../utils/googleSpreadSheets";
+import { env } from "../../../utils/enviroment";
+
 
 const usersService = {};
 const context = "users Service";
