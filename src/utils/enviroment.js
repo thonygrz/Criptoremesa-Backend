@@ -10,4 +10,5 @@ export const env = {
     PG_DB_PORT: process.env.PG_DB_PORT,
     PG_DB_USER: process.env.PG_DB_USER,
     PG_DB_PASSWORD: process.env.PG_DB_PASSWORD,
+    reCAPTCHA_SECRET_KEY: process.env.reCAPTCHA_SECRET_KEY,
 };

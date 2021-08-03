@@ -2,15 +2,45 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import authenticationPGRepository from "../repositories/authentication.pg.repository";
 import auth from "../../../utils/auth";
+import axios from "axios";
+import { response } from "express";
+import { env } from "../../../utils/enviroment";
 
 const authenticationService = {};
 const context = "Authentication Service";
 
-authenticationService.login = (req, res, next) => {
+authenticationService.login = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending module to verify`);
     ObjLog.log(`[${context}]: Sending module to verify`);
-    auth.verify(req, res, next);
+
+    if (!req.body.captcha) {
+      res.status(400).json({
+        success: false,
+        msg: "Ha ocurrido un error. Por favor completa el captcha",
+      });
+    } else {
+        // Secret key
+      const secretKey = env.reCAPTCHA_SECRET_KEY;
+
+      // Verify URL
+      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+
+      // Make a request to verifyURL
+      const body = await axios.get(verifyURL);
+
+      // // If not successful
+      if (body.data.success === false) {
+        res
+          .status(500)
+          .json({ success: false, msg: "Falló la verificación del Captcha" });
+      }
+      else{
+          // If successful
+        auth.verify(req, res, next);
+      }
+
+    }
   } catch (error) {
     next(error);
   }

@@ -49,6 +49,7 @@ async function resp(user) {
     expressObj.res.status(200).send({
       isAuthenticated: expressObj.isAuthenticated,
       user,
+      captchaSuccess: true
     });
   } catch (error) {
     expressObj.next(error);
@@ -197,6 +198,7 @@ export default {
             isAuthenticated: false,
             loginAttempts: attempts,
             userExists: expressObj.userExists,
+            captchaSuccess: true
           });
         }
       })(req, res, next);
