@@ -1115,7 +1115,7 @@ usersService.createNewClient = async (req, res, next) => {
           res
             .status(200)
             .json({ 
-              message: "User registred succesfully", 
+              msg: "User registred succesfully", 
               user: response, 
               captchaSuccess: true
             });
