@@ -1020,74 +1020,104 @@ usersService.createUserClient = async (req, res, next) => {
 
 usersService.createNewClient = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
 
-    let password = await bcrypt.hash(req.body.password, 10);
-    let userObj = {
-      first_name: req.body.first_name,
-      second_name: req.body.second_name,
-      last_name: req.body.last_name,
-      second_last_name: req.body.second_last_name,
-      username: req.body.username,
-      email_user: req.body.email_user,
-      password,
-      cod_user_serv_public: req.body.cod_user_serv_public,
-      cod_rank: req.body.cod_rank,
-      verif_level_apb: req.body.verif_level_apb,
-      multi_country: req.body.multi_country,
-      gender: req.body.gender,
-      date_birth: req.body.date_birth,
-      ident_doc_number: req.body.ident_doc_number,
-      main_phone: req.body.main_phone,
-      main_phone_wha: req.body.main_phone_wha,
-      second_phone: req.body.second_phone,
-      second_phone_wha: req.body.second_phone_wha,
-      delegated_phone: req.body.delegated_phone,
-      delegated_phone_wha: req.body.delegated_phone_wha,
-      resid_city: req.body.resid_city,
-      address: req.body.address,
-      referral_node: req.body.referral_node,
-      main_sn_platf: req.body.main_sn_platf,
-      user_main_sn_platf: req.body.user_main_sn_platf,
-      ok_legal_terms: req.body.ok_legal_terms,
-      date_legacy_reg: req.body.date_legacy_reg,
-      departments: req.body.departments,
-      uuid_profile: req.body.uuid_profile,
-      id_service: req.body.id_service,
-      id_services_utype: req.body.id_services_utype,
-      id_ident_doc_type: req.body.id_ident_doc_type,
-      id_resid_country: req.body.id_resid_country,
-      id_nationality_country: req.body.id_nationality_country,
-      last_ip_registred: req.clientIp,
-      id_verif_level: req.body.id_verif_level,
-      main_phone_code: req.body.main_phone_code,
-      main_phone_full: req.body.main_phone_full,
-      second_phone_code: req.body.second_phone_code,
-      second_phone_full: req.body.second_phone_full,
-      delegated_phone_code: req.body.delegated_phone_code,
-      delegated_phone_full: req.body.delegated_phone_full,
-    };
-    const response = await usersPGRepository.createNewClient(userObj);
-    console.log("RESPNSE: ", response);
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
+    if (!req.body.captcha) {
+      res.status(400).json({
+        success: false,
+        msg: "Ha ocurrido un error. Por favor completa el captcha",
+      });
+    } else {
+        // Secret key
+      const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.clientIp,
-      country: countryResp,
-      route: "/users/createNewClient",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res
-      .status(200)
-      .json({ message: "User registred succesfully", user: response });
+      // Verify URL
+      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+
+      // Make a request to verifyURL
+      const body = await axios.get(verifyURL);
+
+      // // If not successful
+      if (body.data.success === false) {
+        res
+          .status(500)
+          .json({ success: false, msg: "Falló la verificación del Captcha" });
+      }
+      else{
+          // If successful
+          let countryResp = null;
+          let sess = null;
+      
+          let password = await bcrypt.hash(req.body.password, 10);
+          let userObj = {
+            first_name: req.body.first_name,
+            second_name: req.body.second_name,
+            last_name: req.body.last_name,
+            second_last_name: req.body.second_last_name,
+            username: req.body.username,
+            email_user: req.body.email_user,
+            password,
+            cod_user_serv_public: req.body.cod_user_serv_public,
+            cod_rank: req.body.cod_rank,
+            verif_level_apb: req.body.verif_level_apb,
+            multi_country: req.body.multi_country,
+            gender: req.body.gender,
+            date_birth: req.body.date_birth,
+            ident_doc_number: req.body.ident_doc_number,
+            main_phone: req.body.main_phone,
+            main_phone_wha: req.body.main_phone_wha,
+            second_phone: req.body.second_phone,
+            second_phone_wha: req.body.second_phone_wha,
+            delegated_phone: req.body.delegated_phone,
+            delegated_phone_wha: req.body.delegated_phone_wha,
+            resid_city: req.body.resid_city,
+            address: req.body.address,
+            referral_node: req.body.referral_node,
+            main_sn_platf: req.body.main_sn_platf,
+            user_main_sn_platf: req.body.user_main_sn_platf,
+            ok_legal_terms: req.body.ok_legal_terms,
+            date_legacy_reg: req.body.date_legacy_reg,
+            departments: req.body.departments,
+            uuid_profile: req.body.uuid_profile,
+            id_service: req.body.id_service,
+            id_services_utype: req.body.id_services_utype,
+            id_ident_doc_type: req.body.id_ident_doc_type,
+            id_resid_country: req.body.id_resid_country,
+            id_nationality_country: req.body.id_nationality_country,
+            last_ip_registred: req.clientIp,
+            id_verif_level: req.body.id_verif_level,
+            main_phone_code: req.body.main_phone_code,
+            main_phone_full: req.body.main_phone_full,
+            second_phone_code: req.body.second_phone_code,
+            second_phone_full: req.body.second_phone_full,
+            delegated_phone_code: req.body.delegated_phone_code,
+            delegated_phone_full: req.body.delegated_phone_full,
+          };
+          const response = await usersPGRepository.createNewClient(userObj);
+          console.log("RESPNSE: ", response);
+          const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+          if (resp) countryResp = resp.country_name;
+          if (await authenticationPGRepository.getSessionById(req.sessionID))
+            sess = req.sessionID;
+      
+          const log = {
+            is_auth: req.isAuthenticated(),
+            success: true,
+            failed: false,
+            ip: req.clientIp,
+            country: countryResp,
+            route: "/users/createNewClient",
+            session: sess,
+          };
+          authenticationPGRepository.insertLogMsg(log);
+          res
+            .status(200)
+            .json({ 
+              message: "User registred succesfully", 
+              user: response, 
+              captchaSuccess: true
+            });
+      }
+    }
   } catch (error) {
     next(error);
   }
