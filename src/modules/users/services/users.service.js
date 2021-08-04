@@ -2038,12 +2038,24 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         if (!fileError) {
           console.log("FILE DOC: ", doc_path);
           console.log("FILE SELFIE: ", selfie_path);
+          console.log('a la bd: ',{
+            date_birth: fields.date_birth,
+            state_name: fields.state_name,
+            resid_city: fields.resid_city,
+            pol_exp_per: fields.pol_exp_per,
+            email_user: fields.email_user,
+            id_ident_doc_type: fields.id_ident_doc_type,
+            ident_doc_number: fields.ident_doc_number,
+            occupation: fields.occupation,
+            doc_path: doc_path,
+            selfie_path: selfie_path,
+          })
           await usersPGRepository.requestLevelOne1stQ({
             date_birth: fields.date_birth,
             state_name: fields.state_name,
             resid_city: fields.resid_city,
             pol_exp_per: fields.pol_exp_per,
-            uuid_user: fields.uuid_user,
+            email_user: fields.email_user,
             id_ident_doc_type: fields.id_ident_doc_type,
             ident_doc_number: fields.ident_doc_number,
             occupation: fields.occupation,
@@ -2170,7 +2182,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
             state_name: fields.state_name,
             resid_city: fields.resid_city,
             pol_exp_per: fields.pol_exp_per,
-            uuid_user: fields.uuid_user,
+            email_user: fields.email_user,
             id_country: fields.id_country,
             ident_doc_number: fields.ident_doc_number,
             occupation: fields.occupation,
@@ -2299,7 +2311,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
             state_name: fields.state_name,
             resid_city: fields.resid_city,
             pol_exp_per: fields.pol_exp_per,
-            uuid_user: fields.uuid_user,
+            email_user: fields.email_user,
             id_country: fields.id_country,
             ident_doc_number: fields.ident_doc_number,
             occupation: fields.occupation,
