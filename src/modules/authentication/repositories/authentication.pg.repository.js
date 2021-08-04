@@ -17,12 +17,12 @@ authenticationPGRepository.getUserById = async (id) => {
   }
 };
 
-authenticationPGRepository.loginFailed = async (uuid) => {
+authenticationPGRepository.loginFailed = async (email_user) => {
   try {
     logger.info(`[${context}]: Checking login failed in db`);
     ObjLog.log(`[${context}]: Checking login failed in db`);
     await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM sp_login_failed('${uuid}')`);
+    const resp = await pool.query(`SELECT * FROM sp_login_failed('${email_user}')`);
     return resp.rows[0].login_attempts;
   } catch (error) {
     throw error;

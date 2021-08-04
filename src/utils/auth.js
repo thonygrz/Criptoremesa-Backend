@@ -49,7 +49,7 @@ async function resp(user) {
     expressObj.res.status(200).send({
       isAuthenticated: expressObj.isAuthenticated,
       user,
-      captchaSuccess: true
+      captchaSuccess: true,
     });
   } catch (error) {
     expressObj.next(error);
@@ -189,16 +189,15 @@ export default {
         if (!expressObj.isAuthenticated) {
           let attempts = null;
           if (user) {
-            attempts = await authenticationPGRepository.loginFailed(
-              user.id_uuid
-            );
+            console.log("email: ", user.email);
+            attempts = await authenticationPGRepository.loginFailed(user.email);
           }
 
           res.json({
             isAuthenticated: false,
             loginAttempts: attempts,
             userExists: expressObj.userExists,
-            captchaSuccess: true
+            captchaSuccess: true,
           });
         }
       })(req, res, next);

@@ -11,8 +11,8 @@ const context = "Authentication Service";
 
 authenticationService.login = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending module to verify`);
-    ObjLog.log(`[${context}]: Sending module to verify`);
+    logger.info(`[${context}]: Verifying captcha`);
+    ObjLog.log(`[${context}]: Verifying captcha`);
 
     if (!req.body.captcha) {
       res.status(500).json({
@@ -37,6 +37,10 @@ authenticationService.login = async (req, res, next) => {
       }
       else{
           // If successful
+
+          logger.info(`[${context}]: Sending module to verify`);
+          ObjLog.log(`[${context}]: Sending module to verify`);
+
         auth.verify(req, res, next);
       }
 
