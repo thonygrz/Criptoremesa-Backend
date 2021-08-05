@@ -187,15 +187,17 @@ export default {
           return next(err);
         }
         if (!expressObj.isAuthenticated) {
-          let attempts = null;
+          let response = null;
           if (user) {
             console.log("email: ", user.email);
-            attempts = await authenticationPGRepository.loginFailed(user.email);
+            response = await authenticationPGRepository.loginFailed(user.email);
+            console.log("response: ", response);
           }
 
           res.json({
             isAuthenticated: false,
-            loginAttempts: attempts,
+            loginAttempts: response.login_attempts,
+            atcPhone: response.atcPhone,
             userExists: expressObj.userExists,
             captchaSuccess: true,
           });
