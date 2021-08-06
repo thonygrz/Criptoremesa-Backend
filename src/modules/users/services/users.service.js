@@ -1024,29 +1024,29 @@ usersService.createUserClient = async (req, res, next) => {
 usersService.createNewClient = async (req, res, next) => {
   try {
 
-    if (!req.body.captcha) {
-      res.status(400).json({
-        captchaSuccess: false,
-        msg: "Ha ocurrido un error. Por favor completa el captcha",
-      });
-    } else {
-        // Secret key
-      const secretKey = env.reCAPTCHA_SECRET_KEY;
+    // if (!req.body.captcha) {
+    //   res.status(400).json({
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   });
+    // } else {
+    //     // Secret key
+    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+    //   // Verify URL
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
 
-      // Make a request to verifyURL
-      const body = await axios.get(verifyURL);
+    //   // Make a request to verifyURL
+    //   const body = await axios.get(verifyURL);
 
-      // // If not successful
-      if (body.data.success === false) {
-        res
-          .status(500)
-          .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
-      }
-      else{
-          // If successful
+    //   // // If not successful
+    //   if (body.data.success === false) {
+    //     res
+    //       .status(500)
+    //       .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
+    //   }
+    //   else{
+    //       // If successful
           let countryResp = null;
           let sess = null;
       
@@ -1059,7 +1059,7 @@ usersService.createNewClient = async (req, res, next) => {
             username: req.body.username,
             email_user: req.body.email_user,
             password,
-            cod_user_serv_public: req.body.cod_user_serv_public,
+            cust_cr_cod_pub: req.body.cust_cr_cod_pub,
             cod_rank: req.body.cod_rank,
             verif_level_apb: req.body.verif_level_apb,
             multi_country: req.body.multi_country,
@@ -1119,8 +1119,8 @@ usersService.createNewClient = async (req, res, next) => {
               user: response, 
               captchaSuccess: true
             });
-      }
-    }
+      // }
+    // }
   } catch (error) {
     next(error);
   }

@@ -107,7 +107,7 @@ app.use(async function (err, req, res, next) {
 
   await authenticationPGRepository.insertLogMsg(log);
 
-  if (err.message === 'duplicate key value violates unique constraint \"ms_sixmap_users_email_user_key\"')
+  if (err.message === 'duplicate key value violates unique constraint \\\"ms_sixmap_users_email_user_key\\\"')
   res.status(500).send({ error: "BUSINESS_ERROR", msg: 'Esa dirección de correo ya está en uso. Prueba con otro.' });
   else
   res.status(500).send({ error: "SERVER_ERROR", msg: err.message });

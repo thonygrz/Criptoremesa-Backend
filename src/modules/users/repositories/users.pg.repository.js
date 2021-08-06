@@ -123,7 +123,7 @@ usersPGRepository.createNewClient = async (body) => {
       null,
       '${body.email_user}',
       '${body.password}',
-      '${body.cod_user_serv_public}',
+      '${body.cust_cr_cod_pub}',
       '${body.cod_rank}',
       '${body.verif_level_apb}',
       '${body.multi_country}',
