@@ -356,6 +356,7 @@ authenticationPGRepository.getSessionById = async (id) => {
     ObjLog.log(`[${context}]: Getting session from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(`SELECT * FROM get_session_by_id('${id}')`);
+    console.log('session from db: ',resp.rows[0])
     return resp.rows[0];
   } catch (error) {
     throw error;

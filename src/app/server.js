@@ -7,6 +7,7 @@ import ObjLog from "../utils/ObjLog";
 import { env } from "../utils/enviroment";
 import routerIndex from "../routes/index.routes";
 import passport from "passport";
+import cookieParser from "cookie-parser";
 import requestIP from "request-ip";
 import session from "express-session";
 let pgSession = require("connect-pg-simple")(session);
@@ -21,11 +22,11 @@ const app = express();
 app.set("port", env.PORT || 3000);
 const opts = {
   multiples: true,
-  uploadDir:
-    env.FILES_DIR,
+  uploadDir: env.FILES_DIR,
   maxFileSize: 2 * 1024 * 1024,
   keepExtensions: true,
 };
+
 
 // MIDDLEWARES
 app.use(morgan("dev", { stream: logger.stream }));
@@ -39,6 +40,9 @@ app.use(
   })
 );
 app.use(helmet());
+app.use("/cr", routerIndex);
+
+app.use(cookieParser());
 app.use(
   session({
     store: new pgSession({
@@ -52,24 +56,14 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
   })
 );
-// console.log("events", events);
-// app.use(formidableMiddleware(opts, events));
-app.use(requestIP.mw());
-app.use((req, res, next) => {
-  logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
-  ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
-  next();
-});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ROUTES
-app.get("/", async (req, res) => {
-  res.status(200).send("Server running");
-});
-app.use("/cr", routerIndex);
-
 app.use((req, res, next) => {
+  // console.log('middleware')
+  // console.log(req.session)
+  // console.log(req.user)
   ObjUserSessionData.set({
     session: {
       session_id: req.session.id,
@@ -77,9 +71,23 @@ app.use((req, res, next) => {
     },
     user: req.user,
   });
+  res.status(200).send("prooving");
+});
 
+// ROUTES
+app.get("/", async (req, res) => {
+  res.status(200).send("Server running");
   next();
 });
+
+
+app.use((req, res, next) => {
+  logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
+  ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
+
 
 // ERROR HANDLER
 app.use(async function (err, req, res, next) {
@@ -107,10 +115,17 @@ app.use(async function (err, req, res, next) {
 
   await authenticationPGRepository.insertLogMsg(log);
 
-  if (err.message === 'duplicate key value violates unique constraint \\\"ms_sixmap_users_email_user_key\\\"')
-  res.status(500).send({ error: "BUSINESS_ERROR", msg: 'Esa dirección de correo ya está en uso. Prueba con otro.' });
-  else
-  res.status(500).send({ error: "SERVER_ERROR", msg: err.message });
+  if (
+    err.message ===
+    'duplicate key value violates unique constraint \\\"ms_sixmap_users_email_user_key\\\"'
+  )
+    res
+      .status(500)
+      .send({
+        error: "BUSINESS_ERROR",
+        msg: "Esa dirección de correo ya está en uso. Prueba con otro.",
+      });
+  else res.status(500).send({ error: "SERVER_ERROR", msg: err.message });
 });
 
 export default app;

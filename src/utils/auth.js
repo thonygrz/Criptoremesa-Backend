@@ -27,7 +27,7 @@ async function resp(user) {
     let sess = null;
 
     const resp = await authenticationPGRepository.getIpInfo(
-      expressObj.req.clientIp
+      expressObj.req.connection.remoteAddress
     );
     if (resp) countryResp = resp.country_name;
 
@@ -40,7 +40,7 @@ async function resp(user) {
       is_auth: expressObj.req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: expressObj.req.clientIp,
+      ip: expressObj.req.connection.remoteAddress,
       country: countryResp,
       route: "/login",
       session: sess,
@@ -73,9 +73,12 @@ passport.use(
         expressObj.isAuthenticated = false;
         expressObj.userExists = false;
 
+        console.log('auth: ',req.sessionID,
+        req.connection.remoteAddress)
+
         await authenticationPGRepository.updateIPSession(
           req.sessionID,
-          req.clientIp
+          req.connection.remoteAddress
         );
 
         logger.info(`[${context}]: Checking user`);
@@ -94,7 +97,7 @@ passport.use(
 
           await authenticationPGRepository.updateIPUser(
             user.id_uuid,
-            req.clientIp,
+            req.connection.remoteAddress,
             req.sessionID
           );
 
@@ -108,10 +111,10 @@ passport.use(
 
             expressObj.isAuthenticated = true;
 
-            await resp(user);
-
             done(null, user);
             expressObj.req = req;
+
+            await resp(user);
 
             return true;
           }
@@ -124,7 +127,7 @@ passport.use(
             is_auth: req.isAuthenticated(),
             success: false,
             failed: true,
-            ip: req.clientIp,
+            ip: req.connection.remoteAddress,
             country: countryResp,
             route: "/login",
             session: sess,
@@ -143,7 +146,7 @@ passport.use(
             is_auth: req.isAuthenticated(),
             success: false,
             failed: true,
-            ip: req.clientIp,
+            ip: req.connection.remoteAddress,
             country: countryResp,
             route: "/login",
             session: sess,
@@ -160,13 +163,15 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   // PASSPORT LOOKS FOR THE ID AND STORE IT IN SESSION
-  done(null, user.id_uuid);
+  console.log('serialize: ',user)
+  done(null, user.email_user);
 });
 
-passport.deserializeUser(async function (id, done) {
+passport.deserializeUser(async function (email_user, done) {
   try {
-    // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS ID
-    const user = await authenticationPGRepository.getUserById(id);
+    // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS email_user
+    const user = await authenticationPGRepository.getUserByEmail(email_user);
+    console.log('deserialize: ',user)
 
     done(null, user);
   } catch (error) {
@@ -193,15 +198,27 @@ export default {
             response = await authenticationPGRepository.loginFailed(user.email);
             console.log("response: ", response);
           }
-
+          console.log('response: ',response)
           res.json({
             isAuthenticated: false,
-            loginAttempts: response.login_attempts,
-            atcPhone: response.atcPhone,
+            loginAttempts: response ? response.login_attempts : 'NA',
+            atcPhone: response ? response.atcPhone : 'NA',
             userExists: expressObj.userExists,
             captchaSuccess: true,
           });
         }
+
+
+        // console.log(req.session)
+        // console.log(req.user)
+        // ObjUserSessionData.set({
+        //   session: {
+        //     session_id: req.session.id,
+        //     cookie: req.session.cookie,
+        //   },
+        //   user: req.user,
+        // });
+        // res.status(200).send("prooving");
       })(req, res, next);
     } catch (error) {
       next(error);
@@ -213,7 +230,7 @@ export default {
       let sess = null;
 
       req.session.destroy();
-      const resp = await authenticationPGRepository.getIpInfo(req.clientIp);
+      const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
       if (resp) countryResp = resp.country_name;
       if (await authenticationPGRepository.getSessionById(req.sessionID))
         sess = req.sessionID;
@@ -222,7 +239,7 @@ export default {
         is_auth: req.isAuthenticated(),
         success: true,
         failed: false,
-        ip: req.clientIp,
+        ip: req.connection.remoteAddress,
         country: countryResp,
         route: "/logout",
         session: sess,
@@ -257,11 +274,11 @@ export default {
         id_ident_doc_type: req.body.id_ident_doc_type,
         id_resid_country: req.body.id_resid_country,
         id_nationality_country: req.body.id_nationality_country,
-        last_ip_registred: req.clientIp,
+        last_ip_registred: req.connection.remoteAddress,
       });
       await authenticationPGRepository.insert(ObjUserSessionData.get());
 
-      const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+      const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
       if (resp) countryResp = resp.country_name;
       if (await authenticationPGRepository.getSessionById(req.sessionID))
         sess = req.sessionID;
@@ -270,7 +287,7 @@ export default {
         is_auth: req.isAuthenticated(),
         success: true,
         failed: false,
-        ip: req.clientIp,
+        ip: req.connection.remoteAddress,
         country: countryResp,
         route: "/signup",
         session: sess,
