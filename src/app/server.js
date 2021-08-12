@@ -14,7 +14,6 @@ let pgSession = require("connect-pg-simple")(session);
 import pgPool from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
-import formidableMiddleware from "express-formidable";
 // import { events } from "../modules/users/services/users.service";
 
 // SETTINGS
@@ -30,18 +29,18 @@ const opts = {
 // MIDDLEWARES
 app.use(morgan("dev", { stream: logger.stream }));
 app.use(json());
+// app.use(express.json());
+// app.use(express.urlencoded({extended: true}));
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:8080",
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
+    credentials: true
   })
 );
 app.use(helmet());
-app.use("/cr", routerIndex);
-
-app.use(cookieParser());
 app.use(
   session({
     store: new pgSession({
@@ -55,27 +54,14 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
   })
 );
-
+app.use((req, res, next) => {
+  logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
+  ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
+  next();
+});
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-
-  console.log('middleware despues de passport y todo el auth')
-  next()
-
-  // console.log('middleware')
-  // console.log(req.session)
-  // console.log(req.user)
-  // ObjUserSessionData.set({
-  //   session: {
-  //     session_id: req.session.id,
-  //     cookie: req.session.cookie,
-  //   },
-  //   user: req.user,
-  // });
-  // res.status(200).send("prooving");
-});
 
 // ROUTES
 app.get("/", async (req, res) => {
@@ -83,11 +69,45 @@ app.get("/", async (req, res) => {
   next();
 });
 
-app.use((req, res, next) => {
-  logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
-  ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
-  next();
+app.use("/cr", routerIndex);
+
+app.use(async (req, res, next) => {
+
+  console.log('middleware despues de passport y todo el auth')
+
+  console.log('middleware')
+  console.log(req.session)
+  console.log(req.user)
+  ObjUserSessionData.set({
+    session: {
+      session_id: req.session.id,
+      cookie: req.session.cookie,
+    },
+    user: req.user,
+  });
+  // res.status(200).send("prooving");
+
+
+  // if (!req.isAuthenticated) {
+  //   let response = null;
+  //   if (req.user) {
+  //     console.log("email: ", req.user.email);
+  //     response = await authenticationPGRepository.loginFailed(req.user.email);
+  //     console.log("response: ", response);
+  //   }
+  //   console.log('response: ',response)
+  //   res.json({
+  //     isAuthenticated: false,
+  //     loginAttempts: response ? response.login_attempts : 'NA',
+  //     atcPhone: response ? response.atcPhone : 'NA',
+  //     userExists: expressObj.userExists,
+  //     captchaSuccess: true,
+  //   });
+  // }
+
+  next()
 });
+
 
 // ERROR HANDLER
 app.use(async function (err, req, res, next) {

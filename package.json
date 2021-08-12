@@ -37,7 +37,6 @@
     "cors": "^2.8.5",
     "date-and-time": "^1.0.0",
     "express": "^5.0.0-alpha.8",
-    "express-formidable": "^1.2.0",
     "express-promise-router": "^4.0.1",
     "express-session": "^1.17.1",
     "formidable": "^1.2.2",

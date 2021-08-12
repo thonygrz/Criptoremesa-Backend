@@ -11,6 +11,7 @@ const LocalStrategy = PassportLocal.Strategy;
 const context = "Authentication module";
 let ip = null;
 let user;
+let globalUser;
 
 const expressObj = {
   req: null,
@@ -63,7 +64,7 @@ passport.use(
     {
       usernameField: "email",
       passwordField: "password",
-      passReqToCallback: true,
+      passReqToCallback: true
     },
     async function (req, email, password, done) {
       try {
@@ -94,6 +95,7 @@ passport.use(
           ObjLog.log(`[${context}]: User found, checking password`);
 
           expressObj.userExists = true;
+          globalUser = user;
 
           await authenticationPGRepository.updateIPUser(
             user.id_uuid,
@@ -111,10 +113,10 @@ passport.use(
 
             expressObj.isAuthenticated = true;
 
+            await resp(user);
+
             done(null, user);
             expressObj.req = req;
-
-            await resp(user);
 
             return true;
           }
@@ -134,7 +136,7 @@ passport.use(
           };
           authenticationPGRepository.insertLogMsg(log);
 
-          done(null, false);
+          return done(null, false);
         } else {
           logger.error(`[${context}]: User and password do not match`);
           ObjLog.log(`[${context}]: User and password do not match`);
@@ -152,12 +154,20 @@ passport.use(
             session: sess,
           };
           authenticationPGRepository.insertLogMsg(log);
-          done(null, false);
+          return done(null, false);
         }
 
 
+
+        // console.log("DENTRO DE LA STRATEGY");
+        // user = {
+        //   email_user: 'anthony@gmail.com',
+        //   name: "Thony"
+        // }
+        // return done(null, user);
+
       } catch (error) {
-        done(error);
+        throw error;
       }
     }
   )
@@ -165,15 +175,15 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   // PASSPORT LOOKS FOR THE ID AND STORE IT IN SESSION
-  console.log('serialize: ',user)
-  done(null, user.email_user);
+  console.log("serialize: ", user);
+  if (user) done(null, user.email_user);
 });
 
 passport.deserializeUser(async function (email_user, done) {
   try {
     // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS email_user
     const user = await authenticationPGRepository.getUserByEmail(email_user);
-    console.log('deserialize: ',user)
+    console.log("deserialize: ", user);
 
     done(null, user);
   } catch (error) {
@@ -188,27 +198,29 @@ export default {
       expressObj.res = res;
       expressObj.next = next;
 
-      console.log(req.session)
-      console.log(req.user)
-      ObjUserSessionData.set({
-        session: {
-          session_id: req.session.id,
-          cookie: req.session.cookie,
-        },
-        user: req.user,
-      });
-      res.status(200).send("prooving");
+      console.log("req.session antes de la strategy", req.session);
+      console.log("req.user antes de la strategy", req.user);
+      // ObjUserSessionData.set({
+      //   session: {
+      //     session_id: req.session.id,
+      //     cookie: req.session.cookie,
+      //   },
+      //   user: req.user,
+      // });
+      // res.status(200).send("prooving");
 
       // passport.authenticate("local")(req, res, next);
-      passport.authenticate("local", async function (err) {
+
+      // passport.authenticate("local")(req, res, next);
+      passport.authenticate("local", async function (err,user,info) {
         if (err) {
           return next(err);
         }
-        if (!expressObj.isAuthenticated) {
-          let response = null;
-          if (user) {
-            console.log("email: ", user.email);
-            response = await authenticationPGRepository.loginFailed(user.email);
+        let response = null;
+        if (!user) {
+          if (globalUser) {
+            console.log("email: ", globalUser.email);
+            response = await authenticationPGRepository.loginFailed(globalUser.email);
             console.log("response: ", response);
           }
           console.log('response: ',response)
@@ -220,9 +232,13 @@ export default {
             captchaSuccess: true,
           });
         }
+        req.logIn(user, function(err) {
+          if (err) { return next(err); }
+        });
+        console.log("DENTRO DEL AUTHENTICATE");
 
-
-        
+        console.log("req.session despues de la strategy", req.session);
+        console.log("req.user despues de la strategy", req.user);
       })(req, res, next);
     } catch (error) {
       next(error);
@@ -234,7 +250,9 @@ export default {
       let sess = null;
 
       req.session.destroy();
-      const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+      const resp = await authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
       if (resp) countryResp = resp.country_name;
       if (await authenticationPGRepository.getSessionById(req.sessionID))
         sess = req.sessionID;
@@ -282,7 +300,9 @@ export default {
       });
       await authenticationPGRepository.insert(ObjUserSessionData.get());
 
-      const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
       if (resp) countryResp = resp.country_name;
       if (await authenticationPGRepository.getSessionById(req.sessionID))
         sess = req.sessionID;
