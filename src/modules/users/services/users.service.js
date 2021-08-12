@@ -10,7 +10,6 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import axios from "axios";
 
-
 const usersService = {};
 const context = "users Service";
 let events = {};
@@ -298,7 +297,9 @@ usersService.getusers = async (req, res, next) => {
 
     let data = await usersPGRepository.getUsers();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -307,7 +308,7 @@ usersService.getusers = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/getActive",
       session: sess,
@@ -558,7 +559,9 @@ usersService.getusersClient = async (req, res, next) => {
     let data = await usersPGRepository.getusersClient();
     console.log("CLIENTS A ENVIAR: ", data);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -567,7 +570,7 @@ usersService.getusersClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/getActive",
       session: sess,
@@ -917,7 +920,7 @@ usersService.createUser = async (req, res, next) => {
       id_ident_doc_type: req.body.id_ident_doc_type,
       id_resid_country: req.body.id_resid_country,
       id_nationality_country: req.body.id_nationality_country,
-      last_ip_registred: req.clientIp,
+      last_ip_registred: req.connection.remoteAddress,
       main_phone_code: req.body.main_phone_code,
       main_phone_full: req.body.main_phone_full,
       second_phone_code: req.body.second_phone_code,
@@ -927,7 +930,9 @@ usersService.createUser = async (req, res, next) => {
     };
     await usersPGRepository.createUser(userObj);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -936,7 +941,7 @@ usersService.createUser = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/create",
       session: sess,
@@ -989,7 +994,7 @@ usersService.createUserClient = async (req, res, next) => {
       id_ident_doc_type: req.body.id_ident_doc_type,
       id_resid_country: req.body.id_resid_country,
       id_nationality_country: req.body.id_nationality_country,
-      last_ip_registred: req.clientIp,
+      last_ip_registred: req.connection.remoteAddress,
       id_verif_level: req.body.id_verif_level,
       main_phone_code: req.body.main_phone_code,
       main_phone_full: req.body.main_phone_full,
@@ -1000,7 +1005,9 @@ usersService.createUserClient = async (req, res, next) => {
     };
     await usersPGRepository.createUserClient(userObj);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1009,7 +1016,7 @@ usersService.createUserClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/createClient",
       session: sess,
@@ -1023,7 +1030,6 @@ usersService.createUserClient = async (req, res, next) => {
 
 usersService.createNewClient = async (req, res, next) => {
   try {
-
     // if (!req.body.captcha) {
     //   res.status(400).json({
     //     captchaSuccess: false,
@@ -1047,79 +1053,79 @@ usersService.createNewClient = async (req, res, next) => {
     //   }
     //   else{
     //       // If successful
-          let countryResp = null;
-          let sess = null;
-      
-          let password = await bcrypt.hash(req.body.password, 10);
-          let userObj = {
-            first_name: req.body.first_name,
-            second_name: req.body.second_name,
-            last_name: req.body.last_name,
-            second_last_name: req.body.second_last_name,
-            username: req.body.username,
-            email_user: req.body.email_user,
-            password,
-            cust_cr_cod_pub: req.body.cust_cr_cod_pub,
-            cod_rank: req.body.cod_rank,
-            verif_level_apb: req.body.verif_level_apb,
-            multi_country: req.body.multi_country,
-            gender: req.body.gender,
-            date_birth: req.body.date_birth,
-            ident_doc_number: req.body.ident_doc_number,
-            main_phone: req.body.main_phone,
-            main_phone_wha: req.body.main_phone_wha,
-            second_phone: req.body.second_phone,
-            second_phone_wha: req.body.second_phone_wha,
-            delegated_phone: req.body.delegated_phone,
-            delegated_phone_wha: req.body.delegated_phone_wha,
-            resid_city: req.body.resid_city,
-            address: req.body.address,
-            referral_node: req.body.referral_node,
-            main_sn_platf: req.body.main_sn_platf,
-            user_main_sn_platf: req.body.user_main_sn_platf,
-            ok_legal_terms: req.body.ok_legal_terms,
-            date_legacy_reg: req.body.date_legacy_reg,
-            departments: req.body.departments,
-            uuid_profile: req.body.uuid_profile,
-            id_service: req.body.id_service,
-            id_services_utype: req.body.id_services_utype,
-            id_ident_doc_type: req.body.id_ident_doc_type,
-            id_resid_country: req.body.id_resid_country,
-            id_nationality_country: req.body.id_nationality_country,
-            last_ip_registred: req.clientIp,
-            id_verif_level: req.body.id_verif_level,
-            main_phone_code: req.body.main_phone_code,
-            main_phone_full: req.body.main_phone_full,
-            second_phone_code: req.body.second_phone_code,
-            second_phone_full: req.body.second_phone_full,
-            delegated_phone_code: req.body.delegated_phone_code,
-            delegated_phone_full: req.body.delegated_phone_full,
-          };
-          const response = await usersPGRepository.createNewClient(userObj);
-          console.log("RESPNSE: ", response);
-          const resp = authenticationPGRepository.getIpInfo(req.clientIp);
-          if (resp) countryResp = resp.country_name;
-          if (await authenticationPGRepository.getSessionById(req.sessionID))
-            sess = req.sessionID;
-      
-          const log = {
-            is_auth: req.isAuthenticated(),
-            success: true,
-            failed: false,
-            ip: req.clientIp,
-            country: countryResp,
-            route: "/users/createNewClient",
-            session: sess,
-          };
-          authenticationPGRepository.insertLogMsg(log);
-          res
-            .status(200)
-            .json({ 
-              msg: "User registred succesfully", 
-              user: response, 
-              captchaSuccess: true
-            });
-      // }
+    let countryResp = null;
+    let sess = null;
+
+    let password = await bcrypt.hash(req.body.password, 10);
+    let userObj = {
+      first_name: req.body.first_name,
+      second_name: req.body.second_name,
+      last_name: req.body.last_name,
+      second_last_name: req.body.second_last_name,
+      username: req.body.username,
+      email_user: req.body.email_user,
+      password,
+      cust_cr_cod_pub: req.body.cust_cr_cod_pub,
+      cod_rank: req.body.cod_rank,
+      verif_level_apb: req.body.verif_level_apb,
+      multi_country: req.body.multi_country,
+      gender: req.body.gender,
+      date_birth: req.body.date_birth,
+      ident_doc_number: req.body.ident_doc_number,
+      main_phone: req.body.main_phone,
+      main_phone_wha: req.body.main_phone_wha,
+      second_phone: req.body.second_phone,
+      second_phone_wha: req.body.second_phone_wha,
+      delegated_phone: req.body.delegated_phone,
+      delegated_phone_wha: req.body.delegated_phone_wha,
+      resid_city: req.body.resid_city,
+      address: req.body.address,
+      referral_node: req.body.referral_node,
+      main_sn_platf: req.body.main_sn_platf,
+      user_main_sn_platf: req.body.user_main_sn_platf,
+      ok_legal_terms: req.body.ok_legal_terms,
+      date_legacy_reg: req.body.date_legacy_reg,
+      departments: req.body.departments,
+      uuid_profile: req.body.uuid_profile,
+      id_service: req.body.id_service,
+      id_services_utype: req.body.id_services_utype,
+      id_ident_doc_type: req.body.id_ident_doc_type,
+      id_resid_country: req.body.id_resid_country,
+      id_nationality_country: req.body.id_nationality_country,
+      last_ip_registred: req.connection.remoteAddress,
+      id_verif_level: req.body.id_verif_level,
+      main_phone_code: req.body.main_phone_code,
+      main_phone_full: req.body.main_phone_full,
+      second_phone_code: req.body.second_phone_code,
+      second_phone_full: req.body.second_phone_full,
+      delegated_phone_code: req.body.delegated_phone_code,
+      delegated_phone_full: req.body.delegated_phone_full,
+    };
+    const response = await usersPGRepository.createNewClient(userObj);
+    console.log("RESPNSE: ", response);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/createNewClient",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json({
+      msg: "User registred succesfully",
+      user: response,
+      captchaSuccess: true,
+    });
+    // }
     // }
   } catch (error) {
     next(error);
@@ -1140,7 +1146,9 @@ usersService.updateUserClient = async (req, res, next) => {
       req.body.uuid_user
     );
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1149,7 +1157,7 @@ usersService.updateUserClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/updateClient",
       session: sess,
@@ -1175,7 +1183,9 @@ usersService.updateUserEmployee = async (req, res, next) => {
       req.body.uuid_user
     );
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1184,7 +1194,7 @@ usersService.updateUserEmployee = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/updateEmployee",
       session: sess,
@@ -1203,7 +1213,9 @@ usersService.getusersClientById = async (req, res, next) => {
 
     let data = await usersPGRepository.getusersClientById(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1212,7 +1224,7 @@ usersService.getusersClientById = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/geClientById",
       session: sess,
@@ -1231,7 +1243,9 @@ usersService.getusersEmployeeById = async (req, res, next) => {
 
     let data = await usersPGRepository.getusersEmployeeById(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1240,7 +1254,7 @@ usersService.getusersEmployeeById = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/geEmployeeById",
       session: sess,
@@ -1259,7 +1273,9 @@ usersService.getEmployeePhonesById = async (req, res, next) => {
 
     let data = await usersPGRepository.getEmployeePhonesById(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1268,7 +1284,7 @@ usersService.getEmployeePhonesById = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/getEmployeePhonesById",
       session: sess,
@@ -1287,7 +1303,9 @@ usersService.getClientPhonesById = async (req, res, next) => {
 
     let data = await usersPGRepository.getClientPhonesById(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1296,7 +1314,7 @@ usersService.getClientPhonesById = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/getClientPhonesById",
       session: sess,
@@ -1315,7 +1333,9 @@ usersService.getDepartmentsByUserId = async (req, res, next) => {
 
     let data = await usersPGRepository.getDepartmentsByUserId(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1324,7 +1344,7 @@ usersService.getDepartmentsByUserId = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/getDepartmentsByUserId",
       session: sess,
@@ -1542,14 +1562,14 @@ async function getIdVerifLevelClient(name) {
 //         id_nationality_country: (await getIdNatCountryClient(d.nacionality))
 //           ? await getIdNatCountryClient(d.nacionality)
 //           : "3786007", //buscar en db
-//         last_ip_registred: req.clientIp,
+//         last_ip_registred: req.connection.remoteAddress,
 //         id_verif_level: await getIdVerifLevelClient(d.user_verif_level), //buscar en db
 //       };
 
 //       await usersPGRepository.createUserClient(userObj);
 //     });
 
-//     const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+//     const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
 //     if (resp) countryResp = resp.country_name;
 //     if (await authenticationPGRepository.getSessionById(req.sessionID))
 //       sess = req.sessionID;
@@ -1558,7 +1578,7 @@ async function getIdVerifLevelClient(name) {
 //       is_auth: req.isAuthenticated(),
 //       success: true,
 //       failed: false,
-//       ip: req.clientIp,
+//       ip: req.connection.remoteAddress,
 //       country: countryResp,
 //       route: "/users/getDataFromSheets",
 //       session: sess,
@@ -1616,13 +1636,13 @@ async function getIdVerifLevelClient(name) {
 //         id_nationality_country: (await getIdNatCountryEmployee(d.nacionality))
 //           ? await getIdNatCountryEmployee(d.nacionality)
 //           : "4904430", //buscar en db
-//         last_ip_registred: req.clientIp,
+//         last_ip_registred: req.connection.remoteAddress,
 //       };
 
 //       await usersPGRepository.createUser(userObj);
 //     });
 
-//     const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+//     const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
 //     if (resp) countryResp = resp.country_name;
 //     if (await authenticationPGRepository.getSessionById(req.sessionID))
 //       sess = req.sessionID;
@@ -1631,7 +1651,7 @@ async function getIdVerifLevelClient(name) {
 //       is_auth: req.isAuthenticated(),
 //       success: true,
 //       failed: false,
-//       ip: req.clientIp,
+//       ip: req.connection.remoteAddress,
 //       country: countryResp,
 //       route: "/users/getDataFromSheets",
 //       session: sess,
@@ -1650,7 +1670,9 @@ usersService.blockClient = async (req, res, next) => {
 
     await usersPGRepository.blockClient(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1659,7 +1681,7 @@ usersService.blockClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/blockClient",
       session: sess,
@@ -1678,7 +1700,9 @@ usersService.blockEmployee = async (req, res, next) => {
 
     await usersPGRepository.blockEmployee(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1687,7 +1711,7 @@ usersService.blockEmployee = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/blockEmployee",
       session: sess,
@@ -1706,7 +1730,9 @@ usersService.unblockClient = async (req, res, next) => {
 
     await usersPGRepository.unblockClient(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1715,7 +1741,7 @@ usersService.unblockClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/unblockClient",
       session: sess,
@@ -1734,7 +1760,9 @@ usersService.unblockEmployee = async (req, res, next) => {
 
     await usersPGRepository.unblockEmployee(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1743,7 +1771,7 @@ usersService.unblockEmployee = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/unblockEmployee",
       session: sess,
@@ -1762,7 +1790,9 @@ usersService.approveLevelCero = async (req, res, next) => {
 
     await usersPGRepository.approveLevelCero(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1771,7 +1801,7 @@ usersService.approveLevelCero = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/approveLevelCero",
       session: sess,
@@ -1790,7 +1820,7 @@ usersService.files = async (req, res, next) => {
 
     // await usersPGRepository.unblockEmployee(req.params.id);
 
-    // const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    // const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     // if (resp) countryResp = resp.country_name;
     // if (await authenticationPGRepository.getSessionById(req.sessionID))
     //   sess = req.sessionID;
@@ -1799,7 +1829,7 @@ usersService.files = async (req, res, next) => {
     //   is_auth: req.isAuthenticated(),
     //   success: true,
     //   failed: false,
-    //   ip: req.clientIp,
+    //   ip: req.connection.remoteAddress,
     //   country: countryResp,
     //   route: "/users/unblockEmployee",
     //   session: sess,
@@ -1863,8 +1893,7 @@ usersService.files = async (req, res, next) => {
 
     const form = formidable({
       multiples: true,
-      uploadDir:
-      env.FILES_DIR,
+      uploadDir: env.FILES_DIR,
       maxFileSize: 2 * 1024 * 1024,
       keepExtensions: true,
     });
@@ -1942,7 +1971,9 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -1951,7 +1982,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/requestLevelOne1stQ",
       session: sess,
@@ -1962,8 +1993,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
 
     const form = formidable({
       multiples: true,
-      uploadDir:
-      env.FILES_DIR,
+      uploadDir: env.FILES_DIR,
       maxFileSize: 5 * 1024 * 1024,
       keepExtensions: true,
     });
@@ -2038,7 +2068,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         if (!fileError) {
           console.log("FILE DOC: ", doc_path);
           console.log("FILE SELFIE: ", selfie_path);
-          console.log('a la bd: ',{
+          console.log("a la bd: ", {
             date_birth: fields.date_birth,
             state_name: fields.state_name,
             resid_city: fields.resid_city,
@@ -2049,7 +2079,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
             occupation: fields.occupation,
             doc_path: doc_path,
             selfie_path: selfie_path,
-          })
+          });
           await usersPGRepository.requestLevelOne1stQ({
             date_birth: fields.date_birth,
             state_name: fields.state_name,
@@ -2081,7 +2111,9 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -2090,7 +2122,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/requestLevelOne2ndQ",
       session: sess,
@@ -2101,8 +2133,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
 
     const form = formidable({
       multiples: true,
-      uploadDir:
-      env.FILES_DIR,
+      uploadDir: env.FILES_DIR,
       maxFileSize: 5 * 1024 * 1024,
       keepExtensions: true,
     });
@@ -2203,14 +2234,14 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
   }
 };
 
-
-
 usersService.requestLevelOne3rdQ = async (req, res, next) => {
   try {
     let countryResp = null;
     let sess = null;
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -2219,7 +2250,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/users/requestLevelOne3rdQ",
       session: sess,
@@ -2230,8 +2261,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
 
     const form = formidable({
       multiples: true,
-      uploadDir:
-      env.FILES_DIR,
+      uploadDir: env.FILES_DIR,
       maxFileSize: 5 * 1024 * 1024,
       keepExtensions: true,
     });
@@ -2331,7 +2361,6 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export default usersService;
 export { events };

@@ -16,7 +16,9 @@ ip_countriesService.getip_countries = async (req, res, next) => {
 
     let data = await ip_countriesPGRepository.getip_countries();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -25,7 +27,7 @@ ip_countriesService.getip_countries = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/ip_countries/getActive",
       session: sess,
@@ -47,7 +49,9 @@ ip_countriesService.getid_by_name = async (req, res, next) => {
 
     let data = await ip_countriesPGRepository.getid_by_name(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
 
     if (await authenticationPGRepository.getSessionById(req.sessionID))
@@ -57,7 +61,7 @@ ip_countriesService.getid_by_name = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/ip_countries/getIdByName/:id",
       session: sess,
@@ -79,7 +83,9 @@ ip_countriesService.getip_countriesClient = async (req, res, next) => {
 
     let data = await ip_countriesPGRepository.getip_countriesClient();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -88,7 +94,7 @@ ip_countriesService.getip_countriesClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/ip_countries/getActiveClient",
       session: sess,
@@ -112,7 +118,9 @@ ip_countriesService.getid_by_nameClient = async (req, res, next) => {
       req.params.id
     );
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
 
     if (await authenticationPGRepository.getSessionById(req.sessionID))
@@ -122,7 +130,7 @@ ip_countriesService.getid_by_nameClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/ip_countries/getIdByName/:id",
       session: sess,

@@ -27,7 +27,6 @@ const opts = {
   keepExtensions: true,
 };
 
-
 // MIDDLEWARES
 app.use(morgan("dev", { stream: logger.stream }));
 app.use(json());
@@ -61,17 +60,21 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
+
+  console.log('middleware despues de passport y todo el auth')
+  next()
+
   // console.log('middleware')
   // console.log(req.session)
   // console.log(req.user)
-  ObjUserSessionData.set({
-    session: {
-      session_id: req.session.id,
-      cookie: req.session.cookie,
-    },
-    user: req.user,
-  });
-  res.status(200).send("prooving");
+  // ObjUserSessionData.set({
+  //   session: {
+  //     session_id: req.session.id,
+  //     cookie: req.session.cookie,
+  //   },
+  //   user: req.user,
+  // });
+  // res.status(200).send("prooving");
 });
 
 // ROUTES
@@ -80,21 +83,20 @@ app.get("/", async (req, res) => {
   next();
 });
 
-
 app.use((req, res, next) => {
   logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
   ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
   next();
 });
 
-
-
 // ERROR HANDLER
 app.use(async function (err, req, res, next) {
   logger.error(err.message);
   ObjLog.log(err.message);
 
-  const resp = await authenticationPGRepository.getIpInfo(req.clientIp);
+  const resp = await authenticationPGRepository.getIpInfo(
+    req.connection.remoteAddress
+  );
   const countryResp = null;
   let sess = null;
 
@@ -107,7 +109,7 @@ app.use(async function (err, req, res, next) {
     is_auth: req.isAuthenticated(),
     success: false,
     failed: true,
-    ip: req.clientIp,
+    ip: req.connection.remoteAddress,
     country: countryResp,
     route: null,
     session: sess,
@@ -117,14 +119,12 @@ app.use(async function (err, req, res, next) {
 
   if (
     err.message ===
-    'duplicate key value violates unique constraint \\\"ms_sixmap_users_email_user_key\\\"'
+    'duplicate key value violates unique constraint \\"ms_sixmap_users_email_user_key\\"'
   )
-    res
-      .status(500)
-      .send({
-        error: "BUSINESS_ERROR",
-        msg: "Esa dirección de correo ya está en uso. Prueba con otro.",
-      });
+    res.status(500).send({
+      error: "BUSINESS_ERROR",
+      msg: "Esa dirección de correo ya está en uso. Prueba con otro.",
+    });
   else res.status(500).send({ error: "SERVER_ERROR", msg: err.message });
 });
 

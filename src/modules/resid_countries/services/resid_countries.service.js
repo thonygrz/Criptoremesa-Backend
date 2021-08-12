@@ -16,7 +16,9 @@ resid_countriesService.getresid_countries = async (req, res, next) => {
 
     let data = await resid_countriesPGRepository.getresid_countries();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -25,7 +27,7 @@ resid_countriesService.getresid_countries = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/resid_countries/getActive",
       session: sess,
@@ -48,7 +50,9 @@ resid_countriesService.getresid_countriesClient = async (req, res, next) => {
 
     let data = await resid_countriesPGRepository.getresid_countriesClient();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -57,7 +61,7 @@ resid_countriesService.getresid_countriesClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/resid_countries/getActiveClient",
       session: sess,
@@ -80,7 +84,9 @@ resid_countriesService.getid_by_name = async (req, res, next) => {
 
     let data = await resid_countriesPGRepository.getid_by_name(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
 
     if (await authenticationPGRepository.getSessionById(req.sessionID))
@@ -90,7 +96,7 @@ resid_countriesService.getid_by_name = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/resid_countries/getIdByName/:id",
       session: sess,
@@ -112,7 +118,9 @@ resid_countriesService.getISOCodeById = async (req, res, next) => {
 
     let data = await resid_countriesPGRepository.getISOCodeById(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
 
     if (await authenticationPGRepository.getSessionById(req.sessionID))
@@ -122,7 +130,7 @@ resid_countriesService.getISOCodeById = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/resid_countries/getISOCodeById/:id",
       session: sess,
@@ -135,8 +143,6 @@ resid_countriesService.getISOCodeById = async (req, res, next) => {
   }
 };
 
-
-
 resid_countriesService.isPolExp = async (req, res, next) => {
   try {
     let countryResp = null;
@@ -146,7 +152,9 @@ resid_countriesService.isPolExp = async (req, res, next) => {
 
     let data = await resid_countriesPGRepository.isPolExp(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
 
     if (await authenticationPGRepository.getSessionById(req.sessionID))
@@ -156,7 +164,7 @@ resid_countriesService.isPolExp = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/resid_countries/isPolExp",
       session: sess,

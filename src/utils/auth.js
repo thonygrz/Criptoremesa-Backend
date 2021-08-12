@@ -154,6 +154,8 @@ passport.use(
           authenticationPGRepository.insertLogMsg(log);
           done(null, false);
         }
+
+
       } catch (error) {
         done(error);
       }
@@ -186,6 +188,17 @@ export default {
       expressObj.res = res;
       expressObj.next = next;
 
+      console.log(req.session)
+      console.log(req.user)
+      ObjUserSessionData.set({
+        session: {
+          session_id: req.session.id,
+          cookie: req.session.cookie,
+        },
+        user: req.user,
+      });
+      res.status(200).send("prooving");
+
       // passport.authenticate("local")(req, res, next);
       passport.authenticate("local", async function (err) {
         if (err) {
@@ -209,16 +222,7 @@ export default {
         }
 
 
-        // console.log(req.session)
-        // console.log(req.user)
-        // ObjUserSessionData.set({
-        //   session: {
-        //     session_id: req.session.id,
-        //     cookie: req.session.cookie,
-        //   },
-        //   user: req.user,
-        // });
-        // res.status(200).send("prooving");
+        
       })(req, res, next);
     } catch (error) {
       next(error);

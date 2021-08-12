@@ -3,6 +3,7 @@ import { logger } from "./utils/logger";
 import ObjLog from "./utils/ObjLog";
 import app from "./app/server";
 import path from "path";
+import { SocketServer } from "./modules/sockets/sockets.coordinator";
 
 ///////////////////////////
 // Para usar el certificado
@@ -42,7 +43,9 @@ import path from "path";
 // Sin el certificado - forma 2
 ///////////////////////////////
 
-app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), () => {
   logger.info(`Server on port ${app.get("port")}`);
   ObjLog.log(`Server on port ${app.get("port")}`);
 });
+
+SocketServer(server);

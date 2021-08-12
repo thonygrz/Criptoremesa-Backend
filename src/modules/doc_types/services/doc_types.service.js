@@ -17,7 +17,9 @@ doc_typesService.getdoc_types = async (req, res, next) => {
 
     let data = await doc_typesPGRepository.getdoc_types();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -26,7 +28,7 @@ doc_typesService.getdoc_types = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/doc_types/getActive",
       session: sess,
@@ -49,7 +51,9 @@ doc_typesService.getdoc_typesClient = async (req, res, next) => {
 
     let data = await doc_typesPGRepository.getdoc_typesClient();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -58,7 +62,7 @@ doc_typesService.getdoc_typesClient = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/doc_types/getActiveClient",
       session: sess,
@@ -81,7 +85,9 @@ doc_typesService.getDocTypesLevelOne = async (req, res, next) => {
 
     let data = await doc_typesPGRepository.getDocTypesLevelOne();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -90,7 +96,7 @@ doc_typesService.getDocTypesLevelOne = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.clientIp,
+      ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/doc_types/getByIdResidCountry",
       session: sess,

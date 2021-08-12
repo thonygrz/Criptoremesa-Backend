@@ -41,8 +41,8 @@ authenticationService.login = async (req, res, next) => {
     //       logger.info(`[${context}]: Sending module to verify`);
     //       ObjLog.log(`[${context}]: Sending module to verify`);
 
-        auth.verify(req, res, next);
-      // }
+    auth.verify(req, res, next);
+    // }
 
     // }
   } catch (error) {
@@ -78,7 +78,9 @@ authenticationService.protected = async (req, res, next) => {
     let sess = null;
 
     if (req.isAuthenticated()) {
-      const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
       if (resp) countryResp = resp.country_name;
       if (await authenticationPGRepository.getSessionById(req.sessionID))
         sess = req.sessionID;
@@ -87,7 +89,7 @@ authenticationService.protected = async (req, res, next) => {
         is_auth: req.isAuthenticated(),
         success: true,
         failed: false,
-        ip: req.clientIp,
+        ip: req.connection.remoteAddress,
         country: countryResp,
         route: "/protected-route",
         session: sess,
@@ -98,7 +100,9 @@ authenticationService.protected = async (req, res, next) => {
     } else {
       req.session.destroy();
 
-      const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
       let countryResp = null;
       sess = null;
 
@@ -111,7 +115,7 @@ authenticationService.protected = async (req, res, next) => {
         is_auth: req.isAuthenticated(),
         success: false,
         failed: true,
-        ip: req.clientIp,
+        ip: req.connection.remoteAddress,
         country: countryResp,
         route: "/protected-route",
         session: sess,
