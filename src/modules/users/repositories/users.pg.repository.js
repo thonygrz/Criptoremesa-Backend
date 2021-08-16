@@ -659,7 +659,7 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
         '${body.state_name}',
         '${body.resid_city}',
         '${body.pol_exp_per}',
-        '${body.uuid_user}',
+        '${body.email_user}',
         '${body.id_country}',
         '${body.ident_doc_number}',
         '${body.occupation}',
