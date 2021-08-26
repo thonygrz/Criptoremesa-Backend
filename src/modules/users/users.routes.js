@@ -142,4 +142,10 @@ usersRouter.post(
   usersController.requestLevelOne3rdQ
 );
 
+usersRouter.post(
+  "/forgotPassword",
+  // guard.verifyAdmin("/login"),
+  usersController.forgotPassword
+);
+
 export default usersRouter;

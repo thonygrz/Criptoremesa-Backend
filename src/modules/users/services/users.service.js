@@ -1030,28 +1030,28 @@ usersService.createUserClient = async (req, res, next) => {
 
 usersService.createNewClient = async (req, res, next) => {
   try {
-    if (!req.body.captcha) {
-      res.status(400).json({
-        captchaSuccess: false,
-        msg: "Ha ocurrido un error. Por favor completa el captcha",
-      });
-    } else {
-        // Secret key
-      const secretKey = env.reCAPTCHA_SECRET_KEY;
+    // if (!req.body.captcha) {
+    //   res.status(400).json({
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   });
+    // } else {
+    //     // Secret key
+    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+    //   // Verify URL
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
 
-      // Make a request to verifyURL
-      const body = await axios.get(verifyURL);
+    //   // Make a request to verifyURL
+    //   const body = await axios.get(verifyURL);
 
-      // // If not successful
-      if (body.data.success === false) {
-        res
-          .status(500)
-          .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
-      }
-      else{
+    //   // // If not successful
+    //   if (body.data.success === false) {
+    //     res
+    //       .status(500)
+    //       .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
+    //   }
+    //   else{
           // If successful
     let countryResp = null;
     let sess = null;
@@ -1125,8 +1125,8 @@ usersService.createNewClient = async (req, res, next) => {
       user: response,
       captchaSuccess: true,
     });
-    }
-    }
+    // }
+    // }
   } catch (error) {
     next(error);
   }
@@ -2358,6 +2358,41 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
   } catch (error) {
     console.log("error dentro del catch: ", error);
 
+    next(error);
+  }
+};
+
+usersService.forgotPassword = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.forgotPassword(req.body.email_user);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/forgotPassword",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    if (data.msg === 'Código generado'){
+      res.status(200).json(data);
+    } else if (data.msg === 'Correo no existe') {
+      res.status(400).json(data);
+    }
+  } catch (error) {
     next(error);
   }
 };

@@ -389,6 +389,9 @@ usersPGRepository.approveLevelCero = async (id) => {
   try {
     logger.info(`[${context}]: Approving level cero on db`);
     ObjLog.log(`[${context}]: Approving level cero on db`);
+
+    
+
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(`SELECT * FROM SP_APPROVE_LEVEL_CERO(${id})`);
     return resp.rows;
@@ -700,6 +703,18 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   }
 };
 
-
+usersPGRepository.forgotPassword = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Verifying email in db`);
+    ObjLog.log(`[${context}]: Verifying email in db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_forgot_password('${email_user}')`
+    );
+    return resp.rows[0].sp_forgot_password;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export default usersPGRepository;
