@@ -18,11 +18,11 @@ export async function SocketServer(server) {
     io.on("connection", (socket) => {
         logger.info(`[${context}] New connection stablished`);
         ObjLog.log(`[${context}] New connection stablished`);
-        console.log('in connection: ', socket.id)
+        // console.log('in connection: ', socket.id)
 
         socket.on('new_connection', (val)=> {
-            console.log('socket from FE',socket.id)
-            console.log('val ofrom FE',val)
+            // console.log('socket from FE',socket.id)
+            // console.log('val ofrom FE',val)
             redisClient.set(val, socket.id);
             redisClient.get(val, function(err, reply) {
                 // reply is null when the key is missing
@@ -37,7 +37,7 @@ export function notifyChanges(event, data) {
         logger.info(`[${context}] Sending update notification`);
         ObjLog.log(`[${context}] Sending update notification`);
 
-        console.log('data: ',data)
+        // console.log('data: ',data)
 
         redisClient.get(data.email_user, function(err, reply) {
 

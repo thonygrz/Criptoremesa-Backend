@@ -8,7 +8,7 @@ import formidable from "formidable";
 import fs from "fs";
 // import { table } from "../../../utils/googleSpreadSheets";
 import { env } from "../../../utils/enviroment";
-import axios from "axios";
+import mailSender from '../../../utils/mail';
 
 const usersService = {};
 const context = "users Service";
@@ -2388,7 +2388,16 @@ usersService.forgotPassword = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === 'Código generado'){
-      res.status(200).json(data);
+      const mailResp = await mailSender.sendMail({
+        email_user: req.body.email_user,
+        code: data.code
+      })
+
+      res.status(200).json(
+        {
+          msg: data,
+          mailResp
+        });
     } else if (data.msg === 'Correo no existe') {
       res.status(400).json(data);
     }
