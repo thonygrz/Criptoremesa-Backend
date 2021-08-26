@@ -2,6 +2,7 @@ import socketIO from "socket.io";
 import { logger } from "../../utils/logger";
 import ObjLog from "../../utils/ObjLog";
 import redisClient from "../../utils/redis";
+import usersPGRepository from "../../modules/users/repositories/users.pg.repository";
 
 let socketServer = null;
 const context = "Socket Coordinator";
@@ -30,9 +31,13 @@ export async function SocketServer(server) {
       });
     });
 
-    socket.on("verif_forgot_password_code", (val) => {
+    socket.on("verif_forgot_password_code", async (val) => {
       // console.log('socket from FE',socket.id)
       // console.log('val ofrom FE',val)
+        console.log('DEL FRONT: ',val)
+        let data = await usersPGRepository.verifForgotPasswordCode(val.email_user,val.code);
+        console.log('DATA:',data)
+        socketServer.sockets.emit('verif_forgot_password_code_response', data);
     });
   });
 }

@@ -719,4 +719,18 @@ usersPGRepository.forgotPassword = async (email_user) => {
   }
 };
 
+usersPGRepository.verifForgotPasswordCode = async (email_user,code) => {
+  try {
+    logger.info(`[${context}]: Verifying code in db`);
+    ObjLog.log(`[${context}]: Verifying code in db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_verif_forgot_password_code('${email_user}',${code})`
+    );
+    return resp.rows[0].sp_verif_forgot_password_code;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;
