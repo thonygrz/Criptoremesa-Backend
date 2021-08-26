@@ -2368,7 +2368,7 @@ usersService.forgotPassword = async (req, res, next) => {
     let sess = null;
 
     let data = await usersPGRepository.forgotPassword(req.body.email_user);
-
+    console.log('DATA: ',data)
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -2387,7 +2387,7 @@ usersService.forgotPassword = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    if (data.msg === 'Código generado'){
+    if (data.msg === 'Code generated'){
       const mailResp = await mailSender.sendMail({
         email_user: req.body.email_user,
         code: data.code
@@ -2398,7 +2398,7 @@ usersService.forgotPassword = async (req, res, next) => {
           msg: data,
           mailResp
         });
-    } else if (data.msg === 'Correo no existe') {
+    } else if (data.msg === 'The email does not exist') {
       res.status(400).json(data);
     }
   } catch (error) {
