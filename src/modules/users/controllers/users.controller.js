@@ -215,6 +215,8 @@ usersController.approveLevelCero = (req, res, next) => {
   }
 };
 
+
+
 usersController.files = (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to download file`);
