@@ -733,4 +733,33 @@ usersPGRepository.verifForgotPasswordCode = async (email_user,code) => {
   }
 };
 
+usersPGRepository.getLastPasswords = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting passwords from db`);
+    ObjLog.log(`[${context}]: Getting passwords from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM SP_GET_LAST_PASSWORDS('${email_user}')`
+    );
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.newPassword = async (body) => {
+  try {
+    logger.info(`[${context}]: Updating password on db`);
+    ObjLog.log(`[${context}]: Updating password on db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log('BODY A PASAR A BD: ',body)
+    const resp = await pool.query(
+      `SELECT * FROM SP_UPDATE_USER_PASSWORD('${body.new_password}','${body.email_user}')`
+    );
+    return resp.rows[0].sp_update_user_password;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;

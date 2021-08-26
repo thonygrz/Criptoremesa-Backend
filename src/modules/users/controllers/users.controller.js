@@ -272,4 +272,14 @@ usersController.forgotPassword = (req, res, next) => {
   }
 };
 
+usersController.newPassword = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to change password`);
+    ObjLog.log(`[${context}]: Sending service to change password`);
+    usersService.newPassword(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;
