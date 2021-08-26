@@ -1813,6 +1813,8 @@ usersService.approveLevelCero = async (req, res, next) => {
   }
 };
 
+
+
 usersService.files = async (req, res, next) => {
   try {
     let countryResp = null;
@@ -2395,7 +2397,7 @@ usersService.forgotPassword = async (req, res, next) => {
 
       res.status(200).json(
         {
-          msg: data,
+          data,
           mailResp
         });
     } else if (data.msg === 'The email does not exist') {

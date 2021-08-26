@@ -400,6 +400,8 @@ usersPGRepository.approveLevelCero = async (id) => {
   }
 };
 
+
+
 usersPGRepository.getUUIDProfileByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
