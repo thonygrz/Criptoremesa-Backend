@@ -8,7 +8,7 @@ import formidable from "formidable";
 import fs from "fs";
 // import { table } from "../../../utils/googleSpreadSheets";
 import { env } from "../../../utils/enviroment";
-import axios from "axios";
+import mailSender from '../../../utils/mail';
 
 const usersService = {};
 const context = "users Service";
@@ -1052,7 +1052,7 @@ usersService.createNewClient = async (req, res, next) => {
     //       .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
     //   }
     //   else{
-    //       // If successful
+          // If successful
     let countryResp = null;
     let sess = null;
 
@@ -2360,6 +2360,50 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
   } catch (error) {
     console.log("error dentro del catch: ", error);
 
+    next(error);
+  }
+};
+
+usersService.forgotPassword = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.forgotPassword(req.body.email_user);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/forgotPassword",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    if (data.msg === 'Code generated'){
+      const mailResp = await mailSender.sendMail({
+        email_user: req.body.email_user,
+        code: data.code
+      })
+
+      res.status(200).json(
+        {
+          data,
+          mailResp
+        });
+    } else if (data.msg === 'The email does not exit') {
+      res.status(400).json({data:data});
+    }
+  } catch (error) {
     next(error);
   }
 };
