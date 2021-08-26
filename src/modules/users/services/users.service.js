@@ -2370,7 +2370,7 @@ usersService.forgotPassword = async (req, res, next) => {
     let sess = null;
 
     let data = await usersPGRepository.forgotPassword(req.body.email_user);
-
+    console.log('DATA: ',data)
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -2400,8 +2400,8 @@ usersService.forgotPassword = async (req, res, next) => {
           msg: data.msg,
           mailResp
         });
-    } else if (data.msg === 'The email does not exit') {
-      res.status(400).json({msg:data.msg});
+    } else if (data.msg === 'The email does not exist') {
+      res.status(400).json({msg: data.msg});
     }
   } catch (error) {
     next(error);
