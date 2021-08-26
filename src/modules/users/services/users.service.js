@@ -2397,11 +2397,11 @@ usersService.forgotPassword = async (req, res, next) => {
 
       res.status(200).json(
         {
-          data,
+          msg: data.msg,
           mailResp
         });
     } else if (data.msg === 'The email does not exist') {
-      res.status(400).json(data);
+      res.status(400).json({msg: data.msg});
     }
   } catch (error) {
     next(error);
