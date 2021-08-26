@@ -265,7 +265,7 @@ usersController.forgotPassword = (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to verify email`);
     ObjLog.log(`[${context}]: Sending service to verify email`);
-    console.log(req)
+    // console.log(req)
     usersService.forgotPassword(req, res, next);
   } catch (error) {
     next(error);

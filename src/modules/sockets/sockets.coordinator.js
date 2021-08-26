@@ -1,7 +1,7 @@
 import socketIO from 'socket.io';
 import { logger } from "../../utils/logger";
 import ObjLog from "../../utils/ObjLog";
-import redisClient from '../../utils/redis'
+//import redisClient from '../../utils/redis'
 
 let socketServer = null;
 const context = "Socket Coordinator"
@@ -23,11 +23,11 @@ export async function SocketServer(server) {
         socket.on('new_connection', (val)=> {
             // console.log('socket from FE',socket.id)
             // console.log('val ofrom FE',val)
-            redisClient.set(val, socket.id);
-            redisClient.get(val, function(err, reply) {
-                // reply is null when the key is missing
-                console.log('redis reply: ',reply);
-            });
+            // redisClient.set(val, socket.id);
+            // redisClient.get(val, function(err, reply) {
+            //     // reply is null when the key is missing
+            //     console.log('redis reply: ',reply);
+            // });
         });
     });
 };
@@ -39,13 +39,13 @@ export function notifyChanges(event, data) {
 
         // console.log('data: ',data)
 
-        redisClient.get(data.email_user, function(err, reply) {
+        //  redisClient.get(data.email_user, function(err, reply) {
 
-        // reply is null when the key is missing
-        console.log('redis reply: ',reply);
-        socketServer.sockets.to(reply).emit(event, data);
+        // // reply is null when the key is missing
+        // console.log('redis reply: ',reply);
+        // socketServer.sockets.to(reply).emit(event, data);
 
-        });
+        // });
 
 
         // socketServer.sockets.emit(event, data);

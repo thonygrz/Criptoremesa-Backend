@@ -4,6 +4,7 @@ import { env } from "../utils/enviroment";
 export default {
     sendMail: async (body) => {
       try {
+        console.log('Antes')
         let resp = await axios.post(`${env.MAIL_SENDER}/sendMail`,body)
         console.log('Desde axios: ',resp.data);
         return resp.data;
