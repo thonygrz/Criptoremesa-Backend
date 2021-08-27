@@ -762,4 +762,16 @@ usersPGRepository.newPassword = async (body) => {
   }
 };
 
+usersPGRepository.getusersClientByEmail = async (email) => {
+  try {
+    logger.info(`[${context}]: Getting user from db`);
+    ObjLog.log(`[${context}]: Getting user from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(`SELECT * FROM get_user_by_email(${email})`);
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;

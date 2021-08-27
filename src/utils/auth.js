@@ -12,6 +12,7 @@ const context = "Authentication module";
 let ip = null;
 let user;
 let globalUser;
+let blockedOrNotVerified = false;
 
 const expressObj = {
   req: null,
@@ -37,21 +38,40 @@ async function resp(user) {
     )
       sess = expressObj.req.sessionID;
 
-    const log = {
-      is_auth: expressObj.req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: expressObj.req.connection.remoteAddress,
-      country: countryResp,
-      route: "/login",
-      session: sess,
-    };
-    await authenticationPGRepository.insertLogMsg(log);
-    expressObj.res.status(200).send({
-      isAuthenticated: expressObj.isAuthenticated,
-      user,
-      captchaSuccess: true,
-    });
+    if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
+      const log = {
+        is_auth: expressObj.req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: expressObj.req.connection.remoteAddress,
+        country: countryResp,
+        route: "/login",
+        session: sess,
+      };
+      await authenticationPGRepository.insertLogMsg(log);
+      expressObj.res.status(401).send({
+        user_blocked: user.user_blocked,
+        id_verif_level: user.id_verif_level,
+        verif_level_apb: user.verif_level_apb
+      });
+    } else {
+      const log = {
+        is_auth: expressObj.req.isAuthenticated(),
+        success: true,
+        failed: false,
+        ip: expressObj.req.connection.remoteAddress,
+        country: countryResp,
+        route: "/login",
+        session: sess,
+      };
+      await authenticationPGRepository.insertLogMsg(log);
+      expressObj.res.status(200).send({
+        isAuthenticated: expressObj.isAuthenticated,
+        user,
+        captchaSuccess: true,
+      });
+    }
+    expressObj.next()
   } catch (error) {
     expressObj.next(error);
   }
@@ -94,49 +114,80 @@ passport.use(
           logger.info(`[${context}]: User found, checking password`);
           ObjLog.log(`[${context}]: User found, checking password`);
 
-          expressObj.userExists = true;
-          globalUser = user;
+          
 
-          await authenticationPGRepository.updateIPUser(
-            user.id_uuid,
-            req.connection.remoteAddress,
-            req.sessionID
-          );
+          if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
+            logger.error(`[${context}]: User is blocked or not verified`);
+            ObjLog.log(`[${context}]: User is blocked or not verified`);
 
-          let match = await bcrypt.compare(password, user.password);
+            blockedOrNotVerified = true;
 
-          if (match) {
-            logger.info(`[${context}]: Successful login`);
-            ObjLog.log(`[${context}]: Successful login`);
+            if (await authenticationPGRepository.getSessionById(req.sessionID))
+            sess = req.sessionID;
 
-            user = await authenticationPGRepository.getUserById(user.id_uuid);
-
-            expressObj.isAuthenticated = true;
+            const log = {
+              is_auth: req.isAuthenticated(),
+              success: false,
+              failed: true,
+              ip: req.connection.remoteAddress,
+              country: countryResp,
+              route: "/login",
+              session: sess,
+            };
+            authenticationPGRepository.insertLogMsg(log);
 
             await resp(user);
 
-            done(null, user);
+            done(null, false);
             expressObj.req = req;
 
-            return true;
+          } else {
+
+            expressObj.userExists = true;
+            globalUser = user;
+
+            await authenticationPGRepository.updateIPUser(
+              user.id_uuid,
+              req.connection.remoteAddress,
+              req.sessionID
+            );
+            
+            let match = await bcrypt.compare(password, user.password);
+
+            if (match) {
+              logger.info(`[${context}]: Successful login`);
+              ObjLog.log(`[${context}]: Successful login`);
+
+              user = await authenticationPGRepository.getUserById(user.id_uuid);
+
+              expressObj.isAuthenticated = true;
+
+              await resp(user);
+
+              done(null, user);
+              expressObj.req = req;
+
+              return true;
+            }
+            logger.error(`[${context}]: User and password do not match`);
+            ObjLog.log(`[${context}]: User and password do not match`);
+            if (await authenticationPGRepository.getSessionById(req.sessionID))
+              sess = req.sessionID;
+
+            const log = {
+              is_auth: req.isAuthenticated(),
+              success: false,
+              failed: true,
+              ip: req.connection.remoteAddress,
+              country: countryResp,
+              route: "/login",
+              session: sess,
+            };
+            authenticationPGRepository.insertLogMsg(log);
+
+            return done(null, false);
           }
-          logger.error(`[${context}]: User and password do not match`);
-          ObjLog.log(`[${context}]: User and password do not match`);
-          if (await authenticationPGRepository.getSessionById(req.sessionID))
-            sess = req.sessionID;
-
-          const log = {
-            is_auth: req.isAuthenticated(),
-            success: false,
-            failed: true,
-            ip: req.connection.remoteAddress,
-            country: countryResp,
-            route: "/login",
-            session: sess,
-          };
-          authenticationPGRepository.insertLogMsg(log);
-
-          return done(null, false);
+          
         } else {
           logger.error(`[${context}]: User and password do not match`);
           ObjLog.log(`[${context}]: User and password do not match`);
@@ -214,34 +265,41 @@ export default {
       // passport.authenticate("local")(req, res, next);
       passport.authenticate("local", async function (err,user,info) {
         if (err) {
-          return next(err);
+          return expressObj.next(err);
         }
         let response = null;
-        if (!user) {
-          if (globalUser) {
-            console.log("email: ", globalUser.email);
-            response = await authenticationPGRepository.loginFailed(globalUser.email);
-            console.log("response: ", response);
+        if (!blockedOrNotVerified){
+          if (!user) {
+            if (globalUser) {
+              console.log("email: ", globalUser.email);
+              response = await authenticationPGRepository.loginFailed(globalUser.email);
+              console.log("response: ", response);
+            }
+            console.log('response: ',response)
+            res.json({
+              isAuthenticated: false,
+              loginAttempts: response ? response.login_attempts : 'NA',
+              atcPhone: response ? response.atcPhone : 'NA',
+              userExists: expressObj.userExists,
+              captchaSuccess: true,
+            });
+            expressObj.next()
           }
-          console.log('response: ',response)
-          res.json({
-            isAuthenticated: false,
-            loginAttempts: response ? response.login_attempts : 'NA',
-            atcPhone: response ? response.atcPhone : 'NA',
-            userExists: expressObj.userExists,
-            captchaSuccess: true,
+          req.logIn(user, function(err) {
+            if (err) {
+              return next(err); }
           });
+          console.log("DENTRO DEL AUTHENTICATE");
+  
+          console.log("req.session despues de la strategy", req.session);
+          console.log("req.user despues de la strategy", req.user);
         }
-        req.logIn(user, function(err) {
-          if (err) { return next(err); }
-        });
-        console.log("DENTRO DEL AUTHENTICATE");
-
-        console.log("req.session despues de la strategy", req.session);
-        console.log("req.user despues de la strategy", req.user);
-      })(req, res, next);
+        
+        expressObj.next();
+      }
+      )(req, res, next);
     } catch (error) {
-      next(error);
+      expressObj.next(error);
     }
   },
   logout: async (req, res, next) => {
@@ -249,7 +307,20 @@ export default {
       let countryResp = null;
       let sess = null;
 
-      req.session.destroy();
+      console.log('req.user antes de hacer logout(): ',req.user)
+      console.log('req.session antes de hacer logout(): ',req.session)
+      console.log('req.sessionID antes de hacer logout(): ',req.sessionID)
+
+      // req.session.destroy();
+      // req.session.destroy((err) => res.redirect('/'));
+      req.logOut();
+      // req.session = null; 
+      // req.sessionID = null; 
+
+      console.log('req.user despues de hacer logout(): ',req.user)
+      console.log('req.session despues de hacer logout(): ',req.session)
+      console.log('req.sessionID despues de hacer logout(): ',req.sessionID)
+
       const resp = await authenticationPGRepository.getIpInfo(
         req.connection.remoteAddress
       );
@@ -268,6 +339,7 @@ export default {
       };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(200).json({ message: "Logged out succesfully" });
+      next()
     } catch (error) {
       next(error);
     }
