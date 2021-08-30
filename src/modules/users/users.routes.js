@@ -162,5 +162,11 @@ usersRouter.get(
   usersController.getusersClientByEmail
 );
 
+usersRouter.post(
+  "/sendVerificationCodeByEmail",
+  // guard.verifyAdmin("/login"),
+  usersController.sendVerificationCodeByEmail
+);
+
 
 export default usersRouter;
