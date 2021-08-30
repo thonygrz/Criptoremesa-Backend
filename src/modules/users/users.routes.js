@@ -156,5 +156,11 @@ usersRouter.post(
   usersController.newPassword
 );
 
+usersRouter.get(
+  "/getClientByEmail/:id",
+  // guard.verifyAdmin("/login"),
+  usersController.getusersClientByEmail
+);
+
 
 export default usersRouter;

@@ -49,25 +49,27 @@ app.use(
       schemaName: "sec_cust",
     }),
     secret: process.env.COOKIE_SECRET,
-    resave: false,
+    resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
     saveUninitialized: true,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
+    cookie: { maxAge: 60000 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
+    // maxAge: 60
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 app.use((req, res, next) => {
   logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
   ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
   next();
 });
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 
 // ROUTES
-app.get("/", async (req, res) => {
-  res.status(200).send("Server running");
-  next();
-});
+// app.get("/", async (req, res) => {
+//   res.status(200).send("Server running");
+//   next();
+// });
 
 app.use("/cr", routerIndex);
 
