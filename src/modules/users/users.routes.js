@@ -150,4 +150,11 @@ usersRouter.post(
   usersController.forgotPassword
 );
 
+usersRouter.post(
+  "/newPassword",
+  // guard.verifyAdmin("/login"),
+  usersController.newPassword
+);
+
+
 export default usersRouter;
