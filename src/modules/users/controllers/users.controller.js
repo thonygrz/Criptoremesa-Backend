@@ -311,4 +311,26 @@ usersController.approveLevelOne = (req, res, next) => {
   }
 };
 
+usersController.getLevelQuestions = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get questions`);
+    ObjLog.log(`[${context}]: Sending service to get questions`);
+
+    usersService.getLevelQuestions(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.getLevelAnswers = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get questions`);
+    ObjLog.log(`[${context}]: Sending service to get questions`);
+
+    usersService.getLevelAnswers(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;

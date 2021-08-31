@@ -174,4 +174,16 @@ usersRouter.post(
   usersController.approveLevelOne
 );
 
+usersRouter.get(
+  "/getLevelQuestions",
+  // guard.verifyAdmin("/login"),
+  usersController.getLevelQuestions
+);
+
+usersRouter.get(
+  "/getLevelAnswers",
+  // guard.verifyAdmin("/login"),
+  usersController.getLevelAnswers
+);
+
 export default usersRouter;

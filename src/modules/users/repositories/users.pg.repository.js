@@ -796,4 +796,28 @@ usersPGRepository.getusersClientByEmail = async (email) => {
   }
 };
 
+usersPGRepository.getLevelQuestions = async () => {
+  try {
+    logger.info(`[${context}]: Getting questions from db`);
+    ObjLog.log(`[${context}]: Getting questions from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(`SELECT * FROM v_level_questions_get_active()`);
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.getLevelAnswers = async () => {
+  try {
+    logger.info(`[${context}]: Getting answers from db`);
+    ObjLog.log(`[${context}]: Getting answers from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(`SELECT * FROM v_level_answers_get_active()`);
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;
