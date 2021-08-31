@@ -22,22 +22,32 @@ export async function SocketServer(server) {
     // console.log('in connection: ', socket.id)
 
     socket.on("new_connection", (val) => {
-      // console.log('socket from FE',socket.id)
-      // console.log('val ofrom FE',val)
+      console.log('socket from FE',socket.id)
+      console.log('val ofrom FE',val)
       redisClient.set(val, socket.id);
       redisClient.get(val, function (err, reply) {
         // reply is null when the key is missing
         console.log("redis reply: ", reply);
       });
+
+      // redisClient.end(true);
     });
 
     socket.on("verif_code", async (val) => {
+      logger.info(`[${context}] Sending verif code notification`);
+      ObjLog.log(`[${context}] Sending verif code notification`);
+
       // console.log('socket from FE',socket.id)
       // console.log('val ofrom FE',val)
         console.log('DEL FRONT: ',val)
         let data = await usersPGRepository.verifCode(val.email_user,val.code);
         console.log('DATA:',data)
-        socketServer.sockets.emit('verif_code_response', data);
+
+        redisClient.get(val.email_user, function (err, reply) {
+          // reply is null when the key is missing
+          console.log("redis reply: ", reply);
+          socketServer.sockets.to(reply).emit('verif_code_response', data);
+        });
     });
   });
 }
@@ -47,7 +57,7 @@ export function notifyChanges(event, data) {
     logger.info(`[${context}] Sending update notification`);
     ObjLog.log(`[${context}] Sending update notification`);
 
-    // console.log('data: ',data)
+    console.log('notify data: ',data)
 
     redisClient.get(data.email_user, function (err, reply) {
       // reply is null when the key is missing

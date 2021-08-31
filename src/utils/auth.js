@@ -49,7 +49,7 @@ async function resp(user) {
         session: sess,
       };
       await authenticationPGRepository.insertLogMsg(log);
-      expressObj.res.status(401).send({
+      expressObj.res.status(400).send({
         user_blocked: user.user_blocked,
         id_verif_level: user.id_verif_level,
         verif_level_apb: user.verif_level_apb
@@ -94,8 +94,8 @@ passport.use(
         expressObj.isAuthenticated = false;
         expressObj.userExists = false;
 
-        console.log('auth: ',req.sessionID,
-        req.connection.remoteAddress)
+        // console.log('auth: ',req.sessionID,
+        // req.connection.remoteAddress)
 
         await authenticationPGRepository.updateIPSession(
           req.sessionID,
@@ -226,7 +226,7 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   // PASSPORT LOOKS FOR THE ID AND STORE IT IN SESSION
-  console.log("serialize: ", user);
+  // console.log("serialize: ", user);
   if (user) done(null, user.email_user);
 });
 
@@ -234,7 +234,7 @@ passport.deserializeUser(async function (email_user, done) {
   try {
     // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS email_user
     const user = await authenticationPGRepository.getUserByEmail(email_user);
-    console.log("deserialize: ", user);
+    // console.log("deserialize: ", user);
 
     done(null, user);
   } catch (error) {
@@ -249,8 +249,8 @@ export default {
       expressObj.res = res;
       expressObj.next = next;
 
-      console.log("req.session antes de la strategy", req.session);
-      console.log("req.user antes de la strategy", req.user);
+      // console.log("req.session antes de la strategy", req.session);
+      // console.log("req.user antes de la strategy", req.user);
       // ObjUserSessionData.set({
       //   session: {
       //     session_id: req.session.id,
@@ -271,11 +271,11 @@ export default {
         if (!blockedOrNotVerified){
           if (!user) {
             if (globalUser) {
-              console.log("email: ", globalUser.email);
+              // console.log("email: ", globalUser.email);
               response = await authenticationPGRepository.loginFailed(globalUser.email);
-              console.log("response: ", response);
+              // console.log("response: ", response);
             }
-            console.log('response: ',response)
+            // console.log('response: ',response)
             res.json({
               isAuthenticated: false,
               loginAttempts: response ? response.login_attempts : 'NA',
@@ -289,10 +289,10 @@ export default {
             if (err) {
               return next(err); }
           });
-          console.log("DENTRO DEL AUTHENTICATE");
+          // console.log("DENTRO DEL AUTHENTICATE");
   
-          console.log("req.session despues de la strategy", req.session);
-          console.log("req.user despues de la strategy", req.user);
+          // console.log("req.session despues de la strategy", req.session);
+          // console.log("req.user despues de la strategy", req.user);
         }
         
         expressObj.next();
@@ -307,9 +307,9 @@ export default {
       let countryResp = null;
       let sess = null;
 
-      console.log('req.user antes de hacer logout(): ',req.user)
-      console.log('req.session antes de hacer logout(): ',req.session)
-      console.log('req.sessionID antes de hacer logout(): ',req.sessionID)
+      // console.log('req.user antes de hacer logout(): ',req.user)
+      // console.log('req.session antes de hacer logout(): ',req.session)
+      // console.log('req.sessionID antes de hacer logout(): ',req.sessionID)
 
       // req.session.destroy();
       // req.session.destroy((err) => res.redirect('/'));
@@ -317,9 +317,9 @@ export default {
       // req.session = null; 
       // req.sessionID = null; 
 
-      console.log('req.user despues de hacer logout(): ',req.user)
-      console.log('req.session despues de hacer logout(): ',req.session)
-      console.log('req.sessionID despues de hacer logout(): ',req.sessionID)
+      // console.log('req.user despues de hacer logout(): ',req.user)
+      // console.log('req.session despues de hacer logout(): ',req.session)
+      // console.log('req.sessionID despues de hacer logout(): ',req.sessionID)
 
       const resp = await authenticationPGRepository.getIpInfo(
         req.connection.remoteAddress
