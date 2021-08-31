@@ -293,4 +293,15 @@ usersController.getusersClientByEmail = (req, res, next) => {
   }
 };
 
+usersController.sendVerificationCodeByEmail = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to verify email`);
+    ObjLog.log(`[${context}]: Sending service to verify email`);
+    console.log(req)
+    usersService.sendVerificationCodeByEmail(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;

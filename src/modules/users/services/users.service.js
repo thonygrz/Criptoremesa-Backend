@@ -2369,7 +2369,7 @@ usersService.forgotPassword = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await usersPGRepository.forgotPassword(req.body.email_user);
+    let data = await usersPGRepository.validateEmailAndGenerateCode(req.body.email_user);
     console.log('DATA: ',data)
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
@@ -2390,7 +2390,7 @@ usersService.forgotPassword = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === 'Code generated'){
-      const mailResp = await mailSender.sendMail({
+      const mailResp = await mailSender.sendForgotPasswordMail({
         email_user: req.body.email_user,
         code: data.code
       })
@@ -2407,8 +2407,6 @@ usersService.forgotPassword = async (req, res, next) => {
     next(error);
   }
 };
-
-
 
 usersService.newPassword = async (req, res, next) => {
   try {
@@ -2488,6 +2486,50 @@ usersService.getusersClientByEmail = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
     res.status(200).json(data[0]);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.sendVerificationCodeByEmail = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.validateEmailAndGenerateCode(req.body.email_user);
+    console.log('DATA: ',data)
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/sendVerificationCodeByEmail",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    if (data.msg === 'Code generated'){
+      const mailResp = await mailSender.sendSignUpMail({
+        email_user: req.body.email_user,
+        code: data.code
+      })
+
+      res.status(200).json(
+        {
+          msg: data.msg,
+          mailResp
+        });
+    } else if (data.msg === 'The email does not exist') {
+      res.status(400).json({msg: data.msg});
+    }
   } catch (error) {
     next(error);
   }

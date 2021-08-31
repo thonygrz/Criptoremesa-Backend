@@ -705,29 +705,29 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   }
 };
 
-usersPGRepository.forgotPassword = async (email_user) => {
+usersPGRepository.validateEmailAndGenerateCode = async (email_user) => {
   try {
     logger.info(`[${context}]: Verifying email in db`);
     ObjLog.log(`[${context}]: Verifying email in db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM sp_forgot_password('${email_user}')`
+      `SELECT * FROM sp_validate_email_and_generate_code('${email_user}')`
     );
-    return resp.rows[0].sp_forgot_password;
+    return resp.rows[0].sp_validate_email_and_generate_code;
   } catch (error) {
     throw error;
   }
 };
 
-usersPGRepository.verifForgotPasswordCode = async (email_user,code) => {
+usersPGRepository.verifCode = async (email_user,code) => {
   try {
     logger.info(`[${context}]: Verifying code in db`);
     ObjLog.log(`[${context}]: Verifying code in db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM sp_verif_forgot_password_code('${email_user}',${code})`
+      `SELECT * FROM sp_verif_code('${email_user}',${code})`
     );
-    return resp.rows[0].sp_verif_forgot_password_code;
+    return resp.rows[0].sp_verif_code;
   } catch (error) {
     throw error;
   }

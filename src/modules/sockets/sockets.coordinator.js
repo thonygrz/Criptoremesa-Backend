@@ -31,13 +31,13 @@ export async function SocketServer(server) {
       });
     });
 
-    socket.on("verif_forgot_password_code", async (val) => {
+    socket.on("verif_code", async (val) => {
       // console.log('socket from FE',socket.id)
       // console.log('val ofrom FE',val)
         console.log('DEL FRONT: ',val)
-        let data = await usersPGRepository.verifForgotPasswordCode(val.email_user,val.code);
+        let data = await usersPGRepository.verifCode(val.email_user,val.code);
         console.log('DATA:',data)
-        socketServer.sockets.emit('verif_forgot_password_code_response', data);
+        socketServer.sockets.emit('verif_code_response', data);
     });
   });
 }
