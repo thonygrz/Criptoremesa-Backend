@@ -51,7 +51,7 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
     saveUninitialized: true,
-    cookie: { maxAge: 60000 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
+    cookie: { maxAge: 360000 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
     // maxAge: 60
   })
 );
@@ -75,11 +75,11 @@ app.use("/cr", routerIndex);
 
 app.use(async (req, res, next) => {
 
-  console.log('middleware despues de passport y todo el auth')
+  // console.log('middleware despues de passport y todo el auth')
 
-  console.log('middleware')
-  console.log(req.session)
-  console.log(req.user)
+  // console.log('middleware')
+  // console.log(req.session)
+  // console.log(req.user)
   ObjUserSessionData.set({
     session: {
       session_id: req.session.id,
