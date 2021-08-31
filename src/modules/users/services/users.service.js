@@ -1813,8 +1813,6 @@ usersService.approveLevelCero = async (req, res, next) => {
   }
 };
 
-
-
 usersService.files = async (req, res, next) => {
   try {
     let countryResp = null;
@@ -2530,6 +2528,36 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     } else if (data.msg === 'The email does not exist') {
       res.status(400).json({msg: data.msg});
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.approveLevelOne = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    await usersPGRepository.approveLevelOne(req.body);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/approveLevelOne",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json({ message: "User level One approved succesfully" });
   } catch (error) {
     next(error);
   }

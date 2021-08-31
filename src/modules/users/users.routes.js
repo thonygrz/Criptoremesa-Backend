@@ -168,5 +168,10 @@ usersRouter.post(
   usersController.sendVerificationCodeByEmail
 );
 
+usersRouter.post(
+  "/approveLevelOne",
+  // guard.verifyAdmin("/login"),
+  usersController.approveLevelOne
+);
 
 export default usersRouter;
