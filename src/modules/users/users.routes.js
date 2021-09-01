@@ -180,10 +180,4 @@ usersRouter.get(
   usersController.getLevelQuestions
 );
 
-usersRouter.get(
-  "/getLevelAnswers",
-  // guard.verifyAdmin("/login"),
-  usersController.getLevelAnswers
-);
-
 export default usersRouter;
