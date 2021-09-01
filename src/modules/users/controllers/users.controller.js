@@ -206,16 +206,14 @@ usersController.getDataFromSheetsEmployees = (req, res, next) => {
 
 usersController.approveLevelCero = (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to approve level cero`);
-    ObjLog.log(`[${context}]: Sending service to approve level cero`);
+    logger.info(`[${context}]: Sending service to approve level zero`);
+    ObjLog.log(`[${context}]: Sending service to approve level zero`);
 
     usersService.approveLevelCero(req, res, next);
   } catch (error) {
     next(error);
   }
 };
-
-
 
 usersController.files = (req, res, next) => {
   try {
@@ -297,6 +295,39 @@ usersController.sendVerificationCodeByEmail = (req, res, next) => {
     logger.info(`[${context}]: Sending service to verify email`);
     ObjLog.log(`[${context}]: Sending service to verify email`);
     usersService.sendVerificationCodeByEmail(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.approveLevelOne = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to approve level one`);
+    ObjLog.log(`[${context}]: Sending service to approve level one`);
+
+    usersService.approveLevelOne(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.getLevelQuestions = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get questions`);
+    ObjLog.log(`[${context}]: Sending service to get questions`);
+
+    usersService.getLevelQuestions(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.getLevelAnswers = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get questions`);
+    ObjLog.log(`[${context}]: Sending service to get questions`);
+
+    usersService.getLevelAnswers(req, res, next);
   } catch (error) {
     next(error);
   }

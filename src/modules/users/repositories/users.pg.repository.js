@@ -400,7 +400,29 @@ usersPGRepository.approveLevelCero = async (id) => {
   }
 };
 
+usersPGRepository.approveLevelOne = async (body) => {
+  try {
+    logger.info(`[${context}]: Approving level one on db`);
+    ObjLog.log(`[${context}]: Approving level one on db`);
 
+        await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(`SELECT * FROM SP_APPROVE_LEVEL_ONE(
+                                                                      ${body.doc_approved},
+                                                                      ${body.selfie_approved},
+                                                                      ${body.date_birth_approved},
+                                                                      ${body.state_name_approved},
+                                                                      ${body.resid_city_approved},
+                                                                      ${body.pol_exp_per_approved},
+                                                                      ${body.id_doc_type_approved},
+                                                                      ${body.doc_number_approved},
+                                                                      ${body.occupation_approved},
+                                                                      '${body.email_user}'
+                                                                    )`);
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
 
 usersPGRepository.getUUIDProfileByNameEmployee = async (name) => {
   try {
@@ -768,6 +790,30 @@ usersPGRepository.getusersClientByEmail = async (email) => {
     ObjLog.log(`[${context}]: Getting user from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(`SELECT * FROM get_user_by_email(${email})`);
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.getLevelQuestions = async () => {
+  try {
+    logger.info(`[${context}]: Getting questions from db`);
+    ObjLog.log(`[${context}]: Getting questions from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(`SELECT * FROM v_level_questions_get_active()`);
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.getLevelAnswers = async () => {
+  try {
+    logger.info(`[${context}]: Getting answers from db`);
+    ObjLog.log(`[${context}]: Getting answers from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(`SELECT * FROM v_level_answers_get_active()`);
     return resp.rows;
   } catch (error) {
     throw error;

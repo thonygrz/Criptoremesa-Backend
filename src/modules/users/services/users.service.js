@@ -1813,8 +1813,6 @@ usersService.approveLevelCero = async (req, res, next) => {
   }
 };
 
-
-
 usersService.files = async (req, res, next) => {
   try {
     let countryResp = null;
@@ -2534,6 +2532,98 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     next(error);
   }
 };
+
+usersService.approveLevelOne = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    await usersPGRepository.approveLevelOne(req.body);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/approveLevelOne",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json({ message: "User level One approved succesfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getLevelQuestions = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.getLevelQuestions();
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/getLevelQuestions",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getLevelAnswers = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.getLevelAnswers();
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/getLevelAnswers",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 
 export default usersService;
 export { events };
