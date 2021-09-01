@@ -2569,7 +2569,22 @@ usersService.getLevelQuestions = async (req, res, next) => {
     let sess = null;
 
     let data = await usersPGRepository.getLevelQuestions();
+    let answers = await usersPGRepository.getLevelAnswers();
+    let respArr = [];
 
+    data = data.map(function(q) {
+      respArr = answers.filter(a => {
+        return q.id_level_question == a.id_level_question;
+      });
+      return {
+        id_level_question: q.id_level_question,
+        level: q.level,
+        question_number: q.question_number,
+        question: q.question,
+        answers: respArr
+      }
+    });
+    
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -2587,43 +2602,12 @@ usersService.getLevelQuestions = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
+    // res.status(200).json(respArr);
     res.status(200).json(data);
   } catch (error) {
     next(error);
   }
 };
-
-usersService.getLevelAnswers = async (req, res, next) => {
-  try {
-    let countryResp = null;
-    let sess = null;
-
-    let data = await usersPGRepository.getLevelAnswers();
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/getLevelAnswers",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(data);
-  } catch (error) {
-    next(error);
-  }
-};
-
-
 
 export default usersService;
 export { events };
