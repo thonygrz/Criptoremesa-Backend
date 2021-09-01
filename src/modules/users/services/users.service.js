@@ -2581,6 +2581,7 @@ usersService.getLevelQuestions = async (req, res, next) => {
         level: q.level,
         question_number: q.question_number,
         question: q.question,
+        question_type: q.question_type,
         answers: respArr
       }
     });
