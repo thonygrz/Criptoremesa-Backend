@@ -820,4 +820,25 @@ usersPGRepository.getLevelAnswers = async () => {
   }
 };
 
+usersPGRepository.requestLevelTwo = async (body) => {
+  try {
+    logger.info(`[${context}]: Requesting level two in db`);
+    ObjLog.log(`[${context}]: Requesting level two in db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log('en el repository: ',body.answers)
+    const resp = await pool.query(
+      `SELECT * FROM SP_REQUEST_LEVEL_TWO(
+        '${body.funds_source}',
+        '${body.residency_proof_path}',
+        ${body.answers},
+        '${body.email_user}'
+        )`
+    );
+    if (resp.rows[0]) return resp.rows[0];
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;

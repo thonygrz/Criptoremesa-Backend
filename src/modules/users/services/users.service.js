@@ -2106,6 +2106,155 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
   }
 };
 
+let answersToRepo = 'ARRAY[';
+
+function setAnswersToRepo (val) {
+  answersToRepo = val;
+}
+
+function getAnswersToRepo () {
+  return answersToRepo;
+}
+
+usersService.requestLevelTwo = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/requestLevelTwo",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    let fileError = false;
+
+    const form = formidable({
+      multiples: true,
+      uploadDir: env.FILES_DIR,
+      maxFileSize: 5 * 1024 * 1024,
+      keepExtensions: true,
+    });
+
+    form.onPart = (part) => {
+      console.log("part: ", part.mime);
+      if (
+        !fileError &&
+        !(
+          part.mime === "image/png" ||
+          part.mime === "image/jpg" ||
+          part.mime === "image/jpeg" ||
+          part.mime === "image/gif" ||
+          part.mime === "application/pdf" ||
+          part.mime === null
+        )
+      ) {
+        console.log("entro ");
+
+        fileError = true;
+        form.emit("error");
+      } else {
+        form.handlePart(part);
+      }
+    };
+
+    form.on("error", function (err) {
+      if (fileError) {
+        next({
+          message: `Uno o varios archivos no tienen formato permitido`,
+        });
+      } else {
+        fileError = true;
+        console.log("error dentro del formerror: ", err);
+
+        next({
+          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+        });
+      }
+    });
+
+    form.parse(req, async function (err, fields, files) {
+      console.log("fileError ", fileError);
+      console.log("files ", files);
+      console.log("fields ", fields);
+
+      let residency_proof_path = form.uploadDir + `/${fields.email_user}__${files.residency_proof.name}`;
+      
+      Object.values(files).forEach((f) => {
+        if (
+          f.type === "image/png" ||
+          f.type === "image/jpg" ||
+          f.type === "image/jpeg" ||
+          f.type === "image/gif" ||
+          f.type === "application/pdf"
+        ) {
+          fs.rename(
+            f.path,
+            form.uploadDir + `/${fields.email_user}__${f.name}`,
+            (error) => {
+              if (error) {
+                console.log("error dentro del rename: ", error);
+                next(error);
+              }
+            }
+          );
+        }
+      });
+      try {
+        if (!fileError) {
+          console.log("FILE residency_proof_path: ", residency_proof_path);
+          console.log("a la bd: ", {
+            funds_source: fields.funds_source,
+            residency_proof_path: residency_proof_path,
+            answers: JSON.parse(fields.answers),
+            email_user: fields.email_user
+          });
+
+          JSON.parse(fields.answers).forEach((a) => {
+            setAnswersToRepo(getAnswersToRepo() + `,\'${JSON.stringify(a)}\'::JSON`);
+          })
+
+          setAnswersToRepo(getAnswersToRepo()+']::json[]')
+          setAnswersToRepo(getAnswersToRepo().replace(',',''))
+
+          console.log(getAnswersToRepo())
+
+          // console.log(JSON.parse(fields.answers))
+
+         
+
+          await usersPGRepository.requestLevelTwo({
+            funds_source: fields.funds_source,
+            residency_proof_path: residency_proof_path,
+            answers: getAnswersToRepo(),
+            email_user: fields.email_user
+          });
+
+          res.status(200).json({ message: "Archivos subidos" });
+        }
+      } catch (error) {
+        next(error);
+      }
+    });
+  } catch (error) {
+    console.log("error dentro del catch: ", error);
+
+    next(error);
+  }
+};
+
 usersService.requestLevelOne2ndQ = async (req, res, next) => {
   try {
     let countryResp = null;

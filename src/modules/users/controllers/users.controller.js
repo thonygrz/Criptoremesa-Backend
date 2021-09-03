@@ -322,4 +322,15 @@ usersController.getLevelQuestions = (req, res, next) => {
   }
 };
 
+usersController.requestLevelTwo = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to request level two`);
+    ObjLog.log(`[${context}]: Sending service to request level two`);
+
+    usersService.requestLevelTwo(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;
