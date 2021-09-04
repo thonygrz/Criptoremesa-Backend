@@ -2120,6 +2120,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
   try {
     let countryResp = null;
     let sess = null;
+    setAnswersToRepo('ARRAY[')
 
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
@@ -2232,8 +2233,6 @@ usersService.requestLevelTwo = async (req, res, next) => {
           console.log(getAnswersToRepo())
 
           // console.log(JSON.parse(fields.answers))
-
-         
 
           await usersPGRepository.requestLevelTwo({
             funds_source: fields.funds_source,
