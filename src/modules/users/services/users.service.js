@@ -8,7 +8,7 @@ import formidable from "formidable";
 import fs from "fs";
 // import { table } from "../../../utils/googleSpreadSheets";
 import { env } from "../../../utils/enviroment";
-import mailSender from '../../../utils/mail';
+import mailSender from "../../../utils/mail";
 
 const usersService = {};
 const context = "users Service";
@@ -1036,7 +1036,7 @@ usersService.createNewClient = async (req, res, next) => {
         msg: "Ha ocurrido un error. Por favor completa el captcha",
       });
     } else {
-        // Secret key
+      // Secret key
       const secretKey = env.reCAPTCHA_SECRET_KEY;
 
       // Verify URL
@@ -1049,83 +1049,85 @@ usersService.createNewClient = async (req, res, next) => {
       if (body.data.success === false) {
         res
           .status(500)
-          .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
+          .json({
+            captchaSuccess: false,
+            msg: "Falló la verificación del Captcha",
+          });
+      } else {
+        // If successful
+        let countryResp = null;
+        let sess = null;
+
+        let password = await bcrypt.hash(req.body.password, 10);
+        let userObj = {
+          first_name: req.body.first_name,
+          second_name: req.body.second_name,
+          last_name: req.body.last_name,
+          second_last_name: req.body.second_last_name,
+          username: req.body.username,
+          email_user: req.body.email_user,
+          password,
+          cust_cr_cod_pub: req.body.cust_cr_cod_pub,
+          cod_rank: req.body.cod_rank,
+          verif_level_apb: req.body.verif_level_apb,
+          multi_country: req.body.multi_country,
+          gender: req.body.gender,
+          date_birth: req.body.date_birth,
+          ident_doc_number: req.body.ident_doc_number,
+          main_phone: req.body.main_phone,
+          main_phone_wha: req.body.main_phone_wha,
+          second_phone: req.body.second_phone,
+          second_phone_wha: req.body.second_phone_wha,
+          delegated_phone: req.body.delegated_phone,
+          delegated_phone_wha: req.body.delegated_phone_wha,
+          resid_city: req.body.resid_city,
+          address: req.body.address,
+          referral_node: req.body.referral_node,
+          main_sn_platf: req.body.main_sn_platf,
+          user_main_sn_platf: req.body.user_main_sn_platf,
+          ok_legal_terms: req.body.ok_legal_terms,
+          date_legacy_reg: req.body.date_legacy_reg,
+          departments: req.body.departments,
+          uuid_profile: req.body.uuid_profile,
+          id_service: req.body.id_service,
+          id_services_utype: req.body.id_services_utype,
+          id_ident_doc_type: req.body.id_ident_doc_type,
+          id_resid_country: req.body.id_resid_country,
+          id_nationality_country: req.body.id_nationality_country,
+          last_ip_registred: req.connection.remoteAddress,
+          id_verif_level: req.body.id_verif_level,
+          main_phone_code: req.body.main_phone_code,
+          main_phone_full: req.body.main_phone_full,
+          second_phone_code: req.body.second_phone_code,
+          second_phone_full: req.body.second_phone_full,
+          delegated_phone_code: req.body.delegated_phone_code,
+          delegated_phone_full: req.body.delegated_phone_full,
+        };
+        const response = await usersPGRepository.createNewClient(userObj);
+        console.log("RESPNSE: ", response);
+        const resp = authenticationPGRepository.getIpInfo(
+          req.connection.remoteAddress
+        );
+        if (resp) countryResp = resp.country_name;
+        if (await authenticationPGRepository.getSessionById(req.sessionID))
+          sess = req.sessionID;
+
+        const log = {
+          is_auth: req.isAuthenticated(),
+          success: true,
+          failed: false,
+          ip: req.connection.remoteAddress,
+          country: countryResp,
+          route: "/users/createNewClient",
+          session: sess,
+        };
+        authenticationPGRepository.insertLogMsg(log);
+        res.status(200).json({
+          msg: "User registred succesfully",
+          user: response,
+          captchaSuccess: true,
+        });
       }
-      else{
-          // If successful
-    let countryResp = null;
-    let sess = null;
-
-    let password = await bcrypt.hash(req.body.password, 10);
-    let userObj = {
-      first_name: req.body.first_name,
-      second_name: req.body.second_name,
-      last_name: req.body.last_name,
-      second_last_name: req.body.second_last_name,
-      username: req.body.username,
-      email_user: req.body.email_user,
-      password,
-      cust_cr_cod_pub: req.body.cust_cr_cod_pub,
-      cod_rank: req.body.cod_rank,
-      verif_level_apb: req.body.verif_level_apb,
-      multi_country: req.body.multi_country,
-      gender: req.body.gender,
-      date_birth: req.body.date_birth,
-      ident_doc_number: req.body.ident_doc_number,
-      main_phone: req.body.main_phone,
-      main_phone_wha: req.body.main_phone_wha,
-      second_phone: req.body.second_phone,
-      second_phone_wha: req.body.second_phone_wha,
-      delegated_phone: req.body.delegated_phone,
-      delegated_phone_wha: req.body.delegated_phone_wha,
-      resid_city: req.body.resid_city,
-      address: req.body.address,
-      referral_node: req.body.referral_node,
-      main_sn_platf: req.body.main_sn_platf,
-      user_main_sn_platf: req.body.user_main_sn_platf,
-      ok_legal_terms: req.body.ok_legal_terms,
-      date_legacy_reg: req.body.date_legacy_reg,
-      departments: req.body.departments,
-      uuid_profile: req.body.uuid_profile,
-      id_service: req.body.id_service,
-      id_services_utype: req.body.id_services_utype,
-      id_ident_doc_type: req.body.id_ident_doc_type,
-      id_resid_country: req.body.id_resid_country,
-      id_nationality_country: req.body.id_nationality_country,
-      last_ip_registred: req.connection.remoteAddress,
-      id_verif_level: req.body.id_verif_level,
-      main_phone_code: req.body.main_phone_code,
-      main_phone_full: req.body.main_phone_full,
-      second_phone_code: req.body.second_phone_code,
-      second_phone_full: req.body.second_phone_full,
-      delegated_phone_code: req.body.delegated_phone_code,
-      delegated_phone_full: req.body.delegated_phone_full,
-    };
-    const response = await usersPGRepository.createNewClient(userObj);
-    console.log("RESPNSE: ", response);
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/createNewClient",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json({
-      msg: "User registred succesfully",
-      user: response,
-      captchaSuccess: true,
-    });
-    }
     }
   } catch (error) {
     next(error);
@@ -2040,9 +2042,9 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let doc_path = form.uploadDir + `/${fields.uuid_user}__${files.doc.name}`;
+      let doc_path = form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
       let selfie_path =
-        form.uploadDir + `/${fields.uuid_user}__${files.selfie.name}`;
+        form.uploadDir + `/${fields.email_user}__${files.selfie.name}`;
 
       Object.values(files).forEach((f) => {
         if (
@@ -2106,13 +2108,13 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
   }
 };
 
-let answersToRepo = 'ARRAY[';
+let answersToRepo = "ARRAY[";
 
-function setAnswersToRepo (val) {
+function setAnswersToRepo(val) {
   answersToRepo = val;
 }
 
-function getAnswersToRepo () {
+function getAnswersToRepo() {
   return answersToRepo;
 }
 
@@ -2120,7 +2122,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
   try {
     let countryResp = null;
     let sess = null;
-    setAnswersToRepo('ARRAY[')
+    setAnswersToRepo("ARRAY[");
 
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
@@ -2191,8 +2193,9 @@ usersService.requestLevelTwo = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let residency_proof_path = form.uploadDir + `/${fields.email_user}__${files.residency_proof.name}`;
-      
+      let residency_proof_path =
+        form.uploadDir + `/${fields.email_user}__${files.residency_proof.name}`;
+
       Object.values(files).forEach((f) => {
         if (
           f.type === "image/png" ||
@@ -2220,17 +2223,19 @@ usersService.requestLevelTwo = async (req, res, next) => {
             funds_source: fields.funds_source,
             residency_proof_path: residency_proof_path,
             answers: JSON.parse(fields.answers),
-            email_user: fields.email_user
+            email_user: fields.email_user,
           });
 
           JSON.parse(fields.answers).forEach((a) => {
-            setAnswersToRepo(getAnswersToRepo() + `,\'${JSON.stringify(a)}\'::JSON`);
-          })
+            setAnswersToRepo(
+              getAnswersToRepo() + `,\'${JSON.stringify(a)}\'::JSON`
+            );
+          });
 
-          setAnswersToRepo(getAnswersToRepo()+']::json[]')
-          setAnswersToRepo(getAnswersToRepo().replace(',',''))
+          setAnswersToRepo(getAnswersToRepo() + "]::json[]");
+          setAnswersToRepo(getAnswersToRepo().replace(",", ""));
 
-          console.log(getAnswersToRepo())
+          console.log(getAnswersToRepo());
 
           // console.log(JSON.parse(fields.answers))
 
@@ -2238,7 +2243,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
             funds_source: fields.funds_source,
             residency_proof_path: residency_proof_path,
             answers: getAnswersToRepo(),
-            email_user: fields.email_user
+            email_user: fields.email_user,
           });
 
           res.status(200).json({ message: "Archivos subidos" });
@@ -2328,9 +2333,9 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let doc_path = form.uploadDir + `/${fields.uuid_user}__${files.doc.name}`;
+      let doc_path = form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
       let selfie_path =
-        form.uploadDir + `/${fields.uuid_user}__${files.selfie.name}`;
+        form.uploadDir + `/${fields.email_user}__${files.selfie.name}`;
 
       Object.values(files).forEach((f) => {
         if (
@@ -2456,9 +2461,9 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let doc_path = form.uploadDir + `/${fields.uuid_user}__${files.doc.name}`;
+      let doc_path = form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
       let selfie_path =
-        form.uploadDir + `/${fields.uuid_user}__${files.selfie.name}`;
+        form.uploadDir + `/${fields.email_user}__${files.selfie.name}`;
 
       Object.values(files).forEach((f) => {
         if (
@@ -2515,8 +2520,10 @@ usersService.forgotPassword = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await usersPGRepository.validateEmailAndGenerateCode(req.body.email_user);
-    console.log('DATA: ',data)
+    let data = await usersPGRepository.validateEmailAndGenerateCode(
+      req.body.email_user
+    );
+    console.log("DATA: ", data);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -2535,19 +2542,18 @@ usersService.forgotPassword = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    if (data.msg === 'Code generated'){
+    if (data.msg === "Code generated") {
       const mailResp = await mailSender.sendForgotPasswordMail({
         email_user: req.body.email_user,
-        code: data.code
-      })
+        code: data.code,
+      });
 
-      res.status(200).json(
-        {
-          msg: data.msg,
-          mailResp
-        });
-    } else if (data.msg === 'The email does not exist') {
-      res.status(400).json({msg: data.msg});
+      res.status(200).json({
+        msg: data.msg,
+        mailResp,
+      });
+    } else if (data.msg === "The email does not exist") {
+      res.status(400).json({ msg: data.msg });
     }
   } catch (error) {
     next(error);
@@ -2559,10 +2565,11 @@ usersService.newPassword = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let passwordList = await usersPGRepository.getLastPasswords(req.body.email_user);
+    let passwordList = await usersPGRepository.getLastPasswords(
+      req.body.email_user
+    );
     let matchSome = false;
 
-    
     // let data = await usersPGRepository.newPassword(req.body);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
@@ -2587,16 +2594,16 @@ usersService.newPassword = async (req, res, next) => {
 
       if (match) {
         matchSome = true;
-        res.status(400).json({msg: 'The password cannot be equal to last 3'});
+        res.status(400).json({ msg: "The password cannot be equal to last 3" });
       }
-    })
+    });
 
     if (!matchSome) {
       let newPass = await bcrypt.hash(req.body.new_password, 10);
 
       let data = await usersPGRepository.newPassword({
         email_user: req.body.email_user,
-        new_password: newPass
+        new_password: newPass,
       });
       res.status(200).json(data);
     }
@@ -2642,8 +2649,10 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await usersPGRepository.validateEmailAndGenerateCode(req.body.email_user);
-    console.log('DATA: ',data)
+    let data = await usersPGRepository.validateEmailAndGenerateCode(
+      req.body.email_user
+    );
+    console.log("DATA: ", data);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -2662,19 +2671,18 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    if (data.msg === 'Code generated'){
+    if (data.msg === "Code generated") {
       const mailResp = await mailSender.sendSignUpMail({
         email_user: req.body.email_user,
-        code: data.code
-      })
+        code: data.code,
+      });
 
-      res.status(200).json(
-        {
-          msg: data.msg,
-          mailResp
-        });
-    } else if (data.msg === 'The email does not exist') {
-      res.status(400).json({msg: data.msg});
+      res.status(200).json({
+        msg: data.msg,
+        mailResp,
+      });
+    } else if (data.msg === "The email does not exist") {
+      res.status(400).json({ msg: data.msg });
     }
   } catch (error) {
     next(error);
@@ -2720,8 +2728,8 @@ usersService.getLevelQuestions = async (req, res, next) => {
     let answers = await usersPGRepository.getLevelAnswers();
     let respArr = [];
 
-    data = data.map(function(q) {
-      respArr = answers.filter(a => {
+    data = data.map(function (q) {
+      respArr = answers.filter((a) => {
         return q.id_level_question == a.id_level_question;
       });
       return {
@@ -2730,10 +2738,10 @@ usersService.getLevelQuestions = async (req, res, next) => {
         question_number: q.question_number,
         question: q.question,
         question_type: q.question_type,
-        answers: respArr
-      }
+        answers: respArr,
+      };
     });
-    
+
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
