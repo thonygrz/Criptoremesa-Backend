@@ -9,6 +9,7 @@ import fs from "fs";
 // import { table } from "../../../utils/googleSpreadSheets";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
+import axios from 'axios'
 
 const usersService = {};
 const context = "users Service";
@@ -1030,31 +1031,29 @@ usersService.createUserClient = async (req, res, next) => {
 
 usersService.createNewClient = async (req, res, next) => {
   try {
-    if (!req.body.captcha) {
-      res.status(400).json({
-        captchaSuccess: false,
-        msg: "Ha ocurrido un error. Por favor completa el captcha",
-      });
-    } else {
-      // Secret key
-      const secretKey = env.reCAPTCHA_SECRET_KEY;
+    // if (!req.body.captcha) {
+    //   res.status(400).json({
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   });
+    // } else {
+    //   // Secret key
+    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+    //   // Verify URL
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
 
-      // Make a request to verifyURL
-      const body = await axios.get(verifyURL);
+    //   // Make a request to verifyURL
+    //   const body = await axios.get(verifyURL);
 
-      // // If not successful
-      if (body.data.success === false) {
-        res
-          .status(500)
-          .json({
-            captchaSuccess: false,
-            msg: "Falló la verificación del Captcha",
-          });
-      } else {
-        // If successful
+    //   // // If not successful
+    //   if (body.data.success === false) {
+    //     res.status(500).json({
+    //       captchaSuccess: false,
+    //       msg: "Falló la verificación del Captcha",
+    //     });
+    //   } else {
+    //     // If successful
         let countryResp = null;
         let sess = null;
 
@@ -1127,8 +1126,8 @@ usersService.createNewClient = async (req, res, next) => {
           user: response,
           captchaSuccess: true,
         });
-      }
-    }
+    //   }
+    // }
   } catch (error) {
     next(error);
   }
@@ -2042,7 +2041,8 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let doc_path = form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
+      let doc_path =
+        form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
       let selfie_path =
         form.uploadDir + `/${fields.email_user}__${files.selfie.name}`;
 
@@ -2056,7 +2056,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         ) {
           fs.rename(
             f.path,
-            form.uploadDir + `/${fields.uuid_user}__${f.name}`,
+            form.uploadDir + `/${fields.email_user}__${f.name}`,
             (error) => {
               if (error) {
                 console.log("error dentro del rename: ", error);
@@ -2333,7 +2333,8 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let doc_path = form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
+      let doc_path =
+        form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
       let selfie_path =
         form.uploadDir + `/${fields.email_user}__${files.selfie.name}`;
 
@@ -2347,7 +2348,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
         ) {
           fs.rename(
             f.path,
-            form.uploadDir + `/${fields.uuid_user}__${f.name}`,
+            form.uploadDir + `/${fields.email_user}__${f.name}`,
             (error) => {
               if (error) {
                 console.log("error dentro del rename: ", error);
@@ -2461,7 +2462,8 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let doc_path = form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
+      let doc_path =
+        form.uploadDir + `/${fields.email_user}__${files.doc.name}`;
       let selfie_path =
         form.uploadDir + `/${fields.email_user}__${files.selfie.name}`;
 
@@ -2475,7 +2477,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
         ) {
           fs.rename(
             f.path,
-            form.uploadDir + `/${fields.uuid_user}__${f.name}`,
+            form.uploadDir + `/${fields.email_user}__${f.name}`,
             (error) => {
               if (error) {
                 console.log("error dentro del rename: ", error);
