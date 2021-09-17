@@ -49,15 +49,23 @@ export async function SocketServer(server) {
           socketServer.sockets.to(reply).emit('verif_code_response', data);
         });
     });
+
+    socket.on("level_upgrade", async (val) => {
+      logger.info(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      console.log('socket from Sixm',socket.id)
+      console.log('val from Sixm',val)
+      
+      notifyChanges('level_upgrade', val);
+    });
   });
 }
 
 export function notifyChanges(event, data) {
   try {
-    logger.info(`[${context}] Sending update notification`);
-    ObjLog.log(`[${context}] Sending update notification`);
-
-    console.log('notify data: ',data)
+    logger.info(`[${context}] Sending update notification to FE`);
+    ObjLog.log(`[${context}] Sending update notification to FE`);
 
     redisClient.get(data.email_user, function (err, reply) {
       // reply is null when the key is missing

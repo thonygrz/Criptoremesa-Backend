@@ -28,25 +28,25 @@ pool
     client.end();
   });
 
-client.connect()
-.then(response => {
-  logger.info("PG-DB client-listener is connected");
-  ObjLog.log("PG-DB client-listener is connected");
+// client.connect()
+// .then(response => {
+//   logger.info("PG-DB client-listener is connected");
+//   ObjLog.log("PG-DB client-listener is connected");
 
-  // Se escuchan los canales
-  client.query("listen level_upgrade");
+//   // // Se escuchan los canales
+//   // client.query("listen level_upgrade");
 
-  // Se recibe el evento y se envía al FE
-  client.on('notification', async (data) => {
-      if (data.channel === "level_upgrade") {
-          const level = JSON.parse(data.payload);
-          notifyChanges(data.channel, level);
-      }
-  });
-})
-.catch(err => {
-    logger.error(`PG-DB client-listener is not connected: ${err}`);
-    client.end();
-});
+//   // Se recibe el evento y se envía al FE
+//   // client.on('notification', async (data) => {
+//   //     if (data.channel === "level_upgrade") {
+//   //         const level = JSON.parse(data.payload);
+//   //         notifyChanges(data.channel, level);
+//   //     }
+//   // });
+// })
+// .catch(err => {
+//     logger.error(`PG-DB client-listener is not connected: ${err}`);
+//     client.end();
+// });
 
 export default pool;
