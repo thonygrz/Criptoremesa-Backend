@@ -28,5 +28,15 @@ veriflevelsController.requestWholesalePartner = (req, res, next) => {
   }
 };
 
+veriflevelsController.notifications = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get notifications`);
+    ObjLog.log(`[${context}]: Sending service to get notifications`);
+
+    veriflevelsService.notifications(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default veriflevelsController;

@@ -47,4 +47,19 @@ veriflevelsPGRepository.requestWholesalePartner = async (body) => {
   }
 };
 
+veriflevelsPGRepository.notifications = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Requesting notifications`);
+    ObjLog.log(`[${context}]: Requesting notifications`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_notifications(
+      ${email_user}
+    )`);
+    return resp.rows[0].v_notifications;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default veriflevelsPGRepository;
