@@ -16,4 +16,10 @@ veriflevelsRouter.post(
   veriflevelsController.requestWholesalePartner
 );
 
+veriflevelsRouter.get(
+  "/notifications/:email_user",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.notifications
+);
+
 export default veriflevelsRouter;
