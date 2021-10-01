@@ -1031,29 +1031,29 @@ usersService.createUserClient = async (req, res, next) => {
 
 usersService.createNewClient = async (req, res, next) => {
   try {
-    if (!req.body.captcha) {
-      res.status(400).json({
-        captchaSuccess: false,
-        msg: "Ha ocurrido un error. Por favor completa el captcha",
-      });
-    } else {
-      // Secret key
-      const secretKey = env.reCAPTCHA_SECRET_KEY;
+    // if (!req.body.captcha) {
+    //   res.status(400).json({
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   });
+    // } else {
+    //   // Secret key
+    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+    //   // Verify URL
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
 
-      // Make a request to verifyURL
-      const body = await axios.get(verifyURL);
+    //   // Make a request to verifyURL
+    //   const body = await axios.get(verifyURL);
 
-      // // If not successful
-      if (body.data.success === false) {
-        res.status(500).json({
-          captchaSuccess: false,
-          msg: "Falló la verificación del Captcha",
-        });
-      } else {
-        // If successful
+    //   // // If not successful
+    //   if (body.data.success === false) {
+    //     res.status(500).json({
+    //       captchaSuccess: false,
+    //       msg: "Falló la verificación del Captcha",
+    //     });
+    //   } else {
+    //     // If successful
         let countryResp = null;
         let sess = null;
 
@@ -1126,10 +1126,15 @@ usersService.createNewClient = async (req, res, next) => {
           user: response,
           captchaSuccess: true,
         });
-      }
-    }
+    //   }
+    // }
   } catch (error) {
-    next(error);
+    if (error.message === 'llave duplicada viola restricción de unicidad «ms_sixmap_users_email_user_key»') {
+      next({
+        message: 'Email ya existe'
+      })
+    } else
+      next(error);
   }
 };
 
