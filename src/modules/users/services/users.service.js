@@ -1129,7 +1129,12 @@ usersService.createNewClient = async (req, res, next) => {
     //   }
     // }
   } catch (error) {
-    next(error);
+    if (error.message === 'llave duplicada viola restricción de unicidad «ms_sixmap_users_email_user_key»') {
+      next({
+        message: 'Email ya existe'
+      })
+    } else
+      next(error);
   }
 };
 

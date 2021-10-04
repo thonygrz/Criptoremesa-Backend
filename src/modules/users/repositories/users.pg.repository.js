@@ -705,6 +705,7 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
+    console.log('se pasa esto: ',body)
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_3rd_Q(
@@ -713,7 +714,7 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
         '${body.resid_city}',
         '${body.pol_exp_per}',
         '${body.email_user}',
-        '${body.id_country}',
+        ${body.id_country},
         '${body.ident_doc_number}',
         '${body.occupation}',
         '${body.doc_path}',
