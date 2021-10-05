@@ -41,10 +41,11 @@ export async function SocketServer(server) {
       // console.log('val ofrom FE',val)
         console.log('DEL FRONT: ',val)
         let data
-        if (val.msg === 'Code generated') {
-          data = await usersPGRepository.verifCode(val.email_user,val.code);
-        } else if (val.msg === 'Time started')
+        if (val.msg === 'Time started')
           data = val
+        else 
+          data = await usersPGRepository.verifCode(val.email_user,val.code);
+
         console.log('DATA:',data)
 
         redisClient.get(val.email_user, function (err, reply) {
