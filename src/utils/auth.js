@@ -93,6 +93,7 @@ passport.use(
         let sess = null;
         expressObj.isAuthenticated = false;
         expressObj.userExists = false;
+        blockedOrNotVerified = false;
 
         // console.log('auth: ',req.sessionID,
         // req.connection.remoteAddress)
@@ -269,7 +270,6 @@ export default {
         }
         let response = null;
         if (!blockedOrNotVerified){
-          if (!user) {
             if (globalUser) {
               // console.log("email: ", globalUser.email);
               response = await authenticationPGRepository.loginFailed(globalUser.email);
@@ -284,7 +284,6 @@ export default {
               captchaSuccess: true,
             });
             expressObj.next()
-          }
           req.logIn(user, function(err) {
             if (err) {
               return next(err); }
