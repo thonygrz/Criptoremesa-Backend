@@ -22,4 +22,17 @@ veriflevelsRouter.get(
   veriflevelsController.notifications
 );
 
+veriflevelsRouter.get(
+  "/deactivateNotification/:id",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.deactivateNotification
+);
+
+veriflevelsRouter.get(
+  "/readNotification/:id",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.readNotification
+);
+
+
 export default veriflevelsRouter;
