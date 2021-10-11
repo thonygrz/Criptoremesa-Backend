@@ -2576,8 +2576,9 @@ usersService.newPassword = async (req, res, next) => {
       req.body.email_user
     );
     let matchSome = false;
+    let matchLast = true;
 
-    // let data = await usersPGRepository.newPassword(req.body);
+      // let data = await usersPGRepository.newPassword(req.body);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -2596,26 +2597,46 @@ usersService.newPassword = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    passwordList.forEach(async (p) => {
-      let match = await bcrypt.compare(req.body.new_password, p.password);
+    console.log('passwordList: ',passwordList)
 
-      if (match) {
-        matchSome = true;
-        res.status(400).json({ msg: "The password cannot be equal to last 3" });
+    let match = false
+
+    if (req.body.last_password){
+      match = await bcrypt.compare(req.body.last_password, passwordList[passwordList.length - 1].password);
+
+      console.log('match: ',match)
+
+      if (!match) {
+        matchLast = false;
+        res.status(400).json({ msg: "Incorrect last password" });
       }
-    });
-
-    if (!matchSome) {
-      let newPass = await bcrypt.hash(req.body.new_password, 10);
-
-      let data = await usersPGRepository.newPassword({
-        email_user: req.body.email_user,
-        new_password: newPass,
-      });
-      res.status(200).json(data);
     }
 
-    // res.status(200).json(passwordList);
+    console.log('matchLast: ',matchLast)
+
+    if (matchLast) {
+      passwordList.forEach(async (p) => {
+        match = false
+        match = await bcrypt.compare(req.body.new_password, p.password);
+
+        console.log('matchforeach: ',match)
+
+        if (match) {
+          matchSome = true;
+          res.status(400).json({ msg: "The password cannot be equal to last 3" });
+        }
+      });
+
+      if (!matchSome) {
+        let newPass = await bcrypt.hash(req.body.new_password, 10);
+
+        let data = await usersPGRepository.newPassword({
+          email_user: req.body.email_user,
+          new_password: newPass,
+        });
+        res.status(200).json(data);
+      }
+    }
   } catch (error) {
     next(error);
   }

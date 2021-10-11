@@ -109,6 +109,9 @@ veriflevelsService.notifications = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
+    if (dbResp === null)
+      res.status(200).json([]);
+    else
     res.status(200).json(dbResp);
   } catch (error) {
     next(error);
