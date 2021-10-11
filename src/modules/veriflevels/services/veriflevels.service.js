@@ -115,4 +115,64 @@ veriflevelsService.notifications = async (req, res, next) => {
   }
 };
 
+veriflevelsService.deactivateNotification = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    const dbResp = await veriflevelsPGRepository.deactivateNotification(req.params.id);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/deactivateNotification",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(dbResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsService.readNotification = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    const dbResp = await veriflevelsPGRepository.readNotification(req.params.id);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/readNotification",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(dbResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default veriflevelsService;

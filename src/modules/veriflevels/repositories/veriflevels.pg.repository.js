@@ -62,4 +62,34 @@ veriflevelsPGRepository.notifications = async (email_user) => {
   }
 };
 
+veriflevelsPGRepository.deactivateNotification = async (id_notification) => {
+  try {
+    logger.info(`[${context}]: Deactivating notification`);
+    ObjLog.log(`[${context}]: Deactivating notification`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(id_notification)
+    const resp = await pool.query(`SELECT * FROM sp_deactive_notification(
+      ${id_notification}
+    )`);
+    return resp.rows[0].sp_deactive_notification;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.readNotification = async (id_notification) => {
+  try {
+    logger.info(`[${context}]: Deactivating notification`);
+    ObjLog.log(`[${context}]: Deactivating notification`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(id_notification)
+    const resp = await pool.query(`SELECT * FROM sp_read_notification(
+      ${id_notification}
+    )`);
+    return resp.rows[0].sp_read_notification;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default veriflevelsPGRepository;

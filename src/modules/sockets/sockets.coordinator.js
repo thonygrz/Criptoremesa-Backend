@@ -40,7 +40,12 @@ export async function SocketServer(server) {
       // console.log('socket from FE',socket.id)
       // console.log('val ofrom FE',val)
         console.log('DEL FRONT: ',val)
-        let data = await usersPGRepository.verifCode(val.email_user,val.code);
+        let data
+        if (val.msg === 'Time started')
+          data = val
+        else 
+          data = await usersPGRepository.verifCode(val.email_user,val.code);
+
         console.log('DATA:',data)
 
         redisClient.get(val.email_user, function (err, reply) {
@@ -70,6 +75,7 @@ export function notifyChanges(event, data) {
     redisClient.get(data.email_user, function (err, reply) {
       // reply is null when the key is missing
       console.log("redis reply: ", reply);
+      console.log("socket sending: ", data);
       socketServer.sockets.to(reply).emit(event, data);
     });
 

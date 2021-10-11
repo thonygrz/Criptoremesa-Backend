@@ -39,4 +39,26 @@ veriflevelsController.notifications = (req, res, next) => {
   }
 };
 
+veriflevelsController.deactivateNotification = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to deactivate notification`);
+    ObjLog.log(`[${context}]: Sending service to deactivate notification`);
+
+    veriflevelsService.deactivateNotification(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsController.readNotification = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to read notification`);
+    ObjLog.log(`[${context}]: Sending service to read notification`);
+
+    veriflevelsService.readNotification(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default veriflevelsController;
