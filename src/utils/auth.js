@@ -159,8 +159,6 @@ passport.use(
               logger.info(`[${context}]: Successful login`);
               ObjLog.log(`[${context}]: Successful login`);
 
-              user = await authenticationPGRepository.getUserById(user.id_uuid);
-
               expressObj.isAuthenticated = true;
 
               await resp(user);
