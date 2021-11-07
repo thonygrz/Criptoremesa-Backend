@@ -28,17 +28,6 @@ authenticationController.logout = (req, res, next) => {
   }
 };
 
-authenticationController.signup = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to sign up`);
-    ObjLog.log(`[${context}]: Sending service to sign up`);
-
-    authenticationService.signup(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
 authenticationController.protected = (req, res, next) => {
   try {
     logger.info(`[${context}]: Protected`);

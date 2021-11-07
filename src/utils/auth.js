@@ -340,55 +340,5 @@ export default {
     } catch (error) {
       next(error);
     }
-  },
-  signup: async (req, res, next) => {
-    try {
-      let countryResp = null;
-      let sess = null;
-
-      let password = await bcrypt.hash(req.body.password, 10);
-      ObjUserSessionData.set({
-        first_name: req.body.first_name,
-        second_name: req.body.second_name,
-        last_name: req.body.last_name,
-        second_last_name: req.body.second_last_name,
-        username: req.body.username,
-        email_user: req.body.email_user,
-        password,
-        gender: req.body.gender,
-        date_birth: req.body.date_birth,
-        ident_doc_number: req.body.ident_doc_number,
-        main_phone: req.body.main_phone,
-        main_phone_wha: req.body.main_phone_wha,
-        resid_city: req.body.resid_city,
-        departments: req.body.departments,
-        id_ident_doc_type: req.body.id_ident_doc_type,
-        id_resid_country: req.body.id_resid_country,
-        id_nationality_country: req.body.id_nationality_country,
-        last_ip_registred: req.connection.remoteAddress,
-      });
-      await authenticationPGRepository.insert(ObjUserSessionData.get());
-
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      if (resp) countryResp = resp.country_name;
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: true,
-        failed: false,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/signup",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-      res.status(200).json({ message: "User registred succesfully" });
-    } catch (error) {
-      next(error);
-    }
-  },
+  }
 };

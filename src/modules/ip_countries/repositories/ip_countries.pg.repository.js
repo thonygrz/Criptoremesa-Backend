@@ -51,9 +51,9 @@ ip_countriesPGRepository.getid_by_nameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting id from db`);
     ObjLog.log(`[${context}]: Getting id from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await pool.query("SET SCHEMA 'sec_emp'");
     const resp = await pool.query(
-      `SELECT * FROM sec_cust.v_ip_countries_get_id_by_name(${name})`
+      `SELECT * FROM sec_emp.v_ip_countries_get_id_by_name(${name})`
     );
     return resp.rows;
   } catch (error) {

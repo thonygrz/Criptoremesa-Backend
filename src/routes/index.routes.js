@@ -13,8 +13,6 @@ router.post("/login", authenticationController.login);
 
 router.get("/logout", authenticationController.logout);
 
-router.post("/signup", authenticationController.signup);
-
 router.get("/", authenticationController.logout);
 
 router.get(
