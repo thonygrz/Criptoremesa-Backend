@@ -276,7 +276,7 @@ export default {
           return expressObj.next(err);
         }
         let response = null;
-        if (!blockedOrNotVerified){
+        if (!blockedOrNotVerified && !expressObj.isAuthenticated){
             if (globalUser) {
               // console.log("email: ", globalUser.email_user);
               response = await authenticationPGRepository.loginFailed(globalUser.email_user);
