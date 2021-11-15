@@ -147,6 +147,8 @@ passport.use(
             expressObj.userExists = true;
             globalUser = user;
 
+            console.log('user: ',user)
+
             await authenticationPGRepository.updateIPUser(
               user.id_uuid,
               req.connection.remoteAddress,
@@ -269,8 +271,8 @@ export default {
         let response = null;
         if (!blockedOrNotVerified){
             if (globalUser) {
-              // console.log("email: ", globalUser.email);
-              response = await authenticationPGRepository.loginFailed(globalUser.email);
+              // console.log("email: ", globalUser.email_user);
+              response = await authenticationPGRepository.loginFailed(globalUser.email_user);
               // console.log("response: ", response);
             }
             // console.log('response: ',response)
