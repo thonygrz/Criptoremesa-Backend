@@ -5,27 +5,15 @@ const ip_countriesRouter = Router();
 
 // IF YOU WERE USING cg/auth/login
 ip_countriesRouter.get(
-  "/getActive",
-  // guard.verifyAdmin("/login"),
-  ip_countriesController.getip_countries
-);
-
-ip_countriesRouter.get(
   "/getIdByName/:id",
   // guard.verifyAdmin("/login"),
   ip_countriesController.getid_by_name
 );
 
 ip_countriesRouter.get(
-  "/getActiveClient",
+  "/getActive",
   // guard.verifyAdmin("/login"),
-  ip_countriesController.getip_countriesClient
-);
-
-ip_countriesRouter.get(
-  "/getIdByNameClient/:id",
-  // guard.verifyAdmin("/login"),
-  ip_countriesController.getid_by_nameClient
+  ip_countriesController.getip_countries
 );
 
 export default ip_countriesRouter;
