@@ -48,11 +48,18 @@ async function resp(user) {
         route: "/login",
         session: sess,
       };
+      let response;
+      if (user) {
+        // console.log("email: ", user.email_user);
+        response = await authenticationPGRepository.loginFailed(user.email_user);
+        console.log("response: ", response);
+      }
       await authenticationPGRepository.insertLogMsg(log);
       expressObj.res.status(400).send({
         user_blocked: user.user_blocked,
         id_verif_level: user.id_verif_level,
-        verif_level_apb: user.verif_level_apb
+        verif_level_apb: user.verif_level_apb,
+        atcPhone: response ? response.atcPhone : 'NA'
       });
     } else {
       const log = {
