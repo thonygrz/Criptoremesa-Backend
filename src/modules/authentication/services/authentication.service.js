@@ -60,16 +60,6 @@ authenticationService.logout = (req, res, next) => {
   }
 };
 
-authenticationService.signup = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending module to sign up`);
-    ObjLog.log(`[${context}]: Sending module to sign up`);
-    auth.signup(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
 authenticationService.protected = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Protected`);
