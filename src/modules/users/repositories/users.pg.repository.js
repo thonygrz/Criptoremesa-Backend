@@ -842,4 +842,21 @@ usersPGRepository.requestLevelTwo = async (body) => {
   }
 };
 
+usersPGRepository.getATCNumberByIdCountry = async (id) => {
+  try {
+    logger.info(`[${context}]: Looking for ATC Number in db`);
+    ObjLog.log(`[${context}]: Looking for ATC Number in db`);
+    await pool.query("SET SCHEMA 'msg_app'");
+    const resp = await pool.query(
+      `SELECT * FROM msg_app.get_atc_number_by_id_resid_country(
+        ${id}
+        )`
+    );
+    if (resp.rows[0]) return resp.rows[0].get_atc_number_by_id_resid_country;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;
