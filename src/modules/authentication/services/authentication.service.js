@@ -36,10 +36,10 @@ authenticationService.login = async (req, res, next) => {
     //       .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
     //   }
     //   else{
-    //       // If successful
+          // If successful
 
-    //       logger.info(`[${context}]: Sending module to verify`);
-    //       ObjLog.log(`[${context}]: Sending module to verify`);
+          logger.info(`[${context}]: Sending module to verify`);
+          ObjLog.log(`[${context}]: Sending module to verify`);
 
     auth.verify(req, res, next);
     // }

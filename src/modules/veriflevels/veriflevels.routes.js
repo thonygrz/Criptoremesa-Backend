@@ -34,5 +34,16 @@ veriflevelsRouter.patch(
   veriflevelsController.readNotification
 );
 
+veriflevelsRouter.get(
+  "/getWholesalePartnerRequestsCountries",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.getWholesalePartnerRequestsCountries
+);
+
+veriflevelsRouter.get(
+  "/getMigrationStatus",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.getMigrationStatus
+);
 
 export default veriflevelsRouter;

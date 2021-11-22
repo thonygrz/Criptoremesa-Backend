@@ -1031,29 +1031,29 @@ usersService.createUserClient = async (req, res, next) => {
 
 usersService.createNewClient = async (req, res, next) => {
   try {
-    if (!req.body.captcha) {
-      res.status(400).json({
-        captchaSuccess: false,
-        msg: "Ha ocurrido un error. Por favor completa el captcha",
-      });
-    } else {
-      // Secret key
-      const secretKey = env.reCAPTCHA_SECRET_KEY;
+    // if (!req.body.captcha) {
+    //   res.status(400).json({
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   });
+    // } else {
+    //   // Secret key
+    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+    //   // Verify URL
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
 
-      // Make a request to verifyURL
-      const body = await axios.get(verifyURL);
+    //   // Make a request to verifyURL
+    //   const body = await axios.get(verifyURL);
 
-      // // If not successful
-      if (body.data.success === false) {
-        res.status(500).json({
-          captchaSuccess: false,
-          msg: "Falló la verificación del Captcha",
-        });
-      } else {
-        // If successful
+    //   // // If not successful
+    //   if (body.data.success === false) {
+    //     res.status(500).json({
+    //       captchaSuccess: false,
+    //       msg: "Falló la verificación del Captcha",
+    //     });
+    //   } else {
+    //     // If successful
         let countryResp = null;
         let sess = null;
 
@@ -1126,8 +1126,8 @@ usersService.createNewClient = async (req, res, next) => {
           user: response,
           captchaSuccess: true,
         });
-      }
-    }
+    //   }
+    // }
   } catch (error) {
     if (error.code === '23505') {
       next({
@@ -2552,9 +2552,23 @@ usersService.forgotPassword = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
+      let user = await usersPGRepository.getusersClientByEmail(
+        `'${req.body.email_user}'`
+      );
+      console.log('user con su id_country: ',user)
+     
+      let atcNumber = await usersPGRepository.getATCNumberByIdCountry(
+        `${user[0].id_resid_country}`
+      );
+      console.log('atcNumber from bd: ',atcNumber)
+
+      if (atcNumber.length > 1) atcNumber = atcNumber.join(' / ')
+      else atcNumber = atcNumber[0]
+
       const mailResp = await mailSender.sendForgotPasswordMail({
         email_user: req.body.email_user,
         code: data.code,
+        atcNumber
       });
 
       res.status(200).json({
@@ -2702,9 +2716,22 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
+      let user = await usersPGRepository.getusersClientByEmail(
+        `'${req.body.email_user}'`
+      );
+     
+      let atcNumber = await usersPGRepository.getATCNumberByIdCountry(
+        `${user[0].id_resid_country}`
+      );
+      console.log('atcNumber from bd: ',atcNumber)
+
+      if (atcNumber.length > 1) atcNumber = atcNumber.join(' / ')
+      else atcNumber = atcNumber[0]
+
       const mailResp = await mailSender.sendSignUpMail({
         email_user: req.body.email_user,
         code: data.code,
+        atcNumber
       });
 
       res.status(200).json({
