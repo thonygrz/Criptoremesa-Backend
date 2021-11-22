@@ -30,7 +30,8 @@ veriflevelsPGRepository.requestWholesalePartner = async (body) => {
       '${body.remittance_service}',
       '${body.old_resid_client_countries}',
       '${body.profession}',
-      '${body.resid_country_and_migration_status}',
+      '${body.resid_country}',
+      '${body.migration_status}',
       '${body.new_resid_client_countries}',
       '${body.clients_number}',
       '${body.monthly_amount}',
@@ -87,6 +88,34 @@ veriflevelsPGRepository.readNotification = async (id_notification) => {
       ${id_notification}
     )`);
     return resp.rows[0].sp_read_notification;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getWholesalePartnerRequestsCountries = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting countries from DB`);
+    ObjLog.log(`[${context}]: Getting countries from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_countries()`);
+    return resp.rows[0].v_wholesale_partners_requests_countries;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getMigrationStatus = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting migration status from DB`);
+    ObjLog.log(`[${context}]: Getting migration status from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_migration_status()`);
+    return resp.rows[0].v_migration_status;
   } catch (error) {
     throw error;
   }

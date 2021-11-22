@@ -50,7 +50,8 @@ veriflevelsService.requestWholesalePartner = async (req, res, next) => {
       remittance_service: req.body.remittance_service,
       old_resid_client_countries: req.body.old_resid_client_countries.join(),
       profession: req.body.profession,
-      resid_country_and_migration_status: req.body.resid_country_and_migration_status,
+      resid_country: req.body.resid_country,
+      migration_status: req.body.migration_status,
       new_resid_client_countries: req.body.new_resid_client_countries.join(),
       clients_number: req.body.clients_number.toString(),
       monthly_amount: req.body.monthly_amount,
@@ -173,6 +174,72 @@ veriflevelsService.readNotification = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
     res.status(200).json(dbResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsService.getWholesalePartnerRequestsCountries = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: Getting Wholesale Partners Requests countries from DB`);
+    ObjLog.log(`[${context}]: Getting Wholesale Partners Requests countries from DB`);
+
+    const bdResp = await veriflevelsPGRepository.getWholesalePartnerRequestsCountries();
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/getWholesalePartnerRequestsCountries",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(bdResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsService.getMigrationStatus = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: Getting migration status from DB`);
+    ObjLog.log(`[${context}]: Getting migration status from DB`);
+
+    const bdResp = await veriflevelsPGRepository.getMigrationStatus();
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/getMigrationStatus",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(bdResp);
   } catch (error) {
     next(error);
   }

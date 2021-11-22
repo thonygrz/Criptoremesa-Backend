@@ -61,4 +61,24 @@ veriflevelsController.readNotification = (req, res, next) => {
   }
 };
 
+veriflevelsController.getWholesalePartnerRequestsCountries = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get countries`);
+    ObjLog.log(`[${context}]: Sending service to get countries`);
+    veriflevelsService.getWholesalePartnerRequestsCountries(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsController.getMigrationStatus = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get migration status`);
+    ObjLog.log(`[${context}]: Sending service to get migration status`);
+    veriflevelsService.getMigrationStatus(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default veriflevelsController;
