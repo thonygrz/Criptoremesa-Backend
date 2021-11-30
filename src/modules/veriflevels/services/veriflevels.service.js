@@ -245,4 +245,74 @@ veriflevelsService.getMigrationStatus = async (req, res, next) => {
   }
 };
 
+veriflevelsService.getDisapprovedVerifLevelsRequirements = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: Getting Disapproved VerifLevels Requirements from DB`);
+    ObjLog.log(`[${context}]: Getting Disapproved VerifLevels Requirements from DB`);
+
+    const bdResp = await veriflevelsPGRepository.getDisapprovedVerifLevelsRequirements(
+      req.params.id
+    );
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/getDisapprovedVerifLevelsRequirements",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(bdResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsService.getDisapprovedWholesalePartnersRequirements = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: Getting Disapproved Wholesale Partners Requirements from DB`);
+    ObjLog.log(`[${context}]: Getting Disapproved Wholesale Partners Requirements from DB`);
+
+    const bdResp = await veriflevelsPGRepository.getDisapprovedWholesalePartnersRequirements(
+      req.params.id
+    );
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/getDisapprovedWholesalePartnersRequirements",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(bdResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default veriflevelsService;

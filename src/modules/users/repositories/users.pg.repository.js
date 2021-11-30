@@ -404,7 +404,6 @@ usersPGRepository.approveLevelOne = async (body) => {
   try {
     logger.info(`[${context}]: Approving level one on db`);
     ObjLog.log(`[${context}]: Approving level one on db`);
-
         await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(`SELECT * FROM SP_APPROVE_LEVEL_ONE(
                                                                       ${body.doc_approved},
@@ -416,6 +415,8 @@ usersPGRepository.approveLevelOne = async (body) => {
                                                                       ${body.id_doc_type_approved},
                                                                       ${body.doc_number_approved},
                                                                       ${body.occupation_approved},
+                                                                      ${body.main_sn_platf_approved},
+                                                                      ${body.user_main_sn_platf_approved},
                                                                       '${body.email_user}'
                                                                     )`);
     return resp.rows;
@@ -665,7 +666,9 @@ usersPGRepository.requestLevelOne1stQ = async (body) => {
         '${body.ident_doc_number}',
         '${body.occupation}',
         '${body.doc_path}',
-        '${body.selfie_path}'
+        '${body.selfie_path}',
+        '${body.main_sn_platf}',
+        '${body.user_main_sn_platf}'
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -691,7 +694,9 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
         '${body.ident_doc_number}',
         '${body.occupation}',
         '${body.doc_path}',
-        '${body.selfie_path}'
+        '${body.selfie_path}',
+        '${body.main_sn_platf}',
+        '${body.user_main_sn_platf}'
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -718,7 +723,9 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
         '${body.ident_doc_number}',
         '${body.occupation}',
         '${body.doc_path}',
-        '${body.selfie_path}'
+        '${body.selfie_path}',
+        '${body.main_sn_platf}',
+        '${body.user_main_sn_platf}'
         )`
     );
     if (resp.rows[0]) return resp.rows[0];

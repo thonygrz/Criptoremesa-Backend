@@ -81,4 +81,24 @@ veriflevelsController.getMigrationStatus = (req, res, next) => {
   }
 };
 
+veriflevelsController.getDisapprovedVerifLevelsRequirements = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+    ObjLog.log(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+    veriflevelsService.getDisapprovedVerifLevelsRequirements(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsController.getDisapprovedWholesalePartnersRequirements = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+    ObjLog.log(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+    veriflevelsService.getDisapprovedWholesalePartnersRequirements(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default veriflevelsController;

@@ -2098,6 +2098,8 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
             occupation: fields.occupation,
             doc_path: doc_path,
             selfie_path: selfie_path,
+            main_sn_platf: fields.main_sn_platf,
+            user_main_sn_platf: fields.user_main_sn_platf
           });
 
           res.status(200).json({ message: "Archivos subidos" });
@@ -2378,6 +2380,8 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
             occupation: fields.occupation,
             doc_path: doc_path,
             selfie_path: selfie_path,
+            main_sn_platf: fields.main_sn_platf,
+            user_main_sn_platf: fields.user_main_sn_platf
           });
 
           res.status(200).json({ message: "Archivos subidos" });
@@ -2507,6 +2511,8 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
             occupation: fields.occupation,
             doc_path: doc_path,
             selfie_path: selfie_path,
+            main_sn_platf: fields.main_sn_platf,
+            user_main_sn_platf: fields.user_main_sn_platf
           });
 
           res.status(200).json({ message: "Archivos subidos" });
