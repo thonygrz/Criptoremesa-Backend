@@ -121,4 +121,32 @@ veriflevelsPGRepository.getMigrationStatus = async (email_user) => {
   }
 };
 
+veriflevelsPGRepository.getDisapprovedVerifLevelsRequirements = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting Disapproved VerifLevels Requirements from DB`);
+    ObjLog.log(`[${context}]: Getting Disapproved VerifLevels Requirements from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_verif_levels_requirements_disapproved(${email_user})`);
+    return resp.rows[0].v_verif_levels_requirements_disapproved;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getDisapprovedWholesalePartnersRequirements = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting Disapproved WholesalePartners Requirements from DB`);
+    ObjLog.log(`[${context}]: Getting Disapproved WholesalePartners Requirements from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements_disapproved(${email_user})`);
+    return resp.rows[0].v_wholesale_partners_requests_requirements_disapproved;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default veriflevelsPGRepository;

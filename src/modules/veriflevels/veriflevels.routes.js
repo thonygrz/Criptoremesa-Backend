@@ -46,4 +46,16 @@ veriflevelsRouter.get(
   veriflevelsController.getMigrationStatus
 );
 
+veriflevelsRouter.get(
+  "/getDisapprovedVerifLevelsRequirements/:id",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.getDisapprovedVerifLevelsRequirements
+);
+
+veriflevelsRouter.get(
+  "/getDisapprovedWholesalePartnersRequirements/:id",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.getDisapprovedWholesalePartnersRequirements
+);
+
 export default veriflevelsRouter;
