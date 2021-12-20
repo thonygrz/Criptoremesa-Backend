@@ -33,11 +33,11 @@ app.use(json());
 // app.use(express.urlencoded({extended: true}));
 app.use(
   cors({
-    origin: "http://localhost:8080",  
+    origin: "http://localhost:8080",
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
-    credentials: true
+    credentials: true,
   })
 );
 app.use(helmet());
@@ -63,8 +63,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 // ROUTES
 // app.get("/", async (req, res) => {
 //   res.status(200).send("Server running");
@@ -74,7 +72,6 @@ app.use((req, res, next) => {
 app.use("/cr", routerIndex);
 
 app.use(async (req, res, next) => {
-
   // console.log('middleware despues de passport y todo el auth')
 
   // console.log('middleware')
@@ -88,7 +85,6 @@ app.use(async (req, res, next) => {
     user: req.user,
   });
   // res.status(200).send("prooving");
-
 
   // if (!req.isAuthenticated) {
   //   let response = null;
@@ -107,9 +103,8 @@ app.use(async (req, res, next) => {
   //   });
   // }
 
-  next()
+  next();
 });
-
 
 // ERROR HANDLER
 app.use(async function (err, req, res, next) {

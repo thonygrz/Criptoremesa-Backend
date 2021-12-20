@@ -2,6 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import veriflevelsPGRepository from "../repositories/veriflevels.pg.repository";
 import auth from "../../../utils/auth";
+import fs from "fs";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const veriflevelsService = {};
@@ -15,7 +16,7 @@ veriflevelsService.getveriflevels = async (req, res, next) => {
     logger.info(`[${context}]: Searching in DB`);
     ObjLog.log(`[${context}]: Searching in DB`);
 
-    let data = await veriflevelsPGRepository.getveriflevels(req.body);
+    let data = await veriflevelsPGRepository.getveriflevels(req.body); 
 
     const resp = authenticationPGRepository.getIpInfo(req.clientIp);
     if (resp) countryResp = resp.country_name;
@@ -309,6 +310,342 @@ veriflevelsService.getDisapprovedWholesalePartnersRequirements = async (req, res
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(bdResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsService.getLimitationsByCountry = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: Getting Limitations from DB`);
+    ObjLog.log(`[${context}]: Getting Limitations from DB`);
+
+    const bdResp = await veriflevelsPGRepository.getLimitationsByCountry(
+      req.params.id
+    );
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/getLimitationsByCountry",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(bdResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsService.getVerifLevelRequirements = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: Getting requirements from DB`);
+    ObjLog.log(`[${context}]: Getting requirements from DB`);
+
+    const bdResp = await veriflevelsPGRepository.getVerifLevelRequirements(
+      req.params.id
+    );
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/getVerifLevelRequirements",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    if (bdResp.level_one) {
+      let doc = fs.readFileSync(bdResp.level_one[0].req_use_path)
+      let selfie = fs.readFileSync(bdResp.level_one[1].req_use_path)
+
+      bdResp.level_one.forEach((el) => {
+        if (el.req_type === "doc") el.req_use_path = doc;
+        else if (el.req_type === "selfie") el.req_use_path = selfie;
+      });
+    }
+    if (bdResp.level_two) {
+      let residency_proof = fs
+        .readFileSync(bdResp.level_two[1].req_use_path)
+      bdResp.level_two.forEach((el) => {
+        if (el.req_type === "residency_proof")
+          el.req_use_path = residency_proof;
+      });
+    }
+    res.status(200).json({
+      level_one: bdResp.level_one,
+      level_two: bdResp.level_two,
+      email_user: bdResp.email_user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsService.getWholesalePartnerRequestsRequirements = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: Getting requirements from DB`);
+    ObjLog.log(`[${context}]: Getting requirements from DB`);
+
+    const bdResp =
+      await veriflevelsPGRepository.getWholesalePartnerRequestsRequirements(
+        req.params.id
+      );
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/getWholesalePartnerRequestsRequirements",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    res.status(200).json(bdResp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+veriflevelsService.validateRemittance = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    logger.info(`[${context}]: prooving from DB`);
+    ObjLog.log(`[${context}]: prooving from DB`);
+
+    const bdResp =
+      await veriflevelsPGRepository.validateRemittance(
+                                                        {
+                                                          "idChat": "2",
+                                                          "publicCode": 'UISCR30064', 
+                                                          "messages": [
+                                                              {
+                                                                  "id": 3,
+                                                                  "action": "send",
+                                                                  "type": "text",
+                                                                  "atcUser": "AtcUser",
+                                                                  "atcUserLastname": "Rodriguez",
+                                                                  "profile": "Perfil",
+                                                                  "atcUserName": "usuario123",
+                                                                  "date": 1636135966,
+                                                                  "check": true,
+                                                                  "content": "Remesa por 500 mil pesos colombianos\n                    Depositados en Bancolombia Simon Gómez \n                    Mar 12/10/2021\n                    Referido por Jonathan Requena\n                    CR-ID: 092CR10008\n                    No aplica descuento por corresponsal, se hizo transferencia bancaria.\n                    ----\n                    2 Cuentas Destino en Venezuela:\n                    -----\n                    1) Banco Exterior\n                    01150017044003416059\n                    Luz Marina Caballero de Ayala\n                    C.I  17160895\n                    Aquí son 420.000 pesos\n                    ----\n                    2) BanCaribe\n                    01140172401721079178\n                    Janetth Pereira Soto\n                    C.I. 2996390 \n                    A esta cta son 80.000 pesos"
+                                                              }
+                                                          ],
+                                                          "pending": false,
+                                                          "holder": {
+                                                              "idBankAccount": 20,
+                                                              "holderName": "CR Tecnología y Finanzas SpA",
+                                                              "accountNumber": "170 092 9902"
+                                                          },
+                                                          "originCountry": {
+                                                              "idCountry": 4,
+                                                              "name": "Chile",
+                                                              "code": "CL"
+                                                          },
+                                                          "countryCurrency": {
+                                                              "idCourrency": 4,
+                                                              "name": "Peso Chileno",
+                                                              "isoCode": "CLP",
+                                                              "type": "fiat"
+                                                          },
+                                                          "bank": {
+                                                              "idBank": 11,
+                                                              "name": "Banco de Chile"
+                                                          },
+                                                          "thirdPartyTransfer": {
+                                                              "response": false,
+                                                              "country": {
+                                                                  "idCountry": 4,
+                                                                  "name": "Chile",
+                                                                  "code": "CL"
+                                                              },
+                                                              "bank": {
+                                                                  "idBank": 11,
+                                                                  "name": ""
+                                                              },
+                                                              "holder": "Luis Gabriel Perez",
+                                                              "id": "25698565"
+                                                          },
+                                                          "captures": [
+                                                              {
+                                                                  "messageId": 1,
+                                                                  "ammount": 5000,
+                                                                  "ref": "231123",
+                                                                  "date": "2021-12-01"
+                                                              }
+                                                          ],
+                                                          "totalDeposited": 5000,
+                                                          "totalComission": 12,
+                                                          "totalOriginRemittance": 4988,
+                                                          "totalDestinationRemittance": 18006.68,
+                                                          "rateType": {
+                                                              "idRateType": 1,
+                                                              "name": "Normal"
+                                                          },
+                                                          "rateValue": {
+                                                              "rate": 3.61,
+                                                              "operation": "mul"
+                                                          },
+                                                          "beneficiariesInfo": {
+                                                              "destinationCountry": {
+                                                                  "idCountry": 1,
+                                                                  "name": "Venezuela",
+                                                                  "code": "VE"
+                                                              },
+                                                              "destinationCurrency": {
+                                                                  "idCourrency": 1,
+                                                                  "name": "Bolivar",
+                                                                  "isoCode": "VED",
+                                                                  "type": "fiat"
+                                                              },
+                                                              "quantity": 1,
+                                                              "beneficiaries": [
+                                                                  {
+                                                                      "name": {
+                                                                          "value": "Beneficiario",
+                                                                          "pending": false
+                                                                      },
+                                                                      "bank": {
+                                                                          "value": {
+                                                                              "idBank": 2,
+                                                                              "name": "Mercantil"
+                                                                          },
+                                                                          "pending": false
+                                                                      },
+                                                                      "notification": {
+                                                                          "idNotificationType": -1,
+                                                                          "fields": [],
+                                                                          "name": {
+                                                                              "value": "No notificar",
+                                                                              "pending": false
+                                                                          },
+                                                                          "phoneNumber": {
+                                                                              "value": "",
+                                                                              "pending": false
+                                                                          },
+                                                                          "email": {
+                                                                              "value": "",
+                                                                              "pending": false
+                                                                          }
+                                                                      },
+                                                                      "paymentType": {
+                                                                          "value": {
+                                                                              "idPayMethod": 1,
+                                                                              "name": "Transferencia",
+                                                                              "fields": [
+                                                                                  "Banco",
+                                                                                  "Nro. Cuenta",
+                                                                                  "Beneficiario",
+                                                                                  "ID"
+                                                                              ]
+                                                                          },
+                                                                          "pending": false
+                                                                      },
+                                                                      "frequent": {
+                                                                          "value": true,
+                                                                          "pending": false
+                                                                      },
+                                                                      "idNumber": {
+                                                                          "value": "Nro. Doc. ID",
+                                                                          "pending": false
+                                                                      },
+                                                                      "account": {
+                                                                          "value": "21312312312333333333",
+                                                                          "pending": false
+                                                                      },
+                                                                      "accountType": {
+                                                                          "value": "Corriente",
+                                                                          "pending": false
+                                                                      },
+                                                                      "ammount": {
+                                                                          "value": 4988,
+                                                                          "pending": false
+                                                                      },
+                                                                      "phoneNumber": {
+                                                                          "value": "213123",
+                                                                          "pending": false
+                                                                      },
+                                                                      "email": {
+                                                                          "value": "s@gmail.com",
+                                                                          "pending": false
+                                                                      },
+                                                                      "pending": false
+                                                                  }
+                                                              ]
+                                                          },
+                                                          "comments": []
+                                                      }
+      );
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/veriflevels/validateRemittance",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
     res.status(200).json(bdResp);
   } catch (error) {
     next(error);

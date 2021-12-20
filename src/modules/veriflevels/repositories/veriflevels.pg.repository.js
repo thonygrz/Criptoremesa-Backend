@@ -149,4 +149,60 @@ veriflevelsPGRepository.getDisapprovedWholesalePartnersRequirements = async (ema
   }
 };
 
+veriflevelsPGRepository.getLimitationsByCountry = async (id_country) => {
+  try {
+    logger.info(`[${context}]: Getting Limitations from DB`);
+    ObjLog.log(`[${context}]: Getting Limitations from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(id_country)
+    const resp = await pool.query(`SELECT * FROM get_limitations_by_country(${id_country})`);
+    return resp.rows[0].get_limitations_by_country;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getVerifLevelRequirements = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting requirements from DB`);
+    ObjLog.log(`[${context}]: Getting requirements from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_verif_levels_requirements(${email_user})`);
+    return resp.rows[0].v_verif_levels_requirements;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getWholesalePartnerRequestsRequirements = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting requirements from DB`);
+    ObjLog.log(`[${context}]: Getting requirements from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements(${email_user})`);
+    return resp.rows[0].v_wholesale_partners_requests_requirements;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.validateRemittance = async (remittance) => {
+  try {
+    logger.info(`[${context}]: prooving from DB`);
+    ObjLog.log(`[${context}]: prooving from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log('remittance',remittance)
+    const resp = await pool.query(`SELECT * FROM validate_remittance('${JSON.stringify(remittance)}')`);
+    return resp.rows[0].validate_remittance;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default veriflevelsPGRepository;
