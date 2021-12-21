@@ -40,7 +40,22 @@ veriflevelsPGRepository.requestWholesalePartner = async (body) => {
       '${body.bussiness_name}',
       '${body.web_page_exp}',
       '${body.logo}',
-      '${body.email_user}'
+      '${body.email_user}',
+      '${body.reasons_status}',
+      '${body.strenghts_status}',
+      '${body.remittance_service_status}',
+      '${body.old_resid_client_countries_status}',
+      '${body.profession_status}',
+      '${body.resid_country_status}',
+      '${body.migration_status_status}',
+      '${body.new_resid_client_countries_status}',
+      '${body.clients_number_status}',
+      '${body.monthly_amount_status}',
+      '${body.monetary_growth_status}',
+      '${body.clients_growth_status}',
+      '${body.bussiness_name_status}',
+      '${body.web_page_exp_status}',
+      '${body.logo_status}'
     )`);
     return resp.rows[0].sp_request_wholesale_partner;
   } catch (error) {

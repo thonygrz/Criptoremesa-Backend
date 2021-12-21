@@ -62,6 +62,21 @@ veriflevelsService.requestWholesalePartner = async (req, res, next) => {
       web_page_exp: req.body.web_page_exp,
       logo: req.body.logo,
       email_user: req.body.email_user,
+      reasons_status: req.body.reasons_status,
+      strenghts_status: req.body.strenghts_status,
+      remittance_service_status: req.body.remittance_service_status,
+      old_resid_client_countries_status: req.body.old_resid_client_countries_status,
+      profession_status: req.body.profession_status,
+      resid_country_status: req.body.resid_country_status,
+      migration_status_status: req.body.migration_status_status,
+      new_resid_client_countries_status: req.body.new_resid_client_countries_status,
+      clients_number_status: req.body.clients_number_status,
+      monthly_amount_status: req.body.monthly_amount_status,
+      monetary_growth_status: req.body.monetary_growth_status,
+      clients_growth_status: req.body.clients_growth_status,
+      bussiness_name_status: req.body.bussiness_name_status,
+      web_page_exp_status: req.body.web_page_exp_status,
+      logo_status: req.body.logo_status
     });
 
     const resp = authenticationPGRepository.getIpInfo(
@@ -466,7 +481,7 @@ veriflevelsService.validateRemittance = async (
     const bdResp =
       await veriflevelsPGRepository.validateRemittance(
                                                         {
-                                                          "idChat": "2",
+                                                          "idChat": 2,
                                                           "publicCode": 'UISCR30064', 
                                                           "messages": [
                                                               {
