@@ -41,21 +41,21 @@ veriflevelsPGRepository.requestWholesalePartner = async (body) => {
       '${body.web_page_exp}',
       '${body.logo}',
       '${body.email_user}',
-      '${body.reasons_status}',
-      '${body.strenghts_status}',
-      '${body.remittance_service_status}',
-      '${body.old_resid_client_countries_status}',
-      '${body.profession_status}',
-      '${body.resid_country_status}',
-      '${body.migration_status_status}',
-      '${body.new_resid_client_countries_status}',
-      '${body.clients_number_status}',
-      '${body.monthly_amount_status}',
-      '${body.monetary_growth_status}',
-      '${body.clients_growth_status}',
-      '${body.bussiness_name_status}',
-      '${body.web_page_exp_status}',
-      '${body.logo_status}'
+      ${body.reasons_status},
+      ${body.strenghts_status},
+      ${body.remittance_service_status},
+      ${body.old_resid_client_countries_status},
+      ${body.profession_status},
+      ${body.resid_country_status},
+      ${body.migration_status_status},
+      ${body.new_resid_client_countries_status},
+      ${body.clients_number_status},
+      ${body.monthly_amount_status},
+      ${body.monetary_growth_status},
+      ${body.clients_growth_status},
+      ${body.bussiness_name_status},
+      ${body.web_page_exp_status},
+      ${body.logo_status}
     )`);
     return resp.rows[0].sp_request_wholesale_partner;
   } catch (error) {
@@ -192,15 +192,15 @@ veriflevelsPGRepository.getVerifLevelRequirements = async (email_user) => {
   }
 };
 
-veriflevelsPGRepository.getWholesalePartnerRequestsRequirements = async (email_user) => {
+veriflevelsPGRepository.getWholesalePartnerRequestsRequirementsByEmail = async (email_user) => {
   try {
     logger.info(`[${context}]: Getting requirements from DB`);
     ObjLog.log(`[${context}]: Getting requirements from DB`);
 
     await pool.query("SET SCHEMA 'sec_cust'");
     console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements(${email_user})`);
-    return resp.rows[0].v_wholesale_partners_requests_requirements;
+    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements_by_email(${email_user})`);
+    return resp.rows[0].v_wholesale_partners_requests_requirements_by_email;
   } catch (error) {
     throw error;
   }

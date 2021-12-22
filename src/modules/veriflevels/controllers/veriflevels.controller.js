@@ -122,12 +122,12 @@ veriflevelsController.getVerifLevelRequirements = (req, res, next) => {
   }
 };
 
-veriflevelsController.getWholesalePartnerRequestsRequirements = (req, res, next) => {
+veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
     ObjLog.log(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
 
-    veriflevelsService.getWholesalePartnerRequestsRequirements(req, res, next);
+    veriflevelsService.getWholesalePartnerRequestsRequirementsByEmail(req, res, next);
   } catch (error) {
     next(error);
   }

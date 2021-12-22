@@ -71,9 +71,9 @@ veriflevelsRouter.get(
 );
 
 veriflevelsRouter.get(
-  "/getWholesalePartnerRequestsRequirements/:id",
+  "/getWholesalePartnerRequestsRequirementsByEmail/:id",
   // guard.verifyAdmin("/login"),
-  veriflevelsController.getWholesalePartnerRequestsRequirements
+  veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail
 );
 
 veriflevelsRouter.get(

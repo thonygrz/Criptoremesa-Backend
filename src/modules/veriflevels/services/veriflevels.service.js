@@ -423,7 +423,7 @@ veriflevelsService.getVerifLevelRequirements = async (req, res, next) => {
   }
 };
 
-veriflevelsService.getWholesalePartnerRequestsRequirements = async (
+veriflevelsService.getWholesalePartnerRequestsRequirementsByEmail = async (
   req,
   res,
   next
@@ -436,7 +436,7 @@ veriflevelsService.getWholesalePartnerRequestsRequirements = async (
     ObjLog.log(`[${context}]: Getting requirements from DB`);
 
     const bdResp =
-      await veriflevelsPGRepository.getWholesalePartnerRequestsRequirements(
+      await veriflevelsPGRepository.getWholesalePartnerRequestsRequirementsByEmail(
         req.params.id
       );
 
@@ -453,7 +453,7 @@ veriflevelsService.getWholesalePartnerRequestsRequirements = async (
       failed: false,
       ip: req.connection.remoteAddress,
       country: countryResp,
-      route: "/veriflevels/getWholesalePartnerRequestsRequirements",
+      route: "/veriflevels/getWholesalePartnerRequestsRequirementsByEmail",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
@@ -479,7 +479,7 @@ veriflevelsService.validateRemittance = async (
     ObjLog.log(`[${context}]: prooving from DB`);
 
     const bdResp =
-      await veriflevelsPGRepository.validateRemittance(
+      await veriflevelsPGRepository.validateRemittance( 
                                                         {
                                                           "idChat": 2,
                                                           "publicCode": 'UISCR30064', 
@@ -542,7 +542,7 @@ veriflevelsService.validateRemittance = async (
                                                           ],
                                                           "totalDeposited": 5000,
                                                           "totalComission": 12,
-                                                          "totalOriginRemittance": 4988,
+                                                          "totalOriginRemittance": 255555555555555555555555555555,
                                                           "totalDestinationRemittance": 18006.68,
                                                           "rateType": {
                                                               "idRateType": 1,
@@ -567,6 +567,219 @@ veriflevelsService.validateRemittance = async (
                                                               "quantity": 1,
                                                               "beneficiaries": [
                                                                   {
+                                                                      "name": {
+                                                                          "value": "Beneficiario",
+                                                                          "pending": false
+                                                                      },
+                                                                      "bank": {
+                                                                          "value": {
+                                                                              "idBank": 2,
+                                                                              "name": "Mercantil"
+                                                                          },
+                                                                          "pending": false
+                                                                      },
+                                                                      "notification": {
+                                                                          "idNotificationType": -1,
+                                                                          "fields": [],
+                                                                          "name": {
+                                                                              "value": "No notificar",
+                                                                              "pending": false
+                                                                          },
+                                                                          "phoneNumber": {
+                                                                              "value": "",
+                                                                              "pending": false
+                                                                          },
+                                                                          "email": {
+                                                                              "value": "",
+                                                                              "pending": false
+                                                                          }
+                                                                      },
+                                                                      "paymentType": {
+                                                                          "value": {
+                                                                              "idPayMethod": 1,
+                                                                              "name": "Transferencia",
+                                                                              "fields": [
+                                                                                  "Banco",
+                                                                                  "Nro. Cuenta",
+                                                                                  "Beneficiario",
+                                                                                  "ID"
+                                                                              ]
+                                                                          },
+                                                                          "pending": false
+                                                                      },
+                                                                      "frequent": {
+                                                                          "value": true,
+                                                                          "pending": false
+                                                                      },
+                                                                      "idNumber": {
+                                                                          "value": "Nro. Doc. ID",
+                                                                          "pending": false
+                                                                      },
+                                                                      "account": {
+                                                                          "value": "21312312312333333333",
+                                                                          "pending": false
+                                                                      },
+                                                                      "accountType": {
+                                                                          "value": "Corriente",
+                                                                          "pending": false
+                                                                      },
+                                                                      "ammount": {
+                                                                          "value": 4988,
+                                                                          "pending": false
+                                                                      },
+                                                                      "phoneNumber": {
+                                                                          "value": "213123",
+                                                                          "pending": false
+                                                                      },
+                                                                      "email": {
+                                                                          "value": "s@gmail.com",
+                                                                          "pending": false
+                                                                      },
+                                                                      "pending": false
+                                                                  },
+                                                                  {
+                                                                    "name": {
+                                                                        "value": "Beneficiario",
+                                                                        "pending": false
+                                                                    },
+                                                                    "bank": {
+                                                                        "value": {
+                                                                            "idBank": 2,
+                                                                            "name": "Mercantil"
+                                                                        },
+                                                                        "pending": false
+                                                                    },
+                                                                    "notification": {
+                                                                        "idNotificationType": -1,
+                                                                        "fields": [],
+                                                                        "name": {
+                                                                            "value": "No notificar",
+                                                                            "pending": false
+                                                                        },
+                                                                        "phoneNumber": {
+                                                                            "value": "",
+                                                                            "pending": false
+                                                                        },
+                                                                        "email": {
+                                                                            "value": "",
+                                                                            "pending": false
+                                                                        }
+                                                                    },
+                                                                    "paymentType": {
+                                                                        "value": {
+                                                                            "idPayMethod": 1,
+                                                                            "name": "Transferencia",
+                                                                            "fields": [
+                                                                                "Banco",
+                                                                                "Nro. Cuenta",
+                                                                                "Beneficiario",
+                                                                                "ID"
+                                                                            ]
+                                                                        },
+                                                                        "pending": false
+                                                                    },
+                                                                    "frequent": {
+                                                                        "value": true,
+                                                                        "pending": false
+                                                                    },
+                                                                    "idNumber": {
+                                                                        "value": "Nro. Doc. ID",
+                                                                        "pending": false
+                                                                    },
+                                                                    "account": {
+                                                                        "value": "21312312312333333333",
+                                                                        "pending": false
+                                                                    },
+                                                                    "accountType": {
+                                                                        "value": "Corriente",
+                                                                        "pending": false
+                                                                    },
+                                                                    "ammount": {
+                                                                        "value": 4988,
+                                                                        "pending": false
+                                                                    },
+                                                                    "phoneNumber": {
+                                                                        "value": "213123",
+                                                                        "pending": false
+                                                                    },
+                                                                    "email": {
+                                                                        "value": "s@gmail.com",
+                                                                        "pending": false
+                                                                    },
+                                                                    "pending": false
+                                                                },
+                                                                {
+                                                                  "name": {
+                                                                      "value": "Beneficiario",
+                                                                      "pending": false
+                                                                  },
+                                                                  "bank": {
+                                                                      "value": {
+                                                                          "idBank": 2,
+                                                                          "name": "Mercantil"
+                                                                      },
+                                                                      "pending": false
+                                                                  },
+                                                                  "notification": {
+                                                                      "idNotificationType": -1,
+                                                                      "fields": [],
+                                                                      "name": {
+                                                                          "value": "No notificar",
+                                                                          "pending": false
+                                                                      },
+                                                                      "phoneNumber": {
+                                                                          "value": "",
+                                                                          "pending": false
+                                                                      },
+                                                                      "email": {
+                                                                          "value": "",
+                                                                          "pending": false
+                                                                      }
+                                                                  },
+                                                                  "paymentType": {
+                                                                      "value": {
+                                                                          "idPayMethod": 1,
+                                                                          "name": "Transferencia",
+                                                                          "fields": [
+                                                                              "Banco",
+                                                                              "Nro. Cuenta",
+                                                                              "Beneficiario",
+                                                                              "ID"
+                                                                          ]
+                                                                      },
+                                                                      "pending": false
+                                                                  },
+                                                                  "frequent": {
+                                                                      "value": true,
+                                                                      "pending": false
+                                                                  },
+                                                                  "idNumber": {
+                                                                      "value": "Nro. Doc. ID",
+                                                                      "pending": false
+                                                                  },
+                                                                  "account": {
+                                                                      "value": "21312312312333333333",
+                                                                      "pending": false
+                                                                  },
+                                                                  "accountType": {
+                                                                      "value": "Corriente",
+                                                                      "pending": false
+                                                                  },
+                                                                  "ammount": {
+                                                                      "value": 4988,
+                                                                      "pending": false
+                                                                  },
+                                                                  "phoneNumber": {
+                                                                      "value": "213123",
+                                                                      "pending": false
+                                                                  },
+                                                                  "email": {
+                                                                      "value": "s@gmail.com",
+                                                                      "pending": false
+                                                                  },
+                                                                  "pending": false
+                                                              },
+                                                              {
                                                                       "name": {
                                                                           "value": "Beneficiario",
                                                                           "pending": false
