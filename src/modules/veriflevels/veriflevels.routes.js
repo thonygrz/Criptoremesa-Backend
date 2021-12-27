@@ -58,4 +58,28 @@ veriflevelsRouter.get(
   veriflevelsController.getDisapprovedWholesalePartnersRequirements
 );
 
+veriflevelsRouter.get(
+  "/getLimitationsByCountry/:id",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.getLimitationsByCountry
+);
+
+veriflevelsRouter.get(
+  "/getVerifLevelRequirements/:id",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.getVerifLevelRequirements
+);
+
+veriflevelsRouter.get(
+  "/getWholesalePartnerRequestsRequirementsByEmail/:id",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail
+);
+
+veriflevelsRouter.get(
+  "/validateRemittance",
+  // guard.verifyAdmin("/login"),
+  veriflevelsController.validateRemittance
+);
+
 export default veriflevelsRouter;

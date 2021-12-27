@@ -40,7 +40,22 @@ veriflevelsPGRepository.requestWholesalePartner = async (body) => {
       '${body.bussiness_name}',
       '${body.web_page_exp}',
       '${body.logo}',
-      '${body.email_user}'
+      '${body.email_user}',
+      ${body.reasons_status},
+      ${body.strenghts_status},
+      ${body.remittance_service_status},
+      ${body.old_resid_client_countries_status},
+      ${body.profession_status},
+      ${body.resid_country_status},
+      ${body.migration_status_status},
+      ${body.new_resid_client_countries_status},
+      ${body.clients_number_status},
+      ${body.monthly_amount_status},
+      ${body.monetary_growth_status},
+      ${body.clients_growth_status},
+      ${body.bussiness_name_status},
+      ${body.web_page_exp_status},
+      ${body.logo_status}
     )`);
     return resp.rows[0].sp_request_wholesale_partner;
   } catch (error) {
@@ -144,6 +159,62 @@ veriflevelsPGRepository.getDisapprovedWholesalePartnersRequirements = async (ema
     console.log(email_user)
     const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements_disapproved(${email_user})`);
     return resp.rows[0].v_wholesale_partners_requests_requirements_disapproved;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getLimitationsByCountry = async (id_country) => {
+  try {
+    logger.info(`[${context}]: Getting Limitations from DB`);
+    ObjLog.log(`[${context}]: Getting Limitations from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(id_country)
+    const resp = await pool.query(`SELECT * FROM get_limitations_by_country(${id_country})`);
+    return resp.rows[0].get_limitations_by_country;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getVerifLevelRequirements = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting requirements from DB`);
+    ObjLog.log(`[${context}]: Getting requirements from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_verif_levels_requirements(${email_user})`);
+    return resp.rows[0].v_verif_levels_requirements;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.getWholesalePartnerRequestsRequirementsByEmail = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting requirements from DB`);
+    ObjLog.log(`[${context}]: Getting requirements from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user)
+    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements_by_email(${email_user})`);
+    return resp.rows[0].v_wholesale_partners_requests_requirements_by_email;
+  } catch (error) {
+    throw error;
+  }
+};
+
+veriflevelsPGRepository.validateRemittance = async (remittance) => {
+  try {
+    logger.info(`[${context}]: prooving from DB`);
+    ObjLog.log(`[${context}]: prooving from DB`);
+
+    await pool.query("SET SCHEMA 'sec_cust'");
+    console.log('remittance',remittance)
+    const resp = await pool.query(`SELECT * FROM validate_remittance('${JSON.stringify(remittance)}')`);
+    return resp.rows[0].validate_remittance;
   } catch (error) {
     throw error;
   }

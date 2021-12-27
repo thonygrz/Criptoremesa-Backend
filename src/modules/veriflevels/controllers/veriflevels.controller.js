@@ -101,4 +101,47 @@ veriflevelsController.getDisapprovedWholesalePartnersRequirements = (req, res, n
   }
 };
 
+veriflevelsController.getLimitationsByCountry = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get Limitations`);
+    ObjLog.log(`[${context}]: Sending service to get Limitations`);
+    veriflevelsService.getLimitationsByCountry(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsController.getVerifLevelRequirements = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get veriflevels requirements`);
+    ObjLog.log(`[${context}]: Sending service to get veriflevels requirements`);
+
+    veriflevelsService.getVerifLevelRequirements(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
+    ObjLog.log(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
+
+    veriflevelsService.getWholesalePartnerRequestsRequirementsByEmail(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+veriflevelsController.validateRemittance = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to proove`);
+    ObjLog.log(`[${context}]: Sending service to proove`);
+
+    veriflevelsService.validateRemittance(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default veriflevelsController;
