@@ -21,6 +21,10 @@ export async function SocketServer(server) {
     ObjLog.log(`[${context}] New connection stablished`);
     // console.log('in connection: ', socket.id)
 
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
+
     socket.on("new_connection", (val) => {
       console.log('socket from FE',socket.id)
       console.log('val ofrom FE',val)
