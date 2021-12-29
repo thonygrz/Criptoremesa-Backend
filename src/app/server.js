@@ -116,7 +116,7 @@ app.use(async function (err, req, res, next) {
   const resp = await authenticationPGRepository.getIpInfo(
     req.connection.remoteAddress
   );
-  const countryResp = null;
+  let countryResp = null;
   let sess = null;
 
   if (resp) countryResp = resp.country_name;
