@@ -154,7 +154,7 @@ passport.use(
             expressObj.userExists = true;
             globalUser = user;
 
-            console.log('user: ',user)
+            // console.log('user: ',user)
 
             await authenticationPGRepository.updateIPUser(
               user.id_uuid,
@@ -172,10 +172,10 @@ passport.use(
 
               await resp(user);
 
-              done(null, user);
-              expressObj.req = req;
+              return done(null, user);
+              // expressObj.req = req;
 
-              return true;
+              // return true;
             }
             logger.error(`[${context}]: User and password do not match`);
             ObjLog.log(`[${context}]: User and password do not match`);
@@ -234,15 +234,16 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   // PASSPORT LOOKS FOR THE ID AND STORE IT IN SESSION
-  // console.log("serialize: ", user);
+  console.log("serialize ");
   if (user) done(null, user.email_user);
 });
 
 passport.deserializeUser(async function (email_user, done) {
   try {
     // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS email_user
+    console.log("deserialize: ");
+
     const user = await authenticationPGRepository.getUserByEmail(email_user);
-    // console.log("deserialize: ", user);
 
     done(null, user);
   } catch (error) {
@@ -295,13 +296,18 @@ export default {
             if (err) {
               return next(err); }
           });
-          // console.log("DENTRO DEL AUTHENTICATE");
-  
-          // console.log("req.session despues de la strategy", req.session);
-          // console.log("req.user despues de la strategy", req.user);
+          
         }
-        
+        console.log("DENTRO DEL AUTHENTICATE");
+  
+        console.log("req.session despues de la strategy", req.session);
+        // console.log("req.user despues de la strategy", req.user);
+
         expressObj.next();
+        req.login(user, function(err) {
+          if (err) {
+            return next(err); }
+        });
       }
       )(req, res, next);
     } catch (error) {
