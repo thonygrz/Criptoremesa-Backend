@@ -13,6 +13,7 @@ export async function SocketServer(server) {
       origin: "*",
       methods: ["GET", "POST"],
     },
+    transports: ['websocket','flashsocket','htmlfile','xhr-polling','jsonp-polling','polling']
   });
   socketServer = io;
 
