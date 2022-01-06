@@ -37,7 +37,7 @@ app.use(json());
 // app.use(express.urlencoded({extended: true}));
 app.use(
   cors({
-    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080"],
+    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080","http://186.185.127.134:8080","http://186.185.127.134:8081"],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
