@@ -44,7 +44,24 @@ app.use(
     credentials: true,
   })
 );
-app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    'default-src': [ "'self'" ],
+    'base-uri': [ "'self'" ],
+    'block-all-mixed-content': [],
+    'font-src': [ "'self'", 'https:', 'data:' ],
+    'frame-ancestors': [ "'self'" ],
+    'img-src': [ "'self'", 'data:' ],
+    'object-src': [ "'none'" ],
+    'script-src': [ "'self'" ],
+    'script-src-attr': [ "'none'" ],
+    'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],
+    'upgrade-insecure-requests': [],
+    "connect-src": ['https:'],
+    'script-src-elem': [ 'https:' ],
+    'frame-src': [ 'https:' ]
+  }
+}));
 app.use(
   session({
     store: new pgSession({
