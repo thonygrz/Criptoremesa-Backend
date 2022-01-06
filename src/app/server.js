@@ -14,10 +14,14 @@ let pgSession = require("connect-pg-simple")(session);
 import pgPool from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
+import history from 'connect-history-api-fallback';
 // import { events } from "../modules/users/services/users.service";
 
 // SETTINGS
 const app = express();
+app.use(history({
+  logger: console.log.bind(console)
+}));
 app.set("port", env.PORT || 3000);
 const opts = {
   multiples: true,
@@ -72,12 +76,12 @@ app.use((req, res, next) => {
 app.use("/cr", routerIndex);
 
 app.use(async (req, res, next) => {
-  console.log('middleware despues de passport y todo el auth')
+  // console.log('middleware despues de passport y todo el auth')
 
-  console.log('middleware')
-  console.log(req.session)
-  console.log(req.user)
-  console.log(req.isAuthenticated())
+  // console.log('middleware')
+  // console.log(req.session)
+  // console.log(req.user)
+  // console.log(req.isAuthenticated())
   
   ObjUserSessionData.set({
     session: {
@@ -107,6 +111,22 @@ app.use(async (req, res, next) => {
 
   next();
 });
+
+// VUE FRONTEND
+
+
+const path = __dirname + '\\statics\\';
+app.use(express.static(path));
+
+console.log('path:',path);
+
+app.get('/', function (req,res) {
+  res.sendFile(path + "index");
+});
+
+// app.get('/registro/pais-de-residencia', function (req,res) {
+//   res.sendFile(path + "index");
+// });
 
 // ERROR HANDLER
 app.use(async function (err, req, res, next) {
