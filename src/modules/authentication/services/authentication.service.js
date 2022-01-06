@@ -67,6 +67,8 @@ authenticationService.protected = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
     console.log('req.isAuthenticated(): ',req.isAuthenticated())
+    console.log('req.session: ',req.session)
+    console.log('req.user: ',req.user)
     if (req.isAuthenticated()) {
       const resp = authenticationPGRepository.getIpInfo(
         req.connection.remoteAddress

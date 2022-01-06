@@ -14,10 +14,14 @@ let pgSession = require("connect-pg-simple")(session);
 import pgPool from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
+import history from 'connect-history-api-fallback';
 // import { events } from "../modules/users/services/users.service";
 
 // SETTINGS
 const app = express();
+app.use(history({
+  logger: console.log.bind(console)
+}));
 app.set("port", env.PORT || 3000);
 const opts = {
   multiples: true,
@@ -33,14 +37,31 @@ app.use(json());
 // app.use(express.urlencoded({extended: true}));
 app.use(
   cors({
-    origin: "http://localhost:8080",
+    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080","http://186.185.127.134:8080","http://186.185.127.134:8081"],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
     credentials: true,
   })
 );
-app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    'default-src': [ "'self'" ],
+    'base-uri': [ "'self'" ],
+    'block-all-mixed-content': [],
+    'font-src': [ "'self'", 'https:', 'data:' ],
+    'frame-ancestors': [ "'self'" ],
+    'img-src': [ "'self'", 'data:' ],
+    'object-src': [ "'none'" ],
+    'script-src': [ "'self'" ],
+    'script-src-attr': [ "'none'" ],
+    'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],
+    'upgrade-insecure-requests': [],
+    "connect-src": ['https:'],
+    'script-src-elem': [ 'https:' ],
+    'frame-src': [ 'https:' ]
+  }
+}));
 app.use(
   session({
     store: new pgSession({
@@ -51,7 +72,7 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
     saveUninitialized: true,
-    cookie: { maxAge: 360000 }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
+    cookie: { maxAge: 120000, secure: false }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
     // maxAge: 60
   })
 );
@@ -77,6 +98,8 @@ app.use(async (req, res, next) => {
   // console.log('middleware')
   // console.log(req.session)
   // console.log(req.user)
+  // console.log(req.isAuthenticated())
+  
   ObjUserSessionData.set({
     session: {
       session_id: req.session.id,
@@ -106,6 +129,22 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// VUE FRONTEND
+
+
+const path = __dirname + '\\statics\\';
+app.use(express.static(path));
+
+console.log('path:',path);
+
+app.get('/', function (req,res) {
+  res.sendFile(path + "index");
+});
+
+// app.get('/registro/pais-de-residencia', function (req,res) {
+//   res.sendFile(path + "index");
+// });
+
 // ERROR HANDLER
 app.use(async function (err, req, res, next) {
   logger.error(err.message);
@@ -114,7 +153,7 @@ app.use(async function (err, req, res, next) {
   const resp = await authenticationPGRepository.getIpInfo(
     req.connection.remoteAddress
   );
-  const countryResp = null;
+  let countryResp = null;
   let sess = null;
 
   if (resp) countryResp = resp.country_name;
