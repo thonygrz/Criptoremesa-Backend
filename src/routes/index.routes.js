@@ -6,6 +6,7 @@ import doc_typesRouter from "../modules/doc_types/doc_types.routes";
 import ip_countriesRouter from "../modules/ip_countries/ip_countries.routes";
 import resid_countriesRouter from "../modules/resid_countries/resid_countries.routes";
 import veriflevelsRouter from "../modules/veriflevels/veriflevels.routes";
+import beneficiariesRouter from "../modules/beneficiaries/beneficiaries.routes";
 
 const router = Router();
 
@@ -27,5 +28,6 @@ router.use("/ip_countries", ip_countriesRouter);
 router.use("/resid_countries", resid_countriesRouter);
 router.use("/doc_types", doc_typesRouter);
 router.use("/veriflevels", veriflevelsRouter);
+router.use("/beneficiaries", beneficiariesRouter);
 
 export default router;
