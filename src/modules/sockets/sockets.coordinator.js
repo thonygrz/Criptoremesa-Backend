@@ -13,6 +13,7 @@ export async function SocketServer(server) {
       origin: "*",
       methods: ["GET", "POST"],
     },
+    transports: ['websocket','flashsocket','htmlfile','xhr-polling','jsonp-polling','polling']
   });
   socketServer = io;
 
@@ -20,6 +21,10 @@ export async function SocketServer(server) {
     logger.info(`[${context}] New connection stablished`);
     ObjLog.log(`[${context}] New connection stablished`);
     // console.log('in connection: ', socket.id)
+
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
 
     socket.on("new_connection", (val) => {
       console.log('socket from FE',socket.id)
