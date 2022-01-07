@@ -16,7 +16,7 @@ const logConst = {
   session: undefined,
 };
 
-beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next) => {
+beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next,userEmail) => {
   try {
     logger.info(`[${context}]: Obtaining info and sending to repository`);
     ObjLog.log(`[${context}]: Obtaining info and sending to repository`);
@@ -24,7 +24,7 @@ beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next) => {
     log.route = log.route + 'frequentBeneficiaries'; 
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress
-    let data = await beneficiariesRepository.getUserFrequentBeneficiaries();
+    let data = await beneficiariesRepository.getUserFrequentBeneficiaries(userEmail);
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
