@@ -9,9 +9,9 @@ beneficiariesPGRepository.getUserFrequentBeneficiaries = async () => {
   try {
     logger.info(`[${context}]: Getting user frequent beneficiaries from db`);
     ObjLog.log(`[${context}]: Getting user frequent beneficiaries from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await pool.query("SET SCHEMA 'prc_mng'");
     const resp = await pool.query(
-      `SELECT * FROM sec_cust.v_ident_doc_type_get_active()`
+      `SELECT * FROM prc_mng.get_all_frequents_beneficiaries('cliente@gmail.com')`
     );
     return resp.rows;
   } catch (error) {

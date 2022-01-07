@@ -327,10 +327,12 @@ authenticationPGRepository.insertLogMsg = async (log) => {
 
 authenticationPGRepository.getIpInfo = async (ip) => {
   try {
+    logger.info(`[${context}]: Getting ipInfo from DB`);
+    ObjLog.log(`[${context}]: Getting ipInfo from DB`);
     await pool.query("SET SCHEMA 'sec_emp'");
     let resp = await pool.query(
       `SELECT *
-    FROM get_ip_info('${ip}')`
+        FROM get_ip_info('${ip}')`
     );
     return resp.rows[0];
   } catch (error) {

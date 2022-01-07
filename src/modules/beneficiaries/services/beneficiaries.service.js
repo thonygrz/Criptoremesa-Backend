@@ -18,31 +18,17 @@ const logConst = {
 
 beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Searching in DB`);
-    ObjLog.log(`[${context}]: Searching in DB`);
-    let countryResp = null;
-    let sess = null;
+    logger.info(`[${context}]: Obtaining info and sending to repository`);
+    ObjLog.log(`[${context}]: Obtaining info and sending to repository`);
     let log  = logConst;
-    log.route+='frequentBeneficiaries'; 
-
+    log.route = log.route + 'frequentBeneficiaries'; 
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress
     let data = await beneficiariesRepository.getUserFrequentBeneficiaries();
-    if (data.length > 0){
-
-    }
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/beneficiaries/frequentBeneficiaries",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
+    if (resp) log.country = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    await authenticationPGRepository.insertLogMsg(log);
 
     res.status(200).json(data);
   } catch (error) {
