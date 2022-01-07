@@ -10,4 +10,22 @@ beneficiariesRouter.get(
   beneficiariesController.getUserFrequentBeneficiaries
 );
 
+beneficiariesRouter.post(
+  "/frequentBeneficiaries",
+  // guard.verifyAdmin("/login"),
+  beneficiariesController.createFrequentBeneficiary
+);
+
+beneficiariesRouter.delete(
+  "/frequentBeneficiaries/:beneficiaryId",
+  // guard.verifyAdmin("/login"),
+  beneficiariesController.deleteFrequentBeneficiary
+);
+
+beneficiariesRouter.put(
+  "/frequentBeneficiaries/:beneficiaryId",
+  // guard.verifyAdmin("/login"),
+  beneficiariesController.updateFrequentBeneficiary
+);
+
 export default beneficiariesRouter;

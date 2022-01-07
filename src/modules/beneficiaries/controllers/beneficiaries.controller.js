@@ -17,4 +17,38 @@ beneficiariesController.getUserFrequentBeneficiaries = (req, res, next) => {
   }
 };
 
+beneficiariesController.createFrequentBeneficiary = (req,res,next) =>{
+  const userEmail = req.query.email_user;
+  try {
+    logger.info(`[${context}]: Sending service to insert ${userEmail} frequent Beneficiary`);
+    ObjLog.log(`[${context}]: Sending service to insert ${userEmail} frequent Beneficiary`);
+
+    beneficiariesService.createFrequentBeneficiary(req, res, next,userEmail);
+  } catch (error) {
+    next(error);
+  }
+}
+
+beneficiariesController.deleteFrequentBeneficiary = (req,res,next) =>{
+  try {
+    logger.info(`[${context}]: Sending service to delete frequent Beneficiary`);
+    ObjLog.log(`[${context}]: Sending service to delete frequent Beneficiary`);
+
+    beneficiariesService.deleteFrequentBeneficiary(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+}
+
+beneficiariesController.updateFrequentBeneficiary = (req,res,next) =>{
+  try {
+    logger.info(`[${context}]: Sending service to update frequent Beneficiary`);
+    ObjLog.log(`[${context}]: Sending service to update frequent Beneficiary`);
+
+    beneficiariesService.updateFrequentBeneficiary(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default beneficiariesController;
