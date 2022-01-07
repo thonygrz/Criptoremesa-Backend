@@ -14,14 +14,10 @@ let pgSession = require("connect-pg-simple")(session);
 import pgPool from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
-import history from 'connect-history-api-fallback';
 // import { events } from "../modules/users/services/users.service";
 
 // SETTINGS
 const app = express();
-app.use(history({
-  logger: console.log.bind(console)
-}));
 app.set("port", env.PORT || 3000);
 const opts = {
   multiples: true,
@@ -37,31 +33,14 @@ app.use(json());
 // app.use(express.urlencoded({extended: true}));
 app.use(
   cors({
-    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080","http://186.185.127.134:8080","http://186.185.127.134:8081"],
+    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080","http://186.185.127.134:8080","http://186.185.127.134:8081","https://localhost:3010","https://ec2-3-17-37-35.us-east-2.compute.amazonaws.com:3010"],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
     credentials: true,
   })
 );
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    'default-src': [ "'self'" ],
-    'base-uri': [ "'self'" ],
-    'block-all-mixed-content': [],
-    'font-src': [ "'self'", 'https:', 'data:' ],
-    'frame-ancestors': [ "'self'" ],
-    'img-src': [ "'self'", 'data:' ],
-    'object-src': [ "'none'" ],
-    'script-src': [ "'self'" ],
-    'script-src-attr': [ "'none'" ],
-    'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],
-    'upgrade-insecure-requests': [],
-    "connect-src": ['https:'],
-    'script-src-elem': [ 'https:' ],
-    'frame-src': [ 'https:' ]
-  }
-}));
+app.use(helmet());
 app.use(
   session({
     store: new pgSession({
@@ -128,22 +107,6 @@ app.use(async (req, res, next) => {
 
   next();
 });
-
-// VUE FRONTEND
-
-
-const path = __dirname + '\\statics\\';
-app.use(express.static(path));
-
-console.log('path:',path);
-
-app.get('/', function (req,res) {
-  res.sendFile(path + "index");
-});
-
-// app.get('/registro/pais-de-residencia', function (req,res) {
-//   res.sendFile(path + "index");
-// });
 
 // ERROR HANDLER
 app.use(async function (err, req, res, next) {
