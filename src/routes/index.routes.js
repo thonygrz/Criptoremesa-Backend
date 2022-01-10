@@ -9,7 +9,7 @@ import veriflevelsRouter from "../modules/veriflevels/veriflevels.routes";
 import beneficiariesRouter from "../modules/beneficiaries/beneficiaries.routes";
 import countriesRouter from "../modules/countries/countries.routes";
 import currenciesRouter from "../modules/currencies/currencies.routes";
-
+import payMethodRouter from '../modules/payMethods/payMethods.routes';
 const router = Router();
 
 router.post("/login", authenticationController.login);
@@ -33,5 +33,6 @@ router.use("/veriflevels", veriflevelsRouter);
 router.use("/beneficiaries", beneficiariesRouter);
 router.use("/countries", countriesRouter);
 router.use("/currencies", currenciesRouter);
+router.use("/pay_methods", payMethodRouter);
 
 export default router;

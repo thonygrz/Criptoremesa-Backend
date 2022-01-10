@@ -25,7 +25,7 @@ currenciesRepository.getDestinyCurrenciesByCountry = async (idCountry) => {
     ObjLog.log(`[${context}]: Getting destiny currencies by Country from db`);
     await pool.query("SET SCHEMA 'msg_app'");
     const resp = await pool.query(
-      `select * from sp_ms_currencies_get_by_country_destiny('{${idCountry}}')`
+      `select * from msg_app.sp_ms_currencies_get_by_country_destiny('{${idCountry}}')`
     );
     return resp.rows;
   } catch (error) {
