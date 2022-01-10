@@ -10,6 +10,7 @@ import beneficiariesRouter from "../modules/beneficiaries/beneficiaries.routes";
 import countriesRouter from "../modules/countries/countries.routes";
 import currenciesRouter from "../modules/currencies/currencies.routes";
 import payMethodRouter from '../modules/payMethods/payMethods.routes';
+import banksRouter from '../modules/banks/banks.routes'
 const router = Router();
 
 router.post("/login", authenticationController.login);
@@ -34,5 +35,6 @@ router.use("/beneficiaries", beneficiariesRouter);
 router.use("/countries", countriesRouter);
 router.use("/currencies", currenciesRouter);
 router.use("/pay_methods", payMethodRouter);
+router.use("/banks", banksRouter);
 
 export default router;
