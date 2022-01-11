@@ -328,6 +328,10 @@ usersController.requestLevelOne3rdQ = async (req, res, next) => {
         route: "/requestLevelOne3rdQ",
         session: sess,
       };
+      authenticationPGRepository.insertLogMsg(log);
+  
+      res.status(401).json({ message: "Unauthorized" });
+    }
     logger.info(`[${context}]: Sending service to request level one`);
     ObjLog.log(`[${context}]: Sending service to request level one`);
 
