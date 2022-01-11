@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import veriflevelsService from "../services/veriflevels.service";
+import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const veriflevelsController = {};
 const context = "veriflevels Controller";

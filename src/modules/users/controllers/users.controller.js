@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import usersService from "../services/users.service";
+import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const usersController = {};
 const context = "users Controller";
