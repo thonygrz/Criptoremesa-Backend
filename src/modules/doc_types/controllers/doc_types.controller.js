@@ -6,7 +6,7 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 const doc_typesController = {};
 const context = "doc_types Controller";
 
-doc_typesController.getDocTypes = (req, res, next) => {
+doc_typesController.getDocTypes = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();

@@ -40,7 +40,7 @@ resid_countriesController.getid_by_name = (req, res, next) => {
   }
 };
 
-resid_countriesController.getISOCodeById = (req, res, next) => {
+resid_countriesController.getISOCodeById = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -78,7 +78,7 @@ resid_countriesController.getISOCodeById = (req, res, next) => {
   }
 };
 
-resid_countriesController.isPolExp = (req, res, next) => {
+resid_countriesController.isPolExp = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
