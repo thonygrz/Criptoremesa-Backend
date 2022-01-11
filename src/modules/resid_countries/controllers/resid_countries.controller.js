@@ -5,6 +5,7 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 
 const resid_countriesController = {};
 const context = "resid_countries Controller";
+let sess = null;
 
 //AUTENTICACION CON PASSPORT
 resid_countriesController.getresid_countries = (req, res, next) => {

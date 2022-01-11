@@ -5,6 +5,7 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 
 const veriflevelsController = {};
 const context = "veriflevels Controller";
+let sess = null;
 
 //AUTENTICACION CON PASSPORT
 veriflevelsController.getveriflevels = (req, res, next) => {

@@ -5,6 +5,7 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 
 const usersController = {};
 const context = "users Controller";
+let sess = null;
 
 //AUTENTICACION CON PASSPORT
 usersController.getusers = (req, res, next) => {

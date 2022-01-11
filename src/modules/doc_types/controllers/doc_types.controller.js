@@ -6,6 +6,8 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 const doc_typesController = {};
 const context = "doc_types Controller";
 
+let sess = null;
+
 doc_typesController.getDocTypes = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
