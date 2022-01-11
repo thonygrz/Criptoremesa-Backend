@@ -18,7 +18,7 @@ veriflevelsController.getveriflevels = (req, res, next) => {
   }
 };
 
-veriflevelsController.requestWholesalePartner = (req, res, next) => {
+veriflevelsController.requestWholesalePartner = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -56,7 +56,7 @@ veriflevelsController.requestWholesalePartner = (req, res, next) => {
   }
 };
 
-veriflevelsController.notifications = (req, res, next) => {
+veriflevelsController.notifications = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -94,7 +94,7 @@ veriflevelsController.notifications = (req, res, next) => {
   }
 };
 
-veriflevelsController.deactivateNotification = (req, res, next) => {
+veriflevelsController.deactivateNotification = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -132,7 +132,7 @@ veriflevelsController.deactivateNotification = (req, res, next) => {
   }
 };
 
-veriflevelsController.readNotification = (req, res, next) => {
+veriflevelsController.readNotification = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -170,7 +170,7 @@ veriflevelsController.readNotification = (req, res, next) => {
   }
 };
 
-veriflevelsController.getWholesalePartnerRequestsCountries = (req, res, next) => {
+veriflevelsController.getWholesalePartnerRequestsCountries = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -207,7 +207,7 @@ veriflevelsController.getWholesalePartnerRequestsCountries = (req, res, next) =>
   }
 };
 
-veriflevelsController.getMigrationStatus = (req, res, next) => {
+veriflevelsController.getMigrationStatus = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -244,7 +244,7 @@ veriflevelsController.getMigrationStatus = (req, res, next) => {
   }
 };
 
-veriflevelsController.getDisapprovedVerifLevelsRequirements = (req, res, next) => {
+veriflevelsController.getDisapprovedVerifLevelsRequirements = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -281,7 +281,7 @@ veriflevelsController.getDisapprovedVerifLevelsRequirements = (req, res, next) =
   }
 };
 
-veriflevelsController.getDisapprovedWholesalePartnersRequirements = (req, res, next) => {
+veriflevelsController.getDisapprovedWholesalePartnersRequirements = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -318,7 +318,7 @@ veriflevelsController.getDisapprovedWholesalePartnersRequirements = (req, res, n
   }
 };
 
-veriflevelsController.getLimitationsByCountry = (req, res, next) => {
+veriflevelsController.getLimitationsByCountry = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -355,7 +355,7 @@ veriflevelsController.getLimitationsByCountry = (req, res, next) => {
   }
 };
 
-veriflevelsController.getVerifLevelRequirements = (req, res, next) => {
+veriflevelsController.getVerifLevelRequirements = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -393,7 +393,7 @@ veriflevelsController.getVerifLevelRequirements = (req, res, next) => {
   }
 };
 
-veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = (req, res, next) => {
+veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -431,7 +431,7 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = (req, res
   }
 };
 
-veriflevelsController.validateRemittance = (req, res, next) => {
+veriflevelsController.validateRemittance = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();

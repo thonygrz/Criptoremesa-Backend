@@ -227,7 +227,7 @@ usersController.files = (req, res, next) => {
   }
 };
 
-usersController.requestLevelOne1stQ = (req, res, next) => {
+usersController.requestLevelOne1stQ = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -265,7 +265,7 @@ usersController.requestLevelOne1stQ = (req, res, next) => {
   }
 };
 
-usersController.requestLevelOne2ndQ = (req, res, next) => {
+usersController.requestLevelOne2ndQ = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -303,7 +303,7 @@ usersController.requestLevelOne2ndQ = (req, res, next) => {
   }
 };
 
-usersController.requestLevelOne3rdQ = (req, res, next) => {
+usersController.requestLevelOne3rdQ = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -389,7 +389,7 @@ usersController.approveLevelOne = (req, res, next) => {
   }
 };
 
-usersController.getLevelQuestions = (req, res, next) => {
+usersController.getLevelQuestions = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
@@ -427,7 +427,7 @@ usersController.getLevelQuestions = (req, res, next) => {
   }
 };
 
-usersController.requestLevelTwo = (req, res, next) => {
+usersController.requestLevelTwo = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
