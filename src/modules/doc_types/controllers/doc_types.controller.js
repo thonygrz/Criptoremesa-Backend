@@ -36,11 +36,12 @@ doc_typesController.getDocTypes = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
 
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to get doc_types`);
-    ObjLog.log(`[${context}]: Sending service to get doc_types`);
+    } else {
+      logger.info(`[${context}]: Sending service to get doc_types`);
+      ObjLog.log(`[${context}]: Sending service to get doc_types`);
 
-    doc_typesService.getDocTypes(req, res, next);
+      doc_typesService.getDocTypes(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
