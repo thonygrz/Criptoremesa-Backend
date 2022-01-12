@@ -11,7 +11,7 @@ beneficiariesPGRepository.getUserFrequentBeneficiaries = async (emailUser) => {
     ObjLog.log(`[${context}]: Getting user frequent beneficiaries from db`);
     await pool.query("SET SCHEMA 'prc_mng'");
     const resp = await pool.query(
-      `SELECT * FROM prc_mng.get_all_frequents_beneficiaries('${emailUser}')`
+      `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_get_all('${emailUser}')`
     );
     return resp.rows;
   } catch (error) {
@@ -25,7 +25,7 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (body,emailUser) => 
     ObjLog.log(`[${context}]: Inserting ${emailUser} new frequent beneficiary to db`);
     await pool.query("SET SCHEMA 'prc_mng'");
     const resp = await pool.query(
-      `SELECT * FROM prc_mng.insert_frequents_beneficiaries(
+      `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_insert(
         '${body.nickname}',
         '${body.owner_name}',
         '${body.identification}',
@@ -44,15 +44,15 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (body,emailUser) => 
   }
 };
 
-beneficiariesPGRepository.deleteFrequentBeneficiary = async (emailUser) => {
+beneficiariesPGRepository.deleteFrequentBeneficiary = async (beneficiaryId) => {
   try {
     logger.info(`[${context}]: Deleting user frequent beneficiary from DB`);
     ObjLog.log(`[${context}]: Deleting user frequent beneficiary from DB`);
-    await pool.query("SET SCHEMA 'prc_mng'");
+    await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM prc_mng.FUNCION('${emailUser}')`
+      `SELECT * FROM sec_cust.sp_ms_frequents_beneficiaries_delete('${beneficiaryId}')`
     );
-    return resp.rows;
+    return resp.rows[0];
   } catch (error) {
     throw error;
   }

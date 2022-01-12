@@ -22,7 +22,6 @@ beneficiariesController.createFrequentBeneficiary = (req,res,next) =>{
   try {
     logger.info(`[${context}]: Sending service to insert ${userEmail} frequent Beneficiary`);
     ObjLog.log(`[${context}]: Sending service to insert ${userEmail} frequent Beneficiary`);
-
     beneficiariesService.createFrequentBeneficiary(req, res, next,userEmail);
   } catch (error) {
     next(error);
@@ -31,10 +30,12 @@ beneficiariesController.createFrequentBeneficiary = (req,res,next) =>{
 
 beneficiariesController.deleteFrequentBeneficiary = (req,res,next) =>{
   try {
+    let beneficiary = req.params.beneficiaryId;
+
     logger.info(`[${context}]: Sending service to delete frequent Beneficiary`);
     ObjLog.log(`[${context}]: Sending service to delete frequent Beneficiary`);
 
-    beneficiariesService.deleteFrequentBeneficiary(req, res, next);
+    beneficiariesService.deleteFrequentBeneficiary(req, res, next,beneficiary);
   } catch (error) {
     next(error);
   }
