@@ -2246,6 +2246,8 @@ usersService.requestLevelTwo = async (req, res, next) => {
 
           // console.log(JSON.parse(fields.answers))
 
+         
+
           await usersPGRepository.requestLevelTwo({
             funds_source: fields.funds_source,
             residency_proof_path: residency_proof_path,
