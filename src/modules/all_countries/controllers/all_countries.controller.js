@@ -6,7 +6,7 @@ const all_countriesController = {};
 const context = "all_countries Controller";
 
 //AUTENTICACION CON PASSPORT
-all_countriesController.getall_countries = (req, res, next) => {
+all_countriesController.getall_countries = async (req, res, next) => {
   try {
     if (!req.isAuthenticated()){
       req.session.destroy();
