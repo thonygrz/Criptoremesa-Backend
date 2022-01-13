@@ -69,11 +69,12 @@ resid_countriesController.getISOCodeById = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to get resid_countries`);
-    ObjLog.log(`[${context}]: Sending service to get resid_countries`);
+    } else {
+      logger.info(`[${context}]: Sending service to get resid_countries`);
+      ObjLog.log(`[${context}]: Sending service to get resid_countries`);
 
-    resid_countriesService.getISOCodeById(req, res, next);
+      resid_countriesService.getISOCodeById(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -107,11 +108,12 @@ resid_countriesController.isPolExp = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to get pol exp country`);
-    ObjLog.log(`[${context}]: Sending service to get pol exp country`);
+    } else {
+      logger.info(`[${context}]: Sending service to get pol exp country`);
+      ObjLog.log(`[${context}]: Sending service to get pol exp country`);
 
-    resid_countriesService.isPolExp(req, res, next);
+      resid_countriesService.isPolExp(req, res, next);
+    }
   } catch (error) {
     next(error);
   }

@@ -256,11 +256,12 @@ usersController.requestLevelOne1stQ = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to request level one`);
-    ObjLog.log(`[${context}]: Sending service to request level one`);
+    } else {
+      logger.info(`[${context}]: Sending service to request level one`);
+      ObjLog.log(`[${context}]: Sending service to request level one`);
 
-    usersService.requestLevelOne1stQ(req, res, next);
+      usersService.requestLevelOne1stQ(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -294,11 +295,12 @@ usersController.requestLevelOne2ndQ = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to request level one`);
-    ObjLog.log(`[${context}]: Sending service to request level one`);
+    } else {
+      logger.info(`[${context}]: Sending service to request level one`);
+      ObjLog.log(`[${context}]: Sending service to request level one`);
 
-    usersService.requestLevelOne2ndQ(req, res, next);
+      usersService.requestLevelOne2ndQ(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -332,11 +334,12 @@ usersController.requestLevelOne3rdQ = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to request level one`);
-    ObjLog.log(`[${context}]: Sending service to request level one`);
+    } else {
+      logger.info(`[${context}]: Sending service to request level one`);
+      ObjLog.log(`[${context}]: Sending service to request level one`);
 
-    usersService.requestLevelOne3rdQ(req, res, next);
+      usersService.requestLevelOne3rdQ(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -422,11 +425,12 @@ usersController.getLevelQuestions = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to get questions`);
-    ObjLog.log(`[${context}]: Sending service to get questions`);
+    } else {
+      logger.info(`[${context}]: Sending service to get questions`);
+      ObjLog.log(`[${context}]: Sending service to get questions`);
 
-    usersService.getLevelQuestions(req, res, next);
+      usersService.getLevelQuestions(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -460,11 +464,12 @@ usersController.requestLevelTwo = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to request level two`);
-    ObjLog.log(`[${context}]: Sending service to request level two`);
+    } else {
+      logger.info(`[${context}]: Sending service to request level two`);
+      ObjLog.log(`[${context}]: Sending service to request level two`);
 
-    usersService.requestLevelTwo(req, res, next);
+      usersService.requestLevelTwo(req, res, next);
+    }
   } catch (error) {
     next(error);
   }

@@ -47,11 +47,12 @@ veriflevelsController.requestWholesalePartner = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to request Wholesale Partner`);
-    ObjLog.log(`[${context}]: Sending service to request Wholesale Partner`);
+    } else {
+      logger.info(`[${context}]: Sending service to request Wholesale Partner`);
+      ObjLog.log(`[${context}]: Sending service to request Wholesale Partner`);
 
-    veriflevelsService.requestWholesalePartner(req, res, next);
+      veriflevelsService.requestWholesalePartner(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -124,11 +125,12 @@ veriflevelsController.deactivateNotification = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to deactivate notification`);
-    ObjLog.log(`[${context}]: Sending service to deactivate notification`);
+    } else {
+      logger.info(`[${context}]: Sending service to deactivate notification`);
+      ObjLog.log(`[${context}]: Sending service to deactivate notification`);
 
-    veriflevelsService.deactivateNotification(req, res, next);
+      veriflevelsService.deactivateNotification(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -162,11 +164,12 @@ veriflevelsController.readNotification = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to read notification`);
-    ObjLog.log(`[${context}]: Sending service to read notification`);
+    } else {
+      logger.info(`[${context}]: Sending service to read notification`);
+      ObjLog.log(`[${context}]: Sending service to read notification`);
 
-    veriflevelsService.readNotification(req, res, next);
+      veriflevelsService.readNotification(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -200,10 +203,11 @@ veriflevelsController.getWholesalePartnerRequestsCountries = async (req, res, ne
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to get countries`);
+      ObjLog.log(`[${context}]: Sending service to get countries`);
+      veriflevelsService.getWholesalePartnerRequestsCountries(req, res, next);
     }
-    logger.info(`[${context}]: Sending service to get countries`);
-    ObjLog.log(`[${context}]: Sending service to get countries`);
-    veriflevelsService.getWholesalePartnerRequestsCountries(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -237,10 +241,11 @@ veriflevelsController.getMigrationStatus = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to get migration status`);
+      ObjLog.log(`[${context}]: Sending service to get migration status`);
+      veriflevelsService.getMigrationStatus(req, res, next);
     }
-    logger.info(`[${context}]: Sending service to get migration status`);
-    ObjLog.log(`[${context}]: Sending service to get migration status`);
-    veriflevelsService.getMigrationStatus(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -274,10 +279,11 @@ veriflevelsController.getDisapprovedVerifLevelsRequirements = async (req, res, n
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+      ObjLog.log(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+      veriflevelsService.getDisapprovedVerifLevelsRequirements(req, res, next);
     }
-    logger.info(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
-    ObjLog.log(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
-    veriflevelsService.getDisapprovedVerifLevelsRequirements(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -311,10 +317,11 @@ veriflevelsController.getDisapprovedWholesalePartnersRequirements = async (req, 
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+      ObjLog.log(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
+      veriflevelsService.getDisapprovedWholesalePartnersRequirements(req, res, next);
     }
-    logger.info(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
-    ObjLog.log(`[${context}]: Sending service to get Disapproved VerifLevels Requirements`);
-    veriflevelsService.getDisapprovedWholesalePartnersRequirements(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -348,10 +355,11 @@ veriflevelsController.getLimitationsByCountry = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to get Limitations`);
+      ObjLog.log(`[${context}]: Sending service to get Limitations`);
+      veriflevelsService.getLimitationsByCountry(req, res, next);
     }
-    logger.info(`[${context}]: Sending service to get Limitations`);
-    ObjLog.log(`[${context}]: Sending service to get Limitations`);
-    veriflevelsService.getLimitationsByCountry(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -385,11 +393,12 @@ veriflevelsController.getVerifLevelRequirements = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to get veriflevels requirements`);
-    ObjLog.log(`[${context}]: Sending service to get veriflevels requirements`);
+    } else {
+      logger.info(`[${context}]: Sending service to get veriflevels requirements`);
+      ObjLog.log(`[${context}]: Sending service to get veriflevels requirements`);
 
-    veriflevelsService.getVerifLevelRequirements(req, res, next);
+      veriflevelsService.getVerifLevelRequirements(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -423,11 +432,12 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (re
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
-    ObjLog.log(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
+    } else {
+      logger.info(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
+      ObjLog.log(`[${context}]: Sending service to get WholesalePartner Requests requirements`);
 
-    veriflevelsService.getWholesalePartnerRequestsRequirementsByEmail(req, res, next);
+      veriflevelsService.getWholesalePartnerRequestsRequirementsByEmail(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -461,11 +471,12 @@ veriflevelsController.validateRemittance = async (req, res, next) => {
       authenticationPGRepository.insertLogMsg(log);
   
       res.status(401).json({ message: "Unauthorized" });
-    }
-    logger.info(`[${context}]: Sending service to proove`);
-    ObjLog.log(`[${context}]: Sending service to proove`);
+    } else {
+      logger.info(`[${context}]: Sending service to proove`);
+      ObjLog.log(`[${context}]: Sending service to proove`);
 
-    veriflevelsService.validateRemittance(req, res, next);
+      veriflevelsService.validateRemittance(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
