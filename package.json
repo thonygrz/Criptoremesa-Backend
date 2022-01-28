@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/LuisRFuentes54/coingroup-backend-template#readme",
   "dependencies": {
+    "@vonage/server-sdk": "^2.10.10",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",

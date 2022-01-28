@@ -10,6 +10,12 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import axios from 'axios'
+const Vonage = require('@vonage/server-sdk')
+
+const vonage = new Vonage({
+  apiKey: "acb1a6c9",
+  apiSecret: "voUwCiMqJHd16RxE"
+})
 
 const usersService = {};
 const context = "users Service";
@@ -2824,6 +2830,37 @@ usersService.getLevelQuestions = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
     // res.status(200).json(respArr);
     res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.sendVerificationCodeBySMS = async (req, res, next) => {
+  try {
+    const from = "Vonage APIs"
+    const to = req.body.phone_number
+    const text = 'Hola bb                       '
+
+    vonage.message.sendSms(from, to, text, (err, responseData) => {
+        if (err) {
+            console.log(err);
+            res.status(200).json({
+              err
+            });
+        } else {
+            if(responseData.messages[0]['status'] === "0") {
+                console.log("Message sent successfully.");
+                res.status(200).json({
+                  msg: "Message sent successfully."
+                });
+            } else {
+                console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+                res.status(200).json({
+                  msg: `Message failed with error: ${responseData.messages[0]['error-text']}`
+                });
+            }
+        }
+    })
   } catch (error) {
     next(error);
   }
