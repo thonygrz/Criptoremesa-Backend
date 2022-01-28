@@ -3,6 +3,8 @@ import ObjLog from "../../../utils/ObjLog";
 import chatPGRepository from "../repositories/chat.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import fs from "fs";
+import formidable from "formidable";
+import { env } from "../../../utils/enviroment";
 
 const chatService = {};
 const context = "chat Service";
@@ -80,7 +82,7 @@ chatService.sendMessage = async (req, res, next) => {
       console.log("fields ", fields);
 
       let file_path =
-        form.uploadDir + `/chat-${fields.email_user}__${files.doc.name}`;
+        form.uploadDir + `/chat-${fields.email_user}__${files.file.name}`;
 
       Object.values(files).forEach((f) => {
         if (
