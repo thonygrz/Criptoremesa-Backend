@@ -2728,12 +2728,8 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
-      let user = await usersPGRepository.getusersClientByEmail(
-        `'${req.body.email_user}'`
-      );
-     
       let atcNumber = await usersPGRepository.getATCNumberByIdCountry(
-        `${user[0].id_resid_country}`
+        `${req.body.id_resid_country}`
       );
       console.log('atcNumber from bd: ',atcNumber)
 
