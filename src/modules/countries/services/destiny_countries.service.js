@@ -17,18 +17,25 @@ const logConst = {
 
 desintCountriesService.getDestinyCountries = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Get destiny Countries`);
-    ObjLog.log(`[${context}]: Get destiny Countries`);
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress
-    let data = await destinyCountriesRepository.getDestinyCountries();
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    await authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+    if (!req.isAuthenticated()){
+      log.success = false;
+      log.failed = true
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }
+    else{
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Get destiny Countries`);
+      ObjLog.log(`[${context}]: Get destiny Countries`);
+      let data = await destinyCountriesRepository.getDestinyCountries();  
+      res.status(200).json(data);
+    }
   } catch (error) {
     next(error);
   }

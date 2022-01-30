@@ -18,21 +18,27 @@ const logConst = {
 
 doc_typesService.getDocTypes = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Get Doc Types`);
-    ObjLog.log(`[${context}]: Get Doc Types`);
+
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
     log.route = log.route+'/getActive';
     let data = {}
-    data = await doc_typesPGRepository.getDocTypes();
-
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    await authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+    if (!req.isAuthenticated()){
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Get Doc Types`);
+      ObjLog.log(`[${context}]: Get Doc Types`);
+      data = await doc_typesPGRepository.getDocTypes();
+      res.status(200).json(data);
+    }
   } catch (error) {
     next(error);
   }
@@ -40,21 +46,28 @@ doc_typesService.getDocTypes = async (req, res, next) => {
 
 doc_typesService.getDocTypeById = async (req, res, next,docTypeId) => {
   try {
-    logger.info(`[${context}]: Get Doc Types`);
-    ObjLog.log(`[${context}]: Get Doc Types`);
+
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
     log.route = log.route+'/:id_doc_type';
     let data = {}
-    data = await doc_typesPGRepository.getDocTypeById(docTypeId);
-
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    await authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+    if (!req.isAuthenticated()){
+        log.success = false;
+        log.failed = true;
+        await authenticationPGRepository.insertLogMsg(log);
+        res.status(401).json({ message: "Unauthorized" });
+    }
+    else{
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Get Doc Types`);
+      ObjLog.log(`[${context}]: Get Doc Types`);
+      data = await doc_typesPGRepository.getDocTypeById(docTypeId);
+      res.status(200).json(data);
+    }
   } catch (error) {
     next(error);
   }
