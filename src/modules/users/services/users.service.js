@@ -2702,7 +2702,6 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     let data = await usersPGRepository.validateEmailAndGenerateCode(
       req.body.email_user
     );
-    console.log("DATA: ", data);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -2722,14 +2721,13 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
-      let user = await usersPGRepository.getusersClientByEmail(
-        `'${req.body.email_user}'`
-      );
+      // let user = await usersPGRepository.getusersClientByEmail(
+      //   `'${req.body.email_user}'`
+      // );
      
       let atcNumber = await usersPGRepository.getATCNumberByIdCountry(
-        `${user[0].id_resid_country}`
+        `${req.body.id_resid_country}`
       );
-      console.log('atcNumber from bd: ',atcNumber)
 
       if (atcNumber.length > 1) atcNumber = atcNumber.join(' / ')
       else atcNumber = atcNumber[0]

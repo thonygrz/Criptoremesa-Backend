@@ -1,6 +1,6 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
-import destinyCountriesRepository from "../repositories/currencies.pg.repository";
+import currencyRepository from "../repositories/currencies.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const currenciesService = {};
@@ -12,7 +12,7 @@ const logConst = {
   ip: undefined,
   country: undefined,
   route: "/currencies",
-  session: undefined,
+  session: null,
 };
 
 currenciesService.getCurrenciesByCountry = async (req, res, next,countryId,origin) => {
@@ -24,9 +24,9 @@ currenciesService.getCurrenciesByCountry = async (req, res, next,countryId,origi
     log.ip = req.connection.remoteAddress;
     let data = {}
     if (origin === true)
-      data = await destinyCountriesRepository.getOriginCurrenciesByCountry(countryId);
+      data = await currencyRepository.getOriginCurrenciesByCountry(countryId);
     else 
-      data = await destinyCountriesRepository.getDestinyCurrenciesByCountry(countryId);
+      data = await currencyRepository.getDestinyCurrenciesByCountry(countryId);
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
@@ -37,5 +37,7 @@ currenciesService.getCurrenciesByCountry = async (req, res, next,countryId,origi
     next(error);
   }
 };
+
+
 
 export default currenciesService;

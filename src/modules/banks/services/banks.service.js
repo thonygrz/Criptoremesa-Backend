@@ -12,7 +12,7 @@ const logConst = {
   ip: undefined,
   country: undefined,
   route: "/banks",
-  session: undefined,
+  session: null,
 };
 
 banksService.getBanks = async (req, res, next,countryId,payMethodId,currencyId,origin) => {
@@ -38,4 +38,22 @@ banksService.getBanks = async (req, res, next,countryId,payMethodId,currencyId,o
   }
 };
 
+banksService.getBankById = async (req, res, next,bankId) => {
+  try {
+    logger.info(`[${context}]: Get bank by id ${bankId}`);
+    ObjLog.log(`[${context}]: Get bank by id ${bankId}`);
+    let log  = logConst;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    let data = {}
+      data = await banksRepository.getBankById(bankId);
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    await authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
 export default banksService;

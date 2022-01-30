@@ -12,7 +12,7 @@ const logConst = {
   ip: undefined,
   country: undefined,
   route: "/countries/destiny",
-  session: undefined,
+  session: null,
 };
 
 desintCountriesService.getDestinyCountries = async (req, res, next) => {

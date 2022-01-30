@@ -5,11 +5,15 @@ const payMethodsRouter = Router();
 
 // IF YOU WERE USING cg/auth/login
 payMethodsRouter.get(
-  "/:idCountry",
+  "/by_country/:country_id",
   // guard.verifyAdmin("/login"),
   payMethodsController.getPayMethodsByCountry
 );
 
-
+payMethodsRouter.get(
+  "/:pay_method_id",
+  // guard.verifyAdmin("/login"),
+  payMethodsController.getPayMethodById
+);
 
 export default payMethodsRouter;

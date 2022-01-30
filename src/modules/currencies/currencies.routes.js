@@ -11,5 +11,4 @@ currenciesRouter.get(
 );
 
 
-
 export default currenciesRouter;
