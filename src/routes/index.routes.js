@@ -11,8 +11,8 @@ import countriesRouter from "../modules/countries/countries.routes";
 import currenciesRouter from "../modules/currencies/currencies.routes";
 import payMethodRouter from '../modules/payMethods/payMethods.routes';
 import banksRouter from '../modules/banks/banks.routes';
-import allCountriesRouter from '../modules/all_countries/all_countries.routes';
-
+import allCountriesRouter from '../modules/all_countries/all_countries.routes'
+import chatRouter from '../modules/chat/chat.routes'
 const router = Router();
 
 router.post("/login", authenticationController.login);
@@ -39,5 +39,6 @@ router.use("/currencies", currenciesRouter);
 router.use("/pay_methods", payMethodRouter);
 router.use("/banks", banksRouter);
 router.use("/all_countries", allCountriesRouter);
+router.use("/chat", chatRouter);
 
 export default router;
