@@ -5,9 +5,15 @@ const chatRouter = Router();
 
 // IF YOU WERE USING cg/auth/login
 chatRouter.post(
-  "/sendMessage",
+  "/message",
   // guard.verifyAdmin("/login"),
   chatController.sendMessage
+);
+
+chatRouter.get(
+  "/message/:email_user",
+  // guard.verifyAdmin("/login"),
+  chatController.getMessages
 );
 
 export default chatRouter;
