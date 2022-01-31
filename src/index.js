@@ -50,4 +50,6 @@ httpsServer.listen(app.get("port"), "0.0.0.0", () => {
 //   ObjLog.log(`Server on port ${app.get("port")}`);
 // });
 
+console.log(app.get('env'))
+
 SocketServer(httpsServer);

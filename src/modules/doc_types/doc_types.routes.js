@@ -11,4 +11,10 @@ doc_typesRouter.get(
   doc_typesController.getDocTypes
 );
 
+doc_typesRouter.get(
+  "/:id_doc_type",
+  // guard.verifyAdmin("/login"),
+  doc_typesController.getDocTypeById
+);
+
 export default doc_typesRouter;

@@ -125,6 +125,7 @@ veriflevelsService.notifications = async (req, res, next) => {
       route: "/veriflevels/notifications",
       session: sess,
     };
+    console.log(log)
     authenticationPGRepository.insertLogMsg(log);
     if (dbResp === null)
       res.status(200).json([]);

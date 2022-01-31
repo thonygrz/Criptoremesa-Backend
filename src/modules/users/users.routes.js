@@ -118,8 +118,6 @@ usersRouter.get(
   usersController.approveLevelCero
 );
 
-
-
 usersRouter.post(
   "/files",
   // guard.verifyAdmin("/login"),
@@ -184,6 +182,12 @@ usersRouter.post(
   "/requestLevelTwo",
   // guard.verifyAdmin("/login"),
   usersController.requestLevelTwo
+);
+
+usersRouter.post(
+  "/sendVerificationCodeBySMS",
+  // guard.verifyAdmin("/login"),
+  usersController.sendVerificationCodeBySMS
 );
 
 export default usersRouter;
