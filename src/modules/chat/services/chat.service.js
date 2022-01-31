@@ -160,6 +160,7 @@ chatService.getMessages = async (req, res, next,email_user) => {
       logger.info(`[${context}]: Getting all messages from chat`);
       ObjLog.log(`[${context}]: Getting all messages from chat`);
       data = await chatPGRepository.getMessages(email_user);
+      data.file = fs.readFileSync(data.file);
       res.status(200).json(data);
     //}
   } catch (error) {
