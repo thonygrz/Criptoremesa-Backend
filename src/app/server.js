@@ -33,7 +33,7 @@ app.use(json());
 // app.use(express.urlencoded({extended: true}));
 app.use(
   cors({
-    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080","http://186.185.127.134:8080","http://186.185.127.134:8081","https://localhost:3010","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3011","https://localhost:3011","https://localhost:8081","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3020","https://localhost:3020"],
+    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080","http://186.185.127.134:8080","http://186.185.127.134:8081","https://localhost:3010","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3011","https://localhost:3011","https://localhost:8081","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3020","https://localhost:3020","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3031","https://localhost:3031"],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
