@@ -342,13 +342,15 @@ authenticationPGRepository.insertLogMsg = async (log) => {
 
 authenticationPGRepository.getIpInfo = async (ip) => {
   try {
+    logger.info(`[${context}]: Getting ipInfo from DB`);
+    ObjLog.log(`[${context}]: Getting ipInfo from DB`);
     await pool.query("SET SCHEMA 'sec_emp'");
 
     console.log('ip a pasar en get_ip_info()', ip);
 
     let resp = await pool.query(
       `SELECT *
-    FROM get_ip_info('${ip}')`
+        FROM get_ip_info('${ip}')`
     );
     console.log('pais de la ip', resp.rows[0]);
     if (resp.rows[0] === undefined) 

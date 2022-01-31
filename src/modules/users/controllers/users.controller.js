@@ -1,9 +1,11 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import usersService from "../services/users.service";
+import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const usersController = {};
 const context = "users Controller";
+let sess = null;
 
 //AUTENTICACION CON PASSPORT
 usersController.getusers = (req, res, next) => {
@@ -226,34 +228,118 @@ usersController.files = (req, res, next) => {
   }
 };
 
-usersController.requestLevelOne1stQ = (req, res, next) => {
+usersController.requestLevelOne1stQ = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to request level one`);
-    ObjLog.log(`[${context}]: Sending service to request level one`);
+    if (!req.isAuthenticated()){
+      req.session.destroy();
+  
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+  
+      if (resp) countryResp = resp.country_name;
+  
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+  
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/requestLevelOne1stQ",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+  
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to request level one`);
+      ObjLog.log(`[${context}]: Sending service to request level one`);
 
-    usersService.requestLevelOne1stQ(req, res, next);
+      usersService.requestLevelOne1stQ(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.requestLevelOne2ndQ = (req, res, next) => {
+usersController.requestLevelOne2ndQ = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to request level one`);
-    ObjLog.log(`[${context}]: Sending service to request level one`);
+    if (!req.isAuthenticated()){
+      req.session.destroy();
+  
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+  
+      if (resp) countryResp = resp.country_name;
+  
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+  
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/requestLevelOne2ndQ",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+  
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to request level one`);
+      ObjLog.log(`[${context}]: Sending service to request level one`);
 
-    usersService.requestLevelOne2ndQ(req, res, next);
+      usersService.requestLevelOne2ndQ(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.requestLevelOne3rdQ = (req, res, next) => {
+usersController.requestLevelOne3rdQ = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to request level one`);
-    ObjLog.log(`[${context}]: Sending service to request level one`);
+    if (!req.isAuthenticated()){
+      req.session.destroy();
+  
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+  
+      if (resp) countryResp = resp.country_name;
+  
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+  
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/requestLevelOne3rdQ",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+  
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to request level one`);
+      ObjLog.log(`[${context}]: Sending service to request level one`);
 
-    usersService.requestLevelOne3rdQ(req, res, next);
+      usersService.requestLevelOne3rdQ(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
@@ -311,23 +397,89 @@ usersController.approveLevelOne = (req, res, next) => {
   }
 };
 
-usersController.getLevelQuestions = (req, res, next) => {
+usersController.getLevelQuestions = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get questions`);
-    ObjLog.log(`[${context}]: Sending service to get questions`);
+    if (!req.isAuthenticated()){
+      req.session.destroy();
+  
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+  
+      if (resp) countryResp = resp.country_name;
+  
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+  
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/getLevelQuestions",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+  
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to get questions`);
+      ObjLog.log(`[${context}]: Sending service to get questions`);
 
-    usersService.getLevelQuestions(req, res, next);
+      usersService.getLevelQuestions(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.requestLevelTwo = (req, res, next) => {
+usersController.requestLevelTwo = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to request level two`);
-    ObjLog.log(`[${context}]: Sending service to request level two`);
+    if (!req.isAuthenticated()){
+      req.session.destroy();
+  
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+  
+      if (resp) countryResp = resp.country_name;
+  
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+  
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/getActirequestLevelTwove",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+  
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to request level two`);
+      ObjLog.log(`[${context}]: Sending service to request level two`);
 
-    usersService.requestLevelTwo(req, res, next);
+      usersService.requestLevelTwo(req, res, next);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.sendVerificationCodeBySMS = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to verify SMS`);
+    ObjLog.log(`[${context}]: Sending service to verify SMS`);
+    usersService.sendVerificationCodeBySMS(req, res, next);
   } catch (error) {
     next(error);
   }
