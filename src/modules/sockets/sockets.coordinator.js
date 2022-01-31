@@ -78,15 +78,7 @@ export async function SocketServer(server) {
       console.log('socket from Sixm',socket.id)
       console.log('val from Sixm',val)
 
-      val = {
-        msg_date_epoch,
-        atc_user_name,
-        atc_user_last_name,
-        file: fs.readFileSync(file),
-        is_sent,
-        message,
-        email_user
-      }
+      val.file = fs.readFileSync(val.file);
       
       notifyChanges('msg_sent', val);
     });
