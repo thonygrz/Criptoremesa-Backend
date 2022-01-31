@@ -161,7 +161,7 @@ chatService.getMessages = async (req, res, next,email_user) => {
       ObjLog.log(`[${context}]: Getting all messages from chat`);
       data = await chatPGRepository.getMessages(email_user);
       data.forEach((el) => {
-        if (el.file && el.type === 'image') {
+        if (el.file !== 'null' && el.type === 'image') {
           el.file = fs.readFileSync(el.file);
         }
       })
