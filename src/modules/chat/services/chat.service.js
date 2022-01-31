@@ -116,7 +116,7 @@ chatService.sendMessage = async (req, res, next) => {
             file_path
           });
 
-          res.status(200).json({ message: "Archivos subidos" });
+          res.status(200).json({ message: "Messages delivered" });
         }
       } catch (error) {
         next(error);
