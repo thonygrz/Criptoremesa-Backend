@@ -3,6 +3,7 @@ import { logger } from "../../utils/logger";
 import ObjLog from "../../utils/ObjLog";
 import redisClient from "../../utils/redis";
 import usersPGRepository from "../../modules/users/repositories/users.pg.repository";
+import fs from "fs";
 
 let socketServer = null;
 const context = "Socket Coordinator";
@@ -76,6 +77,16 @@ export async function SocketServer(server) {
 
       console.log('socket from Sixm',socket.id)
       console.log('val from Sixm',val)
+
+      val = {
+        msg_date_epoch,
+        atc_user_name,
+        atc_user_last_name,
+        file: fs.readFileSync(file),
+        is_sent,
+        message,
+        email_user
+      }
       
       notifyChanges('msg_sent', val);
     });
