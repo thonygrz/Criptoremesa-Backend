@@ -21,4 +21,16 @@ banksController.getBanks = (req, res, next) => {
   }
 };
 
+banksController.getBankById = (req,res,next) =>{
+  try {
+    const bankId = req.params.bank_id;
+    logger.info(`[${context}]: Sending service to get bank by Id ${bankId}`);
+    ObjLog.log(`[${context}]: Sending service to get bank by Id ${bankId}`);
+
+    banksService.getBankById(req, res, next,bankId);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default banksController;

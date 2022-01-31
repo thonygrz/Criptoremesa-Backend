@@ -33,4 +33,18 @@ banksRepository.getDestinyBanks = async (countryId,payMethodId,currencyId) => {
   }
 };
 
+banksRepository.getBankById = async (bankId) => {
+  try {
+    logger.info(`[${context}]: Getting bank by Id ${bankId} from db`);
+    ObjLog.log(`[${context}]: Getting bank by Id ${bankId} from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `select * from sp_ms_bank_by_id(${bankId})`
+    );
+    return resp.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default banksRepository;

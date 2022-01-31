@@ -18,5 +18,17 @@ payMethodsRepository.getPayMethodsByCountry = async (idCountry) => {
     throw error;
   }
 };
-
+payMethodsRepository.getPayMethodById = async (idPayMethod) => {
+  try {
+    logger.info(`[${context}]: Getting Pay Method by id ${idPayMethod} from db`);
+    ObjLog.log(`[${context}]: Getting Pay Method by id ${idPayMethod} from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `select * from sp_ms_pay_methods_by_id_get(${idPayMethod})`
+    );
+    return  resp.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
 export default payMethodsRepository;

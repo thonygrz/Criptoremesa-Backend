@@ -9,7 +9,11 @@ currenciesRouter.get(
   // guard.verifyAdmin("/login"),
   currenciesController.getBanks
 );
-
+currenciesRouter.get(
+  "/:bank_id",
+  // guard.verifyAdmin("/login"),
+  currenciesController.getBankById
+);
 
 
 export default currenciesRouter;
