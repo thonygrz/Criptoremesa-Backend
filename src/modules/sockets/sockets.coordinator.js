@@ -69,6 +69,16 @@ export async function SocketServer(server) {
       
       notifyChanges('level_upgrade', val);
     });
+
+    socket.on("msg_sent", async (val) => {
+      logger.info(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      console.log('socket from Sixm',socket.id)
+      console.log('val from Sixm',val)
+      
+      notifyChanges('msg_sent', val);
+    });
   });
 }
 
@@ -80,7 +90,7 @@ export function notifyChanges(event, data) {
     redisClient.get(data.email_user, function (err, reply) {
       // reply is null when the key is missing
       console.log("redis reply: ", reply);
-      console.log("socket sending: ", data);
+      console.log("socket sending to FE: ", data);
       socketServer.sockets.to(reply).emit(event, data);
     });
 
