@@ -92,7 +92,7 @@ chatService.sendMessage = async (req, res, next) => {
 
       let file_path = null;
 
-      if (files.file || files.file.size > 0)
+      if (files.file !== undefined && files.file.size > 0)
         file_path = form.uploadDir + `/chat-${fields.email_user}__${files.file.name}`;
 
       Object.values(files).forEach((f) => {
