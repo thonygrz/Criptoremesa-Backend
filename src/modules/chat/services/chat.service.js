@@ -90,8 +90,10 @@ chatService.sendMessage = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      let file_path =
-        form.uploadDir + `/chat-${fields.email_user}__${files.file.name}`;
+      let file_path = null;
+
+      if (files.file || files.file.size > 0)
+        file_path = form.uploadDir + `/chat-${fields.email_user}__${files.file.name}`;
 
       Object.values(files).forEach((f) => {
         if (
@@ -115,7 +117,7 @@ chatService.sendMessage = async (req, res, next) => {
       });
       try {
         if (!fileError) {
-          console.log("FILE: ", file_path);
+          // console.log("FILE: ", file_path);
           console.log("a la bd: ", {
             ...fields,
             file_path
