@@ -23,4 +23,17 @@ chatPGRepository.sendMessage = async (body) => {
   }
 };
 
+chatPGRepository.getMessages = async (user_email) => {
+  try {
+    logger.info(`[${context}]: Getting messages from db`);
+    ObjLog.log(`[${context}]: Getting messages from db`);
+    const resp = await pool.query(
+      `SELECT * FROM msg_app.sp_chat_msgs_get_by_email('${user_email}')`
+    );
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default chatPGRepository;
