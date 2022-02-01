@@ -60,7 +60,7 @@ chatService.sendMessage = async (req, res, next) => {
           part.mime === "image/jpeg" ||
           part.mime === "image/gif" ||
           part.mime === "application/pdf" ||
-          part.mime === "application/octet-stream" ||
+          part.mime === "audio/webm" ||
           part.mime === null
         )
       ) {
@@ -103,7 +103,7 @@ chatService.sendMessage = async (req, res, next) => {
           f.type === "image/jpeg" ||
           f.type === "image/gif" ||
           f.type === "application/pdf" ||
-          f.type === "application/octet-stream"
+          f.type === "audio/webm"
         ) {
           fs.rename(
             f.path,
