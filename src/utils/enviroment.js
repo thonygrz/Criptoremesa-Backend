@@ -12,5 +12,7 @@ export const env = {
     PG_DB_PASSWORD: process.env.PG_DB_PASSWORD,
     reCAPTCHA_SECRET_KEY: process.env.reCAPTCHA_SECRET_KEY,
     FILES_DIR: process.env.FILES_DIR,
-    MAIL_SENDER: process.env.MAIL_SENDER
+    MAIL_SENDER: process.env.MAIL_SENDER,
+    TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN
 };

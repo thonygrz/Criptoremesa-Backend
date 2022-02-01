@@ -10,12 +10,7 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import axios from 'axios'
-import Vonage from '@vonage/server-sdk';
-
-const vonage = new Vonage({
-  apiKey: "acb1a6c9",
-  apiSecret: "voUwCiMqJHd16RxE"
-})
+const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
 
 const usersService = {};
 const context = "users Service";
@@ -2831,40 +2826,13 @@ usersService.getLevelQuestions = async (req, res, next) => {
 
 usersService.sendVerificationCodeBySMS = async (req, res, next) => {
   try {
-    const from = "Vonage APIs"
-    const to = req.body.phone_number
-    const text = 'Hola bb                       '
-
-    const vonage = new Vonage({
-      apiKey: "acb1a6c9",
-      apiSecret: "voUwCiMqJHd16RxE",
-      applicationId: 'c70ebabf-226a-4809-be00-3a1dc3fddaca',
-      privateKey: './private.key'
-    });
-
-    // vonage.channel.send(
-    //   { "type": "sms", "number": to },
-    //   { "type": "sms", "number": "Vonage" },
-    //   {
-    //     "content": {
-    //       "type": "text",
-    //       "text": text
-    //     }
-    //   },
-    //   (err, responseData) => {
-    //     if (err) {
-    //       console.log("Message failed with error:", err);
-    //     } else {
-    //       console.log(`Message ${responseData.message_uuid} sent successfully.`);
-    //     }
-    //   }
-    // );
-
-    // Sending SMS via Vonage
-  vonage.message.sendSms(
-    from, to, text, {type: 'unicode'},
-    (err, responseData) => {if (responseData) {console.log(responseData)}}
-  );
+    client.messages.create({
+      body: 'Probando SMS',
+      from: '+17653024583',
+      to: '+584241668983'
+    })
+    .then((message) => console.log(message))
+    .catch((err) => console.log(err))
   } catch (error) {
     next(error);
   }
