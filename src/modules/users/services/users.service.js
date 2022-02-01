@@ -2836,29 +2836,35 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
     const text = 'Hola bb                       '
 
     const vonage = new Vonage({
-      // apiKey: "acb1a6c9",
-      // apiSecret: "voUwCiMqJHd16RxE",
+      apiKey: "acb1a6c9",
+      apiSecret: "voUwCiMqJHd16RxE",
       applicationId: 'c70ebabf-226a-4809-be00-3a1dc3fddaca',
       privateKey: './private.key'
     });
 
-    vonage.channel.send(
-      { "type": "sms", "number": to },
-      { "type": "sms", "number": "Vonage" },
-      {
-        "content": {
-          "type": "text",
-          "text": text
-        }
-      },
-      (err, responseData) => {
-        if (err) {
-          console.log("Message failed with error:", err);
-        } else {
-          console.log(`Message ${responseData.message_uuid} sent successfully.`);
-        }
-      }
-    );
+    // vonage.channel.send(
+    //   { "type": "sms", "number": to },
+    //   { "type": "sms", "number": "Vonage" },
+    //   {
+    //     "content": {
+    //       "type": "text",
+    //       "text": text
+    //     }
+    //   },
+    //   (err, responseData) => {
+    //     if (err) {
+    //       console.log("Message failed with error:", err);
+    //     } else {
+    //       console.log(`Message ${responseData.message_uuid} sent successfully.`);
+    //     }
+    //   }
+    // );
+
+    // Sending SMS via Vonage
+  vonage.message.sendSms(
+    from, to, text, {type: 'unicode'},
+    (err, responseData) => {if (responseData) {console.log(responseData)}}
+  );
   } catch (error) {
     next(error);
   }
