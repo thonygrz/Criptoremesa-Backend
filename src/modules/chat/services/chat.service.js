@@ -164,7 +164,7 @@ chatService.getMessages = async (req, res, next,email_user) => {
       data = await chatPGRepository.getMessages(email_user);
       console.log('data: ',data)
       data.forEach((el) => {
-        if (el.file !== 'null' && el.type === 'image') {
+        if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
           el.file = fs.readFileSync(el.file);
         }
       })
