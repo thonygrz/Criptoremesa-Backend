@@ -2835,6 +2835,13 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
     const to = req.body.phone_number
     const text = 'Hola bb                       '
 
+    const vonage = new Vonage({
+      // apiKey: "acb1a6c9",
+      // apiSecret: "voUwCiMqJHd16RxE",
+      applicationId: 'c70ebabf-226a-4809-be00-3a1dc3fddaca',
+      privateKey: './private.key'
+    });
+
     vonage.channel.send(
       { "type": "sms", "number": to },
       { "type": "sms", "number": "Vonage" },
