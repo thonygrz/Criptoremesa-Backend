@@ -60,6 +60,7 @@ chatService.sendMessage = async (req, res, next) => {
           part.mime === "image/jpeg" ||
           part.mime === "image/gif" ||
           part.mime === "application/pdf" ||
+          part.mime === "application/octet-stream" ||
           part.mime === null
         )
       ) {
