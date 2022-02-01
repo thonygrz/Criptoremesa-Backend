@@ -10,7 +10,7 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import axios from 'axios'
-const Vonage = require('@vonage/server-sdk')
+import Vonage from '@vonage/server-sdk';
 
 const vonage = new Vonage({
   apiKey: "acb1a6c9",
