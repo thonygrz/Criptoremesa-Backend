@@ -2827,12 +2827,17 @@ usersService.getLevelQuestions = async (req, res, next) => {
 usersService.sendVerificationCodeBySMS = async (req, res, next) => {
   try {
     client.messages.create({
-      body: 'Probando SMS',
+      body: req.body.msg,
       from: '+17653024583',
-      to: '+584241668983'
+      to: req.body.phone_number
     })
-    .then((message) => console.log(message))
-    .catch((err) => console.log(err))
+    .then((message) => {
+      console.log(message)
+      res.status(200).json(message);
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   } catch (error) {
     next(error);
   }
