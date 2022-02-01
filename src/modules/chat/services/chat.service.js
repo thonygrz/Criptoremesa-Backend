@@ -102,7 +102,8 @@ chatService.sendMessage = async (req, res, next) => {
           f.type === "image/jpg" ||
           f.type === "image/jpeg" ||
           f.type === "image/gif" ||
-          f.type === "application/pdf"
+          f.type === "application/pdf" ||
+          f.type === "application/octet-stream"
         ) {
           fs.rename(
             f.path,
