@@ -10,7 +10,7 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import axios from 'axios'
-const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
+// const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
 
 const usersService = {};
 const context = "users Service";
@@ -2826,18 +2826,18 @@ usersService.getLevelQuestions = async (req, res, next) => {
 
 usersService.sendVerificationCodeBySMS = async (req, res, next) => {
   try {
-    client.messages.create({
-      body: req.body.msg,
-      from: '+17653024583',
-      to: req.body.phone_number
-    })
-    .then((message) => {
-      console.log(message)
-      res.status(200).json(message);
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    // client.messages.create({
+    //   body: req.body.msg,
+    //   from: '+17653024583',
+    //   to: req.body.phone_number
+    // })
+    // .then((message) => {
+    //   console.log(message)
+    //   res.status(200).json(message);
+    // })
+    // .catch((err) => {
+    //   console.log(err)
+    // })
   } catch (error) {
     next(error);
   }
