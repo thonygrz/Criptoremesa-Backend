@@ -2835,26 +2835,23 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
     const to = req.body.phone_number
     const text = 'Hola bb                       '
 
-    vonage.message.sendSms(from, to, text, (err, responseData) => {
-        if (err) {
-            console.log(err);
-            res.status(200).json({
-              err
-            });
-        } else {
-            if(responseData.messages[0]['status'] === "0") {
-                console.log("Message sent successfully.");
-                res.status(200).json({
-                  msg: "Message sent successfully."
-                });
-            } else {
-                console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-                res.status(200).json({
-                  msg: `Message failed with error: ${responseData.messages[0]['error-text']}`
-                });
-            }
+    vonage.channel.send(
+      { "type": "sms", "number": to },
+      { "type": "sms", "number": "Vonage" },
+      {
+        "content": {
+          "type": "text",
+          "text": text
         }
-    })
+      },
+      (err, responseData) => {
+        if (err) {
+          console.log("Message failed with error:", err);
+        } else {
+          console.log(`Message ${responseData.message_uuid} sent successfully.`);
+        }
+      }
+    );
   } catch (error) {
     next(error);
   }
