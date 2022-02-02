@@ -50,7 +50,7 @@ export async function SocketServer(server) {
         if (val.msg === 'Time started')
           data = val
         else 
-          data = await usersPGRepository.verifCode(val.email_user,val.code);
+          data = await usersPGRepository.verifCode(val.ident_user,val.code);
 
         console.log('DATA:',data)
 

@@ -167,6 +167,18 @@ usersRouter.post(
 );
 
 usersRouter.post(
+  "/sendSMS",
+  // guard.verifyAdmin("/login"),
+  usersController.sendSMS
+);
+
+usersRouter.post(
+  "/sendVerificationCodeBySMS",
+  // guard.verifyAdmin("/login"),
+  usersController.sendVerificationCodeBySMS
+);
+
+usersRouter.post(
   "/approveLevelOne",
   // guard.verifyAdmin("/login"),
   usersController.approveLevelOne

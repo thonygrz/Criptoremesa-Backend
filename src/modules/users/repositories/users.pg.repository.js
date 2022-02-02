@@ -735,15 +735,15 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   }
 };
 
-usersPGRepository.validateEmailAndGenerateCode = async (email_user) => {
+usersPGRepository.generateCode = async (email_user,mode) => {
   try {
-    logger.info(`[${context}]: Verifying email in db`);
-    ObjLog.log(`[${context}]: Verifying email in db`);
+    logger.info(`[${context}]: Generating code in db`);
+    ObjLog.log(`[${context}]: Generating code in db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM sp_validate_email_and_generate_code('${email_user}')`
+      `SELECT * FROM sp_generate_code('${email_user}','${mode}')`
     );
-    return resp.rows[0].sp_validate_email_and_generate_code;
+    return resp.rows[0].sp_generate_code;
   } catch (error) {
     throw error;
   }

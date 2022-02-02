@@ -386,6 +386,26 @@ usersController.sendVerificationCodeByEmail = (req, res, next) => {
   }
 };
 
+usersController.sendSMS = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to send SMS`);
+    ObjLog.log(`[${context}]: Sending service to send SMS`);
+    usersService.sendSMS(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.sendVerificationCodeBySMS = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to verify SMS`);
+    ObjLog.log(`[${context}]: Sending service to verify SMS`);
+    usersService.sendVerificationCodeBySMS(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 usersController.approveLevelOne = (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to approve level one`);
