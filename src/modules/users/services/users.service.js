@@ -2578,6 +2578,12 @@ usersService.forgotPassword = async (req, res, next) => {
         atcNumber
       });
 
+      if (mailResp.error)
+        res.status(500).json({
+          msg: data.msg,
+          mailResp,
+        });
+
       res.status(200).json({
         msg: data.msg,
         mailResp,
