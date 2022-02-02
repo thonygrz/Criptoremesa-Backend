@@ -892,8 +892,7 @@ usersPGRepository.deactivateUser = async (email_user) => {
     const resp = await pool.query(
       `SELECT * FROM SP_DEACTIVATE_USER('${email_user}')`
     );
-    console.log('leggando de bd: ',resp.rows[0])
-    if (resp.rows[0]) return resp.rows[0].SP_DEACTIVATE_USER;
+    if (resp.rows[0]) return resp.rows[0].sp_deactivate_user;
     else return null;
   } catch (error) {
     throw error;
