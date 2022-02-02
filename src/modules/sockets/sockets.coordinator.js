@@ -3,6 +3,7 @@ import { logger } from "../../utils/logger";
 import ObjLog from "../../utils/ObjLog";
 import redisClient from "../../utils/redis";
 import usersPGRepository from "../../modules/users/repositories/users.pg.repository";
+import fs from "fs";
 
 let socketServer = null;
 const context = "Socket Coordinator";
@@ -49,7 +50,7 @@ export async function SocketServer(server) {
         if (val.msg === 'Time started')
           data = val
         else 
-          data = await usersPGRepository.verifCode(val.email_user,val.code);
+          data = await usersPGRepository.verifCode(val.ident_user,val.code);
 
         console.log('DATA:',data)
 
@@ -69,6 +70,19 @@ export async function SocketServer(server) {
       
       notifyChanges('level_upgrade', val);
     });
+
+    socket.on("msg_sent", async (val) => {
+      logger.info(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      console.log('socket from Sixm',socket.id)
+      console.log('val from Sixm',val)
+
+      if (val.file !== 'null')
+        val.file = fs.readFileSync(val.file);
+      
+      notifyChanges('msg_sent', val);
+    });
   });
 }
 
@@ -80,7 +94,7 @@ export function notifyChanges(event, data) {
     redisClient.get(data.email_user, function (err, reply) {
       // reply is null when the key is missing
       console.log("redis reply: ", reply);
-      console.log("socket sending: ", data);
+      console.log("socket sending to FE: ", data);
       socketServer.sockets.to(reply).emit(event, data);
     });
 

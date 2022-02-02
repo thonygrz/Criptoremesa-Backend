@@ -16,5 +16,18 @@ chatController.sendMessage = (req, res, next) => {
   }
 };
 
+chatController.getMessages = (req, res, next) => {
+  try {
+    let email_user = req.params.email_user;
+    console.log(email_user)
+    logger.info(`[${context}]: Sending service to get all message`);
+    ObjLog.log(`[${context}]: Sending service to get all message`);
+
+    chatService.getMessages(req, res, next,email_user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export default chatController;

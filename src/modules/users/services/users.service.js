@@ -10,12 +10,7 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import axios from 'axios'
-const Vonage = require('@vonage/server-sdk')
-
-const vonage = new Vonage({
-  apiKey: "acb1a6c9",
-  apiSecret: "voUwCiMqJHd16RxE"
-})
+const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
 
 const usersService = {};
 const context = "users Service";
@@ -2705,8 +2700,9 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await usersPGRepository.validateEmailAndGenerateCode(
-      req.body.email_user
+    let data = await usersPGRepository.generateCode(
+      req.body.email_user,
+      'email'
     );
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
@@ -2744,7 +2740,7 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
         msg: data.msg,
         mailResp,
       });
-    } else if (data.msg === "The email does not exist") {
+    } else if (data.msg === "An error ocurred generating code.") {
       res.status(400).json({ msg: data.msg });
     }
   } catch (error) {
@@ -2831,29 +2827,64 @@ usersService.getLevelQuestions = async (req, res, next) => {
 
 usersService.sendVerificationCodeBySMS = async (req, res, next) => {
   try {
-    const from = "Vonage APIs"
-    const to = req.body.phone_number
-    const text = 'Hola bb                       '
 
-    vonage.message.sendSms(from, to, text, (err, responseData) => {
-        if (err) {
-            console.log(err);
-            res.status(200).json({
-              err
-            });
-        } else {
-            if(responseData.messages[0]['status'] === "0") {
-                console.log("Message sent successfully.");
-                res.status(200).json({
-                  msg: "Message sent successfully."
-                });
-            } else {
-                console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-                res.status(200).json({
-                  msg: `Message failed with error: ${responseData.messages[0]['error-text']}`
-                });
-            }
-        }
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.generateCode(req.body.main_phone_full,'sms');
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/sendVerificationCodeBySMS",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    if (data.msg === "Code generated") {
+        client.messages.create({
+        body: `💰<Criptoremesa>💰 Su código de verificación es ${data.code}. No lo compartas con nadie.`,
+        from: '+17653024583',
+        to: req.body.main_phone_full
+      })
+      .then((message) => {
+        res.status(200).json({
+          msg: data.msg
+        });
+      })
+      .catch((err) => {
+        res.status(400).json({ msg: data.msg });
+      })
+    } else if (data.msg === "An error ocurred generating code.") {
+      res.status(400).json({ msg: data.msg });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.sendSMS = async (req, res, next) => {
+  try {
+    client.messages.create({
+    body: req.body.msg,
+    from: '+17653024583',
+    to: req.body.phone_number
+    })
+    .then((message) => {
+      console.log(message)
+      res.status(200).json(message);
+    })
+    .catch((err) => {
+      console.log(err)
     })
   } catch (error) {
     next(error);
