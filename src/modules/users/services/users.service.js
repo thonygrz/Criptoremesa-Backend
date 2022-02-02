@@ -2854,7 +2854,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
         client.messages.create({
         body: `<Criptoremesa> Su código de verificación es ${data.code}. No lo compartas con nadie.`,
         from: '+17653024583',
-        to: req.body.phone_number
+        to: req.body.main_phone_full
       })
       .then((message) => {
         res.status(200).json({
