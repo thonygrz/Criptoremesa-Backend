@@ -202,4 +202,10 @@ usersRouter.post(
   usersController.sendVerificationCodeBySMS
 );
 
+usersRouter.post(
+  "/verifyIdentUser",
+  // guard.verifyAdmin("/login"),
+  usersController.verifyIdentUser
+);
+
 export default usersRouter;

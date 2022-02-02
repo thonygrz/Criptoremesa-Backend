@@ -866,4 +866,22 @@ usersPGRepository.getATCNumberByIdCountry = async (id) => {
   }
 };
 
+usersPGRepository.verifyIdentUser = async (email_user,phone_number) => {
+  try {
+    logger.info(`[${context}]: Verifying ident user on db`);
+    ObjLog.log(`[${context}]: Verifying ident user on db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM verif_ident_user(
+        '${email_user}',
+        '${phone_number}'
+        )`
+    );
+    if (resp.rows[0]) return resp.rows[0].verif_ident_user;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;

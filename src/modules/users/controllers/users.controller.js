@@ -505,4 +505,14 @@ usersController.sendVerificationCodeBySMS = (req, res, next) => {
   }
 };
 
+usersController.verifyIdentUser = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to verify ident user`);
+    ObjLog.log(`[${context}]: Sending service to verify ident user`);
+    usersService.verifyIdentUser(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;

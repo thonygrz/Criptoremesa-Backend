@@ -2578,12 +2578,6 @@ usersService.forgotPassword = async (req, res, next) => {
         atcNumber
       });
 
-      if (mailResp.error)
-        res.status(500).json({
-          msg: data.msg,
-          mailResp,
-        });
-
       res.status(200).json({
         msg: data.msg,
         mailResp,
@@ -2892,6 +2886,37 @@ usersService.sendSMS = async (req, res, next) => {
     .catch((err) => {
       console.log(err)
     })
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.verifyIdentUser = async (req, res, next) => {
+  try {
+
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.verifyIdentUser(req.body.email_user.req.body.phone_number);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/verifyIdentUser",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
