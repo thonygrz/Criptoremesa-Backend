@@ -2852,14 +2852,13 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
 
     if (data.msg === "Code generated") {
         client.messages.create({
-        body: `<Criptoremesa> Su código de verificación es ${data.code}. No lo compartas con nadie.`,
+        body: `💰<Criptoremesa>💰 Su código de verificación es ${data.code}. No lo compartas con nadie.`,
         from: '+17653024583',
         to: req.body.main_phone_full
       })
       .then((message) => {
         res.status(200).json({
-          msg: data.msg,
-          sms_msg: message
+          msg: data.msg
         });
       })
       .catch((err) => {
