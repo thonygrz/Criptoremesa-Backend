@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import currencyRepository from "../repositories/currencies.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-
+import {env, ENVIROMENTS} from '../../../utils/enviroment'
 const currenciesService = {};
 const context = "destiny Countries Service";
 const logConst = {
@@ -25,7 +25,7 @@ currenciesService.getCurrenciesByCountry = async (req, res, next,countryId,origi
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.failed = true;
       log.success = false;
       await authenticationPGRepository.insertLogMsg(log);

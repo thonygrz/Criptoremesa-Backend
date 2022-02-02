@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import doc_typesService from "../services/doc_types.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
 const doc_typesController = {};
 const context = "doc_types Controller";
 
@@ -10,7 +10,7 @@ let sess = null;
 
 doc_typesController.getDocTypes = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
@@ -49,7 +49,7 @@ doc_typesController.getDocTypes = async (req, res, next) => {
 doc_typesController.getDocTypeById = async (req, res, next) => {
   try {
     let docTypeId = req.params.id_doc_type
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(

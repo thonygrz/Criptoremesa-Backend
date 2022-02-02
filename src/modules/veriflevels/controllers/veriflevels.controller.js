@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import veriflevelsService from "../services/veriflevels.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
 const veriflevelsController = {};
 const context = "veriflevels Controller";
 let sess = null;
@@ -21,7 +21,7 @@ veriflevelsController.getveriflevels = (req, res, next) => {
 
 veriflevelsController.requestWholesalePartner = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -60,7 +60,7 @@ veriflevelsController.requestWholesalePartner = async (req, res, next) => {
 
 veriflevelsController.notifications = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -99,7 +99,7 @@ veriflevelsController.notifications = async (req, res, next) => {
 
 veriflevelsController.deactivateNotification = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -138,7 +138,7 @@ veriflevelsController.deactivateNotification = async (req, res, next) => {
 
 veriflevelsController.readNotification = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -177,7 +177,7 @@ veriflevelsController.readNotification = async (req, res, next) => {
 
 veriflevelsController.getWholesalePartnerRequestsCountries = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -215,7 +215,7 @@ veriflevelsController.getWholesalePartnerRequestsCountries = async (req, res, ne
 
 veriflevelsController.getMigrationStatus = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -253,7 +253,7 @@ veriflevelsController.getMigrationStatus = async (req, res, next) => {
 
 veriflevelsController.getDisapprovedVerifLevelsRequirements = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -291,7 +291,7 @@ veriflevelsController.getDisapprovedVerifLevelsRequirements = async (req, res, n
 
 veriflevelsController.getDisapprovedWholesalePartnersRequirements = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -329,7 +329,7 @@ veriflevelsController.getDisapprovedWholesalePartnersRequirements = async (req, 
 
 veriflevelsController.getLimitationsByCountry = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -367,7 +367,7 @@ veriflevelsController.getLimitationsByCountry = async (req, res, next) => {
 
 veriflevelsController.getVerifLevelRequirements = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -406,7 +406,7 @@ veriflevelsController.getVerifLevelRequirements = async (req, res, next) => {
 
 veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -445,7 +445,7 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (re
 
 veriflevelsController.validateRemittance = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(

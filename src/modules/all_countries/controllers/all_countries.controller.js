@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import all_countriesService from "../services/all_countries.service";
+import { env,ENVIROMENTS } from "../../../utils/enviroment"
 
 const all_countriesController = {};
 const context = "all_countries Controller";
@@ -8,7 +9,7 @@ const context = "all_countries Controller";
 //AUTENTICACION CON PASSPORT
 all_countriesController.getall_countries = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(

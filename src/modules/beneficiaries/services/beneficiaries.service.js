@@ -3,7 +3,7 @@ import ObjLog from "../../../utils/ObjLog";
 import beneficiariesRepository from "../repositories/beneficiaries.pg.repository";
 import auth from "../../../utils/auth";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
 const beneficiariesService = {};
 const context = "beneficiaries Service";
 const logConst = {
@@ -25,7 +25,7 @@ beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next,userEm
      const ipInfo = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
      if (ipInfo) log.country = ipInfo.country_name;
      if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-     if (!req.isAuthenticated()){
+     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
         log.success = false;
         log.failed = true;
         await authenticationPGRepository.insertLogMsg(log);
@@ -52,7 +52,7 @@ beneficiariesService.createFrequentBeneficiary = async (req, res, next,userEmail
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
       await authenticationPGRepository.insertLogMsg(log);
@@ -82,7 +82,7 @@ beneficiariesService.deleteFrequentBeneficiary = async (req, res, next,beneficia
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.failed = true;
       log.success = false;
       await authenticationPGRepository.insertLogMsg(log);
@@ -109,7 +109,7 @@ beneficiariesService.updateFrequentBeneficiary = async (req, res, next,beneficia
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
       await authenticationPGRepository.insertLogMsg(log);

@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import usersService from "../services/users.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-
+import { env,ENVIROMENTS } from "../../../utils/enviroment";
 const usersController = {};
 const context = "users Controller";
 let sess = null;
@@ -230,7 +230,7 @@ usersController.files = (req, res, next) => {
 
 usersController.requestLevelOne1stQ = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -269,7 +269,7 @@ usersController.requestLevelOne1stQ = async (req, res, next) => {
 
 usersController.requestLevelOne2ndQ = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -308,7 +308,7 @@ usersController.requestLevelOne2ndQ = async (req, res, next) => {
 
 usersController.requestLevelOne3rdQ = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -419,7 +419,7 @@ usersController.approveLevelOne = (req, res, next) => {
 
 usersController.getLevelQuestions = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -458,7 +458,7 @@ usersController.getLevelQuestions = async (req, res, next) => {
 
 usersController.requestLevelTwo = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(

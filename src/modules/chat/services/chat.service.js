@@ -4,7 +4,7 @@ import chatPGRepository from "../repositories/chat.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import fs from "fs";
 import formidable from "formidable";
-import { env } from "../../../utils/enviroment";
+import { env, ENVIROMENTS } from "../../../utils/enviroment";
 
 const chatService = {};
 const context = "chat Service";
@@ -151,7 +151,7 @@ chatService.getMessages = async (req, res, next,email_user) => {
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    // if (!req.isAuthenticated()){
+    // if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
     //   log.success = false;
     //   log.failed = true;
     //   await authenticationPGRepository.insertLogMsg(log);
