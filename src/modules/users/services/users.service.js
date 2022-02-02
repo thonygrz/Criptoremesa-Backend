@@ -2897,7 +2897,7 @@ usersService.verifyIdentUser = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await usersPGRepository.verifyIdentUser(req.body.email_user.req.body.phone_number);
+    let data = await usersPGRepository.verifyIdentUser(req.body.email_user,req.body.phone_number);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
