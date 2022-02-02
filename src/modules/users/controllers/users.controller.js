@@ -515,4 +515,14 @@ usersController.verifyIdentUser = (req, res, next) => {
   }
 };
 
+usersController.deactivateUser = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to deactivate user`);
+    ObjLog.log(`[${context}]: Sending service to deactivate user`);
+    usersService.deactivateUser(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;

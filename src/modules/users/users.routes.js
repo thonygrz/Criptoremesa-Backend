@@ -208,4 +208,10 @@ usersRouter.post(
   usersController.verifyIdentUser
 );
 
+usersRouter.post(
+  "/deactivateUser",
+  // guard.verifyAdmin("/login"),
+  usersController.deactivateUser
+);
+
 export default usersRouter;
