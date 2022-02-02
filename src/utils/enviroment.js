@@ -14,5 +14,11 @@ export const env = {
     FILES_DIR: process.env.FILES_DIR,
     MAIL_SENDER: process.env.MAIL_SENDER,
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
-    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN
+    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+    ENVIROMENT: process.env.ENVIROMENT
 };
+
+export const ENVIROMENTS = {
+    PRODUCTION: 'prod',
+    DEVELOPMENT: 'dev'
+}

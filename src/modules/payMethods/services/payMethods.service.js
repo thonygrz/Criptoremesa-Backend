@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import payMethodsRepository from "../repositories/payMethods.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
 const payMethodsService = {};
 const context = "pay Methods Service";
 const logConst = {
@@ -25,7 +25,7 @@ payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origi
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
       await authenticationPGRepository.insertLogMsg(log);
@@ -54,7 +54,7 @@ payMethodsService.getPayMethodById = async (req, res, next,payMethodId) => {
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.failed = true;
       log.success = false
       await authenticationPGRepository.insertLogMsg(log);

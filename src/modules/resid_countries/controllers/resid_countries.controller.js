@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import resid_countriesService from "../services/resid_countries.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-
+import { env,ENVIROMENTS } from "../../../utils/enviroment";
 const resid_countriesController = {};
 const context = "resid_countries Controller";
 let sess = null;
@@ -43,7 +43,7 @@ resid_countriesController.getid_by_name = (req, res, next) => {
 
 resid_countriesController.getISOCodeById = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
@@ -82,7 +82,7 @@ resid_countriesController.getISOCodeById = async (req, res, next) => {
 
 resid_countriesController.isPolExp = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
       const resp = authenticationPGRepository.getIpInfo(
