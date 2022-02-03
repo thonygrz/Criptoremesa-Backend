@@ -10,7 +10,8 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import axios from 'axios'
-const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
+// const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
+const url = require('url');
 
 const usersService = {};
 const context = "users Service";
@@ -2874,18 +2875,34 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
 
 usersService.sendSMS = async (req, res, next) => {
   try {
-    client.messages.create({
-    body: req.body.msg,
-    from: '+17653024583',
-    to: req.body.phone_number
-    })
-    .then((message) => {
-      console.log(message)
+    // client.messages.create({
+    // body: req.body.msg,
+    // from: '+17653024583',
+    // to: req.body.phone_number
+    // })
+    // .then((message) => {
+    //   console.log(message)
+    //   res.status(200).json(message);
+    // })
+    // .catch((err) => {
+    //   console.log(err)
+    // })
+    const params = new url.URLSearchParams({ 
+      To: req.body.phone_number,
+      From: '+17653024583',
+      Body: req.body.msg
+     });
+    let message = await axios.post(
+      `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
+      params.toString(),
+      {
+        auth: {
+          username: env.TWILIO_ACCOUNT_SID,
+          password: env.TWILIO_AUTH_TOKEN
+        }
+      }
+      );
       res.status(200).json(message);
-    })
-    .catch((err) => {
-      console.log(err)
-    })
   } catch (error) {
     next(error);
   }
