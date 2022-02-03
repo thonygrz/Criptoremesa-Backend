@@ -2903,7 +2903,7 @@ usersService.sendSMS = async (req, res, next) => {
         }
       }
       );
-      res.status(200).json(message);
+      res.status(200).json(message.data);
   } catch (error) {
     next(error);
   }
