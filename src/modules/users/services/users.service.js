@@ -10,7 +10,7 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import axios from 'axios'
-// const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
+const client = require('twilio')(env.TWILIO_ACCOUNT_SID,env.TWILIO_AUTH_TOKEN);
 const url = require('url');
 
 const usersService = {};
@@ -19,34 +19,35 @@ let events = {};
 
 async function sendSMS(to,body) {
   try {
-        // client.messages.create({
-    // body: req.body.msg,
-    // from: '+17653024583',
-    // to: req.body.phone_number
-    // })
-    // .then((message) => {
-    //   console.log(message)
-    //   res.status(200).json(message);
-    // })
-    // .catch((err) => {
-    //   console.log(err)
-    // })
-    const params = new url.URLSearchParams({ 
-      To: to,
-      From: '+17653024583',
-      Body: body
-     });
-    let message = await axios.post(
-      `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
-      params.toString(),
-      {
-        auth: {
-          username: env.TWILIO_ACCOUNT_SID,
-          password: env.TWILIO_AUTH_TOKEN
-        }
-      }
-      );
-    return message.data
+    client.messages.create({
+    body,
+    from: '+17653024583',
+    to
+    })
+    .then((message) => {
+      console.log(message)
+      return message
+    })
+    .catch((err) => {
+      console.log(err)
+      next(error);
+    })
+    // const params = new url.URLSearchParams({ 
+    //   To: to,
+    //   From: '+17653024583',
+    //   Body: body
+    //  });
+    // let message = await axios.post(
+    //   `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
+    //   params.toString(),
+    //   {
+    //     auth: {
+    //       username: env.TWILIO_ACCOUNT_SID,
+    //       password: env.TWILIO_AUTH_TOKEN
+    //     }
+    //   }
+    //   );
+    // return message.data
   } catch (error) {
     next(error);
   }
@@ -2887,7 +2888,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
-      sendSMS(req.body.main_phone_full,`💰<Criptoremesa>💰 Su código de verificación es ${data.code}. No lo compartas con nadie.`)
+      res.status(200).json(sendSMS(req.body.main_phone_full,`💰<Criptoremesa>💰 Su código de verificación es ${data.code}. No lo compartas con nadie.`))
     } else if (data.msg === "An error ocurred generating code.") {
       res.status(400).json({ msg: data.msg });
     }
