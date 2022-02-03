@@ -17,6 +17,41 @@ const usersService = {};
 const context = "users Service";
 let events = {};
 
+async function sendSMS(to,body) {
+  try {
+        // client.messages.create({
+    // body: req.body.msg,
+    // from: '+17653024583',
+    // to: req.body.phone_number
+    // })
+    // .then((message) => {
+    //   console.log(message)
+    //   res.status(200).json(message);
+    // })
+    // .catch((err) => {
+    //   console.log(err)
+    // })
+    const params = new url.URLSearchParams({ 
+      To: to,
+      From: '+17653024583',
+      Body: body
+     });
+    let message = await axios.post(
+      `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
+      params.toString(),
+      {
+        auth: {
+          username: env.TWILIO_ACCOUNT_SID,
+          password: env.TWILIO_AUTH_TOKEN
+        }
+      }
+      );
+    return message.data
+  } catch (error) {
+    next(error);
+  }
+}
+
 function addStatusToItems(data) {
   data = data.map(function (d) {
     if (d.user_active) {
@@ -2852,20 +2887,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
-      //   client.messages.create({
-      //   body: `💰<Criptoremesa>💰 Su código de verificación es ${data.code}. No lo compartas con nadie.`,
-      //   from: '+17653024583',
-      //   to: req.body.main_phone_full
-      // })
-      // .then((message) => {
-      //   res.status(200).json({
-      //     msg: data.msg
-      //   });
-      // })
-      // .catch((err) => {
-      //   res.status(400).json({ msg: data.msg });
-      // })
-      console.log('probando')
+      sendSMS(req.body.main_phone_full,`💰<Criptoremesa>💰 Su código de verificación es ${data.code}. No lo compartas con nadie.`)
     } else if (data.msg === "An error ocurred generating code.") {
       res.status(400).json({ msg: data.msg });
     }
@@ -2876,34 +2898,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
 
 usersService.sendSMS = async (req, res, next) => {
   try {
-    // client.messages.create({
-    // body: req.body.msg,
-    // from: '+17653024583',
-    // to: req.body.phone_number
-    // })
-    // .then((message) => {
-    //   console.log(message)
-    //   res.status(200).json(message);
-    // })
-    // .catch((err) => {
-    //   console.log(err)
-    // })
-    const params = new url.URLSearchParams({ 
-      To: req.body.phone_number,
-      From: '+17653024583',
-      Body: req.body.msg
-     });
-    let message = await axios.post(
-      `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
-      params.toString(),
-      {
-        auth: {
-          username: env.TWILIO_ACCOUNT_SID,
-          password: env.TWILIO_AUTH_TOKEN
-        }
-      }
-      );
-      res.status(200).json(message.data);
+      res.status(200).json(sendSMS(req.body.phone_number,req.body.msg));
   } catch (error) {
     next(error);
   }
