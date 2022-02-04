@@ -2611,8 +2611,8 @@ usersService.forgotPassword = async (req, res, next) => {
 
       const mailResp = await mailSender.sendForgotPasswordMail({
         email_user: req.body.email_user,
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
+        first_name: user[0].first_name,
+        last_name: user[0].last_name,
         code: data.code,
         atcNumber
       });
