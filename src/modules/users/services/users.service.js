@@ -2611,6 +2611,8 @@ usersService.forgotPassword = async (req, res, next) => {
 
       const mailResp = await mailSender.sendForgotPasswordMail({
         email_user: req.body.email_user,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
         code: data.code,
         atcNumber
       });
@@ -2769,6 +2771,8 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
 
       const mailResp = await mailSender.sendSignUpMail({
         email_user: req.body.email_user,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
         code: data.code,
         atcNumber
       });
@@ -2888,7 +2892,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
-      if (sendSMS(req.body.main_phone_full,`💰<Criptoremesa>💰 Su código de verificación es ${data.code}. No lo compartas con nadie.`))
+      if (sendSMS(req.body.main_phone_full,`💰<Criptoremesa>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`))
       res.status(200).json({
         msg: data.msg
       })
