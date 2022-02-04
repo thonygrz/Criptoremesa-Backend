@@ -2580,7 +2580,7 @@ usersService.forgotPassword = async (req, res, next) => {
 
     let data = await usersPGRepository.generateCode(
       req.body.email_user,
-      user[0].id_resid_country
+      'email'
     );
     console.log("DATA: ", data);
     const resp = authenticationPGRepository.getIpInfo(
