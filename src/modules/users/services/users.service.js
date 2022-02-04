@@ -2573,8 +2573,14 @@ usersService.forgotPassword = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await usersPGRepository.validateEmailAndGenerateCode(
-      req.body.email_user
+    let user = await usersPGRepository.getusersClientByEmail(
+      `'${req.body.email_user}'`
+    );
+    console.log('user con su id_country: ',user)
+
+    let data = await usersPGRepository.generateCode(
+      req.body.email_user,
+      user[0].id_resid_country
     );
     console.log("DATA: ", data);
     const resp = authenticationPGRepository.getIpInfo(
@@ -2596,11 +2602,6 @@ usersService.forgotPassword = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
-      let user = await usersPGRepository.getusersClientByEmail(
-        `'${req.body.email_user}'`
-      );
-      console.log('user con su id_country: ',user)
-     
       let atcNumber = await usersPGRepository.getATCNumberByIdCountry(
         `${user[0].id_resid_country}`
       );
