@@ -197,12 +197,6 @@ usersRouter.post(
 );
 
 usersRouter.post(
-  "/sendVerificationCodeBySMS",
-  // guard.verifyAdmin("/login"),
-  usersController.sendVerificationCodeBySMS
-);
-
-usersRouter.post(
   "/verifyIdentUser",
   // guard.verifyAdmin("/login"),
   usersController.verifyIdentUser

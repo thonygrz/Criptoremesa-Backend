@@ -854,6 +854,7 @@ usersPGRepository.getATCNumberByIdCountry = async (id) => {
     logger.info(`[${context}]: Looking for ATC Number in db`);
     ObjLog.log(`[${context}]: Looking for ATC Number in db`);
     await pool.query("SET SCHEMA 'msg_app'");
+    console.log('id',id)
     const resp = await pool.query(
       `SELECT * FROM msg_app.get_atc_number_by_id_resid_country(
         ${id}

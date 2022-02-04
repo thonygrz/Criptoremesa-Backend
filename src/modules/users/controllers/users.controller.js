@@ -2,6 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import usersService from "../services/users.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
+import limitByIpPGRepository from "../../limit_by_ip/repositories/limit_by_ip.pg.repository";
 import { env,ENVIROMENTS } from "../../../utils/enviroment";
 const usersController = {};
 const context = "users Controller";
@@ -376,11 +377,15 @@ usersController.getusersClientByEmail = (req, res, next) => {
   }
 };
 
-usersController.sendVerificationCodeByEmail = (req, res, next) => {
+usersController.sendVerificationCodeByEmail = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to verify email`);
     ObjLog.log(`[${context}]: Sending service to verify email`);
-    usersService.sendVerificationCodeByEmail(req, res, next);
+    let resp = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeByEmail',req.connection.remoteAddress)
+    if (resp === 'Requests limit by ip hasnt been reached')
+      usersService.sendVerificationCodeByEmail(req, res, next);
+    else 
+      res.status(400).json({ msg: resp });
   } catch (error) {
     next(error);
   }
@@ -396,11 +401,15 @@ usersController.sendSMS = (req, res, next) => {
   }
 };
 
-usersController.sendVerificationCodeBySMS = (req, res, next) => {
+usersController.sendVerificationCodeBySMS = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending service to verify SMS`);
     ObjLog.log(`[${context}]: Sending service to verify SMS`);
-    usersService.sendVerificationCodeBySMS(req, res, next);
+    let resp = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeBySMS',req.connection.remoteAddress)
+    if (resp === 'Requests limit by ip hasnt been reached')
+      usersService.sendVerificationCodeBySMS(req, res, next);
+    else 
+      res.status(400).json({ msg: resp });
   } catch (error) {
     next(error);
   }
@@ -490,16 +499,6 @@ usersController.requestLevelTwo = async (req, res, next) => {
 
       usersService.requestLevelTwo(req, res, next);
     }
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.sendVerificationCodeBySMS = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to verify SMS`);
-    ObjLog.log(`[${context}]: Sending service to verify SMS`);
-    usersService.sendVerificationCodeBySMS(req, res, next);
   } catch (error) {
     next(error);
   }
