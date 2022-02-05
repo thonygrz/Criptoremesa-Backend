@@ -78,7 +78,7 @@ export async function SocketServer(server) {
       console.log('socket from Sixm',socket.id)
       console.log('val from Sixm',val)
 
-      if (val.file !== 'null')
+      if (val.file !== 'null' || null)
         val.file = fs.readFileSync(val.file);
       
       notifyChanges('msg_sent', val);
