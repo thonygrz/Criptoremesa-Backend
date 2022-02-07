@@ -83,6 +83,16 @@ export async function SocketServer(server) {
       
       notifyChanges('msg_sent', val);
     });
+
+    socket.on("chat_asign", async (val) => {
+      logger.info(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      console.log('socket from Sixm',socket.id)
+      console.log('val from Sixm',val)
+
+      notifyChanges('chat_asign', val);
+    });
   });
 }
 

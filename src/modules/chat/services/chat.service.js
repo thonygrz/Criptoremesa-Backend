@@ -36,7 +36,7 @@ chatService.sendMessage = async (req, res, next) => {
       failed: false,
       ip: req.connection.remoteAddress,
       country: countryResp,
-      route: "/chat/sendMessage",
+      route: "/chat/message",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
