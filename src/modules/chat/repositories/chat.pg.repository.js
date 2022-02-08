@@ -9,13 +9,14 @@ chatPGRepository.sendMessage = async (body) => {
   try {
     logger.info(`[${context}]: Sending message to db`);
     ObjLog.log(`[${context}]: Sending message to db`);
+    console.log('BODY EN REPOSITORY: ',body)
     const resp = await pool.query(
       `SELECT * FROM msg_app.sp_app_msg_insert(null,
                                                null,
                                                $$${body.message_body}$$,
                                                null,
                                                '${body.msg_date}',
-                                               '${body.is_sent}',
+                                               ${body.is_sent},
                                                '${body.uniq_id}')`
     );
     return resp.rows;

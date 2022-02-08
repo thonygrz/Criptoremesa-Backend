@@ -100,7 +100,7 @@ export async function SocketServer(server) {
       logger.info(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
-      console.log('New id connection from FE: ',socket.id)
+      console.log('from_basic_chat from FE: ',socket.id)
       console.log('val from FE: ',val)
 
       await chatPGRepository.sendMessage(val);
