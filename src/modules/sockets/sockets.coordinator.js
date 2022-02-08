@@ -3,6 +3,8 @@ import { logger } from "../../utils/logger";
 import ObjLog from "../../utils/ObjLog";
 import redisClient from "../../utils/redis";
 import usersPGRepository from "../../modules/users/repositories/users.pg.repository";
+import chatPGRepository from "../chat/repositories/chat.pg.repository";
+
 import fs from "fs";
 
 let socketServer = null;
@@ -28,12 +30,12 @@ export async function SocketServer(server) {
     });
 
     socket.on("new_connection", (val) => {
-      console.log('socket from FE',socket.id)
-      console.log('val ofrom FE',val)
+      console.log('New id connection from FE: ',socket.id)
+      console.log('val from FE: ',val)
       redisClient.set(val, socket.id);
       redisClient.get(val, function (err, reply) {
         // reply is null when the key is missing
-        console.log("redis reply: ", reply);
+        console.log("Redis id socket reply: ", reply);
       });
 
       // redisClient.end(true);
@@ -56,7 +58,7 @@ export async function SocketServer(server) {
 
         redisClient.get(val.email_user, function (err, reply) {
           // reply is null when the key is missing
-          console.log("redis reply: ", reply);
+          console.log("Redis id socket reply: ", reply);
           socketServer.sockets.to(reply).emit('verif_code_response', data);
         });
     });
@@ -93,6 +95,27 @@ export async function SocketServer(server) {
 
       notifyChanges('chat_asign', val);
     });
+
+    socket.on("from_basic_chat", async (val) => {
+      logger.info(`[${context}] Receiving data from frontend`);
+      ObjLog.log(`[${context}] Receiving data from frontend`);
+
+      console.log('New id connection from FE: ',socket.id)
+      console.log('val from FE: ',val)
+
+      await chatPGRepository.sendMessage(val);
+
+    });
+
+    socket.on("to_basic_chat", async (val) => {
+      logger.info(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      console.log('New id connection from FE: ',socket.id)
+      console.log('val from FE: ',val)
+
+      notifyChanges('to_basic_chat', val);
+    });
   });
 }
 
@@ -101,13 +124,18 @@ export function notifyChanges(event, data) {
     logger.info(`[${context}] Sending update notification to FE`);
     ObjLog.log(`[${context}] Sending update notification to FE`);
 
-    redisClient.get(data.email_user, function (err, reply) {
+    let redisKey
+
+    if (data.email_user) redisKey = data.email_user
+    else if (data.uniq_id) redisKey = data.uniq_id  
+
+    redisClient.get(redisKey, function (err, reply) {
       // reply is null when the key is missing
-      console.log("redis reply: ", reply);
+      console.log("Redis id socket reply: ", reply);
       console.log("socket sending to FE: ", data);
       socketServer.sockets.to(reply).emit(event, data);
     });
-
+      
     // socketServer.sockets.emit(event, data);
   } catch (error) {
     logger.error(`[${context}] Sending update notification`);

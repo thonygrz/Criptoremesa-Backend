@@ -10,12 +10,13 @@ chatPGRepository.sendMessage = async (body) => {
     logger.info(`[${context}]: Sending message to db`);
     ObjLog.log(`[${context}]: Sending message to db`);
     const resp = await pool.query(
-      `SELECT * FROM msg_app.sp_app_msg_insert('${body.email_user}',
-                                               '${body.emp_username}',
+      `SELECT * FROM msg_app.sp_app_msg_insert(null,
+                                               null,
                                                $$${body.message_body}$$,
-                                               '${body.file_path}',
+                                               null,
                                                '${body.msg_date}',
-                                               '${body.is_sent}')`
+                                               '${body.is_sent}',
+                                               '${body.uniq_id}')`
     );
     return resp.rows;
   } catch (error) {
