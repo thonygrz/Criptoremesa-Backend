@@ -41,6 +41,19 @@ export async function SocketServer(server) {
       // redisClient.end(true);
     });
 
+    socket.on("new_connection_basic_chat", async (val) => {
+      console.log('New id connection basic_chat from FE: ',socket.id)
+      console.log('val from FE: ',val)
+      redisClient.set(val, socket.id);
+      redisClient.get(val, function (err, reply) {
+        // reply is null when the key is missing
+        console.log("Redis id socket reply: ", reply);
+      });
+
+      await chatPGRepository.getMessagesByUniqId(val);
+      // redisClient.end(true);
+    });
+
     socket.on("verif_code", async (val) => {
       logger.info(`[${context}] Sending verif code notification`);
       ObjLog.log(`[${context}] Sending verif code notification`);
@@ -104,7 +117,6 @@ export async function SocketServer(server) {
       console.log('val from FE: ',val)
 
       await chatPGRepository.sendMessage(val);
-
     });
 
     socket.on("to_basic_chat", async (val) => {
