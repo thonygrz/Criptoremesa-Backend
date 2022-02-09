@@ -126,7 +126,7 @@ export async function SocketServer(server) {
       console.log('from_basic_chat from FE: ',socket.id)
       console.log('val from FE: ',val)
 
-      await chaSocketService.sendMessage(val);
+      await chatSocketService.sendMessage(val);
     });
 
     socket.on("to_basic_chat", async (val) => {
