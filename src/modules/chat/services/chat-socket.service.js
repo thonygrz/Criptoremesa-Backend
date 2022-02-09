@@ -1,4 +1,5 @@
 import chatPGRepository from "../repositories/chat.pg.repository";
+import {join} from 'path'
 
 const chatSocketService = {};
 
