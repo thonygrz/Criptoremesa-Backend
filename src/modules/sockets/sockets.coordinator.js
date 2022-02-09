@@ -38,6 +38,7 @@ export async function SocketServer(server) {
         console.log("Redis id socket reply: ", reply);
       });
 
+      await chatPGRepository.getMessages(val);
       // redisClient.end(true);
     });
 
