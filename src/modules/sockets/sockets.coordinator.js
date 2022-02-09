@@ -86,6 +86,16 @@ export async function SocketServer(server) {
       notifyChanges('level_upgrade', val);
     });
 
+    socket.on("from_pro_chat", async (val) => {
+      logger.info(`[${context}] Receiving data from frontend`);
+      ObjLog.log(`[${context}] Receiving data from frontend`);
+
+      console.log('from_pro_chat from FE: ',socket.id)
+      console.log('val from FE: ',val)
+
+      // await chatPGRepository.sendMessage(val);
+    });
+
     socket.on("to_pro_chat", async (val) => {
       logger.info(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
