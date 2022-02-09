@@ -8,7 +8,7 @@ chaSocketService.sendMessage = async (body) => {
     if (body.file) {
         var magic = new Magic();
   
-            magic.detect(body.file, function(err, result) {
+            magic.detectFile(body.file, function(err, result) {
                 if (err) throw err;
                 console.log(result);
                 // output: Python script, ASCII text executable
