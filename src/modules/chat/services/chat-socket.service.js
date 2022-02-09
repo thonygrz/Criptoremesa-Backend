@@ -1,12 +1,13 @@
 import chatPGRepository from "../repositories/chat.pg.repository";
 // import {fileTypeFromBuffer} from 'file-type';
-var Magic = require('mmmagic').Magic;
+var mmm = require('mmmagic'),
+      Magic = mmm.Magic;
 const chaSocketService = {};
 
 chaSocketService.sendMessage = async (body) => {
   try {
     if (body.file) {
-        var magic = new Magic();
+        var magic = new Magic(mmm.MAGIC_MIME_TYPE | mmm.MAGIC_MIME_ENCODING);
   
             magic.detectFile(body.file, function(err, result) {
                 if (err) throw err;
