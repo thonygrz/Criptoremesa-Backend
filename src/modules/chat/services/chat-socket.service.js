@@ -1,6 +1,7 @@
 import chatPGRepository from "../repositories/chat.pg.repository";
 import {join} from 'path'
 import {env} from '../../../utils/enviroment'
+import fs from 'fs'
 
 const chatSocketService = {};
 
