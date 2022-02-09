@@ -121,11 +121,25 @@ chatService.sendMessage = async (req, res, next) => {
         if (!fileError) {
           // console.log("FILE: ", file_path);
           console.log("a la bd: ", {
-            ...fields,
+            email_user: fields.email_user === 'null' ? null : fields.email_user,
+            emp_username: fields.emp_username === 'null' ? null : fields.emp_username,
+            message_body: fields.message_body === 'null' ? null : fields.message_body,
+            msg_date: fields.msg_date === 'null' ? null : fields.msg_date,
+            file: fields.file === 'null' ? null : fields.file,
+            is_sent: fields.is_sent === 'null' ? null : fields.is_sent,
+            time_zone: fields.time_zone === 'null' ? null : fields.time_zone,
+            uniq_id: fields.uniq_id === 'null' ? null : fields.uniq_id,
             file_path
           });
           await chatPGRepository.sendMessage({
-            ...fields,
+            email_user: fields.email_user === 'null' ? null : fields.email_user,
+            emp_username: fields.emp_username === 'null' ? null : fields.emp_username,
+            message_body: fields.message_body === 'null' ? null : fields.message_body,
+            msg_date: fields.msg_date === 'null' ? null : fields.msg_date,
+            file: fields.file === 'null' ? null : fields.file,
+            is_sent: fields.is_sent === 'null' ? null : fields.is_sent,
+            time_zone: fields.time_zone === 'null' ? null : fields.time_zone,
+            uniq_id: fields.uniq_id === 'null' ? null : fields.uniq_id,
             file_path
           });
 
