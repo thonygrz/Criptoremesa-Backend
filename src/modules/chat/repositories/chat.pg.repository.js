@@ -17,7 +17,9 @@ chatPGRepository.sendMessage = async (body) => {
                                                null,
                                                '${body.msg_date}',
                                                ${body.is_sent},
-                                               '${body.uniq_id}')`
+                                               ${body.uniq_id ? `'${body.uniq_id}'` : null},
+                                               ${body.time_zone ? `'${body.time_zone}'` : null}
+                                               )`
     );
     return resp.rows;
   } catch (error) {

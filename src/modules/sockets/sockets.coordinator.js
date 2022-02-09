@@ -86,7 +86,7 @@ export async function SocketServer(server) {
       notifyChanges('level_upgrade', val);
     });
 
-    socket.on("msg_sent", async (val) => {
+    socket.on("to_pro_chat", async (val) => {
       logger.info(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
@@ -96,7 +96,7 @@ export async function SocketServer(server) {
       if (val.file !== 'null' && val.file !== null)
         val.file = fs.readFileSync(val.file);
       
-      notifyChanges('msg_sent', val);
+      notifyChanges('to_pro_chat', val);
     });
 
     socket.on("chat_asign", async (val) => {
