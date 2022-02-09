@@ -17,7 +17,7 @@ chatSocketService.sendMessage = async (body) => {
         let pathName = join(env.FILES_DIR,`/${body.email_user}_${body.file_name}`)
         while (exists){
            let number = between(10000,99999);
-           pathName = join(env.FILES_DIR,`/${email_user}-${number}_${body.file_name}`)
+           pathName = join(env.FILES_DIR,`/${body.email_user}-${number}_${body.file_name}`)
            if (!fs.existsSync(pathName)){
                 exists = false
            }
