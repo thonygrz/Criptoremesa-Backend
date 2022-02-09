@@ -13,7 +13,7 @@ chatPGRepository.sendMessage = async (body) => {
     const resp = await pool.query(
       `SELECT * FROM msg_app.sp_app_msg_insert(${body.email_user ? `'${body.email_user}'` : null},
                                                null,
-                                               $$${body.message_body}$$,
+                                               $$${JSON.stringify(body.message_body)}$$::json,
                                                null,
                                                '${body.msg_date}',
                                                ${body.is_sent},
