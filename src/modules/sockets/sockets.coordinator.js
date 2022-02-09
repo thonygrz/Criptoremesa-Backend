@@ -2,7 +2,7 @@ import socketIO from "socket.io";
 import { logger } from "../../utils/logger";
 import ObjLog from "../../utils/ObjLog";
 import redisClient from "../../utils/redis";
-import chaSocketService from "../chat/services/chat-socket.service";
+import chatSocketService from "../chat/services/chat-socket.service";
 import chatPGRepository from "../chat/repositories/chat.pg.repository";
 
 import fs from "fs";
@@ -93,7 +93,7 @@ export async function SocketServer(server) {
       console.log('from_pro_chat from FE: ',socket.id)
       console.log('val from FE: ',val)
 
-      await chaSocketService.sendMessage(val);
+      await chatSocketService.sendMessage(val);
     });
 
     socket.on("to_pro_chat", async (val) => {
