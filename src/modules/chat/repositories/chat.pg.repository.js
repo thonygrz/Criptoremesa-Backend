@@ -11,7 +11,7 @@ chatPGRepository.sendMessage = async (body) => {
     ObjLog.log(`[${context}]: Sending message to db`);
     console.log('BODY EN REPOSITORY: ',body)
     const resp = await pool.query(
-      `SELECT * FROM msg_app.sp_app_msg_insert(null,
+      `SELECT * FROM msg_app.sp_app_msg_insert(${body.email_user ? `'${body.email_user}'` : null},
                                                null,
                                                $$${JSON.stringify(body.message_body)}$$,
                                                null,
