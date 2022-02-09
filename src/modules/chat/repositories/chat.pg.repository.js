@@ -43,7 +43,7 @@ chatPGRepository.getMessagesByUniqId = async (uniq_id) => {
     logger.info(`[${context}]: Getting messages from db`);
     ObjLog.log(`[${context}]: Getting messages from db`);
     const resp = await pool.query(
-      `SELECT * FROM msg_app.sp_chat_msgs_get_by_email('${uniq_id}')`
+      `SELECT * FROM msg_app.sp_chat_msgs_get_by_uniq_id('${uniq_id}')`
     );
     return resp.rows;
   } catch (error) {
