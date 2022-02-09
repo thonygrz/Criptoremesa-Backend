@@ -14,7 +14,7 @@ chatPGRepository.sendMessage = async (body) => {
       `SELECT * FROM msg_app.sp_app_msg_insert(${body.email_user ? `'${body.email_user}'` : null},
                                                null,
                                                $$${JSON.stringify(body.message_body)}$$,
-                                               null,
+                                               ${body.file ? `'${body.file}'` : null},
                                                '${body.msg_date}',
                                                ${body.is_sent},
                                                ${body.uniq_id ? `'${body.uniq_id}'` : null},
