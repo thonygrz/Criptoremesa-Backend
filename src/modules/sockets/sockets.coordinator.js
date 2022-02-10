@@ -104,7 +104,7 @@ export async function SocketServer(server) {
       console.log('socket from Sixm',socket.id)
       console.log('val from Sixm',val)
 
-      if (val.file !== 'null' && val.file !== null)
+      if (!val.messages && val.file !== 'null' && val.file !== null)
         val.file = fs.readFileSync(val.file);
       
       notifyChanges('to_pro_chat', val);
