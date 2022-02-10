@@ -38,7 +38,8 @@ export async function SocketServer(server) {
         console.log("Redis id socket reply: ", reply);
       });
 
-      await chatPGRepository.getMessages(val);
+      let resp = await chatPGRepository.getMessages(val);
+      notifyChanges(resp.socket_channel, resp);
       // redisClient.end(true);
     });
 
@@ -51,7 +52,8 @@ export async function SocketServer(server) {
         console.log("Redis id socket reply: ", reply);
       });
 
-      await chatPGRepository.getMessagesByUniqId(val);
+      let resp = await chatPGRepository.getMessagesByUniqId(val);
+      notifyChanges(resp.socket_channel, resp);
       // redisClient.end(true);
     });
 
