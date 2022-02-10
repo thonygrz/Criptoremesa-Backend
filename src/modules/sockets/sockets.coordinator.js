@@ -29,7 +29,7 @@ export async function SocketServer(server) {
       console.log(`connect_error due to ${err.message}`);
     });
 
-    socket.on("new_connection", (val) => {
+    socket.on("new_connection", async (val) => {
       console.log('New id connection from FE: ',socket.id)
       console.log('val from FE: ',val)
       redisClient.set(val, socket.id);
