@@ -106,6 +106,12 @@ export async function SocketServer(server) {
 
       if (!val.messages && val.file !== 'null' && val.file !== null)
         val.file = fs.readFileSync(val.file);
+      else if (val.messages)
+        val.forEach((el) => {
+          if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
+            el.file = fs.readFileSync(el.file);
+          }
+        })
       
       notifyChanges('to_pro_chat', val);
     });
