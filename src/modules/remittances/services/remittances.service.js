@@ -66,7 +66,7 @@ remittancesService.getRemittances = async (req, res, next,userEmail) => {
         await authenticationPGRepository.insertLogMsg(log);
         logger.info(`[${context}]: Get ${userEmail} remittances`);
         ObjLog.log(`[${context}]: Get ${userEmail} remittances`);
-        let data = await remittancesRepository.getRemittances(userEmail);
+        let data = await remittancesPGRepository.getRemittances(userEmail);
         res.status(200).json(data);
      }
   } catch (error) {
