@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import remittancesPGRepository from "../repositories/remittances.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-import { env } from "../../../utils/enviroment";
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
 
 const remittancesService = {};
 const context = "remittances Service";
