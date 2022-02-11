@@ -10,4 +10,10 @@ remittancesRouter.get(
   remittancesController.notificationTypes
 );
 
+remittancesRouter.get(
+  "/:email_user",
+  // guard.verifyAdmin("/login"),
+  remittancesController.getRemittances
+);
+
 export default remittancesRouter;
