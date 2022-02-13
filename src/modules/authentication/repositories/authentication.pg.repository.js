@@ -143,7 +143,7 @@ authenticationPGRepository.updateIPSession = async (sessionID, ip) => {
     colsArray.push("ip_current_con");
     colsArray.push("country_ip_current_con");
 
-    valsArray.push(ipInfo.network);
+    valsArray.push(ip);
     valsArray.push(ipInfo.country_name);
 
     await pool.query("SET SCHEMA 'sec_cust'");
@@ -206,7 +206,7 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     colsArray.push("last_ip_city_reg");
 
     valsArray.push(sessionID);
-    valsArray.push(ipInfo.network);
+    valsArray.push(ip);
     valsArray.push(ipInfo.city_name);
 
     //UPDATE USER
