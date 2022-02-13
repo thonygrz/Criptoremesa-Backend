@@ -13,8 +13,7 @@ remittancesPGRepository.notificationTypes = async () => {
     const resp = await pool.query(
       `SELECT * FROM sp_ms_user_notification_types()`
     );
-    console.log('RESP: ',resp)
-    if (resp.rows[0]) return resp.rows[0].sp_ms_user_notification_types;
+    if (resp.rows[0]) return resp.rows[0];
     else return null;
   } catch (error) {
     throw error;
