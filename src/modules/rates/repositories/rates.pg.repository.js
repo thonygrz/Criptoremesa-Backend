@@ -49,7 +49,7 @@ ratesPGRepository.rateTypes = async () => {
     const resp = await pool.query(
       `SELECT * FROM sp_ms_cr_rate_type_get()`
     );
-    if (resp.rows[0]) return resp.rows[0];
+    if (resp.rows) return resp.rows;
     else return null;
   } catch (error) {
     throw error;
