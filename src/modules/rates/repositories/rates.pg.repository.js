@@ -26,16 +26,30 @@ ratesPGRepository.getRate = async (body) => {
   }
 };
 
-
-ratesPGRepository.getRangeRates = async () => {
+remittancesPGRepository.rangeRates = async () => {
   try {
-    logger.info(`[${context}]: Looking for range rates on db`);
-    ObjLog.log(`[${context}]: Looking for range rates on db`);
+    logger.info(`[${context}]: Looking for range Rates on db`);
+    ObjLog.log(`[${context}]: Looking for range Rates on db`);
     await pool.query("SET SCHEMA 'msg_app'");
     const resp = await pool.query(
       `SELECT * FROM sp_get_range_rates()`
     );
-    if (resp.rows[0]) return resp.rows[0].sp_get_range_rates;
+    if (resp.rows[0].sp_get_range_rates) return resp.rows[0].sp_get_range_rates;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+remittancesPGRepository.rateTypes = async () => {
+  try {
+    logger.info(`[${context}]: Looking for rate Types on db`);
+    ObjLog.log(`[${context}]: Looking for rate Types on db`);
+    await pool.query("SET SCHEMA 'msg_app'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_ms_cr_rate_type_get()`
+    );
+    if (resp.rows[0]) return resp.rows[0];
     else return null;
   } catch (error) {
     throw error;

@@ -38,5 +38,4 @@ remittancesController.limitationsByCodPub = (req, res, next) => {
   }
 };
 
-
 export default remittancesController;

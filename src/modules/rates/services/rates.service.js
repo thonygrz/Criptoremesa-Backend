@@ -8,13 +8,13 @@ const ratesService = {};
 const context = "rates Service";
 let events = {};
 
-ratesService.getRangeRates = async (req, res, next) => {
+ratesService.rangeRates = async (req, res, next) => {
   try {
 
     let countryResp = null;
     let sess = null;
 
-    let data = await ratesPGRepository.getRangeRates();
+    let data = await ratesPGRepository.rangeRates();
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -28,7 +28,38 @@ ratesService.getRangeRates = async (req, res, next) => {
       failed: false,
       ip: req.connection.remoteAddress,
       country: countryResp,
-      route: "/rates/getRangeRates",
+      route: "/remittances/rangeRates",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+ratesService.rateTypes = async (req, res, next) => {
+  try {
+
+    let countryResp = null;
+    let sess = null;
+
+    let data = await ratesPGRepository.rateTypes();
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/remittances/rateTypes",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);

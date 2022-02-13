@@ -5,9 +5,15 @@ const ratesRouter = Router();
 
 // IF YOU WERE USING cg/auth/login
 ratesRouter.get(
-  "/getRangeRates",
+  "/rangeRates",
   // guard.verifyAdmin("/login"),
-  ratesController.getRangeRates
+  ratesController.rangeRates
+);
+
+ratesRouter.get(
+  "/rateTypes",
+  // guard.verifyAdmin("/login"),
+  ratesController.rateTypes
 );
 
 export default ratesRouter;
