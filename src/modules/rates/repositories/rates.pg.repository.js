@@ -26,7 +26,7 @@ ratesPGRepository.getRate = async (body) => {
   }
 };
 
-remittancesPGRepository.rangeRates = async () => {
+ratesPGRepository.rangeRates = async () => {
   try {
     logger.info(`[${context}]: Looking for range Rates on db`);
     ObjLog.log(`[${context}]: Looking for range Rates on db`);
@@ -41,7 +41,7 @@ remittancesPGRepository.rangeRates = async () => {
   }
 };
 
-remittancesPGRepository.rateTypes = async () => {
+ratesPGRepository.rateTypes = async () => {
   try {
     logger.info(`[${context}]: Looking for rate Types on db`);
     ObjLog.log(`[${context}]: Looking for rate Types on db`);
