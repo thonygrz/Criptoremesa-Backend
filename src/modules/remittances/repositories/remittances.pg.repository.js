@@ -34,4 +34,19 @@ remittancesPGRepository.getRemittances = async (emailUser) => {
   }
 };
 
+remittancesPGRepository.limitationsByCodPub = async (cust_cr_cod_pub) => {
+  try {
+    logger.info(`[${context}]: Looking for limitations on db`);
+    ObjLog.log(`[${context}]: Looking for limitations on db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM get_limitations_by_user('${cust_cr_cod_pub}')`
+    );
+    if (resp.rows[0].get_limitations_by_user) return resp.rows[0].get_limitations_by_user;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default remittancesPGRepository;

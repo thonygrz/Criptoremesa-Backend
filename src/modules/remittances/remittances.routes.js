@@ -16,4 +16,10 @@ remittancesRouter.get(
   remittancesController.getRemittances
 );
 
+remittancesRouter.get(
+  "/limitationsByCodPub/:cust_cr_cod_pub",
+  // guard.verifyAdmin("/login"),
+  remittancesController.limitationsByCodPub
+);
+
 export default remittancesRouter;

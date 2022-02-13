@@ -27,5 +27,16 @@ remittancesController.getRemittances = (req, res, next) => {
   }
 };
 
+remittancesController.limitationsByCodPub = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get limitations`);
+    ObjLog.log(`[${context}]: Sending service to get limitations`);
+
+    remittancesService.limitationsByCodPub(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export default remittancesController;
