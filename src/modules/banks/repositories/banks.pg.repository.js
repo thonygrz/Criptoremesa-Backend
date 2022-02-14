@@ -57,7 +57,7 @@ banksRepository.getBankAccountsById = async (id) => {
       `select * from get_bank_accounts_by_country(${id})`
     );
     console.log('RESP::: ',resp)
-    return resp.rows;
+    return resp.rows[0].get_bank_accounts_by_country;
   } catch (error) {
     throw error;
   }
