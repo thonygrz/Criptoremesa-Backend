@@ -51,10 +51,11 @@ banksRepository.getBankById = async (bankId) => {
 
 banksRepository.getBankAccountsById = async (body) => {
   try {
+    console.log('BODYYYY: ', banks)
+
     logger.info(`[${context}]: Getting bank accounts from db`);
     ObjLog.log(`[${context}]: Getting bank accounts from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
-    console.log('BODYYYY: ', banks)
 
     const resp = await pool.query(
       `select * from get_bank_accounts_by_country(${body.id_country},${body.id_currency})`
