@@ -47,4 +47,18 @@ banksRepository.getBankById = async (bankId) => {
   }
 };
 
+banksRepository.getBankAccountsById = async (id) => {
+  try {
+    logger.info(`[${context}]: Getting bank accounts from db`);
+    ObjLog.log(`[${context}]: Getting bank accounts from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `select * from sp_ms_bank_by_id(${id})`
+    );
+    return resp.rows[0].sp_ms_bank_by_id;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default banksRepository;
