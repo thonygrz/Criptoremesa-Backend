@@ -65,7 +65,7 @@ banksRepository.getBankAccountsById = async (body) => {
       el.image = fs.readFileSync(env.FILES_DIR + '/bank_logos/' + el.ident_name + '.png');
     });
     console.log(banks)
-    return res.rows[0].get_bank_accounts_by_country;
+    return resp.rows[0].get_bank_accounts_by_country;
   } catch (error) {
     throw error;
   }
