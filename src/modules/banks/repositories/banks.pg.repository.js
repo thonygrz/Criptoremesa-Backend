@@ -51,8 +51,6 @@ banksRepository.getBankById = async (bankId) => {
 
 banksRepository.getBankAccountsById = async (body) => {
   try {
-    console.log('BODYYYY: ', banks)
-
     logger.info(`[${context}]: Getting bank accounts from db`);
     ObjLog.log(`[${context}]: Getting bank accounts from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
@@ -64,7 +62,6 @@ banksRepository.getBankAccountsById = async (body) => {
     banks.forEach(el => {
       el.image = fs.readFileSync(env.FILES_DIR + '/bank_logos/' + el.ident_name + '.png');
     });
-    console.log(banks)
     return resp.rows[0].get_bank_accounts_by_country;
   } catch (error) {
     throw error;
