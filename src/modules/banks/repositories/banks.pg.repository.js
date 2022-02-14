@@ -57,7 +57,7 @@ banksRepository.getBankAccountsById = async (id) => {
       `select * from sp_ms_bank_by_id(${id})`
     );
     console.log('RESP::: ',resp)
-    return resp.rows[0].sp_ms_bank_by_id;
+    return resp.rows;
   } catch (error) {
     throw error;
   }
