@@ -52,9 +52,11 @@ banksRepository.getBankAccountsById = async (id) => {
     logger.info(`[${context}]: Getting bank accounts from db`);
     ObjLog.log(`[${context}]: Getting bank accounts from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
+    console.log('ID::: ',id)
     const resp = await pool.query(
       `select * from sp_ms_bank_by_id(${id})`
     );
+    console.log('RESP::: ',resp)
     return resp.rows[0].sp_ms_bank_by_id;
   } catch (error) {
     throw error;
