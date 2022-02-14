@@ -1,6 +1,8 @@
 import pool from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
+import fs from "fs";
+import {env} from '../../../utils/enviroment'
 
 const banksRepository = {};
 const context = "banks PG Repository";
@@ -55,7 +57,12 @@ banksRepository.getBankAccountsById = async (id) => {
     const resp = await pool.query(
       `select * from get_bank_accounts_by_country(${id})`
     );
-    return resp.rows[0].get_bank_accounts_by_country;
+    let banks = res.rows[0].get_bank_accounts_by_country
+    banks.forEach(el => {
+      el.image = fs.readFileSync(env.FILES_DIR + '/bank_logos/' + el.ident_name + '.png');
+    });
+    console.log(banks)
+    return res.rows[0].get_bank_accounts_by_country;
   } catch (error) {
     throw error;
   }
