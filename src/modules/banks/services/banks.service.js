@@ -94,7 +94,7 @@ banksService.getBankAccountsById = async (req, res, next) => {
         let data = {}
           data = await banksRepository.getBankAccountsById({ 
             id_country:  req.params.id_country,
-            id_currency: req.body.id_currency
+            id_currency: req.params.id_currency
           });
         res.status(200).json(data);
     }
