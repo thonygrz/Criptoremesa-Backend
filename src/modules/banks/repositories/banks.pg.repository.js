@@ -54,7 +54,7 @@ banksRepository.getBankAccountsById = async (id) => {
     await pool.query("SET SCHEMA 'sec_cust'");
     console.log('ID::: ',id)
     const resp = await pool.query(
-      `select * from sp_ms_bank_by_id(${id})`
+      `select * from get_bank_accounts_by_country(${id})`
     );
     console.log('RESP::: ',resp)
     return resp.rows;
