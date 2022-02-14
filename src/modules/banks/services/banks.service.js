@@ -92,7 +92,10 @@ banksService.getBankAccountsById = async (req, res, next) => {
         ObjLog.log(`[${context}]: Get bank accounts`);
         await authenticationPGRepository.insertLogMsg(log);
         let data = {}
-          data = await banksRepository.getBankAccountsById(req.params.id_country);
+          data = await banksRepository.getBankAccountsById({ 
+            id_country:  req.params.id_country,
+            id_currency: req.body.id_currency
+          });
         res.status(200).json(data);
     }
   } catch (error) {

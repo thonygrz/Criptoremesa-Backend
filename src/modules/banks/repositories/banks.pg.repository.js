@@ -49,13 +49,13 @@ banksRepository.getBankById = async (bankId) => {
   }
 };
 
-banksRepository.getBankAccountsById = async (id) => {
+banksRepository.getBankAccountsById = async (body) => {
   try {
     logger.info(`[${context}]: Getting bank accounts from db`);
     ObjLog.log(`[${context}]: Getting bank accounts from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `select * from get_bank_accounts_by_country(${id})`
+      `select * from get_bank_accounts_by_country(${body.id_country},${body.id_currency})`
     );
     let banks = res.rows[0].get_bank_accounts_by_country
     banks.forEach(el => {
