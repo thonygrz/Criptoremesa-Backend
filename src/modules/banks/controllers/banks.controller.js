@@ -35,7 +35,6 @@ banksController.getBankById = (req,res,next) =>{
 
 banksController.getBankAccountsById = (req,res,next) =>{
   try {
-    const bankId = req.params.bank_id;
     logger.info(`[${context}]: Sending service to get bank accounts`);
     ObjLog.log(`[${context}]: Sending service to get bank accounts`);
 

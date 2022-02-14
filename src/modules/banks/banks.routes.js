@@ -17,7 +17,7 @@ currenciesRouter.get(
 );
 
 currenciesRouter.get(
-  "/getBankAccountsById",
+  "/getBankAccountsById/:id_country/:id_currency",
   // guard.verifyAdmin("/login"),
   currenciesController.getBankAccountsById
 );
