@@ -21,6 +21,13 @@ pool
   .then((response) => {
     logger.info("PG-DB is connected");
     ObjLog.log("PG-DB is connected");
+    pool.on(
+      'connect', client => {
+        client.on('notice', notice => {
+          console.log(notice.message)
+        })
+      }
+    )
   })
   .catch((err) => {
     logger.error(`PGDB is not connected: ${err}`);
