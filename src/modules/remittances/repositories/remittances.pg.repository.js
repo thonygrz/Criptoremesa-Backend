@@ -49,4 +49,19 @@ remittancesPGRepository.limitationsByCodPub = async (cust_cr_cod_pub) => {
   }
 };
 
+remittancesPGRepository.startRemittance = async (body) => {
+  try {
+    logger.info(`[${context}]: Starting remittance on db`);
+    ObjLog.log(`[${context}]: Starting remittance on db`);
+    await pool.query("SET SCHEMA 'msg_app'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
+    );
+    if (resp.rows[0].sp_lnk_cr_remittances_init) return resp.rows[0].sp_lnk_cr_remittances_init;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default remittancesPGRepository;

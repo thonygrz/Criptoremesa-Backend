@@ -22,4 +22,10 @@ remittancesRouter.get(
   remittancesController.limitationsByCodPub
 );
 
+remittancesRouter.post(
+  "/",
+  // guard.verifyAdmin("/login"),
+  remittancesController.startRemittance
+);
+
 export default remittancesRouter;

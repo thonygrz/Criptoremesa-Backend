@@ -38,4 +38,15 @@ remittancesController.limitationsByCodPub = (req, res, next) => {
   }
 };
 
+remittancesController.startRemittance = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to start remittance`);
+    ObjLog.log(`[${context}]: Sending service to start remittance`);
+
+    remittancesService.startRemittance(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default remittancesController;
