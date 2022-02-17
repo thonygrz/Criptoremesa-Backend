@@ -38,7 +38,7 @@ banksService.getBanks = async (req, res, next) => {
       logger.info(`[${context}]: Get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
       ObjLog.log(`[${context}]: Get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
       let data = {}
-      if (req.query.origin === true)
+      if (req.query.origin === 'true')
         data = await banksRepository.getOriginBanks(req.query.country_id,req.query.payMethod_id,req.query.currency_id);
       else 
         data = await banksRepository.getDestinyBanks(req.query.country_id,req.query.payMethod_id,req.query.currency_id);
