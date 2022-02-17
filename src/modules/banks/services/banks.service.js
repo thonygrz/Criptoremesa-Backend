@@ -18,6 +18,8 @@ const logConst = {
 
 banksService.getBanks = async (req, res, next) => {
   try {
+    console.log('REQ.QUERY: ',req.query)
+
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
@@ -36,7 +38,6 @@ banksService.getBanks = async (req, res, next) => {
       logger.info(`[${context}]: Get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
       ObjLog.log(`[${context}]: Get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
       let data = {}
-      console.log('REQ.QUERY: ',req.query)
       if (req.query.origin === true)
         data = await banksRepository.getOriginBanks(req.query.country_id,req.query.payMethod_id,req.query.currency_id);
       else 
