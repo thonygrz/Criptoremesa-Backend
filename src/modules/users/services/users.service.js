@@ -2573,6 +2573,8 @@ usersService.forgotPassword = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
+    console.log('user con su id_country: ',req.body)
+
     let user = await usersPGRepository.getusersClientByEmail(
       `'${req.body.email_user}'`
     );
