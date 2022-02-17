@@ -1,26 +1,26 @@
 import Router from "express-promise-router";
-import currenciesController from "./controllers/banks.controller";
+import banksController from "./controllers/banks.controller";
 import guard from "../../utils/guard";
-const currenciesRouter = Router();
+const banksRouter = Router();
 
 // IF YOU WERE USING cg/auth/login
-currenciesRouter.get(
+banksRouter.get(
   "/",
   // guard.verifyAdmin("/login"),
-  currenciesController.getBanks
+  banksController.getBanks
 );
 
-currenciesRouter.get(
+banksRouter.get(
   "/:bank_id",
   // guard.verifyAdmin("/login"),
-  currenciesController.getBankById
+  banksController.getBankById
 );
 
-currenciesRouter.get(
+banksRouter.get(
   "/getBankAccountsById/:id_country/:id_currency",
   // guard.verifyAdmin("/login"),
-  currenciesController.getBankAccountsById
+  banksController.getBankAccountsById
 );
 
 
-export default currenciesRouter;
+export default banksRouter;

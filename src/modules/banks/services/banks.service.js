@@ -16,7 +16,7 @@ const logConst = {
   session: null,
 };
 
-banksService.getBanks = async (req, res, next,countryId,payMethodId,currencyId,origin) => {
+banksService.getBanks = async (req, res, next) => {
   try {
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
@@ -33,13 +33,14 @@ banksService.getBanks = async (req, res, next,countryId,payMethodId,currencyId,o
     }
     else{
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get ${origin === true ? 'origin' : 'destiny'} banks`);
-      ObjLog.log(`[${context}]: Get ${origin === true ? 'origin' : 'destiny'} banks`);
+      logger.info(`[${context}]: Get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
+      ObjLog.log(`[${context}]: Get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
       let data = {}
-      if (origin === true)
-        data = await banksRepository.getOriginBanks(countryId,payMethodId,currencyId);
+      console.log('REQ.QUERY: ',req.query)
+      if (req.query.origin === true)
+        data = await banksRepository.getOriginBanks(req.query.country_id,req.query.payMethod_id,req.query.currency_id);
       else 
-        data = await banksRepository.getDestinyBanks(countryId,payMethodId,currencyId);
+        data = await banksRepository.getDestinyBanks(req.query.country_id,req.query.payMethod_id,req.query.currency_id);
       res.status(200).json(data);
     }
   } catch (error) {
