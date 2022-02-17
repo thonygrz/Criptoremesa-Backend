@@ -5,6 +5,7 @@ import redisClient from "../../utils/redis";
 import chatSocketService from "../chat/services/chat-socket.service";
 import chatPGRepository from "../chat/repositories/chat.pg.repository";
 import ratesPGRepository from "../rates/repositories/rates.pg.repository";
+import usersPGRepository from "../users/repositories/users.pg.repository";
 
 import fs from "fs";
 
