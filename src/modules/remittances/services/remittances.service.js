@@ -142,7 +142,7 @@ remittancesService.countriesCurrencies = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await remittancesPGRepository.countriesCurrencies(req.body);
+    let data = await remittancesPGRepository.countriesCurrencies(req.params.originDestiny);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
