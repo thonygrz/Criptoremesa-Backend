@@ -42,7 +42,8 @@ remittancesPGRepository.limitationsByCodPub = async (cust_cr_cod_pub) => {
     const resp = await pool.query(
       `SELECT * FROM get_limitations_by_user('${cust_cr_cod_pub}')`
     );
-    if (resp.rows[0].get_limitations_by_user) return resp.rows[0].get_limitations_by_user;
+    if (resp.rows[0].get_limitations_by_user)
+      return resp.rows[0].get_limitations_by_user;
     else return null;
   } catch (error) {
     throw error;
@@ -57,23 +58,25 @@ remittancesPGRepository.startRemittance = async (body) => {
     const resp = await pool.query(
       `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
     );
-    if (resp.rows[0].sp_lnk_cr_remittances_init) return resp.rows[0].sp_lnk_cr_remittances_init;
+    if (resp.rows[0].sp_lnk_cr_remittances_init)
+      return resp.rows[0].sp_lnk_cr_remittances_init;
     else return null;
   } catch (error) {
     throw error;
   }
 };
 
-remittancesPGRepository.countriesCurrencies = async (body) => {
+remittancesPGRepository.countriesCurrencies = async (originDestiny) => {
   try {
     logger.info(`[${context}]: Getting countries and currencies fron db`);
     ObjLog.log(`[${context}]: Getting countries and currencies fron db`);
     await pool.query("SET SCHEMA 'msg_app'");
-    // const resp = await pool.query(
-    //   `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
-    // );
-    // if (resp.rows[0].sp_lnk_cr_remittances_init) return resp.rows[0].sp_lnk_cr_remittances_init;
-    // else return null;
+    const resp = await pool.query(
+      `SELECT * FROM sp_get_countries_currencies('${originDestiny}')`
+    );
+    if (resp.rows[0].sp_get_countries_currencies)
+      return resp.rows[0].sp_get_countries_currencies;
+    else return null;
   } catch (error) {
     throw error;
   }
