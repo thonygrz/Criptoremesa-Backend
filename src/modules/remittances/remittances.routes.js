@@ -29,7 +29,7 @@ remittancesRouter.post(
 );
 
 remittancesRouter.get(
-  "/countriesCurrencies/:originDestiny",
+  "/countriesCurrencies",
   // guard.verifyAdmin("/login"),
   remittancesController.countriesCurrencies
 );
