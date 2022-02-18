@@ -29,7 +29,7 @@ remittancesRouter.post(
 );
 
 remittancesRouter.get(
-  "/countriesCurrencies",
+  "/hola",
   // guard.verifyAdmin("/login"),
   remittancesController.countriesCurrencies
 );
