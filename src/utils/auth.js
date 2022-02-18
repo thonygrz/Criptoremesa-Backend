@@ -286,6 +286,7 @@ export default {
           return expressObj.next(err);
         }
         let response = null;
+        console.log('blockedOrNotVerified: ',blockedOrNotVerified)
         if (!blockedOrNotVerified && !expressObj.isAuthenticated){
             if (globalUser) {
               // console.log("email: ", globalUser.email_user);
