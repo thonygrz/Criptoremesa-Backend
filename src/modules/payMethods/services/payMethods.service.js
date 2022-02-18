@@ -44,6 +44,35 @@ payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origi
   }
 };
 
+payMethodsService.deposit_method_by_country = async (req, res, next) => {
+  try {
+
+    let log  = logConst;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    let data = {}
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }
+    else{
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Get deposit Methods by Country`);
+      ObjLog.log(`[${context}]: Get deposit Methods by Country`);
+      data = await payMethodsRepository.deposit_method_by_country(req.params.id_country);
+      res.status(200).json(data);
+    }
+    
+  } catch (error) {
+    next(error);
+  }
+};
+
 payMethodsService.getPayMethodById = async (req, res, next,payMethodId) => {
   try {
 

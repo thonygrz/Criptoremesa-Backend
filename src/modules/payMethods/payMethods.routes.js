@@ -16,4 +16,10 @@ payMethodsRouter.get(
   payMethodsController.getPayMethodById
 );
 
+payMethodsRouter.get(
+  "/deposit_method_by_country/:id_country",
+  // guard.verifyAdmin("/login"),
+  payMethodsController.deposit_method_by_country
+);
+
 export default payMethodsRouter;

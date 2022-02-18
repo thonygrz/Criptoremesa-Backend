@@ -18,6 +18,21 @@ payMethodsRepository.getPayMethodsByCountry = async (idCountry) => {
     throw error;
   }
 };
+
+payMethodsRepository.deposit_method_by_country = async (id_country) => {
+  try {
+    logger.info(`[${context}]: Getting deposit Methods by Country from db`);
+    ObjLog.log(`[${context}]: Getting deposit Methods by Country from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `select * from sec_cust.sp_get_deposit_methods_by_country(${id_country})`
+    );
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 payMethodsRepository.getPayMethodById = async (idPayMethod) => {
   try {
     logger.info(`[${context}]: Getting Pay Method by id ${idPayMethod} from db`);
