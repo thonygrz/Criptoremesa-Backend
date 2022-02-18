@@ -49,7 +49,7 @@ authenticationPGRepository.getUserByEmail = async (email) => {
     ObjLog.log(`[${context}]: Getting user by email from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM get_user_by_email('${email}')`
+      `SELECT * FROM get_all_users_by_email('${email}')`
     );
     return resp.rows[0];
   } catch (error) {
