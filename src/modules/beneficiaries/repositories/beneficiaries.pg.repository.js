@@ -51,7 +51,7 @@ beneficiariesPGRepository.deleteFrequentBeneficiary = async (beneficiaryId) => {
     ObjLog.log(`[${context}]: Deleting user frequent beneficiary from DB`);
     await pool.query("SET SCHEMA 'prc_mng'");
     const resp = await pool.query(
-      `SELECT * FROM sp_ms_frequents_beneficiaries_delete('${beneficiaryId}')`
+      `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_delete('${beneficiaryId}')`
     );
     return resp.rows[0];
   } catch (error) {
