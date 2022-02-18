@@ -41,11 +41,13 @@ export async function SocketServer(server) {
       });
 
       let resp = await chatPGRepository.getMessages(val);
-      resp.messages.forEach((el) => {
-        if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
-          el.file = fs.readFileSync(el.file);
-        }
-      })
+      if (resp.messages) {
+        resp.messages.forEach((el) => {
+          if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
+            el.file = fs.readFileSync(el.file);
+          }
+        })
+      }
       notifyChanges(resp.socket_channel, resp);
       // redisClient.end(true);
     });
@@ -60,11 +62,13 @@ export async function SocketServer(server) {
       });
 
       let resp = await chatPGRepository.getMessagesByUniqId(val);
-      resp.messages.forEach((el) => {
-        if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
-          el.file = fs.readFileSync(el.file);
-        }
-      })
+      if (resp.messages) {
+        resp.messages.forEach((el) => {
+          if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
+            el.file = fs.readFileSync(el.file);
+          }
+        })
+      }
       notifyChanges(resp.socket_channel, resp);
       // redisClient.end(true);
     });
