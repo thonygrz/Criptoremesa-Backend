@@ -2727,7 +2727,7 @@ usersService.getusersClientByEmail = async (req, res, next) => {
       failed: false,
       ip: req.connection.remoteAddress,
       country: countryResp,
-      route: "/users/geClientByEmail",
+      route: "/users/getClientByEmail",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);

@@ -8,8 +8,8 @@ const context = "banks Controller";
 //AUTENTICACION CON PASSPORT
 banksController.getBanks = (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
-    ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === true ? 'origin' : 'destiny'} banks`);
+    logger.info(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
+    ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
 
     banksService.getBanks(req, res, next);
   } catch (error) {

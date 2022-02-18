@@ -28,4 +28,10 @@ remittancesRouter.post(
   remittancesController.startRemittance
 );
 
+remittancesRouter.get(
+  "/",
+  // guard.verifyAdmin("/login"),
+  remittancesController.startRemittance
+);
+
 export default remittancesRouter;
