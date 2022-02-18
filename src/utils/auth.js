@@ -19,7 +19,7 @@ const expressObj = {
   res: null,
   next: null,
   isAuthenticated: false,
-  userExists: false,
+  userExists: false
 };
 
 // THIS SENDS A CUSTOM RESPONSE IF USER LOGS IN CORRECTLY
@@ -55,6 +55,12 @@ async function resp(user) {
         console.log("response: ", response);
       }
       await authenticationPGRepository.insertLogMsg(log);
+      console.log('VERIFICAAAAAAAA:',{
+        user_blocked: user.user_blocked,
+        id_verif_level: user.id_verif_level,
+        verif_level_apb: user.verif_level_apb,
+        atcPhone: response ? response.atcPhone : 'NA'
+      })
       expressObj.res.status(400).send({
         user_blocked: user.user_blocked,
         id_verif_level: user.id_verif_level,
@@ -72,6 +78,11 @@ async function resp(user) {
         session: sess,
       };
       await authenticationPGRepository.insertLogMsg(log);
+      console.log('VERIFICAAAAAAAA:',{
+        isAuthenticated: expressObj.isAuthenticated,
+        user,
+        captchaSuccess: true,
+      })
       expressObj.res.status(200).send({
         isAuthenticated: expressObj.isAuthenticated,
         user,
@@ -121,8 +132,6 @@ passport.use(
         if (user) {
           logger.info(`[${context}]: User found, checking password`);
           ObjLog.log(`[${context}]: User found, checking password`);
-
-          
 
           if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
             logger.error(`[${context}]: User is blocked or not verified`);
@@ -284,6 +293,13 @@ export default {
               // console.log("response: ", response);
             }
             // console.log('response: ',response)
+            console.log('VERIFICAAAAAAAA:',{
+              isAuthenticated: false,
+              loginAttempts: response ? response.login_attempts : 'NA',
+              atcPhone: response ? response.atcPhone : 'NA',
+              userExists: expressObj.userExists,
+              captchaSuccess: true,
+            })
             res.json({
               isAuthenticated: false,
               loginAttempts: response ? response.login_attempts : 'NA',
