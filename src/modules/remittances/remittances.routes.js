@@ -13,7 +13,7 @@ remittancesRouter.get(
 remittancesRouter.get(
   "/notificationTypes2",
   // guard.verifyAdmin("/login"),
-  remittancesController.notificationTypes
+  remittancesController.countriesCurrencies
 );
 
 remittancesRouter.get(
