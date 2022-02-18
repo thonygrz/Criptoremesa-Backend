@@ -27,7 +27,7 @@ payMethodsRepository.deposit_method_by_country = async (id_country) => {
     const resp = await pool.query(
       `select * from sec_cust.sp_get_deposit_methods_by_country(${id_country})`
     );
-    return resp.rows;
+    return resp.rows[0].sp_get_deposit_methods_by_country;
   } catch (error) {
     throw error;
   }
