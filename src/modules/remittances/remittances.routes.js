@@ -29,9 +29,9 @@ remittancesRouter.post(
 );
 
 remittancesRouter.get(
-  "/",
+  "/countriesCurrencies",
   // guard.verifyAdmin("/login"),
-  remittancesController.startRemittance
+  remittancesController.countriesCurrencies
 );
 
 export default remittancesRouter;

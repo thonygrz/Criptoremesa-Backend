@@ -49,4 +49,15 @@ remittancesController.startRemittance = (req, res, next) => {
   }
 };
 
+remittancesController.countriesCurrencies = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get countries and currencies`);
+    ObjLog.log(`[${context}]: Sending service to get countries and currencies`);
+
+    remittancesService.countriesCurrencies(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default remittancesController;

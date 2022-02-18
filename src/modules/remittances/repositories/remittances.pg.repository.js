@@ -64,4 +64,19 @@ remittancesPGRepository.startRemittance = async (body) => {
   }
 };
 
+remittancesPGRepository.countriesCurrencies = async (body) => {
+  try {
+    logger.info(`[${context}]: Getting countries and currencies fron db`);
+    ObjLog.log(`[${context}]: Getting countries and currencies fron db`);
+    await pool.query("SET SCHEMA 'msg_app'");
+    // const resp = await pool.query(
+    //   `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
+    // );
+    // if (resp.rows[0].sp_lnk_cr_remittances_init) return resp.rows[0].sp_lnk_cr_remittances_init;
+    // else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default remittancesPGRepository;
