@@ -11,7 +11,7 @@ remittancesRouter.get(
 );
 
 remittancesRouter.get(
-  "/notificationTypes2",
+  "/countriesCurrencies",
   // guard.verifyAdmin("/login"),
   remittancesController.countriesCurrencies
 );
@@ -32,12 +32,6 @@ remittancesRouter.post(
   "/",
   // guard.verifyAdmin("/login"),
   remittancesController.startRemittance
-);
-
-remittancesRouter.get(
-  "/hola",
-  // guard.verifyAdmin("/login"),
-  remittancesController.countriesCurrencies
 );
 
 export default remittancesRouter;

@@ -70,7 +70,7 @@ remittancesPGRepository.countriesCurrencies = async (originDestiny) => {
   try {
     logger.info(`[${context}]: Getting countries and currencies fron db`);
     ObjLog.log(`[${context}]: Getting countries and currencies fron db`);
-    await pool.query("SET SCHEMA 'msg_app'");
+    await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
       `SELECT * FROM sp_get_countries_currencies('${originDestiny}')`
     );
