@@ -1,5 +1,5 @@
 import Router from "express-promise-router";
-import destinyCountriesController from "./controllers/destiny_countries.controller";
+import countriesController from "./controllers/countries.controller";
 import countryStatesController from "./controllers/states.controller";
 import guard from "../../utils/guard";
 const countriesRouter = Router();
@@ -8,7 +8,7 @@ const countriesRouter = Router();
 countriesRouter.get(
   "/destiny",
   // guard.verifyAdmin("/login"),
-  destinyCountriesController.getDestinyCountries
+  countriesController.getDestinyCountries
 );
 
 countriesRouter.get(
@@ -17,7 +17,10 @@ countriesRouter.get(
   countryStatesController.getStatesByCountryId
 );
 
-
-
+countriesRouter.get(
+  "/countriesCurrencies",
+  // guard.verifyAdmin("/login"),
+  remittancesController.countriesCurrencies
+);
 
 export default countriesRouter;

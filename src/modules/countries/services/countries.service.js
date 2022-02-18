@@ -1,10 +1,10 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
-import destinyCountriesRepository from "../repositories/destiny_countries.pg.repository";
+import countriesRepository from "../repositories/countries.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
-const desintCountriesService = {};
-const context = "destiny Countries Service";
+const countriesService = {};
+const context = "countries Service";
 const logConst = {
   is_auth: undefined,
   success: true,
@@ -15,7 +15,7 @@ const logConst = {
   session: null,
 };
 
-desintCountriesService.getDestinyCountries = async (req, res, next) => {
+countriesService.getDestinyCountries = async (req, res, next) => {
   try {
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
@@ -33,7 +33,7 @@ desintCountriesService.getDestinyCountries = async (req, res, next) => {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Get destiny Countries`);
       ObjLog.log(`[${context}]: Get destiny Countries`);
-      let data = await destinyCountriesRepository.getDestinyCountries();  
+      let data = await countriesRepository.getDestinyCountries();  
       res.status(200).json(data);
     }
   } catch (error) {
@@ -41,4 +41,34 @@ desintCountriesService.getDestinyCountries = async (req, res, next) => {
   }
 };
 
-export default desintCountriesService;
+countriesService.countriesCurrencies = async (req, res, next) => {
+  try {
+
+    let countryResp = null;
+    let sess = null;
+    let data = await countriesRepository.countriesCurrencies();
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/countries/countriesCurrencies",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default countriesService;

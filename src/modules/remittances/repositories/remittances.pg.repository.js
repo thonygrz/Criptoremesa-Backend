@@ -66,20 +66,4 @@ remittancesPGRepository.startRemittance = async (body) => {
   }
 };
 
-remittancesPGRepository.countriesCurrencies = async () => {
-  try {
-    logger.info(`[${context}]: Getting countries and currencies fron db`);
-    ObjLog.log(`[${context}]: Getting countries and currencies fron db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
-      `SELECT * FROM sp_get_countries_currencies()`
-    );
-    if (resp.rows[0].sp_get_countries_currencies)
-      return resp.rows[0].sp_get_countries_currencies;
-    else return null;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export default remittancesPGRepository;

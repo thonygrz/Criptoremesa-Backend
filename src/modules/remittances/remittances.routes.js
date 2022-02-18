@@ -11,12 +11,6 @@ remittancesRouter.get(
 );
 
 remittancesRouter.get(
-  "/countriesCurrencies",
-  // guard.verifyAdmin("/login"),
-  remittancesController.countriesCurrencies
-);
-
-remittancesRouter.get(
   "/:email_user",
   // guard.verifyAdmin("/login"),
   remittancesController.getRemittances
