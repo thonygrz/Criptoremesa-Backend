@@ -11,6 +11,12 @@ remittancesRouter.get(
 );
 
 remittancesRouter.get(
+  "/hola",
+  // guard.verifyAdmin("/login"),
+  remittancesController.countriesCurrencies
+);
+
+remittancesRouter.get(
   "/:email_user",
   // guard.verifyAdmin("/login"),
   remittancesController.getRemittances
@@ -28,10 +34,6 @@ remittancesRouter.post(
   remittancesController.startRemittance
 );
 
-remittancesRouter.get(
-  "/hola",
-  // guard.verifyAdmin("/login"),
-  remittancesController.countriesCurrencies
-);
+
 
 export default remittancesRouter;
