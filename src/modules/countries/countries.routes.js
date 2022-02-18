@@ -20,7 +20,7 @@ countriesRouter.get(
 countriesRouter.get(
   "/countriesCurrencies",
   // guard.verifyAdmin("/login"),
-  remittancesController.countriesCurrencies
+  countriesController.countriesCurrencies
 );
 
 export default countriesRouter;
