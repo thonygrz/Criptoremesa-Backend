@@ -6,6 +6,7 @@ import chatSocketService from "../chat/services/chat-socket.service";
 import chatPGRepository from "../chat/repositories/chat.pg.repository";
 import ratesPGRepository from "../rates/repositories/rates.pg.repository";
 import usersPGRepository from "../users/repositories/users.pg.repository";
+import remittancesPGRepository from "../remittances/repositories/remittances.pg.repository";
 
 import fs from "fs";
 
@@ -174,6 +175,18 @@ export async function SocketServer(server) {
       let rate = await ratesPGRepository.getRate(val);
       rate.email_user = val.email_user
       notifyChanges('get_rate', rate);
+    });
+
+    socket.on("get_bank_fee", async (val) => {
+      logger.info(`[${context}] Receiving data from frontend`);
+      ObjLog.log(`[${context}] Receiving data from frontend`);
+
+      console.log('get_rate from FE: ',socket.id)
+      console.log('val from FE: ',val)
+
+      let fee = await remittancesPGRepository.getBankFee(val);
+      fee.email_user = val.email_user
+      notifyChanges('get_bank_fee', fee);
     });
   });
 }

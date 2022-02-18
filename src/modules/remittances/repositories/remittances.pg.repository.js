@@ -66,4 +66,24 @@ remittancesPGRepository.startRemittance = async (body) => {
   }
 };
 
+remittancesPGRepository.getBankFee = async (body) => {
+  try {
+    logger.info(`[${context}]: Getting fee from db`);
+    ObjLog.log(`[${context}]: Getting fee from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_calculate_bank_fee(
+                                          ${body.id_origin_bank},
+                                          ${body.id_destiny_bank},
+                                          ${body.id_pay_method},
+                                          )`
+    );
+    if (resp.rows[0].sp_calculate_bank_fee)
+      return resp.rows[0].sp_calculate_bank_fee;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default remittancesPGRepository;
