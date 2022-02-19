@@ -78,8 +78,8 @@ remittancesPGRepository.getBankFee = async (body) => {
                                           ${body.id_pay_method}
                                           )`
     );
-    if (resp.rows[0].sp_calculate_bank_fee)
-      return resp.rows[0].sp_calculate_bank_fee;
+    if (resp.rows)
+      return resp.rows;
     else return null;
   } catch (error) {
     throw error;
