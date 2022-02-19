@@ -75,7 +75,7 @@ remittancesPGRepository.getBankFee = async (body) => {
       `SELECT * FROM sp_calculate_bank_fee(
                                           ${body.id_origin_bank},
                                           ${body.id_destiny_bank},
-                                          ${body.id_pay_method},
+                                          ${body.id_pay_method}
                                           )`
     );
     if (resp.rows[0].sp_calculate_bank_fee)
