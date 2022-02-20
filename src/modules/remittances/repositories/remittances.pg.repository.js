@@ -79,8 +79,8 @@ remittancesPGRepository.getBankFee = async (body) => {
                                           )`
     );
     console.log('resp: ',resp.rows)
-    if (resp.rows[0].sp_calculate_bank_fee)
-      return resp.rows[0].sp_calculate_bank_fee;
+    if (resp.rows[0].sp_calculate_bank_fee[0])
+      return resp.rows[0].sp_calculate_bank_fee[0];
     else return null;
   } catch (error) {
     throw error;
