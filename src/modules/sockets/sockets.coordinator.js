@@ -185,6 +185,7 @@ export async function SocketServer(server) {
       console.log('val from FE: ',val)
 
       let fee = await remittancesPGRepository.getBankFee(val);
+      console.log('LLEGO ESTO DE BD: ',)
       fee.email_user = val.email_user
       notifyChanges('get_bank_fee', fee);
     });
