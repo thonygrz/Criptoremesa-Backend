@@ -34,10 +34,10 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (body,emailUser) => 
         ${body.account_type === null ? 'null' : `'${body.account_type}'`},
         ${body.phone_number === null ? 'null' : `'${body.phone_number}'`},
         ${body.email === null ? 'null' : `'${body.email}'`},
-        '${body.id_doc_type}',
+        ${body.id_doc_type},
         ${body.id_bank === null ? 'null' : `'${body.id_bank}'`},
         '${emailUser}',
-        '${body.id_pay_method}'
+        ${body.id_pay_method}
         )`
     );
     return resp.rows[0];
