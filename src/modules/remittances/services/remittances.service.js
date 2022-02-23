@@ -141,7 +141,7 @@ function waitingPreRemittance(id_pre_remittance) {
   const timmy = setTimeout(async () => {
     let resp = await remittancesPGRepository.expiredPreRemittance(id_pre_remittance);
   }, 60000);
-  redisClient.set(data.id_pre_remittance, timmy);
+  redisClient.set(id_pre_remittance, timmy);
 }
 
 remittancesService.startPreRemittance = async (req, res, next) => {
