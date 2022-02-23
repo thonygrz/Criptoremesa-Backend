@@ -70,7 +70,7 @@ remittancesPGRepository.startPreRemittance = async (body) => {
   try {
     logger.info(`[${context}]: Starting pre remittance on db`);
     ObjLog.log(`[${context}]: Starting pre remittance on db`);
-    await pool.query("SET SCHEMA 'msg_app'");
+    await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
       `SELECT * FROM sp_store_pre_remittance('${JSON.stringify(body)}','${body.email_user}')`
     );
