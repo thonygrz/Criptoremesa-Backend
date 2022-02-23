@@ -35,7 +35,7 @@ remittancesRouter.post(
 );
 
 remittancesRouter.get(
-  "/preRemittanceByUser",
+  "/preRemittanceByUser/:email_user",
   // guard.verifyAdmin("/login"),
   remittancesController.getPreRemittanceByUser
 );
