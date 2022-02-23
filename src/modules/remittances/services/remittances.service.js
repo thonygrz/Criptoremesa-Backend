@@ -221,7 +221,7 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await remittancesPGRepository.cancelPreRemittance(req.params.id_pre_remmittance);
+    let data = await remittancesPGRepository.cancelPreRemittance(req.params.id_pre_remittance);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
