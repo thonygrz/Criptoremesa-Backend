@@ -41,7 +41,7 @@ remittancesRouter.get(
 );
 
 remittancesRouter.delete(
-  "/cancelPreRemittance/:id_pre_remittance",
+  "/preRemittance/:id_pre_remittance",
   // guard.verifyAdmin("/login"),
   remittancesController.cancelPreRemittance
 );
