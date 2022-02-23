@@ -13,7 +13,7 @@ banksRepository.getOriginBanks = async (countryId,payMethodId,currencyId) => {
     ObjLog.log(`[${context}]: Getting origin banks from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `select * from sp_get_origin_banks_by_country_and_currency({${countryId}},{${currencyId}})`
+      `select * from sp_get_origin_banks_by_country_and_currency(${countryId},${currencyId})`
     );
     return resp.rows;
   } catch (error) {
