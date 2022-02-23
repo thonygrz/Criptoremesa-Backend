@@ -59,9 +59,6 @@ banksRepository.getBankAccountsById = async (body) => {
       `select * from get_bank_accounts_by_country(${body.id_country},${body.id_currency})`
     );
     let banks = resp.rows[0].get_bank_accounts_by_country
-    banks.forEach(el => {
-      el.image = fs.readFileSync(env.FILES_DIR + '/bank_logos/' + el.ident_name + '.png');
-    });
     return resp.rows[0].get_bank_accounts_by_country;
   } catch (error) {
     throw error;
