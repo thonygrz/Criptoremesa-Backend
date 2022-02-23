@@ -90,8 +90,8 @@ remittancesPGRepository.getPreRemittanceByUser = async (email_user) => {
     const resp = await pool.query(
       `SELECT * FROM get_pre_remittance_by_user('${email_user}')`
     );
-    if (resp.rows[0].getPreRemittanceByUser)
-      return resp.rows[0].getPreRemittanceByUser;
+    if (resp.rows[0].get_pre_remittance_by_user)
+      return resp.rows[0].get_pre_remittance_by_user;
     else return null;
   } catch (error) {
     throw error;
