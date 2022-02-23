@@ -82,6 +82,22 @@ remittancesPGRepository.startPreRemittance = async (body) => {
   }
 };
 
+remittancesPGRepository.expiredPreRemittance = async (id_pre_remittance) => {
+  try {
+    logger.info(`[${context}]: Expiring pre remittance on db`);
+    ObjLog.log(`[${context}]: Expiring pre remittance on db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_expire_pre_remittance(${id_pre_remittance})`
+    );
+    if (resp.rows[0].sp_expire_pre_remittance)
+      return resp.rows[0].sp_expire_pre_remittance;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 remittancesPGRepository.getPreRemittanceByUser = async (email_user) => {
   try {
     logger.info(`[${context}]: Getting pre remittance on db`);

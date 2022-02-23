@@ -3,6 +3,7 @@ import ObjLog from "../../../utils/ObjLog";
 import remittancesPGRepository from "../repositories/remittances.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
+import redisClient from "../../utils/redis";
 
 const remittancesService = {};
 const context = "remittances Service";
@@ -136,6 +137,13 @@ remittancesService.startRemittance = async (req, res, next) => {
   }
 };
 
+async function waitingPreRemittance(id_pre_remittance) {
+  const timmy = setTimeout(() => {
+    let resp = await remittancesPGRepository.expiredPreRemittance(id_pre_remittance);
+  }, 60000);
+  redisClient.set(data.id_pre_remittance, timmy);
+}
+
 remittancesService.startPreRemittance = async (req, res, next) => {
   try {
 
@@ -160,6 +168,12 @@ remittancesService.startPreRemittance = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
+
+    if (data.message === 'Pre-remittance succesfully inserted.'){
+
+      waitingPreRemittance(data.id_pre_remittance);
+
+    }
 
     res.status(200).json(data);
   } catch (error) {
