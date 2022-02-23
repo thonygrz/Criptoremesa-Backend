@@ -74,8 +74,8 @@ remittancesPGRepository.startPreRemittance = async (body) => {
     const resp = await pool.query(
       `SELECT * FROM sp_store_pre_remittance('${JSON.stringify(body)}','${body.email_user}')`
     );
-    if (resp.rows[0].sp_lnk_cr_remittances_init)
-      return resp.rows[0].sp_lnk_cr_remittances_init;
+    if (resp.rows[0].sp_store_pre_remittance)
+      return resp.rows[0].sp_store_pre_remittance;
     else return null;
   } catch (error) {
     throw error;
