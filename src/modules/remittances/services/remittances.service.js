@@ -4,6 +4,7 @@ import remittancesPGRepository from "../repositories/remittances.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import redisClient from "../../../utils/redis";
+import { notifyChanges } from "../modules/sockets/sockets.coordinator";
 
 const remittancesService = {};
 const context = "remittances Service";
@@ -140,6 +141,8 @@ remittancesService.startRemittance = async (req, res, next) => {
 function waitingPreRemittance(id_pre_remittance) {
   const timmy = setTimeout(async () => {
     let resp = await remittancesPGRepository.expiredPreRemittance(id_pre_remittance);
+    IF (resp.email_user)
+      notifyChanges('expired_remittance', resp);
   }, 60000);
   redisClient.set(id_pre_remittance.toString(), timmy.toString());
 }
