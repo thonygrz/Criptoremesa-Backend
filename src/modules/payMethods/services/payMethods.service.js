@@ -64,7 +64,7 @@ payMethodsService.deposit_method_by_country = async (req, res, next) => {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Get deposit Methods by Country`);
       ObjLog.log(`[${context}]: Get deposit Methods by Country`);
-      data = await payMethodsRepository.deposit_method_by_country(req.params.id_country);
+      data = await payMethodsRepository.deposit_method_by_country(req.params.id_country,req.params.id_bank);
       res.status(200).json(data);
     }
     

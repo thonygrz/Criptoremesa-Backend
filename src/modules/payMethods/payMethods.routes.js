@@ -17,7 +17,7 @@ payMethodsRouter.get(
 );
 
 payMethodsRouter.get(
-  "/deposit_method_by_country/:id_country",
+  "/deposit_method_by_country/:id_country/:id_bank",
   // guard.verifyAdmin("/login"),
   payMethodsController.deposit_method_by_country
 );
