@@ -66,6 +66,22 @@ remittancesPGRepository.startRemittance = async (body) => {
   }
 };
 
+remittancesPGRepository.startPreRemittance = async (body) => {
+  try {
+    logger.info(`[${context}]: Starting pre remittance on db`);
+    ObjLog.log(`[${context}]: Starting pre remittance on db`);
+    await pool.query("SET SCHEMA 'msg_app'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_store_pre_remittance('${JSON.stringify(body)}','${body.email_user}')`
+    );
+    if (resp.rows[0].sp_lnk_cr_remittances_init)
+      return resp.rows[0].sp_lnk_cr_remittances_init;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 remittancesPGRepository.getBankFee = async (body) => {
   try {
     logger.info(`[${context}]: Getting fee from db`);
