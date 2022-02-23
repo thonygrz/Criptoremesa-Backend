@@ -19,13 +19,13 @@ payMethodsRepository.getPayMethodsByCountry = async (idCountry) => {
   }
 };
 
-payMethodsRepository.deposit_method_by_country = async (body) => {
+payMethodsRepository.deposit_method_by_country = async (id_country,id_bank) => {
   try {
     logger.info(`[${context}]: Getting deposit Methods by Country from db`);
     ObjLog.log(`[${context}]: Getting deposit Methods by Country from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `select * from sec_cust.sp_get_deposit_methods_by_country(${body.id_country},${body.id_bank})`
+      `select * from sec_cust.sp_get_deposit_methods_by_country(${id_country},${id_bank})`
     );
     return resp.rows[0].sp_get_deposit_methods_by_country;
   } catch (error) {
