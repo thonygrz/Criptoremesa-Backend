@@ -60,4 +60,15 @@ remittancesController.startPreRemittance = (req, res, next) => {
   }
 };
 
+remittancesController.getPreRemittanceByUser = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to start remittance`);
+    ObjLog.log(`[${context}]: Sending service to start remittance`);
+
+    remittancesService.getPreRemittanceByUser(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default remittancesController;

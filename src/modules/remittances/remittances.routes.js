@@ -29,9 +29,15 @@ remittancesRouter.post(
 );
 
 remittancesRouter.post(
-  "/pre-remittance",
+  "/preRemittance",
   // guard.verifyAdmin("/login"),
   remittancesController.startPreRemittance
+);
+
+remittancesRouter.get(
+  "/preRemittanceByUser",
+  // guard.verifyAdmin("/login"),
+  remittancesController.getPreRemittanceByUser
 );
 
 export default remittancesRouter;
