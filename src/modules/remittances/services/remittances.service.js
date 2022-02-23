@@ -4,7 +4,7 @@ import remittancesPGRepository from "../repositories/remittances.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import redisClient from "../../../utils/redis";
-import { notifyChanges } from "../modules/sockets/sockets.coordinator";
+import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
 
 const remittancesService = {};
 const context = "remittances Service";
