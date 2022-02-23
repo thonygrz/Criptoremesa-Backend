@@ -114,6 +114,22 @@ remittancesPGRepository.getPreRemittanceByUser = async (email_user) => {
   }
 };
 
+remittancesPGRepository.cancelPreRemittance = async (id_pre_remittance) => {
+  try {
+    logger.info(`[${context}]: Getting pre remittance on db`);
+    ObjLog.log(`[${context}]: Getting pre remittance on db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_cancel_pre_remittance(${id_pre_remittance})`
+    );
+    if (resp.rows[0].sp_cancel_pre_remittance)
+      return resp.rows[0].sp_cancel_pre_remittance;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 remittancesPGRepository.getBankFee = async (body) => {
   try {
     logger.info(`[${context}]: Getting fee from db`);

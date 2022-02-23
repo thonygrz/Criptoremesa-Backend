@@ -71,4 +71,15 @@ remittancesController.getPreRemittanceByUser = (req, res, next) => {
   }
 };
 
+remittancesController.cancelPreRemittance = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to cancel pre remittance`);
+    ObjLog.log(`[${context}]: Sending service to cancel pre remittance`);
+
+    remittancesService.cancelPreRemittance(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default remittancesController;
