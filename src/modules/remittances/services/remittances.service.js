@@ -7,6 +7,8 @@ import redisClient from "../../../utils/redis";
 import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
 import {join} from 'path'
 import fs from 'fs'
+import formidable from "formidable";
+
 
 const remittancesService = {};
 const context = "remittances Service";
@@ -120,22 +122,22 @@ remittancesService.startRemittance = async (req, res, next) => {
 
     let countryResp = null;
     let sess = null;
-    console.log('req.body.captures: ',req.body)
-    if (req.body.captures) {
-      req.body.captures.forEach(el => {
-        let exists = true
-        let pathName
-        while (exists){
-            let number = between(10000,99999);
-            pathName = join(env.FILES_DIR,`/${req.body.email_user}-${number}`)
-            if (!fs.existsSync(pathName)){
-                exists = false
-            }
-        }
-        fs.writeFileSync(pathName,el.content)
-        el.path = pathName
-      });
-    }  
+    // console.log('req.body.captures: ',req.body)
+    // if (req.body.captures) {
+    //   req.body.captures.forEach(el => {
+    //     let exists = true
+    //     let pathName
+    //     while (exists){
+    //         let number = between(10000,99999);
+    //         pathName = join(env.FILES_DIR,`/${req.body.email_user}-${number}`)
+    //         if (!fs.existsSync(pathName)){
+    //             exists = false
+    //         }
+    //     }
+    //     fs.writeFileSync(pathName,el.content)
+    //     el.path = pathName
+    //   });
+    // }  
 
     let data = await remittancesPGRepository.startRemittance(req.body);
     const resp = authenticationPGRepository.getIpInfo(
@@ -155,6 +157,118 @@ remittancesService.startRemittance = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
+
+
+    let fileError = false;
+
+    const form = formidable({
+      multiples: true,
+      uploadDir: env.FILES_DIR,
+      maxFileSize: 5 * 1024 * 1024,
+      keepExtensions: true,
+    });
+
+    form.onPart = (part) => {
+      console.log("part: ", part.mime);
+      if (
+        !fileError &&
+        !(
+          part.mime === "image/png" ||
+          part.mime === "image/jpg" ||
+          part.mime === "image/jpeg" ||
+          part.mime === "image/gif" ||
+          part.mime === "application/pdf" ||
+          part.mime === "audio/webm" ||
+          part.mime === null
+        )
+      ) {
+        fileError = true;
+        form.emit("error");
+      } else {
+        form.handlePart(part);
+      }
+    };
+
+    form.on("error", function (err) {
+      if (fileError) {
+        next({
+          message: `Uno o varios archivos no tienen formato permitido`,
+        });
+      } else {
+        fileError = true;
+        console.log("error dentro del formerror: ", err);
+
+        next({
+          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+        });
+      }
+    });
+
+    form.parse(req, async function (err, fields, files) {
+      console.log("fileError ", fileError);
+      console.log("files ", files);
+      console.log("fields ", fields);
+
+      let file_path = null;
+
+      // if (files.file !== undefined && files.file.size > 0)
+      //   file_path = form.uploadDir + `/chat-${fields.email_user}__${files.file.name}`;
+
+      Object.values(files).forEach((f) => {
+        if (
+          f.type === "image/png" ||
+          f.type === "image/jpg" ||
+          f.type === "image/jpeg" ||
+          f.type === "image/gif" ||
+          f.type === "application/pdf" ||
+          f.type === "audio/webm"
+        ) {
+          // fs.rename(
+          //   f.path,
+          //   form.uploadDir + `/chat-${fields.email_user}__${f.name}`,
+          //   (error) => {
+          //     if (error) {
+          //       console.log("error dentro del rename: ", error);
+          //       next(error);
+          //     }
+          //   }
+          // );
+        }
+      });
+      try {
+        if (!fileError) {
+          // console.log("FILE: ", file_path);
+          // console.log("a la bd: ", {
+          //   email_user: fields.email_user === 'null' ? null : fields.email_user,
+          //   emp_username: fields.emp_username === 'null' ? null : fields.emp_username,
+          //   message_body: fields.message_body === 'null' ? null : fields.message_body,
+          //   msg_date: fields.msg_date === 'null' ? null : fields.msg_date,
+          //   file: fields.file === 'null' ? null : fields.file,
+          //   is_sent: fields.is_sent === 'null' ? null : fields.is_sent,
+          //   time_zone: fields.time_zone === 'null' ? null : fields.time_zone,
+          //   uniq_id: fields.uniq_id === 'null' ? null : fields.uniq_id,
+          //   file_path
+          // });
+          // await chatPGRepository.sendMessage({
+          //   email_user: fields.email_user === 'null' ? null : fields.email_user,
+          //   emp_username: fields.emp_username === 'null' ? null : fields.emp_username,
+          //   message_body: fields.message_body === 'null' ? null : fields.message_body,
+          //   msg_date: fields.msg_date === 'null' ? null : fields.msg_date,
+          //   file: fields.file === 'null' ? null : fields.file,
+          //   is_sent: fields.is_sent === 'null' ? null : fields.is_sent,
+          //   time_zone: fields.time_zone === 'null' ? null : fields.time_zone,
+          //   uniq_id: fields.uniq_id === 'null' ? null : fields.uniq_id,
+          //   file_path
+          // });
+
+        }
+      } catch (error) {
+        next(error);
+      }
+    });
+
+
+
 
     if (data.message = 'Remittance started') {
       redisClient.get(data.id_pre_remittance, function (err, reply) {
