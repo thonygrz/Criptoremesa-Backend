@@ -74,8 +74,10 @@ banksRepository.getBankAccountById = async (id) => {
     const resp = await pool.query(
       `select * from get_bank_account_by_id(${id})`
     );
-    resp.rows[0].get_bank_account_by_id
-    return resp.rows[0].get_bank_account_by_id;
+    let bank = resp.rows[0].get_bank_account_by_id[0]
+
+      bank.image = fs.readFileSync(env.FILES_DIR + '/bank_logos/' + bank.ident_name + '.png');
+    return resp.rows[0].get_bank_account_by_id[0];
   } catch (error) {
     throw error;
   }
