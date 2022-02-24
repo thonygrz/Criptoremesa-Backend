@@ -120,7 +120,7 @@ remittancesService.startRemittance = async (req, res, next) => {
 
     let countryResp = null;
     let sess = null;
-
+    console.log('req.body.captures: ',req.body.captures)
     if (req.body.captures) {
       req.body.captures.forEach(el => {
         let exists = true
