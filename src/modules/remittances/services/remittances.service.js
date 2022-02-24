@@ -235,7 +235,7 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
       failed: false,
       ip: req.connection.remoteAddress,
       country: countryResp,
-      route: "/remittances/cancelPreRemittance",
+      route: "/remittances/preRemittance",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);

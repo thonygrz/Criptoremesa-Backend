@@ -22,5 +22,10 @@ banksRouter.get(
   banksController.getBankAccountsById
 );
 
+banksRouter.get(
+  "/getBankAccountById/:id_bank_account",
+  // guard.verifyAdmin("/login"),
+  banksController.getBankAccountById
+);
 
 export default banksRouter;

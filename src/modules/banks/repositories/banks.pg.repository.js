@@ -65,4 +65,20 @@ banksRepository.getBankAccountsById = async (body) => {
   }
 };
 
+banksRepository.getBankAccountById = async (id) => {
+  try {
+    logger.info(`[${context}]: Getting bank account from db`);
+    ObjLog.log(`[${context}]: Getting bank account from db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+
+    const resp = await pool.query(
+      `select * from get_bank_accounts_by_country(${id})`
+    );
+    resp.rows[0].get_bank_accounts_by_country
+    return resp.rows[0].get_bank_accounts_by_country;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default banksRepository;
