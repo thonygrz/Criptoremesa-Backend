@@ -173,7 +173,7 @@ function waitingPreRemittance(id_pre_remittance) {
     let resp = await remittancesPGRepository.expiredPreRemittance(id_pre_remittance);
     if (resp.email_user)
       notifyChanges('expired_remittance', resp);
-  }, 60000);
+  }, 300000);
   redisClient.set(id_pre_remittance.toString(), timmy.toString());
 }
 
