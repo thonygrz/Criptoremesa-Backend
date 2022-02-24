@@ -226,7 +226,7 @@ remittancesService.startRemittance = async (req, res, next) => {
               f.type === "image/gif" ||
               f.type === "application/pdf" 
             ) {
-              remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}`,
+              remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}`
             }
           });
 
