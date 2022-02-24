@@ -122,24 +122,7 @@ remittancesService.startRemittance = async (req, res, next) => {
 
     let countryResp = null;
     let sess = null;
-    // console.log('req.body.captures: ',req.body)
-    // if (req.body.captures) {
-    //   req.body.captures.forEach(el => {
-    //     let exists = true
-    //     let pathName
-    //     while (exists){
-    //         let number = between(10000,99999);
-    //         pathName = join(env.FILES_DIR,`/${req.body.email_user}-${number}`)
-    //         if (!fs.existsSync(pathName)){
-    //             exists = false
-    //         }
-    //     }
-    //     fs.writeFileSync(pathName,el.content)
-    //     el.path = pathName
-    //   });
-    // }  
 
-  //  let data = await remittancesPGRepository.startRemittance(req.body);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -178,7 +161,6 @@ remittancesService.startRemittance = async (req, res, next) => {
           part.mime === "image/jpeg" ||
           part.mime === "image/gif" ||
           part.mime === "application/pdf" ||
-          part.mime === "audio/webm" ||
           part.mime === null
         )
       ) {
@@ -208,15 +190,9 @@ remittancesService.startRemittance = async (req, res, next) => {
       console.log("fileError ", fileError);
       console.log("files ", files);
 
-
       console.log('JSONNN: ',JSON.parse(fields.remittance))
 
       console.log("fields ", fields);
-
-      let file_path = null;
-
-      // if (files.file !== undefined && files.file.size > 0)
-      //   file_path = form.uploadDir + `/chat-${fields.email_user}__${files.file.name}`;
 
       Object.values(files).forEach((f) => {
         if (
@@ -224,65 +200,52 @@ remittancesService.startRemittance = async (req, res, next) => {
           f.type === "image/jpg" ||
           f.type === "image/jpeg" ||
           f.type === "image/gif" ||
-          f.type === "application/pdf" ||
-          f.type === "audio/webm"
+          f.type === "application/pdf" 
         ) {
-          // fs.rename(
-          //   f.path,
-          //   form.uploadDir + `/chat-${fields.email_user}__${f.name}`,
-          //   (error) => {
-          //     if (error) {
-          //       console.log("error dentro del rename: ", error);
-          //       next(error);
-          //     }
-          //   }
-          // );
+          fs.rename(
+            f.path,
+            form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}`,
+            (error) => {
+              if (error) {
+                console.log("error dentro del rename: ", error);
+                next(error);
+              }
+            }
+          );
         }
       });
       try {
         if (!fileError) {
-          // console.log("FILE: ", file_path);
-          // console.log("a la bd: ", {
-          //   email_user: fields.email_user === 'null' ? null : fields.email_user,
-          //   emp_username: fields.emp_username === 'null' ? null : fields.emp_username,
-          //   message_body: fields.message_body === 'null' ? null : fields.message_body,
-          //   msg_date: fields.msg_date === 'null' ? null : fields.msg_date,
-          //   file: fields.file === 'null' ? null : fields.file,
-          //   is_sent: fields.is_sent === 'null' ? null : fields.is_sent,
-          //   time_zone: fields.time_zone === 'null' ? null : fields.time_zone,
-          //   uniq_id: fields.uniq_id === 'null' ? null : fields.uniq_id,
-          //   file_path
-          // });
-          // await chatPGRepository.sendMessage({
-          //   email_user: fields.email_user === 'null' ? null : fields.email_user,
-          //   emp_username: fields.emp_username === 'null' ? null : fields.emp_username,
-          //   message_body: fields.message_body === 'null' ? null : fields.message_body,
-          //   msg_date: fields.msg_date === 'null' ? null : fields.msg_date,
-          //   file: fields.file === 'null' ? null : fields.file,
-          //   is_sent: fields.is_sent === 'null' ? null : fields.is_sent,
-          //   time_zone: fields.time_zone === 'null' ? null : fields.time_zone,
-          //   uniq_id: fields.uniq_id === 'null' ? null : fields.uniq_id,
-          //   file_path
-          // });
+          let remittance = JSON.parse(fields.remittance)
 
+          Object.values(files).forEach((f,i) => {
+            if (
+              f.type === "image/png" ||
+              f.type === "image/jpg" ||
+              f.type === "image/jpeg" ||
+              f.type === "image/gif" ||
+              f.type === "application/pdf" 
+            ) {
+              remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}`,
+            }
+          });
+
+          let data = await remittancesPGRepository.startRemittance(remittance);
+
+          if (data.message = 'Remittance started') {
+            redisClient.get(data.id_pre_remittance, function (err, reply) {
+              // reply is null when the key is missing
+              console.log("Redis reply: ", reply);
+              clearTimeout(parseInt(reply))
+            });
+          }
+      
+          res.status(200).json(data);
         }
       } catch (error) {
         next(error);
       }
     });
-
-
-
-
-    if (data.message = 'Remittance started') {
-      redisClient.get(data.id_pre_remittance, function (err, reply) {
-        // reply is null when the key is missing
-        console.log("Redis reply: ", reply);
-        clearTimeout(parseInt(reply))
-      });
-    }
-
-    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
