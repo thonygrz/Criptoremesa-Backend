@@ -113,6 +113,22 @@ remittancesService.startRemittance = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
+    if (req.body.captures) {
+      req.body.captures.forEach(el => {
+        let exists = true
+        let pathName
+        while (exists){
+            let number = between(10000,99999);
+            pathName = join(env.FILES_DIR,`/${req.body.email_user}-${number}`)
+            if (!fs.existsSync(pathName)){
+                exists = false
+            }
+        }
+        fs.writeFileSync(pathName,el.content)
+        el.path = pathName
+      });
+    }  
+
     let data = await remittancesPGRepository.startRemittance(req.body);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
