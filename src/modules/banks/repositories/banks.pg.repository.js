@@ -72,10 +72,10 @@ banksRepository.getBankAccountById = async (id) => {
     await pool.query("SET SCHEMA 'sec_cust'");
 
     const resp = await pool.query(
-      `select * from get_bank_accounts_by_country(${id})`
+      `select * from get_bank_account_by_id(${id})`
     );
-    resp.rows[0].get_bank_accounts_by_country
-    return resp.rows[0].get_bank_accounts_by_country;
+    resp.rows[0].get_bank_account_by_id
+    return resp.rows[0].get_bank_account_by_id;
   } catch (error) {
     throw error;
   }
