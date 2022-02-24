@@ -73,7 +73,7 @@ payMethodsService.deposit_method_by_country = async (req, res, next) => {
   }
 };
 
-payMethodsService.getPayMethodById = async (req, res, next,payMethodId) => {
+payMethodsService.depositMethodsByBank = async (req, res, next) => {
   try {
 
     let log  = logConst;
@@ -90,9 +90,9 @@ payMethodsService.getPayMethodById = async (req, res, next,payMethodId) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get Pay Method by Id ${payMethodId}`);
-      ObjLog.log(`[${context}]: Get Pay Method by Id ${payMethodId}`);
-      data = await payMethodsRepository.getPayMethodById(payMethodId);
+      logger.info(`[${context}]: Get Pay Method by bank`);
+      ObjLog.log(`[${context}]: Get Pay Method by bank`);
+      data = await payMethodsRepository.depositMethodsByBank(req.params.id_bank);
       res.status(200).json(data);
     }
   } catch (error) {

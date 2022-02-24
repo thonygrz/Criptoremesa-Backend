@@ -30,13 +30,12 @@ payMethodsController.getPayMethodById = (req, res, next) => {
   }
 };
 
-payMethodsController.deposit_method_by_country = (req, res, next) => {
+payMethodsController.depositMethodsByBank = (req, res, next) => {
   try {
-    const countryId = req.params.id_country;
-    logger.info(`[${context}]: Sending service to get deposit methods by Country`);
-    ObjLog.log(`[${context}]: Sending service to get deposit methods by Country`);
+    logger.info(`[${context}]: Sending service to get deposit methods by bank`);
+    ObjLog.log(`[${context}]: Sending service to get deposit methods by bank`);
 
-    payMethodsService.deposit_method_by_country(req, res, next);
+    payMethodsService.depositMethodsByBank(req, res, next);
   } catch (error) {
     next(error);
   }
