@@ -6,6 +6,7 @@ import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import redisClient from "../../../utils/redis";
 import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
 import {join} from 'path'
+import fs from 'fs'
 
 const remittancesService = {};
 const context = "remittances Service";
