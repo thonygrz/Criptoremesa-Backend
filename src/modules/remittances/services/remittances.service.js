@@ -5,6 +5,7 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import redisClient from "../../../utils/redis";
 import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
+import {join} from 'path'
 
 const remittancesService = {};
 const context = "remittances Service";
