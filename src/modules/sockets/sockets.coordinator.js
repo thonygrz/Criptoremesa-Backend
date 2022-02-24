@@ -189,6 +189,16 @@ export async function SocketServer(server) {
       fee.email_user = val.email_user
       notifyChanges('get_bank_fee', fee);
     });
+
+    socket.on("rate_change", async (val) => {
+      logger.info(`[${context}] Receiving data from backend`);
+      ObjLog.log(`[${context}] Receiving data from backend`);
+
+      console.log('rate_change from BE: ',socket.id)
+      console.log('val from BE: ',val)
+
+      notifyChanges('rate_change', val);
+    });
   });
 }
 
