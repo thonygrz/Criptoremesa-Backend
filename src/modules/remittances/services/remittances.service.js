@@ -207,6 +207,10 @@ remittancesService.startRemittance = async (req, res, next) => {
     form.parse(req, async function (err, fields, files) {
       console.log("fileError ", fileError);
       console.log("files ", files);
+
+
+      console.log('JSONNN: ',JSON.parse(fields.remittance))
+
       console.log("fields ", fields);
 
       let file_path = null;
