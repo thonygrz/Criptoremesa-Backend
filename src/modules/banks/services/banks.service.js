@@ -124,7 +124,7 @@ banksService.getBankAccountById = async (req, res, next) => {
         ObjLog.log(`[${context}]: Get bank account by id`);
         await authenticationPGRepository.insertLogMsg(log);
         let data = {}
-          data = await banksRepository.getBankAccountById(req.params.id_country);
+          data = await banksRepository.getBankAccountById(req.params.id_bank_account);
         res.status(200).json(data);
     }
   } catch (error) {
