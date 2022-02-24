@@ -139,7 +139,7 @@ remittancesService.startRemittance = async (req, res, next) => {
     //   });
     // }  
 
-    let data = await remittancesPGRepository.startRemittance(req.body);
+  //  let data = await remittancesPGRepository.startRemittance(req.body);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
