@@ -257,7 +257,7 @@ function waitingPreRemittance(id_pre_remittance) {
     if (resp.email_user)
       notifyChanges('expired_remittance', resp);
   }, 300000);
-  redisClient.set(id_pre_remittance, timmy);
+  redisClient.set(id_pre_remittance.toString(), timmy);
 }
 
 remittancesService.startPreRemittance = async (req, res, next) => {
