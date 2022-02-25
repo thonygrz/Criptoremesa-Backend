@@ -207,13 +207,13 @@ remittancesService.startRemittance = async (req, res, next) => {
           let pathName
           while (exists){
               let number = between(10000,99999);
-              pathName = join(env.FILES_DIR,`/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${number}`)
+              pathName = join(env.FILES_DIR,`/remittance-${JSON.parse(fields.remittance).email_user}_${number}_${f.name}`)
               if (!fs.existsSync(pathName)){
                   exists = false
                   numbers.push(number)
                   fs.rename(
                     f.path,
-                    form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${number}`,
+                    form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}_${number}_${f.name}`,
                     (error) => {
                       if (error) {
                         console.log("error dentro del rename: ", error);
@@ -237,7 +237,7 @@ remittancesService.startRemittance = async (req, res, next) => {
               f.type === "image/gif" ||
               f.type === "application/pdf" 
             ) {
-              remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${numbers[i]}`
+              remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}_${numbers[i]}_${f.name}`
             }
           });
           console.log('SE ENVIA ESTO AL REPO', remittance)
