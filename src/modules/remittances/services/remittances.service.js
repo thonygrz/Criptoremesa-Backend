@@ -204,7 +204,7 @@ remittancesService.startRemittance = async (req, res, next) => {
         ) {
 
           let exists = true
-          let pathName = join(env.FILES_DIR,`/${body.email_user}_${body.file_name}`)
+          let pathName
           while (exists){
               let number = between(10000,99999);
               pathName = join(env.FILES_DIR,`/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${number}`)
