@@ -185,6 +185,7 @@ remittancesService.startRemittance = async (req, res, next) => {
         });
       }
     });
+    let numbers = []
 
     form.parse(req, async function (err, fields, files) {
       console.log("fileError ", fileError);
@@ -192,7 +193,6 @@ remittancesService.startRemittance = async (req, res, next) => {
       console.log("fields ", fields);
 
       console.log('JSONNN: ',JSON.parse(fields.remittance))
-
 
       Object.values(files).forEach((f) => {
         if (
@@ -202,9 +202,21 @@ remittancesService.startRemittance = async (req, res, next) => {
           f.type === "image/gif" ||
           f.type === "application/pdf" 
         ) {
+
+          let exists = true
+          let pathName = join(env.FILES_DIR,`/${body.email_user}_${body.file_name}`)
+          while (exists){
+              let number = between(10000,99999);
+              pathName = join(env.FILES_DIR,`/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${number}`)
+              if (!fs.existsSync(pathName)){
+                  exists = false
+                  numbers.push(number)
+              }
+          }
+
           fs.rename(
             f.path,
-            form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}`,
+            form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${number}`,
             (error) => {
               if (error) {
                 console.log("error dentro del rename: ", error);
@@ -226,7 +238,7 @@ remittancesService.startRemittance = async (req, res, next) => {
               f.type === "image/gif" ||
               f.type === "application/pdf" 
             ) {
-              remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}`
+              remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${numbers[i]}`
             }
           });
           console.log('SE ENVIA ESTO AL REPO', remittance)
