@@ -229,7 +229,7 @@ remittancesService.startRemittance = async (req, res, next) => {
               remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}`
             }
           });
-
+          console.log('SE ENVIA ESTO AL REPO', remittance)
           let data = await remittancesPGRepository.startRemittance(remittance);
 
           if (data.message = 'Remittance started') {
