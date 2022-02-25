@@ -262,8 +262,8 @@ function waitingPreRemittance(id_pre_remittance) {
     val: timmy
   }
   console.log('TIMMY: ',timmy)
-  console.log('obj.toString(): ',obj.toString())
-  redisClient.set(id_pre_remittance.toString(), obj.toString());
+  console.log('JSON.stringify(obj): ',JSON.stringify(obj))
+  redisClient.set(id_pre_remittance.toString(), JSON.stringify(obj));
 }
 
 remittancesService.startPreRemittance = async (req, res, next) => {
