@@ -258,12 +258,12 @@ function waitingPreRemittance(id_pre_remittance) {
     if (resp.email_user)
       notifyChanges('expired_remittance', resp);
   }, 60000);
-  // const obj = {
-  //   val: timmy
-  // }
-  // console.log('TIMMY: ',timmy)
-  // console.log('JSON.stringify(obj): ',JSON.stringify(timmy))
-  // redisClient.set(id_pre_remittance.toString(), JSON.stringify(obj));
+  const obj = {
+    val: timmy
+  }
+  console.log('TIMMY: ',timmy)
+  console.log('JSON.stringify(obj): ',timmy[Symbol.toPrimitive]())
+  redisClient.set(id_pre_remittance.toString(), timmy[Symbol.toPrimitive]());
 }
 
 remittancesService.startPreRemittance = async (req, res, next) => {
@@ -362,8 +362,8 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
     console.log('LO QUE SE VA A PASAR A REDIS to string: ',req.params.id_pre_remittance.toString())
     redisClient.get(req.params.id_pre_remittance, function (err, reply) {
       // reply is null when the key is missing
-      console.log("Redis reply CANCELLED: ", JSON.parse(reply).val);
-      clearTimeout(JSON.parse(reply))
+      console.log("Redis reply CANCELLED: ", reply);
+      clearTimeout(reply)
     });
 
     res.status(200).json(data);
