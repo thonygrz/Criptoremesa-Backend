@@ -353,6 +353,12 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
+    redisClient.get(req.params.id_pre_remittance, function (err, reply) {
+      // reply is null when the key is missing
+      console.log("Redis reply: ", reply);
+      clearTimeout(parseInt(reply))
+    });
+
     res.status(200).json(data);
   } catch (error) {
     next(error);
