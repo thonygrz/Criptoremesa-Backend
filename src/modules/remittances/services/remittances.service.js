@@ -355,7 +355,7 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
 
     redisClient.get(req.params.id_pre_remittance, function (err, reply) {
       // reply is null when the key is missing
-      console.log("Redis reply: ", reply);
+      console.log("Redis reply CANCELLED: ", reply);
       clearTimeout(parseInt(reply))
     });
 

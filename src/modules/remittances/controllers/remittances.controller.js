@@ -51,8 +51,8 @@ remittancesController.startRemittance = (req, res, next) => {
 
 remittancesController.startPreRemittance = (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to start remittance`);
-    ObjLog.log(`[${context}]: Sending service to start remittance`);
+    logger.info(`[${context}]: Sending service to start pre remittance`);
+    ObjLog.log(`[${context}]: Sending service to start pre remittance`);
 
     remittancesService.startPreRemittance(req, res, next);
   } catch (error) {
@@ -62,8 +62,8 @@ remittancesController.startPreRemittance = (req, res, next) => {
 
 remittancesController.getPreRemittanceByUser = (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to start remittance`);
-    ObjLog.log(`[${context}]: Sending service to start remittance`);
+    logger.info(`[${context}]: Sending service to get pre remittance`);
+    ObjLog.log(`[${context}]: Sending service to get pre remittance`);
 
     remittancesService.getPreRemittanceByUser(req, res, next);
   } catch (error) {
