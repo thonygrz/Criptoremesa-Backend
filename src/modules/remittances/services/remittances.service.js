@@ -211,19 +211,18 @@ remittancesService.startRemittance = async (req, res, next) => {
               if (!fs.existsSync(pathName)){
                   exists = false
                   numbers.push(number)
+                  fs.rename(
+                    f.path,
+                    form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${number}`,
+                    (error) => {
+                      if (error) {
+                        console.log("error dentro del rename: ", error);
+                        next(error);
+                      }
+                    }
+                  );
               }
           }
-
-          fs.rename(
-            f.path,
-            form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}__${f.name}_${number}`,
-            (error) => {
-              if (error) {
-                console.log("error dentro del rename: ", error);
-                next(error);
-              }
-            }
-          );
         }
       });
       try {
