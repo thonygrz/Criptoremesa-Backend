@@ -189,10 +189,10 @@ remittancesService.startRemittance = async (req, res, next) => {
     form.parse(req, async function (err, fields, files) {
       console.log("fileError ", fileError);
       console.log("files ", files);
+      console.log("fields ", fields);
 
       console.log('JSONNN: ',JSON.parse(fields.remittance))
 
-      console.log("fields ", fields);
 
       Object.values(files).forEach((f) => {
         if (
@@ -235,7 +235,7 @@ remittancesService.startRemittance = async (req, res, next) => {
           if (data.message = 'Remittance started') {
             redisClient.get(data.id_pre_remittance, function (err, reply) {
               // reply is null when the key is missing
-              console.log("Redis reply: ", reply);
+              console.log("Redis reply: ", parseInt(reply));
               clearTimeout(parseInt(reply))
             });
           }
