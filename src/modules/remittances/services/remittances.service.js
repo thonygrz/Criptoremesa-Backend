@@ -258,12 +258,12 @@ function waitingPreRemittance(id_pre_remittance) {
     if (resp.email_user)
       notifyChanges('expired_remittance', resp);
   }, 60000);
-  const obj = {
-    val: timmy
-  }
-  console.log('TIMMY: ',timmy)
-  console.log('JSON.stringify(obj): ',JSON.stringify(obj))
-  redisClient.set(id_pre_remittance.toString(), JSON.stringify(obj));
+  // const obj = {
+  //   val: timmy
+  // }
+  // console.log('TIMMY: ',timmy)
+  // console.log('JSON.stringify(obj): ',JSON.stringify(timmy))
+  // redisClient.set(id_pre_remittance.toString(), JSON.stringify(obj));
 }
 
 remittancesService.startPreRemittance = async (req, res, next) => {
