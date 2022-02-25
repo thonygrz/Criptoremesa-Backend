@@ -197,7 +197,7 @@ export async function SocketServer(server) {
       console.log('rate_change from BE: ',socket.id)
       console.log('val from BE: ',val)
 
-      notifyChanges('rate_change', val);
+      socketServer.emit('rate_change', val);
     });
   });
 }
