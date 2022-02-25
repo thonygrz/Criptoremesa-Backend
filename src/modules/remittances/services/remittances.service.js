@@ -233,6 +233,7 @@ remittancesService.startRemittance = async (req, res, next) => {
           let data = await remittancesPGRepository.startRemittance(remittance);
 
           if (data.message = 'Remittance started') {
+            console.log('LO QUE SE VA A PASAR A REDIS: ',data.id_pre_remittance)
             redisClient.get(data.id_pre_remittance, function (err, reply) {
               // reply is null when the key is missing
               console.log("Redis reply: ", parseInt(reply));
@@ -354,7 +355,8 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
-
+    console.log('LO QUE SE VA A PASAR A REDIS: ',req.params.id_pre_remittance)
+    console.log('LO QUE SE VA A PASAR A REDIS to string: ',req.params.id_pre_remittance.toString())
     redisClient.get(req.params.id_pre_remittance.toString(), function (err, reply) {
       // reply is null when the key is missing
       console.log("Redis reply CANCELLED: ", parseInt(reply));
