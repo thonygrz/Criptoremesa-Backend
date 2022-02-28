@@ -17,7 +17,7 @@ const httpsServer = https.createServer(
   {
     key: fs.readFileSync(path.join(__dirname, "utils", "cert", "selfsigned.key")),
     cert: fs.readFileSync(path.join(__dirname, "utils", "cert", "selfsigned.crt")),
-    requestCert: false,
+    requestCert: true,
     rejectUnauthorized: false
   },
   app
