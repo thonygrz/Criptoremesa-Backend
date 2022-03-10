@@ -72,7 +72,7 @@ ratesPGRepository.userRates = async (body) => {
         '${body.email_user}'
       )`
     );
-    if (resp.rows) return resp.rows;
+    if (resp.rows) return resp.rows[0].sp_ms_cr_rate_get_valid;
     else return null;
   } catch (error) {
     throw error;
