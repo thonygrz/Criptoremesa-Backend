@@ -76,7 +76,7 @@ ratesService.userRates = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await ratesPGRepository.userRates(req.body);
+    let data = await ratesPGRepository.userRates(req.query);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
