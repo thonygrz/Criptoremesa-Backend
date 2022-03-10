@@ -16,4 +16,10 @@ ratesRouter.get(
   ratesController.rateTypes
 );
 
+ratesRouter.get(
+  "/userRates",
+  // guard.verifyAdmin("/login"),
+  ratesController.userRates
+);
+
 export default ratesRouter;

@@ -26,4 +26,15 @@ ratesController.rateTypes = (req, res, next) => {
   }
 };
 
+ratesController.userRates = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get userRates`);
+    ObjLog.log(`[${context}]: Sending service to get userRates`);
+
+    ratesService.userRates(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default ratesController;
