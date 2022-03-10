@@ -62,9 +62,9 @@ ratesPGRepository.userRates = async (body) => {
   try {
     logger.info(`[${context}]: Looking for userRates on db`);
     ObjLog.log(`[${context}]: Looking for userRates on db`);
-    await pool.query("SET SCHEMA 'msg_app'");
+    await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM sp_ms_cr_rate_get_valid(
+      `SELECT * FROM sec_cust.sp_ms_cr_rate_get_valid(
         ${body.id_origin_country},
         ${body.id_origin_currency},
         ${body.id_destiny_country},
