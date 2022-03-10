@@ -16,7 +16,7 @@ ratesRouter.get(
   ratesController.rateTypes
 );
 
-ratesRouter.get(
+ratesRouter.post(
   "/userRates",
   // guard.verifyAdmin("/login"),
   ratesController.userRates
