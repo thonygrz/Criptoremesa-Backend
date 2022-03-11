@@ -246,7 +246,7 @@ remittancesService.startRemittance = async (req, res, next) => {
           let rateFromAPI = fullRateFromAPI.rates[remittance.countryCurrency.isoCode]
           rateFromAPI = parseFloat(rateFromAPI)
 
-          remittance.totalDollarOriginRemittance = parseFloat(totalOriginRemittance / rateFromAPI).toFixed(2));
+          remittance.totalDollarOriginRemittance = parseFloat((totalOriginRemittance / rateFromAPI).toFixed(2));
 
           console.log('SE ENVIA ESTO AL REPO', remittance)
 
