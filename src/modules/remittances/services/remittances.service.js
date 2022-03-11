@@ -8,7 +8,7 @@ import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
 import {join} from 'path'
 import fs from 'fs'
 import formidable from "formidable";
-
+import axios from 'axios'
 
 const remittancesService = {};
 const context = "remittances Service";
@@ -240,7 +240,16 @@ remittancesService.startRemittance = async (req, res, next) => {
               remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}_${numbers[i]}_${f.name}`
             }
           });
+
+          let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${remittance.countryCurrency.isoCode}`);
+
+          let rateFromAPI = fullRateFromAPI.rates[remittance.countryCurrency.isoCode]
+          rateFromAPI = parseFloat(rateFromAPI)
+
+          remittance.totalDollarOriginRemittance = parseFloat(totalOriginRemittance / rateFromAPI).toFixed(2));
+
           console.log('SE ENVIA ESTO AL REPO', remittance)
+
           let data = await remittancesPGRepository.startRemittance(remittance);
 
           if (data.message = 'Remittance started') {
