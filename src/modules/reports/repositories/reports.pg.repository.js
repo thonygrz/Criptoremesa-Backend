@@ -17,7 +17,7 @@ reportsPGRepository.usersWithMostTransactionsByRangeTimeAndCountry = async (from
                                                                                           ${id_country}
                                                                                           )`
     );
-    return resp.rows;
+    return resp.rows[0].report_users_with_most_transactions_by_range_time_and_country;
   } catch (error) {
     throw error;
   }
@@ -35,7 +35,7 @@ reportsPGRepository.usersWithMoneyTransferedByRangeTimeAndCountry = async (from_
                                                                                           ${id_country}
                                                                                           )`
     );
-    return resp.rows;
+    return resp.rows[0].report_users_with_money_transfered_by_range_time_and_country;
   } catch (error) {
     throw error;
   }
