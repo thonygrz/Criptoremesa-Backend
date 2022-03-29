@@ -96,7 +96,7 @@ ratesPGRepository.fullRates = async (body) => {
       )`
     );
     if (resp.rows) {
-        return resp.rows[0].sp_ms_cr_rate_get_valid;
+        return resp.rows[0].sp_get_full_rates;
     }
     else return null;
   } catch (error) {
