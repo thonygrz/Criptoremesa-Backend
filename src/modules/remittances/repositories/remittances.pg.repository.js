@@ -161,6 +161,7 @@ remittancesPGRepository.lastRemittances = async (email_user) => {
       `SELECT * FROM sp_get_last_remittances_by_user('${email_user}',3)`
     );
     if (resp.rows[0].sp_get_last_remittances_by_user)
+      return resp.rows[0].sp_get_last_remittances_by_user;
     else return null;
   } catch (error) {
     throw error;
