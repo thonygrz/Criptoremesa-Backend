@@ -138,7 +138,7 @@ ratesService.promo = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await ratesPGRepository.promo();
+    let data = await ratesPGRepository.promo(req.query);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );

@@ -104,7 +104,7 @@ ratesPGRepository.fullRates = async (body) => {
   }
 };
 
-ratesPGRepository.promo = async () => {
+ratesPGRepository.promo = async (body) => {
   try {
     logger.info(`[${context}]: Looking for promo on db`);
     ObjLog.log(`[${context}]: Looking for promo on db`);
