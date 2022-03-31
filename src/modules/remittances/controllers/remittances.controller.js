@@ -82,4 +82,16 @@ remittancesController.cancelPreRemittance = (req, res, next) => {
   }
 };
 
+remittancesController.lastRemittances = (req, res, next) => {
+  const userEmail = req.params.email_user;
+  try {
+    logger.info(`[${context}]: Sending service to get last ${userEmail} remittances`);
+    ObjLog.log(`[${context}]: Sending service to get last ${userEmail} remittances`);
+
+    remittancesService.lastRemittances(req, res, next,userEmail);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default remittancesController;

@@ -46,4 +46,10 @@ remittancesRouter.delete(
   remittancesController.cancelPreRemittance
 );
 
+remittancesRouter.get(
+  "/lastRemittances/:email_user",
+  // guard.verifyAdmin("/login"),
+  remittancesController.lastRemittances
+);
+
 export default remittancesRouter;
