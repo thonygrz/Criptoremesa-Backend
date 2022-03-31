@@ -11,7 +11,7 @@ remittancesRouter.get(
 );
 
 remittancesRouter.get(
-  "/:email_user",
+  "/chat/:email_user",
   // guard.verifyAdmin("/login"),
   remittancesController.getRemittances
 );
@@ -47,7 +47,7 @@ remittancesRouter.delete(
 );
 
 remittancesRouter.get(
-  "/lastRemittances/:email_user",
+  "/:email_user",
   // guard.verifyAdmin("/login"),
   remittancesController.lastRemittances
 );
