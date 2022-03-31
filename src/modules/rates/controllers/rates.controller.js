@@ -48,4 +48,15 @@ ratesController.fullRates = (req, res, next) => {
   }
 };
 
+ratesController.promo = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get promo`);
+    ObjLog.log(`[${context}]: Sending service to get promo`);
+
+    ratesService.promo(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default ratesController;

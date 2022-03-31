@@ -28,4 +28,10 @@ ratesRouter.get(
   ratesController.fullRates
 );
 
+ratesRouter.get(
+  "/promo",
+  // guard.verifyAdmin("/login"),
+  ratesController.promo
+);
+
 export default ratesRouter;

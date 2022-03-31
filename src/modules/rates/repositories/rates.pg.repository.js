@@ -104,4 +104,26 @@ ratesPGRepository.fullRates = async (body) => {
   }
 };
 
+ratesPGRepository.promo = async () => {
+  try {
+    logger.info(`[${context}]: Looking for promo on db`);
+    ObjLog.log(`[${context}]: Looking for promo on db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM sec_cust.sp_get_special_rates_by_country_and_currency(
+        ${body.id_origin_country},
+        ${body.id_origin_currency},
+        ${body.id_destiny_country},
+        ${body.id_destiny_currency}
+      )`
+    );
+    if (resp.rows) {
+        return resp.rows[0].sp_get_special_rates_by_country_and_currency;
+    }
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default ratesPGRepository;
