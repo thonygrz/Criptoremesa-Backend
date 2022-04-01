@@ -366,7 +366,7 @@ authenticationPGRepository.getSomeSession = async () => {
   try {
     logger.info(`[${context}]: Getting session from db`);
     ObjLog.log(`[${context}]: Getting session from db`);
-    await poolSM.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'basics'");
     const resp = await poolSM.query(`SELECT * FROM get_some_session()`);
     return resp.rows[0];
   } catch (error) {
@@ -378,8 +378,8 @@ authenticationPGRepository.getSessionById = async (id) => {
   try {
     logger.info(`[${context}]: Getting session from db`);
     ObjLog.log(`[${context}]: Getting session from db`);
-    await poolSM.query("SET SCHEMA 'sec_cust'");
-    const resp = await poolSM.query(`SELECT * FROM get_session_by_id('${id}')`);
+    await poolSM.query("SET SCHEMA 'basics'");
+    const resp = await poolCR.query(`SELECT * FROM get_session_by_id('${id}')`);
     console.log("session from db: ", resp.rows[0]);
     return resp.rows[0];
   } catch (error) {
