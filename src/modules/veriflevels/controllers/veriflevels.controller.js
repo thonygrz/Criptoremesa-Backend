@@ -60,6 +60,8 @@ veriflevelsController.requestWholesalePartner = async (req, res, next) => {
 
 veriflevelsController.notifications = async (req, res, next) => {
   try {
+    console.log('req.isAuthenticated(): ', req.isAuthenticated())
+    console.log('req.sessionID: ', req.sessionID)
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
   
