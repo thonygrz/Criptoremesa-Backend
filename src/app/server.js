@@ -46,7 +46,7 @@ app.use(
     store: new pgSession({
       pool: poolCR,
       tableName: "session_obj", // Use another table-name than the default "session" one
-      schemaName: "sec_cust",
+      schemaName: "basics",
     }),
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía

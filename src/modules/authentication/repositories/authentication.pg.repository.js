@@ -1,4 +1,4 @@
-import { poolSM } from "../../../db/pg.connection";
+import { poolSM, poolCR } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -150,10 +150,10 @@ authenticationPGRepository.updateIPSession = async (sessionID, ip) => {
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
 
-    resp = await poolSM.query(
+    resp = await poolCR.query(
       `
       SELECT *
-      FROM sec_cust.sp_session_obj_update(
+      FROM basics.sp_session_obj_update(
         ($1),
         ($2),
         ($3),
@@ -290,10 +290,10 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     console.log("colsArray a pasar a sp_session_obj_update()", colsArray);
     console.log("valsArray a pasar a sp_session_obj_update()", valsArray);
 
-    resp = await poolSM.query(
+    resp = await poolCR.query(
       `
       SELECT *
-      FROM sec_cust.sp_session_obj_update(
+      FROM basics.sp_session_obj_update(
         ($1),
         ($2),
         ($3),
