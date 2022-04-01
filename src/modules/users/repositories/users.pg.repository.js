@@ -1,4 +1,4 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -390,8 +390,6 @@ usersPGRepository.approveLevelCero = async (id) => {
     logger.info(`[${context}]: Approving level cero on db`);
     ObjLog.log(`[${context}]: Approving level cero on db`);
 
-    
-
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(`SELECT * FROM SP_APPROVE_LEVEL_CERO(${id})`);
     return resp.rows;
@@ -404,7 +402,7 @@ usersPGRepository.approveLevelOne = async (body) => {
   try {
     logger.info(`[${context}]: Approving level one on db`);
     ObjLog.log(`[${context}]: Approving level one on db`);
-        await pool.query("SET SCHEMA 'sec_cust'");
+    await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(`SELECT * FROM SP_APPROVE_LEVEL_ONE(
                                                                       ${body.doc_approved},
                                                                       ${body.selfie_approved},
@@ -710,7 +708,7 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
-    console.log('se pasa esto: ',body)
+    console.log("se pasa esto: ", body);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_3rd_Q(
@@ -735,7 +733,7 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   }
 };
 
-usersPGRepository.generateCode = async (email_user,mode) => {
+usersPGRepository.generateCode = async (email_user, mode) => {
   try {
     logger.info(`[${context}]: Generating code in db`);
     ObjLog.log(`[${context}]: Generating code in db`);
@@ -749,7 +747,7 @@ usersPGRepository.generateCode = async (email_user,mode) => {
   }
 };
 
-usersPGRepository.verifCode = async (email_user,code) => {
+usersPGRepository.verifCode = async (email_user, code) => {
   try {
     logger.info(`[${context}]: Verifying code in db`);
     ObjLog.log(`[${context}]: Verifying code in db`);
@@ -782,7 +780,7 @@ usersPGRepository.newPassword = async (body) => {
     logger.info(`[${context}]: Updating password on db`);
     ObjLog.log(`[${context}]: Updating password on db`);
     await pool.query("SET SCHEMA 'sec_cust'");
-    console.log('BODY A PASAR A BD: ',body)
+    console.log("BODY A PASAR A BD: ", body);
     const resp = await pool.query(
       `SELECT * FROM SP_UPDATE_USER_PASSWORD('${body.new_password}','${body.email_user}')`
     );
@@ -809,7 +807,9 @@ usersPGRepository.getLevelQuestions = async () => {
     logger.info(`[${context}]: Getting questions from db`);
     ObjLog.log(`[${context}]: Getting questions from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM v_level_questions_get_active()`);
+    const resp = await pool.query(
+      `SELECT * FROM v_level_questions_get_active()`
+    );
     return resp.rows;
   } catch (error) {
     throw error;
@@ -833,7 +833,7 @@ usersPGRepository.requestLevelTwo = async (body) => {
     logger.info(`[${context}]: Requesting level two in db`);
     ObjLog.log(`[${context}]: Requesting level two in db`);
     await pool.query("SET SCHEMA 'sec_cust'");
-    console.log('en el repository: ',body.answers)
+    console.log("en el repository: ", body.answers);
     const resp = await pool.query(
       `SELECT * FROM SP_REQUEST_LEVEL_TWO(
         '${body.funds_source}',
@@ -854,7 +854,7 @@ usersPGRepository.getATCNumberByIdCountry = async (id) => {
     logger.info(`[${context}]: Looking for ATC Number in db`);
     ObjLog.log(`[${context}]: Looking for ATC Number in db`);
     await pool.query("SET SCHEMA 'msg_app'");
-    console.log('id',id)
+    console.log("id", id);
     const resp = await pool.query(
       `SELECT * FROM msg_app.get_atc_number_by_id_resid_country(
         ${id}
@@ -867,7 +867,7 @@ usersPGRepository.getATCNumberByIdCountry = async (id) => {
   }
 };
 
-usersPGRepository.verifyIdentUser = async (email_user,phone_number) => {
+usersPGRepository.verifyIdentUser = async (email_user, phone_number) => {
   try {
     logger.info(`[${context}]: Verifying ident user on db`);
     ObjLog.log(`[${context}]: Verifying ident user on db`);

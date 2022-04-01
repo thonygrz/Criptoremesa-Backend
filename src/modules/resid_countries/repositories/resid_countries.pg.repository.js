@@ -1,4 +1,4 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -66,9 +66,7 @@ resid_countriesPGRepository.isPolExp = async (id) => {
     logger.info(`[${context}]: Checking country in db`);
     ObjLog.log(`[${context}]: Checking country in db`);
     await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
-      `SELECT * FROM SP_IS_POL_EXP_COUNTRY(${id})`
-    );
+    const resp = await pool.query(`SELECT * FROM SP_IS_POL_EXP_COUNTRY(${id})`);
     return resp.rows[0];
   } catch (error) {
     throw error;

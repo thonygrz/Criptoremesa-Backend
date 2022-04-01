@@ -1,4 +1,4 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -55,7 +55,7 @@ remittancesPGRepository.startRemittance = async (body) => {
     logger.info(`[${context}]: Starting remittance on db`);
     ObjLog.log(`[${context}]: Starting remittance on db`);
     await pool.query("SET SCHEMA 'msg_app'");
-    console.log('REMITTANCE A PASAR A BD BODYYY: ',body)
+    console.log("REMITTANCE A PASAR A BD BODYYY: ", body);
     const resp = await pool.query(
       `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
     );
@@ -73,7 +73,9 @@ remittancesPGRepository.startPreRemittance = async (body) => {
     ObjLog.log(`[${context}]: Starting pre remittance on db`);
     await pool.query("SET SCHEMA 'sec_cust'");
     const resp = await pool.query(
-      `SELECT * FROM sp_store_pre_remittance('${JSON.stringify(body)}','${body.email_user}')`
+      `SELECT * FROM sp_store_pre_remittance('${JSON.stringify(body)}','${
+        body.email_user
+      }')`
     );
     if (resp.rows[0].sp_store_pre_remittance)
       return resp.rows[0].sp_store_pre_remittance;
@@ -143,7 +145,7 @@ remittancesPGRepository.getBankFee = async (body) => {
                                           ${body.id_pay_method}
                                           )`
     );
-    console.log('resp: ',resp.rows)
+    console.log("resp: ", resp.rows);
     if (resp.rows[0].sp_calculate_bank_fee[0])
       return resp.rows[0].sp_calculate_bank_fee[0];
     else return null;
@@ -152,7 +154,7 @@ remittancesPGRepository.getBankFee = async (body) => {
   }
 };
 
-remittancesPGRepository.lastRemittances = async (email_user,limit) => {
+remittancesPGRepository.lastRemittances = async (email_user, limit) => {
   try {
     logger.info(`[${context}]: Getting last remittances on db`);
     ObjLog.log(`[${context}]: Getting last remittances on db`);

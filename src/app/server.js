@@ -11,7 +11,7 @@ import cookieParser from "cookie-parser";
 import requestIP from "request-ip";
 import session from "express-session";
 let pgSession = require("connect-pg-simple")(session);
-import pgPool from "../db/pg.connection";
+import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 // import { events } from "../modules/users/services/users.service";
@@ -44,7 +44,7 @@ app.use(helmet());
 app.use(
   session({
     store: new pgSession({
-      pool: pgPool,
+      pool: poolCR,
       tableName: "session_obj", // Use another table-name than the default "session" one
       schemaName: "sec_cust",
     }),

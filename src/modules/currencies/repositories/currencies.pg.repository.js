@@ -1,4 +1,4 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -32,7 +32,5 @@ currenciesRepository.getDestinyCurrenciesByCountry = async (idCountry) => {
     throw error;
   }
 };
-
-
 
 export default currenciesRepository;

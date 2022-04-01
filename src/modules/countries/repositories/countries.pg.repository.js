@@ -1,4 +1,4 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -34,6 +34,5 @@ countriesRepository.countriesCurrencies = async () => {
     throw error;
   }
 };
-
 
 export default countriesRepository;

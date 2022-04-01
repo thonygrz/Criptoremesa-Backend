@@ -1,13 +1,13 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import fs from "fs";
-import {env} from '../../../utils/enviroment'
+import { env } from "../../../utils/enviroment";
 
 const banksRepository = {};
 const context = "banks PG Repository";
 
-banksRepository.getOriginBanks = async (countryId,payMethodId,currencyId) => {
+banksRepository.getOriginBanks = async (countryId, payMethodId, currencyId) => {
   try {
     logger.info(`[${context}]: Getting origin banks from db`);
     ObjLog.log(`[${context}]: Getting origin banks from db`);
@@ -21,7 +21,11 @@ banksRepository.getOriginBanks = async (countryId,payMethodId,currencyId) => {
   }
 };
 
-banksRepository.getDestinyBanks = async (countryId,payMethodId,currencyId) => {
+banksRepository.getDestinyBanks = async (
+  countryId,
+  payMethodId,
+  currencyId
+) => {
   try {
     logger.info(`[${context}]: Getting destiny banks from db`);
     ObjLog.log(`[${context}]: Getting destiny banks from db`);
@@ -40,9 +44,7 @@ banksRepository.getBankById = async (bankId) => {
     logger.info(`[${context}]: Getting bank by Id ${bankId} from db`);
     ObjLog.log(`[${context}]: Getting bank by Id ${bankId} from db`);
     await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
-      `select * from sp_ms_bank_by_id(${bankId})`
-    );
+    const resp = await pool.query(`select * from sp_ms_bank_by_id(${bankId})`);
     return resp.rows[0];
   } catch (error) {
     throw error;
@@ -58,7 +60,7 @@ banksRepository.getBankAccountsById = async (body) => {
     const resp = await pool.query(
       `select * from get_bank_accounts_by_country(${body.id_country},${body.id_currency})`
     );
-    let banks = resp.rows[0].get_bank_accounts_by_country
+    let banks = resp.rows[0].get_bank_accounts_by_country;
     return resp.rows[0].get_bank_accounts_by_country;
   } catch (error) {
     throw error;
@@ -74,9 +76,11 @@ banksRepository.getBankAccountById = async (id) => {
     const resp = await pool.query(
       `select * from get_bank_account_by_id(${id})`
     );
-    let bank = resp.rows[0].get_bank_account_by_id[0]
+    let bank = resp.rows[0].get_bank_account_by_id[0];
 
-      bank.image = fs.readFileSync(env.FILES_DIR + '/bank_logos/' + bank.ident_name + '.png');
+    bank.image = fs.readFileSync(
+      env.FILES_DIR + "/bank_logos/" + bank.ident_name + ".png"
+    );
     return resp.rows[0].get_bank_account_by_id[0];
   } catch (error) {
     throw error;
