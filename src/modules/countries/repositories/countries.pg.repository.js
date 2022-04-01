@@ -9,8 +9,8 @@ countriesRepository.getDestinyCountries = async () => {
   try {
     logger.info(`[${context}]: Getting resid_countries from db`);
     ObjLog.log(`[${context}]: Getting resid_countries from db`);
-    await pool.query("SET SCHEMA 'msg_app'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'msg_app'");
+    const resp = await poolSM.query(
       `SELECT * FROM msg_app.sp_ms_countries_get_destiny_countries()`
     );
     return resp.rows;
@@ -23,8 +23,8 @@ countriesRepository.countriesCurrencies = async () => {
   try {
     logger.info(`[${context}]: Getting countries and currencies fron db`);
     ObjLog.log(`[${context}]: Getting countries and currencies fron db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_get_countries_currencies()`
     );
     if (resp.rows[0].sp_get_countries_currencies)

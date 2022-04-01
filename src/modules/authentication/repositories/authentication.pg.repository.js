@@ -9,8 +9,8 @@ authenticationPGRepository.getUserById = async (id) => {
   try {
     logger.info(`[${context}]: Getting user by id from db`);
     ObjLog.log(`[${context}]: Getting user by id from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM get_user_by_id('${id}')`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(`SELECT * FROM get_user_by_id('${id}')`);
     return resp.rows[0];
   } catch (error) {
     throw error;
@@ -21,8 +21,8 @@ authenticationPGRepository.loginFailed = async (email_user) => {
   try {
     logger.info(`[${context}]: Checking login failed in db`);
     ObjLog.log(`[${context}]: Checking login failed in db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_login_failed('${email_user}')`
     );
     return resp.rows[0].sp_login_failed;
@@ -35,8 +35,8 @@ authenticationPGRepository.getUserByUsername = async (username) => {
   try {
     logger.info(`[${context}]: Getting user by username from db`);
     ObjLog.log(`[${context}]: Getting user by username from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_user_by_username('${username}')`
     );
     return resp.rows[0];
@@ -49,8 +49,8 @@ authenticationPGRepository.getUserByEmail = async (email) => {
   try {
     logger.info(`[${context}]: Getting user by email from db`);
     ObjLog.log(`[${context}]: Getting user by email from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_all_users_by_email('${email}')`
     );
     return resp.rows[0];
@@ -66,8 +66,8 @@ authenticationPGRepository.insert = async (body) => {
     logger.info(`[${context}]: Inserting in pg`);
     ObjLog.log(`[${context}]: Inserting in pg`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query(
       `
       SELECT *
         FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT_SIGNUP(
@@ -118,12 +118,12 @@ authenticationPGRepository.updateIPSession = async (sessionID, ip) => {
       country_iso_code: null,
       time_zone: null,
     };
-    await pool.query("SET SCHEMA 'sec_emp'");
+    await poolSM.query("SET SCHEMA 'sec_emp'");
 
     console.log("ip a pasar en get_ip_info()", ip);
     console.log("sessionID a pasar a sp_session_obj_update()", sessionID);
 
-    let resp = await pool.query(
+    let resp = await poolSM.query(
       `SELECT *
     FROM get_ip_info('${ip}')`
     );
@@ -148,9 +148,9 @@ authenticationPGRepository.updateIPSession = async (sessionID, ip) => {
     valsArray.push(ip);
     valsArray.push(ipInfo.country_name);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'sec_cust'");
 
-    resp = await pool.query(
+    resp = await poolSM.query(
       `
       SELECT *
       FROM sec_cust.sp_session_obj_update(
@@ -180,11 +180,11 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
       country_iso_code: null,
       time_zone: null,
     };
-    await pool.query("SET SCHEMA 'sec_emp'");
+    await poolSM.query("SET SCHEMA 'sec_emp'");
 
     console.log("ip a pasar en get_ip_info()", ip);
 
-    let resp = await pool.query(
+    let resp = await poolSM.query(
       `SELECT *
     FROM get_ip_info('${ip}')`
     );
@@ -212,9 +212,9 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     valsArray.push(ipInfo.city_name);
 
     //UPDATE USER
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'sec_cust'");
 
-    resp = await pool.query(
+    resp = await poolSM.query(
       `
       SELECT *
       FROM sec_cust.sp_ms_sixmap_users_update(
@@ -226,7 +226,7 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
       [colsArray, valsArray, uuid_user]
     );
     //UPDATE SESSION
-    resp = await pool.query(`SELECT * FROM get_user_by_id('${uuid_user}')`);
+    resp = await poolSM.query(`SELECT * FROM get_user_by_id('${uuid_user}')`);
 
     let fullUser = resp.rows[0];
     console.log("fullUser: ", fullUser);
@@ -290,7 +290,7 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     console.log("colsArray a pasar a sp_session_obj_update()", colsArray);
     console.log("valsArray a pasar a sp_session_obj_update()", valsArray);
 
-    resp = await pool.query(
+    resp = await poolSM.query(
       `
       SELECT *
       FROM sec_cust.sp_session_obj_update(
@@ -311,11 +311,11 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
 
 authenticationPGRepository.insertLogMsg = async (log) => {
   try {
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'sec_cust'");
     let sess = null;
     let resp = null;
     if (log.session != null) {
-      resp = await pool.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
+      resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
         '${log.is_auth}',
         '${log.success}',
         '${log.failed}',
@@ -325,7 +325,7 @@ authenticationPGRepository.insertLogMsg = async (log) => {
         '${log.session}'
     )`);
     } else {
-      resp = await pool.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
+      resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
         '${log.is_auth}',
         '${log.success}',
         '${log.failed}',
@@ -346,11 +346,11 @@ authenticationPGRepository.getIpInfo = async (ip) => {
   try {
     logger.info(`[${context}]: Getting ipInfo from DB`);
     ObjLog.log(`[${context}]: Getting ipInfo from DB`);
-    await pool.query("SET SCHEMA 'sec_emp'");
+    await poolSM.query("SET SCHEMA 'sec_emp'");
 
     console.log("ip a pasar en get_ip_info()", ip);
 
-    let resp = await pool.query(
+    let resp = await poolSM.query(
       `SELECT *
         FROM get_ip_info('${ip}')`
     );
@@ -366,8 +366,8 @@ authenticationPGRepository.getSomeSession = async () => {
   try {
     logger.info(`[${context}]: Getting session from db`);
     ObjLog.log(`[${context}]: Getting session from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM get_some_session()`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(`SELECT * FROM get_some_session()`);
     return resp.rows[0];
   } catch (error) {
     throw error;
@@ -378,8 +378,8 @@ authenticationPGRepository.getSessionById = async (id) => {
   try {
     logger.info(`[${context}]: Getting session from db`);
     ObjLog.log(`[${context}]: Getting session from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM get_session_by_id('${id}')`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(`SELECT * FROM get_session_by_id('${id}')`);
     console.log("session from db: ", resp.rows[0]);
     return resp.rows[0];
   } catch (error) {

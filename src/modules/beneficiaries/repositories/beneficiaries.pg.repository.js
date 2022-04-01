@@ -9,8 +9,8 @@ beneficiariesPGRepository.getUserFrequentBeneficiaries = async (emailUser) => {
   try {
     logger.info(`[${context}]: Getting user frequent beneficiaries from db`);
     ObjLog.log(`[${context}]: Getting user frequent beneficiaries from db`);
-    await pool.query("SET SCHEMA 'prc_mng'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_get_all($$${emailUser}$$)`
     );
     return resp.rows;
@@ -30,9 +30,9 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (
     ObjLog.log(
       `[${context}]: Inserting ${emailUser} new frequent beneficiary to db`
     );
-    await pool.query("SET SCHEMA 'prc_mng'");
+    await poolSM.query("SET SCHEMA 'prc_mng'");
     console.log("LLEGANDO: ", body);
-    const resp = await pool.query(
+    const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_insert(
         '${body.nickname}',
         ${body.owner_name === null ? "null" : `'${body.owner_name}'`},
@@ -57,8 +57,8 @@ beneficiariesPGRepository.deleteFrequentBeneficiary = async (beneficiaryId) => {
   try {
     logger.info(`[${context}]: Deleting user frequent beneficiary from DB`);
     ObjLog.log(`[${context}]: Deleting user frequent beneficiary from DB`);
-    await pool.query("SET SCHEMA 'prc_mng'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_delete('${beneficiaryId}')`
     );
     return resp.rows[0];
@@ -74,8 +74,8 @@ beneficiariesPGRepository.updateFrequentBeneficiary = async (
   try {
     logger.info(`[${context}]: Updating user frequent beneficiary in DB`);
     ObjLog.log(`[${context}]: Updating user frequent beneficiary in DB`);
-    await pool.query("SET SCHEMA 'prc_mng'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_update('${emailUser}',$$${JSON.stringify(
         body
       )}$$::jsonb)`

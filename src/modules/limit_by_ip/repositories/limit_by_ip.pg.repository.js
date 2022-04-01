@@ -9,8 +9,8 @@ limit_by_ipPGRepository.verifyRouteByIp = async (route, ip) => {
   try {
     logger.info(`[${context}]: Verifying route by ip on db`);
     ObjLog.log(`[${context}]: Verifying route by ip on db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_verify_route_by_ip(
         '${route}',
         '${ip}'

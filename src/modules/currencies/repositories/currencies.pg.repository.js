@@ -9,8 +9,8 @@ currenciesRepository.getOriginCurrenciesByCountry = async (idCountry) => {
   try {
     logger.info(`[${context}]: Getting origin currencies by Country from db`);
     ObjLog.log(`[${context}]: Getting origin currencies by Country from db`);
-    await pool.query("SET SCHEMA 'msg_app'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'msg_app'");
+    const resp = await poolSM.query(
       `select * from msg_app.sp_ms_currencies_get_by_country_origin('{${idCountry}}')`
     );
     return resp.rows;
@@ -23,8 +23,8 @@ currenciesRepository.getDestinyCurrenciesByCountry = async (idCountry) => {
   try {
     logger.info(`[${context}]: Getting destiny currencies by Country from db`);
     ObjLog.log(`[${context}]: Getting destiny currencies by Country from db`);
-    await pool.query("SET SCHEMA 'msg_app'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'msg_app'");
+    const resp = await poolSM.query(
       `select * from msg_app.sp_ms_currencies_get_by_country_destiny('{${idCountry}}')`
     );
     return resp.rows;

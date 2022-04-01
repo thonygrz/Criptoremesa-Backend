@@ -13,8 +13,8 @@ countryStatesRepository.getStatesByCountryId = async (countryId) => {
     ObjLog.log(
       `[${context}]: Getting country states by id ${countryId} from db`
     );
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_states_get_by_country_id(${countryId})`
     );
     return resp.rows;

@@ -10,9 +10,9 @@ usersPGRepository.createUser = async (body) => {
     logger.info(`[${context}]: Inserting user in db`);
     ObjLog.log(`[${context}]: Inserting user in db`);
 
-    await pool.query("SET SCHEMA 'sec_emp'");
+    await poolSM.query("SET SCHEMA 'sec_emp'");
     const resp =
-      await pool.query(`SELECT * FROM sec_emp.SP_MS_SIXMAP_USERS_INSERT(
+      await poolSM.query(`SELECT * FROM sec_emp.SP_MS_SIXMAP_USERS_INSERT(
       '${body.first_name}',
       '${body.second_name}',
       '${body.last_name}',
@@ -56,9 +56,9 @@ usersPGRepository.createUserClient = async (body) => {
     ObjLog.log(`[${context}]: Inserting user client in db`);
 
     console.log("SE ENVIA A LA BD: ", body);
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp =
-      await pool.query(`SELECT * FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT(
+      await poolSM.query(`SELECT * FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT(
       '${body.first_name}',
       '${body.second_name}',
       '${body.last_name}',
@@ -113,9 +113,9 @@ usersPGRepository.createNewClient = async (body) => {
     ObjLog.log(`[${context}]: Inserting new client in db`);
 
     console.log("SE ENVIA A LA BD: ", body);
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp =
-      await pool.query(`SELECT * FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT_NEW(
+      await poolSM.query(`SELECT * FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT_NEW(
       '${body.first_name}',
       '${body.second_name}',
       '${body.last_name}',
@@ -169,8 +169,10 @@ usersPGRepository.getUsers = async () => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(`SELECT * FROM sp_ms_sixmap_users_get_all()`);
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_ms_sixmap_users_get_all()`
+    );
     return resp.rows;
   } catch (error) {
     throw error;
@@ -181,8 +183,10 @@ usersPGRepository.getusersClient = async () => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM sp_ms_sixmap_users_get_all()`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_ms_sixmap_users_get_all()`
+    );
     return resp.rows;
   } catch (error) {
     throw error;
@@ -195,8 +199,8 @@ usersPGRepository.updateUserClient = async (cols, vals, uuid) => {
     ObjLog.log(`[${context}]: Updating user on db`);
     console.log("COLS: ", cols);
     console.log("VALS: ", vals);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_ms_sixmap_users_update(
       ($1),
       ($2),
@@ -215,8 +219,8 @@ usersPGRepository.updateUserEmployee = async (cols, vals, uuid) => {
   try {
     logger.info(`[${context}]: Updating user on db`);
     ObjLog.log(`[${context}]: Updating user on db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_ms_sixmap_users_update(
       ($1),
       ($2),
@@ -237,8 +241,8 @@ usersPGRepository.blockClient = async (uuid) => {
     ObjLog.log(`[${context}]: Blocking user on db`);
     let cols = ["user_active", "user_blocked"];
     let vals = [false, true];
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_ms_sixmap_users_update(
       ($1),
       ($2),
@@ -259,8 +263,8 @@ usersPGRepository.blockEmployee = async (uuid) => {
     ObjLog.log(`[${context}]: Blocking user on db`);
     let cols = ["user_active", "user_blocked"];
     let vals = [false, true];
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_ms_sixmap_users_update(
       ($1),
       ($2),
@@ -281,8 +285,8 @@ usersPGRepository.unblockClient = async (uuid) => {
     ObjLog.log(`[${context}]: unblocking user on db`);
     let cols = ["user_active", "user_blocked"];
     let vals = [true, false];
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_ms_sixmap_users_update(
       ($1),
       ($2),
@@ -303,8 +307,8 @@ usersPGRepository.unblockEmployee = async (uuid) => {
     ObjLog.log(`[${context}]: unblocking user on db`);
     let cols = ["user_active", "user_blocked"];
     let vals = [true, false];
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_ms_sixmap_users_update(
       ($1),
       ($2),
@@ -323,8 +327,8 @@ usersPGRepository.getusersClientById = async (id) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM get_user_by_id(${id})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(`SELECT * FROM get_user_by_id(${id})`);
     return resp.rows;
   } catch (error) {
     throw error;
@@ -335,8 +339,8 @@ usersPGRepository.getusersEmployeeById = async (id) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(`SELECT * FROM get_user_by_id(${id})`);
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(`SELECT * FROM get_user_by_id(${id})`);
     return resp.rows;
   } catch (error) {
     throw error;
@@ -347,8 +351,8 @@ usersPGRepository.getEmployeePhonesById = async (id) => {
   try {
     logger.info(`[${context}]: Getting phones from db`);
     ObjLog.log(`[${context}]: Getting phones from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_phones_by_uuid_user(${id})`
     );
     return resp.rows;
@@ -361,8 +365,8 @@ usersPGRepository.getClientPhonesById = async (id) => {
   try {
     logger.info(`[${context}]: Getting phones from db`);
     ObjLog.log(`[${context}]: Getting phones from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_phones_by_uuid_user(${id})`
     );
     return resp.rows;
@@ -375,8 +379,8 @@ usersPGRepository.getDepartmentsByUserId = async (id) => {
   try {
     logger.info(`[${context}]: Getting departments from db`);
     ObjLog.log(`[${context}]: Getting departments from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_departments_by_uuid_user(${id})`
     );
     return resp.rows;
@@ -390,8 +394,10 @@ usersPGRepository.approveLevelCero = async (id) => {
     logger.info(`[${context}]: Approving level cero on db`);
     ObjLog.log(`[${context}]: Approving level cero on db`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM SP_APPROVE_LEVEL_CERO(${id})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM SP_APPROVE_LEVEL_CERO(${id})`
+    );
     return resp.rows;
   } catch (error) {
     throw error;
@@ -402,8 +408,8 @@ usersPGRepository.approveLevelOne = async (body) => {
   try {
     logger.info(`[${context}]: Approving level one on db`);
     ObjLog.log(`[${context}]: Approving level one on db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM SP_APPROVE_LEVEL_ONE(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(`SELECT * FROM SP_APPROVE_LEVEL_ONE(
                                                                       ${body.doc_approved},
                                                                       ${body.selfie_approved},
                                                                       ${body.date_birth_approved},
@@ -427,8 +433,8 @@ usersPGRepository.getUUIDProfileByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_uuid_profile_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].uuid_profile;
@@ -442,8 +448,8 @@ usersPGRepository.getUUIDProfileByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sec_cust.get_uuid_profile_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].uuid_profile;
@@ -457,8 +463,8 @@ usersPGRepository.getIdServiceByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_service_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_service;
@@ -472,8 +478,8 @@ usersPGRepository.getIdServiceByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_service_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_service;
@@ -487,8 +493,8 @@ usersPGRepository.getIdUTypeByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_utype_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_services_utype;
@@ -502,8 +508,8 @@ usersPGRepository.getIdUTypeByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_utype_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_services_utype;
@@ -517,8 +523,8 @@ usersPGRepository.getIdDocTypeByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_doc_type_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_ident_doc_type;
@@ -532,8 +538,8 @@ usersPGRepository.getIdDocTypeByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_doc_type_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_ident_doc_type;
@@ -547,8 +553,8 @@ usersPGRepository.getIdResidCountryByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_resid_country_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_country;
@@ -562,8 +568,8 @@ usersPGRepository.getIdResidCountryByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_resid_country_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_country;
@@ -577,8 +583,8 @@ usersPGRepository.getIdNatCountryByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_ip_country_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_ip_country;
@@ -592,8 +598,8 @@ usersPGRepository.getIdNatCountryByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_ip_country_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_ip_country;
@@ -607,8 +613,8 @@ usersPGRepository.getIdVerifLevelByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_verif_level_by_name(${name})`
     );
     if (resp.rows[0]) return resp.rows[0].id_verif_level;
@@ -622,8 +628,8 @@ usersPGRepository.getIdDepartmentByNameClient = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_department_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_dpt;
@@ -637,8 +643,8 @@ usersPGRepository.getIdDepartmentByNameEmployee = async (name) => {
   try {
     logger.info(`[${context}]: Getting users from db`);
     ObjLog.log(`[${context}]: Getting users from db`);
-    await pool.query("SET SCHEMA 'sec_emp'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_emp'");
+    const resp = await poolSM.query(
       `SELECT * FROM get_id_department_by_name('${name}')`
     );
     if (resp.rows[0]) return resp.rows[0].id_dpt;
@@ -652,8 +658,8 @@ usersPGRepository.requestLevelOne1stQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_1st_Q(
         '${body.date_birth}',
         '${body.state_name}',
@@ -680,8 +686,8 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_2nd_Q(
         '${body.date_birth}',
         '${body.state_name}',
@@ -709,8 +715,8 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
     console.log("se pasa esto: ", body);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_3rd_Q(
         '${body.date_birth}',
         '${body.state_name}',
@@ -737,8 +743,8 @@ usersPGRepository.generateCode = async (email_user, mode) => {
   try {
     logger.info(`[${context}]: Generating code in db`);
     ObjLog.log(`[${context}]: Generating code in db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_generate_code('${email_user}','${mode}')`
     );
     return resp.rows[0].sp_generate_code;
@@ -751,8 +757,8 @@ usersPGRepository.verifCode = async (email_user, code) => {
   try {
     logger.info(`[${context}]: Verifying code in db`);
     ObjLog.log(`[${context}]: Verifying code in db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sp_verif_code('${email_user}',${code})`
     );
     return resp.rows[0].sp_verif_code;
@@ -765,8 +771,8 @@ usersPGRepository.getLastPasswords = async (email_user) => {
   try {
     logger.info(`[${context}]: Getting passwords from db`);
     ObjLog.log(`[${context}]: Getting passwords from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM SP_GET_LAST_PASSWORDS('${email_user}')`
     );
     return resp.rows;
@@ -779,9 +785,9 @@ usersPGRepository.newPassword = async (body) => {
   try {
     logger.info(`[${context}]: Updating password on db`);
     ObjLog.log(`[${context}]: Updating password on db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'sec_cust'");
     console.log("BODY A PASAR A BD: ", body);
-    const resp = await pool.query(
+    const resp = await poolSM.query(
       `SELECT * FROM SP_UPDATE_USER_PASSWORD('${body.new_password}','${body.email_user}')`
     );
     return resp.rows[0].sp_update_user_password;
@@ -794,8 +800,10 @@ usersPGRepository.getusersClientByEmail = async (email) => {
   try {
     logger.info(`[${context}]: Getting user from db`);
     ObjLog.log(`[${context}]: Getting user from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM get_user_by_email(${email})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM get_user_by_email(${email})`
+    );
     return resp.rows;
   } catch (error) {
     throw error;
@@ -806,8 +814,8 @@ usersPGRepository.getLevelQuestions = async () => {
   try {
     logger.info(`[${context}]: Getting questions from db`);
     ObjLog.log(`[${context}]: Getting questions from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM v_level_questions_get_active()`
     );
     return resp.rows;
@@ -820,8 +828,10 @@ usersPGRepository.getLevelAnswers = async () => {
   try {
     logger.info(`[${context}]: Getting answers from db`);
     ObjLog.log(`[${context}]: Getting answers from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM v_level_answers_get_active()`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM v_level_answers_get_active()`
+    );
     return resp.rows;
   } catch (error) {
     throw error;
@@ -832,9 +842,9 @@ usersPGRepository.requestLevelTwo = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level two in db`);
     ObjLog.log(`[${context}]: Requesting level two in db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query("SET SCHEMA 'sec_cust'");
     console.log("en el repository: ", body.answers);
-    const resp = await pool.query(
+    const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_TWO(
         '${body.funds_source}',
         '${body.residency_proof_path}',
@@ -853,9 +863,9 @@ usersPGRepository.getATCNumberByIdCountry = async (id) => {
   try {
     logger.info(`[${context}]: Looking for ATC Number in db`);
     ObjLog.log(`[${context}]: Looking for ATC Number in db`);
-    await pool.query("SET SCHEMA 'msg_app'");
+    await poolSM.query("SET SCHEMA 'msg_app'");
     console.log("id", id);
-    const resp = await pool.query(
+    const resp = await poolSM.query(
       `SELECT * FROM msg_app.get_atc_number_by_id_resid_country(
         ${id}
         )`
@@ -871,8 +881,8 @@ usersPGRepository.verifyIdentUser = async (email_user, phone_number) => {
   try {
     logger.info(`[${context}]: Verifying ident user on db`);
     ObjLog.log(`[${context}]: Verifying ident user on db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM verif_ident_user(
         '${email_user}',
         '${phone_number}'
@@ -889,8 +899,8 @@ usersPGRepository.deactivateUser = async (email_user) => {
   try {
     logger.info(`[${context}]: Deactivating user on db`);
     ObjLog.log(`[${context}]: Deactivating user on db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM SP_DEACTIVATE_USER('${email_user}')`
     );
     if (resp.rows[0]) return resp.rows[0].sp_deactivate_user;
