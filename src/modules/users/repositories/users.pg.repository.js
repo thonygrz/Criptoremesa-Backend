@@ -922,7 +922,7 @@ usersPGRepository.getReferrals = async (cust_cr_cod_pub) => {
                                               )`
     );
     console.log('resp: ',resp)
-    return resp;
+    return resp.rows[0].sp_get_referrals_by_user;
   } catch (error) {
     throw error;
   }
