@@ -910,4 +910,20 @@ usersPGRepository.deactivateUser = async (email_user) => {
   }
 };
 
+usersPGRepository.getReferrals = async (cust_cr_cod_pub) => {
+  try {
+    logger.info(`[${context}]: Getting referrals from db`);
+    ObjLog.log(`[${context}]: Getting referrals from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_referrals_by_user(
+                                                '${cust_cr_cod_pub}'
+                                              )`
+    );
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;

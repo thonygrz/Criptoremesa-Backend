@@ -208,4 +208,10 @@ usersRouter.post(
   usersController.deactivateUser
 );
 
+usersRouter.get(
+  "/referrals",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferrals
+);
+
 export default usersRouter;
