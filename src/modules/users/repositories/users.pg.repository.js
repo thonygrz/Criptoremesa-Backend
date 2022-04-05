@@ -921,7 +921,7 @@ usersPGRepository.getReferrals = async (cust_cr_cod_pub) => {
                                                 '${cust_cr_cod_pub}'
                                               )`
     );
-    console.log('resp: ',resp)
+    console.log('resp.rows[0].sp_get_referrals_by_user: ',resp.rows[0].sp_get_referrals_by_user)
     return resp.rows[0].sp_get_referrals_by_user;
   } catch (error) {
     throw error;
