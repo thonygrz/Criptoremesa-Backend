@@ -3001,7 +3001,7 @@ usersService.getReferrals = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(data[0]);
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }

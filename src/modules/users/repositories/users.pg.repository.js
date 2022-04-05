@@ -915,13 +915,11 @@ usersPGRepository.getReferrals = async (cust_cr_cod_pub) => {
     logger.info(`[${context}]: Getting referrals from db`);
     ObjLog.log(`[${context}]: Getting referrals from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log('cust_cr_cod_pub: ',cust_cr_cod_pub)
     const resp = await poolSM.query(
       `SELECT * FROM sp_get_referrals_by_user(
                                                 '${cust_cr_cod_pub}'
                                               )`
     );
-    console.log('resp.rows[0].sp_get_referrals_by_user: ',resp.rows[0].sp_get_referrals_by_user)
     return resp.rows[0].sp_get_referrals_by_user;
   } catch (error) {
     throw error;
