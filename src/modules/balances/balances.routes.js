@@ -6,7 +6,7 @@ const balancesRouter = Router();
 // IF YOU WERE USING cg/auth/login
 
 balancesRouter.get(
-  "/:email_user",
+  "/",
   // guard.verifyAdmin("/login"),
   balancesController.getBalances
 );
