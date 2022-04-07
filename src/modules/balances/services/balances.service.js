@@ -36,7 +36,7 @@ balancesService.getBalances = async (req, res, next) => {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Get Doc Types`);
       ObjLog.log(`[${context}]: Get Doc Types`);
-      data = await balancesPGRepository.getBalances(req.query.email_user,req.query.id_origin_country);
+      data = await balancesPGRepository.getBalances(req.params.email_user);
       res.status(200).json(data);
     }
   } catch (error) {
