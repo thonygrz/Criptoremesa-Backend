@@ -215,7 +215,7 @@ usersRouter.get(
 );
 
 usersRouter.get(
-  "/referralsOperations/:email_user",
+  "/:email_user/referralsOperations",
   // guard.verifyAdmin("/login"),
   usersController.getReferralsOperations
 );
