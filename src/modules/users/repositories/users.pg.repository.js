@@ -926,4 +926,20 @@ usersPGRepository.getReferrals = async (cust_cr_cod_pub) => {
   }
 };
 
+usersPGRepository.getReferralsOperations = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting referrals from db`);
+    ObjLog.log(`[${context}]: Getting referrals from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_referral_operations_by_user(
+                                                '${email_user}'
+                                              )`
+    );
+    return resp.rows[0].sp_get_referrals_by_user;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;

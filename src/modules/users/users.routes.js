@@ -214,4 +214,10 @@ usersRouter.get(
   usersController.getReferrals
 );
 
+usersRouter.get(
+  "/referralsOperations/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsOperations
+);
+
 export default usersRouter;
