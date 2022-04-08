@@ -221,7 +221,7 @@ usersRouter.get(
 );
 
 usersRouter.get(
-  "/:email_user/referralsByCountry",
+  "/:email_user/referrals/totalByCountry",
   // guard.verifyAdmin("/login"),
   usersController.getReferralsByCountry
 );
