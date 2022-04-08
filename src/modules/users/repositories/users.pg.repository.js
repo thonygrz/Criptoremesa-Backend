@@ -968,7 +968,7 @@ usersPGRepository.getReferralsByStatus = async (email_user) => {
                                                 '${email_user}'
                                               )`
     );
-    return resp.rows[0].sp_get_country_referrals_by_user;
+    return resp.rows[0].sp_get_status_referrals_by_user;
   } catch (error) {
     throw error;
   }
