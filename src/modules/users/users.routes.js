@@ -226,4 +226,10 @@ usersRouter.get(
   usersController.getReferralsByCountry
 );
 
+usersRouter.get(
+  "/:email_user/referrals/totalByStatus",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsByStatus
+);
+
 export default usersRouter;
