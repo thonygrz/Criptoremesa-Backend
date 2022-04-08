@@ -3012,6 +3012,7 @@ usersService.getReferralsOperations = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
+    console.log('REQ.PARAMS: ',req.params)
     let data = await usersPGRepository.getReferralsOperations(req.params.email_user);
 
     const resp = authenticationPGRepository.getIpInfo(
