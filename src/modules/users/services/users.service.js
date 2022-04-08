@@ -3106,11 +3106,6 @@ usersService.ambassadorRequest = async (req, res, next) => {
       email_user: req.params.email_user
     });
 
-    res.status(200).json({
-      msg: data.msg,
-      mailResp,
-    });
-
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -3128,7 +3123,9 @@ usersService.ambassadorRequest = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(data);
+    res.status(200).json({
+      mailResp,
+    });
   } catch (error) {
     next(error);
   }
