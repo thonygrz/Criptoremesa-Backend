@@ -220,4 +220,10 @@ usersRouter.get(
   usersController.getReferralsOperations
 );
 
+usersRouter.get(
+  "/:email_user/referralsByCountry",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsByCountry
+);
+
 export default usersRouter;
