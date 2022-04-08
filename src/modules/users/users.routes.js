@@ -232,4 +232,10 @@ usersRouter.get(
   usersController.getReferralsByStatus
 );
 
+usersRouter.get(
+  "/:email_user/ambassadorRequest",
+  // guard.verifyAdmin("/login"),
+  usersController.ambassadorRequest
+);
+
 export default usersRouter;

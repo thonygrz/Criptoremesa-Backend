@@ -22,4 +22,14 @@ export default {
       return error;
     }
   },
+  sendAmbassadorMail: async (body) => {
+    try {
+      let resp = await axios.post(`${env.MAIL_SENDER}/sendAmbassadorMail`,body)
+      console.log('Desde axios: ',resp.data);
+      return resp.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  },
 };
