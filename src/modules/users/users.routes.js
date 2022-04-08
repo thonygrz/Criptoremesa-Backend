@@ -233,7 +233,7 @@ usersRouter.get(
 );
 
 usersRouter.get(
-  "/:email_user/ambassadorRequest",
+  "/:email_user/ambassador/request",
   // guard.verifyAdmin("/login"),
   usersController.ambassadorRequest
 );
