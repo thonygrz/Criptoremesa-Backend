@@ -40,7 +40,7 @@ cryptomilesController.insertCryptomile = async (req, res, next) => {
       logger.info(`[${context}]: Sending service to insert cryptomile`);
       ObjLog.log(`[${context}]: Sending service to insert cryptomile`);
 
-      cryptomilesService.c(req, res, next);
+      cryptomilesService.insertCryptomile(req, res, next);
     }
   } catch (error) {
     next(error);
