@@ -1,4 +1,4 @@
-import { poolSM } from "../../../db/pg.connection";
+import { poolSM, poolCR } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -9,9 +9,9 @@ cryptomilesPGRepository.insertCryptomile = async (body) => {
   try {
     logger.info(`[${context}]: Getting cryptomiles client from db`);
     ObjLog.log(`[${context}]: Getting cryptomiles client from db`);
-    await poolSM.query("SET SCHEMA 'sec_cust'");
-    const resp = await poolSM.query(
-      `SELECT * FROM sp_ms_cryptomiles_insert(
+    await poolSM.query("SET SCHEMA 'basics'");
+    const resp = await poolCR.query(
+      `SELECT * FROM basics.sp_ms_cryptomiles_insert(
                                               ${body.amount},
                                               '${body.email_user}',
                                               '${body.emp_username}',
