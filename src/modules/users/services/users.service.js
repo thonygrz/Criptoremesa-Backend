@@ -3123,6 +3123,7 @@ usersService.ambassadorRequest = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
+    if (mailResp.mailResp = 'Connection timed out')
     res.status(200).json({
       mailResp,
     });

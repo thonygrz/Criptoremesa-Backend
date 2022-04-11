@@ -16,7 +16,8 @@ import chatRouter from '../modules/chat/chat.routes';
 import remittancesRouter from '../modules/remittances/remittances.routes';
 import ratesRouter from '../modules/rates/rates.routes';
 import balancesRouter from '../modules/balances/balances.routes';
-const router = Router();
+import cryptomilesRouter from '../modules/cryptomiles/cryptomiles.routes';
+const router = Router();  
 
 router.post("/login", authenticationController.login);
 
@@ -46,5 +47,6 @@ router.use("/chat", chatRouter);
 router.use("/remittances", remittancesRouter);
 router.use("/rates", ratesRouter);
 router.use("/balances", balancesRouter);
+router.use("/cryptomiles", cryptomilesRouter);
 
 export default router;
