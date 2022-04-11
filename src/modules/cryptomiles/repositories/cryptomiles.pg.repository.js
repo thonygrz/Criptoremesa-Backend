@@ -18,8 +18,8 @@ cryptomilesPGRepository.insertCryptomile = async (body) => {
                                               '${body.trans_type}',
                                               '${body.trans_description}',
                                               '${body.trans_comment}',
-                                              '${body.id_operation}',
-                                              '${body.operation_type}'
+                                              ${body.id_operation},
+                                              ${body.operation_type}
                                               )`
     );
     return resp.rows[0].sp_ms_cryptomiles_insert;
