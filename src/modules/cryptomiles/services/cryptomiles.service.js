@@ -18,7 +18,7 @@ const logConst = {
 
 cryptomilesService.insertCryptomile = async (req, res, next) => {
   try {
-
+    console.log('insertCryptomile')
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
@@ -33,9 +33,10 @@ cryptomilesService.insertCryptomile = async (req, res, next) => {
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
     }else{
+      console.log('else insertCryptomile')
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get Doc Types`);
-      ObjLog.log(`[${context}]: Get Doc Types`);
+      logger.info(`[${context}]: Inserting Cryptomile`);
+      ObjLog.log(`[${context}]: Inserting Cryptomile`);
       data = await cryptomilesPGRepository.insertCryptomile(req.body);
       res.status(200).json(data);
     }
