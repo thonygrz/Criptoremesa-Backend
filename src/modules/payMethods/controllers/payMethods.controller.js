@@ -20,11 +20,10 @@ payMethodsController.getPayMethodsByCountry = (req, res, next) => {
 
 payMethodsController.getPayMethodById = (req, res, next) => {
   try {
-    const payMethodId = req.params.pay_method_id;
     logger.info(`[${context}]: Sending service to get pay methods by Id ${payMethodId}`);
     ObjLog.log(`[${context}]: Sending service to get pay methods by Id ${payMethodId}`);
 
-    payMethodsService.getPayMethodById(req, res, next,payMethodId);
+    payMethodsService.getPayMethodById(req, res, next);
   } catch (error) {
     next(error);
   }
