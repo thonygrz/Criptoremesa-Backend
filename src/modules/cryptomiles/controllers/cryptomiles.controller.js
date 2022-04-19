@@ -154,8 +154,8 @@ cryptomilesController.activateCryptomiles = async (req, res, next) => {
 
       res.status(401).json({ message: "Unauthorized" });
     } else {
-      logger.info(`[${context}]: Sending service to deactivate cryptomiles`);
-      ObjLog.log(`[${context}]: Sending service to deactivate cryptomiles`);
+      logger.info(`[${context}]: Sending service to activate cryptomiles`);
+      ObjLog.log(`[${context}]: Sending service to activate cryptomiles`);
 
       cryptomilesService.activateCryptomiles(req, res, next);
     }
