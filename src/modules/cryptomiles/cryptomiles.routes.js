@@ -17,5 +17,17 @@ cryptomilesRouter.get(
   cryptomilesController.getCryptomiles
 );
 
+cryptomilesRouter.put(
+  "/:email_user",
+  // guard.verifyAdmin("/login"),
+  cryptomilesController.deactivateCryptomiles
+);
+
+cryptomilesRouter.put(
+  "/:email_user",
+  // guard.verifyAdmin("/login"),
+  cryptomilesController.activateCryptomiles
+);
+
 
 export default cryptomilesRouter;

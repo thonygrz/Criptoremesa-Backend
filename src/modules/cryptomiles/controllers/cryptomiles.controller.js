@@ -86,4 +86,82 @@ cryptomilesController.getCryptomiles = async (req, res, next) => {
   }
 };
 
+cryptomilesController.deactivateCryptomiles = async (req, res, next) => {
+  try {
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+
+      if (resp) countryResp = resp.country_name;
+
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/cryptomiles",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to deactivate cryptomiles`);
+      ObjLog.log(`[${context}]: Sending service to deactivate cryptomiles`);
+
+      cryptomilesService.deactivateCryptomiles(req, res, next);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+cryptomilesController.activateCryptomiles = async (req, res, next) => {
+  try {
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+
+      if (resp) countryResp = resp.country_name;
+
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/cryptomiles",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      logger.info(`[${context}]: Sending service to deactivate cryptomiles`);
+      ObjLog.log(`[${context}]: Sending service to deactivate cryptomiles`);
+
+      cryptomilesService.activateCryptomiles(req, res, next);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default cryptomilesController;

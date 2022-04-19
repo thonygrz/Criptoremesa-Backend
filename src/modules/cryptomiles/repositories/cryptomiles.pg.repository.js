@@ -44,4 +44,36 @@ cryptomilesPGRepository.getCryptomiles = async (email_user) => {
   }
 };
 
+cryptomilesPGRepository.deactivateCryptomiles = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Deactivating cryptomiles client from db`);
+    ObjLog.log(`[${context}]: Deactivating cryptomiles client from db`);
+    await poolSM.query("SET SCHEMA 'basics'");
+    const resp = await poolCR.query(
+      `SELECT * FROM basics.sp_cryptomiles_deactivate_by_id(
+                                              '${email_user}'
+                                              )`
+    );
+    return resp.rows[0].sp_cryptomiles_deactivate_by_id;
+  } catch (error) {
+    throw error;
+  }
+};
+
+cryptomilesPGRepository.activateCryptomiles = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Activating cryptomiles client from db`);
+    ObjLog.log(`[${context}]: Activating cryptomiles client from db`);
+    await poolSM.query("SET SCHEMA 'basics'");
+    const resp = await poolCR.query(
+      `SELECT * FROM basics.sp_cryptomiles_activate_by_id(
+                                              '${email_user}'
+                                              )`
+    );
+    return resp.rows[0].sp_cryptomiles_activate_by_id;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default cryptomilesPGRepository;

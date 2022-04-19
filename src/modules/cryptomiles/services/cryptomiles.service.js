@@ -70,4 +70,31 @@ cryptomilesService.getCryptomiles = async (req, res, next) => {
   }
 };
 
+cryptomilesService.deactivateCryptomiles = async (req, res, next) => {
+  try {
+    let log  = logConst;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = log.route;
+    let data = {}
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Inserting Cryptomile`);
+      ObjLog.log(`[${context}]: Inserting Cryptomile`);
+      data = await cryptomilesPGRepository.deactivateCryptomiles(req.params.email_user);
+      res.status(200).json(data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default cryptomilesService;
