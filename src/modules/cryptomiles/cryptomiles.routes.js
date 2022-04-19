@@ -11,4 +11,11 @@ cryptomilesRouter.post(
   cryptomilesController.insertCryptomile
 );
 
+cryptomilesRouter.get(
+  "/:email_user",
+  // guard.verifyAdmin("/login"),
+  cryptomilesController.getCryptomiles
+);
+
+
 export default cryptomilesRouter;

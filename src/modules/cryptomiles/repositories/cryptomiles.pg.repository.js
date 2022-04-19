@@ -28,4 +28,20 @@ cryptomilesPGRepository.insertCryptomile = async (body) => {
   }
 };
 
+cryptomilesPGRepository.getCryptomiles = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting cryptomiles client from db`);
+    ObjLog.log(`[${context}]: Getting cryptomiles client from db`);
+    await poolSM.query("SET SCHEMA 'basics'");
+    const resp = await poolCR.query(
+      `SELECT * FROM basics.sp_ms_cryptomiles_get(
+                                              '${email_user}'
+                                              )`
+    );
+    return resp.rows[0].sp_ms_cryptomiles_get;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default cryptomilesPGRepository;
