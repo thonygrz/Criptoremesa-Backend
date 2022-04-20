@@ -84,10 +84,10 @@ cryptomilesPGRepository.getAllCryptomiles = async (body) => {
     const resp = await poolCR.query(
       `SELECT * FROM basics.sp_cryptomiles_get_all(
                                                   ${body.active},
-                                                  ${body.email_user == null ? null : `'${body.email_user}'`},
-                                                  ${body.id_currency == null ? null : body.id_currency},
-                                                  ${body.start_date == null ? null : body.start_date},
-                                                  ${body.end_date == null ? null : body.end_date}
+                                                  ${body.email_user == 'null' ? null : `'${body.email_user}'`},
+                                                  ${body.id_currency == 'null' ? null : body.id_currency},
+                                                  ${body.start_date == 'null' ? null : body.start_date},
+                                                  ${body.end_date == 'null' ? null : body.end_date}
                                                   )`
     );
     return resp.rows[0].sp_cryptomiles_get_all;

@@ -145,7 +145,7 @@ cryptomilesService.getAllCryptomiles = async (req, res, next) => {
       ObjLog.log(`[${context}]: Getting all Cryptomiles`);
       data = await cryptomilesPGRepository.getAllCryptomiles({
                                                               email_user: req.params.email_user,
-                                                              ...req.body
+                                                              ...req.query
                                                             });
       res.status(200).json(data);
     }
