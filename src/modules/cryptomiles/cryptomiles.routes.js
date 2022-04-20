@@ -29,5 +29,10 @@ cryptomilesRouter.put(
   cryptomilesController.activateCryptomiles
 );
 
+cryptomilesRouter.get(
+  "/all",
+  // guard.verifyAdmin("/login"),
+  cryptomilesController.getAllCryptomiles
+);
 
 export default cryptomilesRouter;
