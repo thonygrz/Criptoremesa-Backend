@@ -10,15 +10,14 @@ cryptomilesPGRepository.insertCryptomile = async (body) => {
     logger.info(`[${context}]: Getting cryptomiles client from db`);
     ObjLog.log(`[${context}]: Getting cryptomiles client from db`);
     await poolSM.query("SET SCHEMA 'basics'");
-    console.log('BODYYYY INSERT: ',body)
     const resp = await poolCR.query(
       `SELECT * FROM basics.sp_ms_cryptomiles_insert(
                                               ${body.amount},
                                               '${body.email_user}',
                                               '${body.emp_username}',
                                               '${body.trans_type}',
-                                              ${body.trans_description === 'null' ? null : `'${body.trans_description}'`},
-                                              ${body.trans_comment === 'null' ? null : `'${body.trans_comment}'`},
+                                              ${body.trans_description === null ? null : `'${body.trans_description}'`},
+                                              ${body.trans_comment === null ? null : `'${body.trans_comment}'`},
                                               ${body.id_operation},
                                               ${body.operation_type},
                                               ${body.id_currency},
