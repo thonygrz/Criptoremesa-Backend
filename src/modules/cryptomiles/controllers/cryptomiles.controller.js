@@ -186,7 +186,7 @@ cryptomilesController.getAllCryptomiles = async (req, res, next) => {
         failed: true,
         ip: req.connection.remoteAddress,
         country: countryResp,
-        route: "/cryptomiles",
+        route: "/cryptomiles/all",
         session: sess,
       };
       authenticationPGRepository.insertLogMsg(log);

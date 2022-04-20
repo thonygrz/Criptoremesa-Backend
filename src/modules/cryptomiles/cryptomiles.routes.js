@@ -30,7 +30,7 @@ cryptomilesRouter.put(
 );
 
 cryptomilesRouter.get(
-  "/all",
+  "/:email_user/all",
   // guard.verifyAdmin("/login"),
   cryptomilesController.getAllCryptomiles
 );

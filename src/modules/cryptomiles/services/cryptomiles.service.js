@@ -143,7 +143,10 @@ cryptomilesService.getAllCryptomiles = async (req, res, next) => {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting all Cryptomiles`);
       ObjLog.log(`[${context}]: Getting all Cryptomiles`);
-      data = await cryptomilesPGRepository.getAllCryptomiles(req.body);
+      data = await cryptomilesPGRepository.getAllCryptomiles({
+                                                              email_user: req.params.email_user,
+                                                              ...req.body
+                                                            });
       res.status(200).json(data);
     }
   } catch (error) {
