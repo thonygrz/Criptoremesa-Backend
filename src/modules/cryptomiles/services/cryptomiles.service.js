@@ -60,8 +60,8 @@ cryptomilesService.getCryptomiles = async (req, res, next) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Inserting Cryptomile`);
-      ObjLog.log(`[${context}]: Inserting Cryptomile`);
+      logger.info(`[${context}]: Getting Cryptomiles`);
+      ObjLog.log(`[${context}]: Getting Cryptomiles`);
       data = await cryptomilesPGRepository.getCryptomiles(req.params.email_user);
       res.status(200).json(data);
     }
@@ -141,8 +141,8 @@ cryptomilesService.getAllCryptomiles = async (req, res, next) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Inserting Cryptomile`);
-      ObjLog.log(`[${context}]: Inserting Cryptomile`);
+      logger.info(`[${context}]: Getting all Cryptomiles`);
+      ObjLog.log(`[${context}]: Getting all Cryptomiles`);
       data = await cryptomilesPGRepository.getAllCryptomiles(req.body);
       res.status(200).json(data);
     }
