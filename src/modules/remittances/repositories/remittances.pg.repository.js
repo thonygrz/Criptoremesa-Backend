@@ -57,7 +57,7 @@ remittancesPGRepository.startRemittance = async (body) => {
     await poolSM.query("SET SCHEMA 'msg_app'");
     console.log("REMITTANCE A PASAR A BD BODYYY: ", body);
     const resp = await poolSM.query(
-      `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
+      `CALL sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
     );
     if (resp.rows[0].sp_lnk_cr_remittances_init)
       return resp.rows[0].sp_lnk_cr_remittances_init;
