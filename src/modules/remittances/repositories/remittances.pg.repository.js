@@ -159,13 +159,17 @@ remittancesPGRepository.getBankFee = async (body) => {
   }
 };
 
-remittancesPGRepository.lastRemittances = async (email_user, limit) => {
+remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, end_date) => {
   try {
     logger.info(`[${context}]: Getting last remittances on db`);
     ObjLog.log(`[${context}]: Getting last remittances on db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
-      `SELECT * FROM sp_get_last_remittances_by_user('${email_user}',${limit})`
+      `SELECT * FROM sp_get_last_remittances_by_user('${email_user}',
+                                                      ${limit},
+                                                      ${start_date},
+                                                      ${end_date},
+                                                    )`
     );
     if (resp.rows[0].sp_get_last_remittances_by_user)
       return resp.rows[0].sp_get_last_remittances_by_user;
