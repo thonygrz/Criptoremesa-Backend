@@ -3138,6 +3138,7 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
     let sess = null;
 
     let data = await usersPGRepository.verifReferrallByCodPub(req.params.cust_cr_cod_pub);
+    console.log('devolvió esto el repo: ',data)
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
