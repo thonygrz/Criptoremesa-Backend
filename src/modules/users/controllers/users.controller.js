@@ -719,5 +719,14 @@ usersController.ambassadorRequest = async (req, res, next) => {
   }
 };
 
+usersController.verifReferrallByCodPub = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to verify referral`);
+    ObjLog.log(`[${context}]: Sending service to verify referral`);
+    usersService.verifReferrallByCodPub(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default usersController;

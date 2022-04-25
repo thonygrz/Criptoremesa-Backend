@@ -974,4 +974,19 @@ usersPGRepository.getReferralsByStatus = async (email_user) => {
   }
 };
 
+usersPGRepository.verifReferrallByCodPub = async (cust_cr_cod_pub) => {
+  try {
+    logger.info(`[${context}]: Verifying referrall cod pub on db`);
+    ObjLog.log(`[${context}]: Verifying referrall cod pub on db`);
+    await pool.query("SET SCHEMA 'sec_cust'");
+    const resp = await pool.query(
+      `SELECT * FROM sp_cod_pub_exists('${cust_cr_cod_pub}')`
+    );
+    if (resp.rows[0]) return resp.rows[0].sp_cod_pub_exists;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;
