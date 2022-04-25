@@ -3,6 +3,7 @@ import ObjLog from "../../../utils/ObjLog";
 import ratesPGRepository from "../repositories/rates.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import { env } from "../../../utils/enviroment";
+import {MANUAL_RATES} from '../constants/manualRates.constants'
 
 const ratesService = {};
 const context = "rates Service";
@@ -126,7 +127,17 @@ ratesService.fullRates = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    res.status(200).json(data);
+    let currentManualRate = data.manual_rates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
+
+    let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${currentManualRate.currency_origin_iso_code}`);
+    
+    if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
+      data.local_amount_limit = currentManualRate.amount_limit * fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]
+      res.status(200).json(data);
+    }
+    else
+      next({message: 'There was an error getting Currency Freaks rate.'})
+
   } catch (error) {
     next(error);
   }
