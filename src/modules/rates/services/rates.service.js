@@ -127,7 +127,7 @@ ratesService.fullRates = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    let currentManualRate = data.manual_rates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
+    let currentManualRate = data.manualRates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
 
     let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${currentManualRate.currency_origin_iso_code}`);
     
