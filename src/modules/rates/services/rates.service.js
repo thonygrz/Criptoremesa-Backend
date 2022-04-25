@@ -132,7 +132,7 @@ ratesService.fullRates = async (req, res, next) => {
 
     console.log('currentManualRate: ',currentManualRate)
     
-    let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${currentManualRate.currency_origin_iso_code}`);
+    let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${currentManualRate.currency_origin_iso_code}`).data;
     console.log('fullRateFromAPI: ',fullRateFromAPI)
     
     if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
