@@ -3158,11 +3158,11 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
 
     console.log('devolvió esto el repo: ',data)
     if (data.message === 'Exists public code.')
-      res.status(200);
+      res.status(200).json();
     else if (data.message === 'Not exists public code.')
-      res.status(406);
+      res.status(406).json();
     else 
-      res.status(400);
+      res.status(400).json();
   } catch (error) {
     next(error);
   }
