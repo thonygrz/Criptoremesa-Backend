@@ -4,6 +4,7 @@ import ratesPGRepository from "../repositories/rates.pg.repository";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import { env } from "../../../utils/enviroment";
 import {MANUAL_RATES} from '../constants/manualRates.constants'
+import axios from 'axios'
 
 const ratesService = {};
 const context = "rates Service";
