@@ -3157,7 +3157,7 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    res.status(200).json(data);
+    res.status(200).json({fuck: 'life'});
   } catch (error) {
     next(error);
   }
