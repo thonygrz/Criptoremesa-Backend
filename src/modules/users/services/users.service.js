@@ -3138,7 +3138,6 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
     let sess = null;
 
     let data = await usersPGRepository.verifReferrallByCodPub(req.params.cust_cr_cod_pub);
-    console.log('devolvió esto el repo: ',data)
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -3157,6 +3156,7 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
+    console.log('devolvió esto el repo: ',data)
     if (data.message === 'Exists public code.')
       res.status(200);
     else if (data.message === 'Not exists public code.')
