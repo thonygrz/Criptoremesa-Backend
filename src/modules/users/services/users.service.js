@@ -3157,9 +3157,9 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
     };
     authenticationPGRepository.insertLogMsg(log);
 
-    if (data.message = 'Exists public code.')
+    if (data.message === 'Exists public code.')
       res.status(200);
-    else if (data.message = 'Not exists public code.')
+    else if (data.message === 'Not exists public code.')
       res.status(406);
     else 
       res.status(400);
