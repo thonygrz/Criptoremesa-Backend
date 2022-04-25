@@ -238,7 +238,7 @@ usersRouter.post(
   usersController.ambassadorRequest
 );
 
-usersRouter.head(
+usersRouter.get(
   "/:cust_cr_cod_pub",
   // guard.verifyAdmin("/login"),
   usersController.verifReferrallByCodPub
