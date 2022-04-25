@@ -982,7 +982,7 @@ usersPGRepository.verifReferrallByCodPub = async (cust_cr_cod_pub) => {
     const resp = await poolSM.query(
       `SELECT * FROM sp_cod_pub_exists('${cust_cr_cod_pub}')`
     );
-    console.log('respp: ',resp)
+    console.log('respp: ',resp.rows[0].sp_cod_pub_exists)
     if (resp.rows[0]) return resp.rows[0].sp_cod_pub_exists;
     else return null;
   } catch (error) {
