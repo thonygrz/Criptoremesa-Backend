@@ -136,7 +136,7 @@ ratesService.fullRates = async (req, res, next) => {
     console.log('fullRateFromAPI: ',fullRateFromAPI)
     
     if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
-      data.local_amount_limit = currentManualRate.amount_limit * fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]
+      data.localAmountLimit = currentManualRate.amount_limit * fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]
       res.status(200).json(data);
     }
     else
