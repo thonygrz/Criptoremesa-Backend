@@ -239,7 +239,7 @@ usersRouter.post(
 );
 
 usersRouter.head(
-  "/:cust_cr_cod_pub",
+  "/referrer/:cust_cr_cod_pub",
   // guard.verifyAdmin("/login"),
   usersController.verifReferrallByCodPub
 );

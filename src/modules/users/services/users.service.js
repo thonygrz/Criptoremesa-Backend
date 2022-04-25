@@ -3160,7 +3160,7 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
     if (data.message === 'Exists public code.')
       res.status(200).json();
     else if (data.message === 'Not exists public code.')
-      res.status(406).json();
+      res.status(400).json();
     else 
       res.status(400).json();
   } catch (error) {
