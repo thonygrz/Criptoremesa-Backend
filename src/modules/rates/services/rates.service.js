@@ -130,7 +130,10 @@ ratesService.fullRates = async (req, res, next) => {
 
     let currentManualRate = data.manualRates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
 
+    console.log('currentManualRate: ',currentManualRate)
+    
     let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${currentManualRate.currency_origin_iso_code}`);
+    console.log('fullRateFromAPI: ',fullRateFromAPI)
     
     if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
       data.local_amount_limit = currentManualRate.amount_limit * fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]
