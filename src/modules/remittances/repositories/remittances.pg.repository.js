@@ -55,11 +55,12 @@ remittancesPGRepository.startRemittance = async (body) => {
     logger.info(`[${context}]: Starting remittance on db`);
     ObjLog.log(`[${context}]: Starting remittance on db`);
     await poolSM.query("SET SCHEMA 'msg_app'");
-    const resp = await poolSM.query(
-      `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
-      );
+    // const resp = await poolSM.query(
+    //   `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
+    //   );
       
-      console.log("resp.rows[0].sp_lnk_cr_remittances_init: ", resp.rows[0].sp_lnk_cr_remittances_init);
+      // console.log("resp.rows[0].sp_lnk_cr_remittances_init: ", resp.rows[0].sp_lnk_cr_remittances_init);
+      console.log("prueba ");
     if (resp.rows[0].sp_lnk_cr_remittances_init) {
       // await poolSM.query(
       //   `SELECT * FROM sec_cust.cryptomiles_assign(${resp.rows[0].sp_lnk_cr_remittances_init.id_remittance})`
