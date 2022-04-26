@@ -192,8 +192,6 @@ remittancesService.startRemittance = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      console.log('JSONNN: ',JSON.parse(fields.remittance))
-
       Object.values(files).forEach((f) => {
         if (
           f.type === "image/png" ||
@@ -243,14 +241,10 @@ remittancesService.startRemittance = async (req, res, next) => {
 
           let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${remittance.countryCurrency.isoCode}`);
 
-          console.log('fullRateFromAPI: ',fullRateFromAPI)
-
           let rateFromAPI = fullRateFromAPI.data.rates[remittance.countryCurrency.isoCode]
           rateFromAPI = parseFloat(rateFromAPI)
 
           remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance / rateFromAPI).toFixed(2));
-
-          console.log('SE ENVIA ESTO AL REPO', remittance)
 
           let data = await remittancesPGRepository.startRemittance(remittance);
 
@@ -280,8 +274,8 @@ function waitingPreRemittance(id_pre_remittance) {
     if (resp.email_user)
       notifyChanges('expired_remittance', resp);
   }, 900000);
-  console.log('TIMMY: ',timmy)
-  console.log('JSON.stringify(obj): ',timmy[Symbol.toPrimitive]())
+  // console.log('TIMMY: ',timmy)
+  // console.log('JSON.stringify(obj): ',timmy[Symbol.toPrimitive]())
   redisClient.set(id_pre_remittance.toString(), timmy[Symbol.toPrimitive]());
 }
 
@@ -377,8 +371,8 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
-    console.log('LO QUE SE VA A PASAR A REDIS: ',req.params.id_pre_remittance)
-    console.log('LO QUE SE VA A PASAR A REDIS to string: ',req.params.id_pre_remittance.toString())
+    // console.log('LO QUE SE VA A PASAR A REDIS: ',req.params.id_pre_remittance)
+    // console.log('LO QUE SE VA A PASAR A REDIS to string: ',req.params.id_pre_remittance.toString())
     redisClient.get(req.params.id_pre_remittance, function (err, reply) {
       // reply is null when the key is missing
       console.log("Redis reply CANCELLED: ", reply);
