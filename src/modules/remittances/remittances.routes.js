@@ -52,4 +52,10 @@ remittancesRouter.get(
   remittancesController.lastRemittances
 );
 
+remittancesRouter.get(
+  "/minAmount",
+  // guard.verifyAdmin("/login"),
+  remittancesController.getMinAmounts
+);
+
 export default remittancesRouter;

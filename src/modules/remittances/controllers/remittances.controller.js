@@ -94,4 +94,15 @@ remittancesController.lastRemittances = (req, res, next) => {
   }
 };
 
+remittancesController.getMinAmounts = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get min amounts`);
+    ObjLog.log(`[${context}]: Sending service to get min amounts`);
+
+    remittancesService.getMinAmounts(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default remittancesController;

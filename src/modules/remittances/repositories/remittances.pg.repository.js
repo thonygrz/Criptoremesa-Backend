@@ -180,4 +180,20 @@ remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, 
   }
 };
 
+remittancesPGRepository.getMinAmounts = async () => {
+  try {
+    logger.info(`[${context}]: Getting min amounts from db`);
+    ObjLog.log(`[${context}]: Getting min amounts from db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_remittance_min_amounts()`
+    );
+    if (resp.rows[0].sp_get_remittance_min_amounts)
+      return resp.rows[0].sp_get_remittance_min_amounts;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default remittancesPGRepository;
