@@ -53,7 +53,7 @@ remittancesRouter.get(
 );
 
 remittancesRouter.get(
-  "/minAmount",
+  "/countries/minAmounts",
   // guard.verifyAdmin("/login"),
   remittancesController.getMinAmounts
 );
