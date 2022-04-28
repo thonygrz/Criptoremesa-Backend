@@ -21,6 +21,7 @@ cryptomilesPGRepository.insertCryptomile = async (body) => {
                                               ${body.id_operation},
                                               ${body.operation_type},
                                               ${body.id_currency},
+                                              ${body.id_country},
                                               ${body.was_charged}
                                               )`
     );
