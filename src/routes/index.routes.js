@@ -17,6 +17,7 @@ import remittancesRouter from '../modules/remittances/remittances.routes';
 import ratesRouter from '../modules/rates/rates.routes';
 import balancesRouter from '../modules/balances/balances.routes';
 import cryptomilesRouter from '../modules/cryptomiles/cryptomiles.routes';
+import cryptomilesRouter from '../modules/reports/reports.routes';
 const router = Router();  
 
 router.post("/login", authenticationController.login);
@@ -48,5 +49,6 @@ router.use("/remittances", remittancesRouter);
 router.use("/rates", ratesRouter);
 router.use("/balances", balancesRouter);
 router.use("/cryptomiles", cryptomilesRouter);
+router.use("/reports", reportsRouter);
 
 export default router;
