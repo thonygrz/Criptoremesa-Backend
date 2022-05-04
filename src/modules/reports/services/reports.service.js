@@ -44,13 +44,13 @@ reportsService.reportAmountSentByBenef = async (req, res, next) => {
   }
 };
 
-reportsService.getDocTypeById = async (req, res, next,docTypeId) => {
+reportsService.reportAmountSentByCurrency = async (req, res, next) => {
   try {
 
     let log  = logConst;
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/:id_doc_type';
+    log.route = log.route+'/reports/users/:email_user/remittances/totalAmount';
     let data = {}
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
@@ -63,9 +63,9 @@ reportsService.getDocTypeById = async (req, res, next,docTypeId) => {
     }
     else{
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get Doc Types`);
-      ObjLog.log(`[${context}]: Get Doc Types`);
-      data = await reportsPGRepository.getDocTypeById(docTypeId);
+      logger.info(`[${context}]: Getting report`);
+      ObjLog.log(`[${context}]: Getting report`);
+      data = await reportsPGRepository.reportAmountSentByCurrency(req.params.email_user);
       res.status(200).json(data);
     }
   } catch (error) {

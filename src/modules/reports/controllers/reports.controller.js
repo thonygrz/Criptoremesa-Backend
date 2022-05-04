@@ -47,9 +47,8 @@ reportsController.reportAmountSentByBenef = async (req, res, next) => {
   }
 };
 
-reportsController.getDocTypeById = async (req, res, next) => {
+reportsController.reportAmountSentByCurrency = async (req, res, next) => {
   try {
-    let docTypeId = req.params.id_doc_type
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
 
@@ -70,20 +69,21 @@ reportsController.getDocTypeById = async (req, res, next) => {
         failed: true,
         ip: req.connection.remoteAddress,
         country: countryResp,
-        route: "/getActive",
+        route: "/reports/users/:email_user/currencies/totalAmount",
         session: sess,
       };
       authenticationPGRepository.insertLogMsg(log);
 
       res.status(401).json({ message: "Unauthorized" });
     } else {
-      logger.info(`[${context}]: Sending service to get doc type by id `);
-      ObjLog.log(`[${context}]: Sending service to get doc type by id `);
+      logger.info(`[${context}]: Sending service to get report`);
+      ObjLog.log(`[${context}]: Sending service to get report`);
 
-      reportsService.getDocTypeById(req, res, next,docTypeId);
+      reportsService.reportAmountSentByCurrency(req, res, next);
     }
   } catch (error) {
     next(error);
   }
 };
+
 export default reportsController;

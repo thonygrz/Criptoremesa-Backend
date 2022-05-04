@@ -11,4 +11,10 @@ reportsRouter.get(
   reportsController.reportAmountSentByBenef
 );
 
+reportsRouter.get(
+  "/users/:email_user/currencies/totalAmount",
+  // guard.verifyAdmin("/login"),
+  reportsController.reportAmountSentByCurrency
+);
+
 export default reportsRouter;
