@@ -1,0 +1,29 @@
+import { poolSM } from "../../../db/pg.connection";
+import { logger } from "../../../utils/logger";
+import ObjLog from "../../../utils/ObjLog";
+
+const reportsPGRepository = {};
+const context = "reports PG Repository";
+
+reportsPGRepository.reportAmountSentByBenef = async (params,query) => {
+  try {
+    logger.info(`[${context}]: Getting report from db`);
+    ObjLog.log(`[${context}]: Getting report from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM report_amount_sent_by_benef(
+                                                    ${query.from_date},
+                                                    ${query.to_date},
+                                                    ${query.id_country},
+                                                    ${query.id_currency},
+                                                    ${query.id_beneficiary},
+                                                    '${params.email_user}'
+                                                )`
+    );
+    return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default reportsPGRepository;
