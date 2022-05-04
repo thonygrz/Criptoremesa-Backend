@@ -12,11 +12,11 @@ reportsPGRepository.reportAmountSentByBenef = async (params,query) => {
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM report_amount_sent_by_benef(
-                                                    ${query.from_date},
-                                                    ${query.to_date},
-                                                    ${query.id_country},
-                                                    ${query.id_currency},
-                                                    ${query.id_beneficiary},
+                                                    ${query.from_date === 'null' ? null : query.from_date},
+                                                    ${query.to_date === 'null' ? null : query.to_date},
+                                                    ${query.id_country === 'null' ? null : query.id_country},
+                                                    ${query.id_currency === 'null' ? null : query.id_currency},
+                                                    ${query.id_beneficiary === 'null' ? null : query.id_beneficiary},
                                                     '${params.email_user}'
                                                 )`
     );
