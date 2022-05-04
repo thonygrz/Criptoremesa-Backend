@@ -44,4 +44,20 @@ reportsPGRepository.reportAmountSentByCurrency = async (email_user) => {
   }
 };
 
+reportsPGRepository.reportTopFrequentBeneficiaries = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting report from db`);
+    ObjLog.log(`[${context}]: Getting report from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM report_top_frequent_beneficiaries(
+                                                    '${email_user}'
+                                                )`
+    );
+    return resp.rows[0].report_top_frequent_beneficiaries.report;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default reportsPGRepository;

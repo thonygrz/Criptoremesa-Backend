@@ -17,4 +17,11 @@ reportsRouter.get(
   reportsController.reportAmountSentByCurrency
 );
 
+reportsRouter.get(
+  "/users/:email_user/frequentBeneficiaries/top",
+  // guard.verifyAdmin("/login"),
+  reportsController.reportTopFrequentBeneficiaries
+);
+
+
 export default reportsRouter;
