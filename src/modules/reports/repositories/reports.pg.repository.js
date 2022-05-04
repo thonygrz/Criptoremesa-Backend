@@ -22,7 +22,7 @@ reportsPGRepository.reportAmountSentByBenef = async (params,query) => {
                                                     '${params.email_user}'
                                                 )`
     );
-    return resp.rows[0].report_amount_sent_by_benef;
+    return resp.rows[0].report_amount_sent_by_benef.report;
   } catch (error) {
     throw error;
   }
