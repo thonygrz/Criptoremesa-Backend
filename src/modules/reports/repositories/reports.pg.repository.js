@@ -10,6 +10,8 @@ reportsPGRepository.reportAmountSentByBenef = async (params,query) => {
     logger.info(`[${context}]: Getting report from db`);
     ObjLog.log(`[${context}]: Getting report from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log('params: ',params)
+    console.log('query: ',query)
     const resp = await poolSM.query(
       `SELECT * FROM report_amount_sent_by_benef(
                                                     ${query.from_date === 'null' ? null : query.from_date},
@@ -20,7 +22,7 @@ reportsPGRepository.reportAmountSentByBenef = async (params,query) => {
                                                     '${params.email_user}'
                                                 )`
     );
-    return resp.rows;
+    return resp.rows[0].report_amount_sent_by_benef;
   } catch (error) {
     throw error;
   }
