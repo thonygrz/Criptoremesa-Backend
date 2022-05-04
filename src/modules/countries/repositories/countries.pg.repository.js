@@ -21,8 +21,8 @@ countriesRepository.getDestinyCountries = async () => {
 
 countriesRepository.countriesCurrencies = async () => {
   try {
-    logger.info(`[${context}]: Getting countries and currencies fron db`);
-    ObjLog.log(`[${context}]: Getting countries and currencies fron db`);
+    logger.info(`[${context}]: Getting countries and currencies from db`);
+    ObjLog.log(`[${context}]: Getting countries and currencies from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM sp_get_countries_currencies()`

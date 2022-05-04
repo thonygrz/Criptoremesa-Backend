@@ -244,7 +244,7 @@ remittancesService.startRemittance = async (req, res, next) => {
           let rateFromAPI = fullRateFromAPI.data.rates[remittance.countryCurrency.isoCode]
           rateFromAPI = parseFloat(rateFromAPI)
 
-          remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance / rateFromAPI).toFixed(2));
+          remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance / (rateFromAPI * 0.97)).toFixed(2));
 
           let data = await remittancesPGRepository.startRemittance(remittance);
 
