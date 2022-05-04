@@ -19,13 +19,13 @@ countriesRepository.getDestinyCountries = async () => {
   }
 };
 
-countriesRepository.countriesCurrencies = async () => {
+countriesRepository.countriesCurrencies = async (email_user) => {
   try {
     logger.info(`[${context}]: Getting countries and currencies from db`);
     ObjLog.log(`[${context}]: Getting countries and currencies from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
-      `SELECT * FROM sp_get_countries_currencies()`
+      `SELECT * FROM sp_get_countries_currencies(${email_user === null ? null : `'${email_user}'`})`
     );
     if (resp.rows[0].sp_get_countries_currencies)
       return resp.rows[0].sp_get_countries_currencies;

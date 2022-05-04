@@ -46,7 +46,7 @@ countriesService.countriesCurrencies = async (req, res, next) => {
 
     let countryResp = null;
     let sess = null;
-    let data = await countriesRepository.countriesCurrencies();
+    let data = await countriesRepository.countriesCurrencies(req.query.email_user ? req.query.email_user : null);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
