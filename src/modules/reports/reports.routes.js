@@ -29,4 +29,10 @@ reportsRouter.get(
   reportsController.reportTopFrequentDestinys
 );
 
+reportsRouter.get(
+  "/users/:email_user/remittances",
+  // guard.verifyAdmin("/login"),
+  reportsController.reportRemittancesByStatus
+);
+
 export default reportsRouter;
