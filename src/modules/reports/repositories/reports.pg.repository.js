@@ -100,7 +100,7 @@ reportsPGRepository.reportRemittancesByMonth = async (email_user,month) => {
     const resp = await poolSM.query(
       `SELECT * FROM report_remittances_by_status(
                                                     '${email_user}',
-                                                    ${query.month === 'null' ? null : parseInt(query.month)}
+                                                    ${month === 'null' ? null : parseInt(month)}
                                                 )`
     );
     return resp.rows[0].report_remittances_by_status.report;
