@@ -23,5 +23,10 @@ reportsRouter.get(
   reportsController.reportTopFrequentBeneficiaries
 );
 
+reportsRouter.get(
+  "/users/:email_user/frequentDestinys/top",
+  // guard.verifyAdmin("/login"),
+  reportsController.reportTopFrequentDestinys
+);
 
 export default reportsRouter;
