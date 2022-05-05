@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import reportsService from "../services/reports.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-import {env,ENVIROMENTS} from '../../../utils/enviroment'
+import { env, ENVIROMENTS } from "../../../utils/enviroment";
 const reportsController = {};
 const context = "reports Controller";
 
@@ -10,7 +10,7 @@ let sess = null;
 
 reportsController.reportAmountSentByBenef = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
@@ -49,7 +49,7 @@ reportsController.reportAmountSentByBenef = async (req, res, next) => {
 
 reportsController.reportAmountSentByCurrency = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
@@ -88,7 +88,7 @@ reportsController.reportAmountSentByCurrency = async (req, res, next) => {
 
 reportsController.reportTopFrequentBeneficiaries = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
@@ -125,9 +125,9 @@ reportsController.reportTopFrequentBeneficiaries = async (req, res, next) => {
   }
 };
 
-reportsController.reportTopFrequentDestinys = async (req, res, next) => {
+reportsController.reportTopFrequentDestinations = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
@@ -147,7 +147,7 @@ reportsController.reportTopFrequentDestinys = async (req, res, next) => {
         failed: true,
         ip: req.connection.remoteAddress,
         country: countryResp,
-        route: "/reports/users/:email_user/frequentDestinys/top",
+        route: "/reports/users/:email_user/frequentDestinations/top",
         session: sess,
       };
       authenticationPGRepository.insertLogMsg(log);
@@ -157,7 +157,7 @@ reportsController.reportTopFrequentDestinys = async (req, res, next) => {
       logger.info(`[${context}]: Sending service to get report`);
       ObjLog.log(`[${context}]: Sending service to get report`);
 
-      reportsService.reportTopFrequentDestinys(req, res, next);
+      reportsService.reportTopFrequentDestinations(req, res, next);
     }
   } catch (error) {
     next(error);
@@ -166,7 +166,7 @@ reportsController.reportTopFrequentDestinys = async (req, res, next) => {
 
 reportsController.reportRemittancesByStatus = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
@@ -203,10 +203,9 @@ reportsController.reportRemittancesByStatus = async (req, res, next) => {
   }
 };
 
-reportsController.reportRemittancesByMonth
- = async (req, res, next) => {
+reportsController.reportRemittancesByMonth = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
@@ -236,8 +235,7 @@ reportsController.reportRemittancesByMonth
       logger.info(`[${context}]: Sending service to get report`);
       ObjLog.log(`[${context}]: Sending service to get report`);
 
-      reportsService.reportRemittancesByMonth
-(req, res, next);
+      reportsService.reportRemittancesByMonth(req, res, next);
     }
   } catch (error) {
     next(error);
@@ -246,7 +244,7 @@ reportsController.reportRemittancesByMonth
 
 reportsController.reportRatesTakenAdvantageOf = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(

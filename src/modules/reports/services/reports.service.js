@@ -3,7 +3,7 @@ import ObjLog from "../../../utils/ObjLog";
 import reportsPGRepository from "../repositories/reports.pg.repository";
 import auth from "../../../utils/auth";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-import {env,ENVIROMENTS} from '../../../utils/enviroment'
+import { env, ENVIROMENTS } from "../../../utils/enviroment";
 const reportsService = {};
 const context = "reports Service";
 const logConst = {
@@ -18,25 +18,31 @@ const logConst = {
 
 reportsService.reportAmountSentByBenef = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
+    let log = logConst;
+    log.is_auth = req.isAuthenticated();
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/reports/users/:email_user/remittances/totalAmount';
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    log.route =
+      log.route + "/reports/users/:email_user/remittances/totalAmount";
+    let data = {};
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       log.success = false;
       log.failed = true;
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting report`);
       ObjLog.log(`[${context}]: Getting report`);
-      data = await reportsPGRepository.reportAmountSentByBenef(req.params,req.query);
+      data = await reportsPGRepository.reportAmountSentByBenef(
+        req.params,
+        req.query
+      );
       res.status(200).json(data);
     }
   } catch (error) {
@@ -46,26 +52,30 @@ reportsService.reportAmountSentByBenef = async (req, res, next) => {
 
 reportsService.reportAmountSentByCurrency = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
+    let log = logConst;
+    log.is_auth = req.isAuthenticated();
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/reports/users/:email_user/remittances/totalAmount';
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    log.route =
+      log.route + "/reports/users/:email_user/remittances/totalAmount";
+    let data = {};
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting report`);
       ObjLog.log(`[${context}]: Getting report`);
-      data = await reportsPGRepository.reportAmountSentByCurrency(req.params.email_user);
+      data = await reportsPGRepository.reportAmountSentByCurrency(
+        req.params.email_user
+      );
       res.status(200).json(data);
     }
   } catch (error) {
@@ -75,26 +85,30 @@ reportsService.reportAmountSentByCurrency = async (req, res, next) => {
 
 reportsService.reportTopFrequentBeneficiaries = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
+    let log = logConst;
+    log.is_auth = req.isAuthenticated();
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/reports/users/:email_user/frequentBeneficiaries/top';
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    log.route =
+      log.route + "/reports/users/:email_user/frequentBeneficiaries/top";
+    let data = {};
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting report`);
       ObjLog.log(`[${context}]: Getting report`);
-      data = await reportsPGRepository.reportTopFrequentBeneficiaries(req.params.email_user);
+      data = await reportsPGRepository.reportTopFrequentBeneficiaries(
+        req.params.email_user
+      );
       res.status(200).json(data);
     }
   } catch (error) {
@@ -102,28 +116,32 @@ reportsService.reportTopFrequentBeneficiaries = async (req, res, next) => {
   }
 };
 
-reportsService.reportTopFrequentDestinys = async (req, res, next) => {
+reportsService.reportTopFrequentDestinations = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
+    let log = logConst;
+    log.is_auth = req.isAuthenticated();
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/reports/users/:email_user/frequentDestinys/top';
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    log.route =
+      log.route + "/reports/users/:email_user/frequentDestinations/top";
+    let data = {};
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting report`);
       ObjLog.log(`[${context}]: Getting report`);
-      data = await reportsPGRepository.reportTopFrequentDestinys(req.params.email_user);
+      data = await reportsPGRepository.reportTopFrequentDestinations(
+        req.params.email_user
+      );
       res.status(200).json(data);
     }
   } catch (error) {
@@ -133,26 +151,29 @@ reportsService.reportTopFrequentDestinys = async (req, res, next) => {
 
 reportsService.reportRemittancesByStatus = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
+    let log = logConst;
+    log.is_auth = req.isAuthenticated();
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/reports/users/:email_user/remittances';
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    log.route = log.route + "/reports/users/:email_user/remittances";
+    let data = {};
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting report`);
       ObjLog.log(`[${context}]: Getting report`);
-      data = await reportsPGRepository.reportRemittancesByStatus(req.params.email_user);
+      data = await reportsPGRepository.reportRemittancesByStatus(
+        req.params.email_user
+      );
       res.status(200).json(data);
     }
   } catch (error) {
@@ -162,26 +183,30 @@ reportsService.reportRemittancesByStatus = async (req, res, next) => {
 
 reportsService.reportRemittancesByMonth = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
+    let log = logConst;
+    log.is_auth = req.isAuthenticated();
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/reports/users/:email_user/remittances/month';
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    log.route = log.route + "/reports/users/:email_user/remittances/month";
+    let data = {};
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting report`);
       ObjLog.log(`[${context}]: Getting report`);
-      data = await reportsPGRepository.reportRemittancesByMonth(req.params.email_user,req.query.month);
+      data = await reportsPGRepository.reportRemittancesByMonth(
+        req.params.email_user,
+        req.query.month
+      );
       res.status(200).json(data);
     }
   } catch (error) {
@@ -191,26 +216,29 @@ reportsService.reportRemittancesByMonth = async (req, res, next) => {
 
 reportsService.reportRatesTakenAdvantageOf = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
+    let log = logConst;
+    log.is_auth = req.isAuthenticated();
     log.ip = req.connection.remoteAddress;
-    log.route = log.route+'/reports/users/:email_user/remittances';
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    log.route = log.route + "/reports/users/:email_user/remittances";
+    let data = {};
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
     if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting report`);
       ObjLog.log(`[${context}]: Getting report`);
-      data = await reportsPGRepository.reportRatesTakenAdvantageOf(req.params.email_user);
+      data = await reportsPGRepository.reportRatesTakenAdvantageOf(
+        req.params.email_user
+      );
       res.status(200).json(data);
     }
   } catch (error) {

@@ -24,9 +24,9 @@ reportsRouter.get(
 );
 
 reportsRouter.get(
-  "/users/:email_user/frequentDestinys/top",
+  "/users/:email_user/frequentDestinations/top",
   // guard.verifyAdmin("/login"),
-  reportsController.reportTopFrequentDestinys
+  reportsController.reportTopFrequentDestinations
 );
 
 reportsRouter.get(
