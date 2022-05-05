@@ -41,4 +41,10 @@ reportsRouter.get(
   reportsController.reportRemittancesByMonth
 );
 
+reportsRouter.get(
+  "/users/:email_user/rates",
+  // guard.verifyAdmin("/login"),
+  reportsController.reportRatesTakenAdvantageOf
+);
+
 export default reportsRouter;
