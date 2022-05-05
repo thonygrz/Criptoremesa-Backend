@@ -98,12 +98,12 @@ reportsPGRepository.reportRemittancesByMonth = async (email_user,month) => {
     ObjLog.log(`[${context}]: Getting report from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
-      `SELECT * FROM report_remittances_by_status(
+      `SELECT * FROM report_remittances_by_month(
                                                     '${email_user}',
                                                     ${month === 'null' ? null : parseInt(month)}
                                                 )`
     );
-    return resp.rows[0].report_remittances_by_status.report;
+    return resp.rows[0].report_remittances_by_month.report;
   } catch (error) {
     throw error;
   }
