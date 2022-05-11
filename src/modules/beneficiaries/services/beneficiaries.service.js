@@ -64,9 +64,9 @@ beneficiariesService.createFrequentBeneficiary = async (req, res, next,userEmail
       ObjLog.log(`[${context}]: Create frequent beneficiary for ${userEmail}`);
       let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,userEmail);
       if (data.id_beneficiary !== '')
-        res.status(200).json(true);
+        res.status(200).json(data);
       else 
-        res.status(500).json(false)
+        res.status(500).json(data)
     }
   } catch (error) {
     next(error);
