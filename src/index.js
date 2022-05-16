@@ -17,8 +17,8 @@ const httpsServer = https.createServer(
   {
     key: fs.readFileSync('/etc/ssl/certs/private/nimobot.com.key.pem'),
     cert: fs.readFileSync('/etc/ssl/certs/nimobot.com.pem'),
-    requestCert: true,
-    rejectUnauthorized: true
+    requestCert: false,
+    rejectUnauthorized: false
   },
   app
 );
