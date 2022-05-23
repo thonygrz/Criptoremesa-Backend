@@ -182,17 +182,19 @@ passport.use(
               logger.info(`[${context}]: Successful login`);
               ObjLog.log(`[${context}]: Successful login`);
 
-              // if (await authenticationPGRepository.userHasAnActiveSession(email)){
-              //   await resp({expired: true});
+              console.log('await authenticationPGRepository.userHasAnActiveSession(email)',await authenticationPGRepository.userHasAnActiveSession(email))
 
-              //   return done(null, false);
-              // } else {
+              if (await authenticationPGRepository.userHasAnActiveSession(email)){
+                await resp({expired: true});
+
+                return done(null, false);
+              } else {
                 expressObj.isAuthenticated = true;
 
                 await resp(user);
 
                 return done(null, user);
-              // }
+              }
             }
             logger.error(`[${context}]: User and password do not match`);
             ObjLog.log(`[${context}]: User and password do not match`);
