@@ -94,6 +94,7 @@ async function resp(user) {
         captchaSuccess: true,
       });
     }
+    console.log('prueba')
     expressObj.next()
   } catch (error) {
     expressObj.next(error);
@@ -186,12 +187,12 @@ passport.use(
               console.log('await authenticationPGRepository.userHasAnActiveSession(email)',await authenticationPGRepository.userHasAnActiveSession(email))
 
               if (await authenticationPGRepository.userHasAnActiveSession(email)){
+                expressObj.isAuthenticated = true;
                 user.expired = true
                 await resp(user);
 
                 return done(null, false);
               } else {
-                expressObj.isAuthenticated = true;
 
                 await resp(user);
 
