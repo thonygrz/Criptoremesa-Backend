@@ -388,4 +388,16 @@ authenticationPGRepository.getSessionById = async (id) => {
   }
 };
 
+authenticationPGRepository.userHasAnActiveSession = async (email) => {
+  try {
+    logger.info(`[${context}]: Checking session on db`);
+    ObjLog.log(`[${context}]: Checking session on db`);
+    await poolSM.query("SET SCHEMA 'basics'");
+    const resp = await poolCR.query(`SELECT * FROM basics.user_has_an_active_session('${email}')`);
+    return resp.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default authenticationPGRepository;

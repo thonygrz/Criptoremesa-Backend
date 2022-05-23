@@ -38,7 +38,12 @@ async function resp(user) {
     )
       sess = expressObj.req.sessionID;
 
-    if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
+    if (user.expired){
+      expressObj.res.status(401).send({
+        message: 'There is already an active session with this user. Try again in a few minutes.'
+      });
+    }
+    else if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
       const log = {
         is_auth: expressObj.req.isAuthenticated(),
         success: false,
@@ -177,14 +182,17 @@ passport.use(
               logger.info(`[${context}]: Successful login`);
               ObjLog.log(`[${context}]: Successful login`);
 
-              expressObj.isAuthenticated = true;
+              // if (await authenticationPGRepository.userHasAnActiveSession(email)){
+              //   await resp({expired: true});
 
-              await resp(user);
+              //   return done(null, false);
+              // } else {
+                expressObj.isAuthenticated = true;
 
-              return done(null, user);
-              // expressObj.req = req;
+                await resp(user);
 
-              // return true;
+                return done(null, user);
+              // }
             }
             logger.error(`[${context}]: User and password do not match`);
             ObjLog.log(`[${context}]: User and password do not match`);
