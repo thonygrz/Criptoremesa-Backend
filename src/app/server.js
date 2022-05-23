@@ -50,11 +50,11 @@ app.use(
     }),
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { 
-      // maxAge: 86400000, 
+      expires: 120000,
       secure: true,
-      expires: 60000
+      // maxAge: 86400000, 
     }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
     // maxAge: 60
   })
