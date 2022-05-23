@@ -234,16 +234,6 @@ passport.use(
           authenticationPGRepository.insertLogMsg(log);
           return done(null, false);
         }
-
-
-
-        // console.log("DENTRO DE LA STRATEGY");
-        // user = {
-        //   email_user: 'anthony@gmail.com',
-        //   name: "Thony"
-        // }
-        // return done(null, user);
-
       } catch (error) {
         throw error;
       }
@@ -297,6 +287,7 @@ export default {
         }
         let response = null;
         console.log('blockedOrNotVerified: ',blockedOrNotVerified)
+        console.log('expressObj.isAuthenticated: ',expressObj.isAuthenticated)
         if (!blockedOrNotVerified && !expressObj.isAuthenticated){
             if (globalUser) {
               // console.log("email: ", globalUser.email_user);
