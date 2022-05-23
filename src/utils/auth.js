@@ -182,6 +182,7 @@ passport.use(
               logger.info(`[${context}]: Successful login`);
               ObjLog.log(`[${context}]: Successful login`);
 
+              console.log("🚀 ~ file: auth.js ~ line 186 ~ email", email)
               console.log('await authenticationPGRepository.userHasAnActiveSession(email)',await authenticationPGRepository.userHasAnActiveSession(email))
 
               if (await authenticationPGRepository.userHasAnActiveSession(email)){
