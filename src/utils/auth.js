@@ -19,7 +19,8 @@ const expressObj = {
   res: null,
   next: null,
   isAuthenticated: false,
-  userExists: false
+  userExists: false,
+  userActiveSession: false
 };
 
 // THIS SENDS A CUSTOM RESPONSE IF USER LOGS IN CORRECTLY
@@ -184,15 +185,17 @@ passport.use(
               ObjLog.log(`[${context}]: Successful login`);
 
               console.log("🚀 ~ file: auth.js ~ line 186 ~ email", email)
-              console.log('await authenticationPGRepository.userHasAnActiveSession(email)',await authenticationPGRepository.userHasAnActiveSession(email))
+              
+              expressObj.userActiveSession = await authenticationPGRepository.userHasAnActiveSession(email)
+              console.log("🚀 ~ file: auth.js ~ line 190 ~ expressObj.userActiveSession", expressObj.userActiveSession)
 
-              if (await authenticationPGRepository.userHasAnActiveSession(email)){
-                expressObj.isAuthenticated = true;
+              if (expressObj.userActiveSession){
                 user.expired = true
                 await resp(user);
-
+                
                 return done(null, false);
               } else {
+                expressObj.isAuthenticated = true;
 
                 await resp(user);
 
@@ -291,7 +294,7 @@ export default {
         let response = null;
         console.log('blockedOrNotVerified: ',blockedOrNotVerified)
         console.log('expressObj.isAuthenticated: ',expressObj.isAuthenticated)
-        if (!blockedOrNotVerified && !expressObj.isAuthenticated){
+        if (!blockedOrNotVerified && !expressObj.isAuthenticated && !expressObj.userActiveSession){
             if (globalUser) {
               // console.log("email: ", globalUser.email_user);
               response = await authenticationPGRepository.loginFailed(globalUser.email_user);
