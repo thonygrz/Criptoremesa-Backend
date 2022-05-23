@@ -6,6 +6,7 @@ import authenticationPGRepository from "../modules/authentication/repositories/a
 import bcrypt from "bcryptjs";
 import guard from "../utils/guard";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
+import { notifyChanges } from "../modules/sockets/sockets.coordinator"	
 
 const LocalStrategy = PassportLocal.Strategy;
 const context = "Authentication module";
@@ -195,6 +196,11 @@ passport.use(
                 req.session = null;
 
                 user.expired = true
+
+                notifyChanges('login_attempt', {
+                  email: email
+                });
+
                 await resp(user);
                 
                 return done(null, false);
