@@ -186,7 +186,8 @@ passport.use(
               console.log('await authenticationPGRepository.userHasAnActiveSession(email)',await authenticationPGRepository.userHasAnActiveSession(email))
 
               if (await authenticationPGRepository.userHasAnActiveSession(email)){
-                await resp({expired: true});
+                user.expired = true
+                await resp(user);
 
                 return done(null, false);
               } else {
