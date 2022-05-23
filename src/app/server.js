@@ -124,9 +124,9 @@ app.use(async function (err, req, res, next) {
   let sess = null;
 
   if (resp) countryResp = resp.country_name;
-
-  if (await authenticationPGRepository.getSessionById(req.sessionID))
-    sess = req.sessionID;
+  if (req.sessionID)
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
 
   const log = {
     is_auth: req.isAuthenticated(),

@@ -96,8 +96,7 @@ async function resp(user) {
         captchaSuccess: true,
       });
     }
-    console.log('prueba')
-    expressObj.next()
+      expressObj.next()
   } catch (error) {
     expressObj.next(error);
   }
