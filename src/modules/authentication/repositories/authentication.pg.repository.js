@@ -393,6 +393,7 @@ authenticationPGRepository.userHasAnActiveSession = async (email) => {
     logger.info(`[${context}]: Checking session on db`);
     ObjLog.log(`[${context}]: Checking session on db`);
     await poolSM.query("SET SCHEMA 'basics'");
+    console.log("🚀 ~ file: authentication.pg.repository.js ~ line 392 ~ authenticationPGRepository.userHasAnActiveSession= ~ email", email)
     const resp = await poolCR.query(`SELECT * FROM basics.user_has_an_active_session('${email}')`);
     return resp.rows[0].user_has_an_active_session;
   } catch (error) {
