@@ -190,7 +190,9 @@ passport.use(
               console.log("🚀 ~ file: auth.js ~ line 190 ~ expressObj.userActiveSession", expressObj.userActiveSession)
 
               if (expressObj.userActiveSession){
-                req.session.destroy();
+                // req.session.destroy();
+
+                req.session = null;
 
                 user.expired = true
                 await resp(user);
