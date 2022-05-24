@@ -14,7 +14,6 @@ let pgSession = require("connect-pg-simple")(session);
 import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
-// import { events } from "../modules/users/services/users.service";
 
 // SETTINGS
 const app = express();
@@ -78,36 +77,14 @@ app.use("/cr", routerIndex);
 app.use(async (req, res, next) => {
   // console.log('middleware despues de passport y todo el auth')
 
-  // console.log('middleware')
-  // console.log(req.session)
-  // console.log(req.user)
-  // console.log(req.isAuthenticated())
-  
   ObjUserSessionData.set({
     session: {
-      session_id: req.session.id,
+      session_id: req.session ? req.session.id : null,
       cookie: req.session.cookie,
     },
     user: req.user,
   });
   // res.status(200).send("prooving");
-
-  // if (!req.isAuthenticated) {
-  //   let response = null;
-  //   if (req.user) {
-  //     console.log("email: ", req.user.email);
-  //     response = await authenticationPGRepository.loginFailed(req.user.email);
-  //     console.log("response: ", response);
-  //   }
-  //   console.log('response: ',response)
-  //   res.json({
-  //     isAuthenticated: false,
-  //     loginAttempts: response ? response.login_attempts : 'NA',
-  //     atcPhone: response ? response.atcPhone : 'NA',
-  //     userExists: expressObj.userExists,
-  //     captchaSuccess: true,
-  //   });
-  // }
 
   next();
 });
