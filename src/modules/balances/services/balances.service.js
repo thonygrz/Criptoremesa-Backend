@@ -28,7 +28,7 @@ balancesService.getBalances = async (req, res, next) => {
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
     console.log("🚀 ~ file: balances.service.js ~ line 31 ~ balancesService.getBalances= ~ req.isAuthenticated()", req.isAuthenticated())
-    if (!req.isAuthenticated()){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
       await authenticationPGRepository.insertLogMsg(log);
