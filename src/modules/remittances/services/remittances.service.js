@@ -239,7 +239,7 @@ remittancesService.startRemittance = async (req, res, next) => {
             }
           });
 
-          let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${remittance.countryCurrency.isoCode}`);
+          let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API}&symbols=${remittance.countryCurrency.isoCode}`);
 
           let rateFromAPI = fullRateFromAPI.data.rates[remittance.countryCurrency.isoCode]
           rateFromAPI = parseFloat(rateFromAPI)
