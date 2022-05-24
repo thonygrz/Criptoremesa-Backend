@@ -80,7 +80,7 @@ app.use(async (req, res, next) => {
   ObjUserSessionData.set({
     session: {
       session_id: req.session ? req.session.id : null,
-      cookie: req.session.cookie,
+      cookie: req.session ? req.session.cookie : null,
     },
     user: req.user,
   });
