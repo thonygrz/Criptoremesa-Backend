@@ -196,7 +196,7 @@ passport.use(
                 user.expired = true
 
                 notifyChanges('login_attempt', {
-                  email: email
+                  email_user: email
                 });
 
                 await resp(user);
