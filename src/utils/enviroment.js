@@ -21,7 +21,7 @@ export const env = {
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
     ENVIROMENT: process.env.ENVIROMENT,
-    CURRENCY_FREAKS_API_KEY: process.env.CURRENCY_FREAKS_API
+    CURRENCY_FREAKS_API_KEY: process.env.CURRENCY_FREAKS_API_KEY
 };
 
 export const ENVIROMENTS = {
