@@ -57,9 +57,8 @@ async function resp(user) {
       };
       let response;
       if (user) {
-        // console.log("email: ", user.email_user);
         response = await authenticationPGRepository.loginFailed(user.email_user);
-        console.log("response: ", response);
+        console.log("loginFailed response: ", response);
       }
       await authenticationPGRepository.insertLogMsg(log);
       console.log('VERIFICAAAAAAAA:',{
