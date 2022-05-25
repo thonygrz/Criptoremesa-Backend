@@ -151,7 +151,7 @@ banksService.getBankAccountByPayMethod = async (req, res, next) => {
         ObjLog.log(`[${context}]: Get bank account by pay method`);
         await authenticationPGRepository.insertLogMsg(log);
         let data = {}
-          data = await banksRepository.getBankAccountByPayMethod(req.query.id_pay_method);
+          data = await banksRepository.getBankAccountByPayMethod(req.params.id_pay_method);
         res.status(200).json(data);
     }
   } catch (error) {
