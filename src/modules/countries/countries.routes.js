@@ -23,10 +23,4 @@ countriesRouter.get(
   countriesController.countriesCurrencies
 );
 
-countriesRouter.get(
-  "/",
-  // guard.verifyAdmin("/login"),
-  countriesController.getCountriesByPayMethod
-);
-
 export default countriesRouter;

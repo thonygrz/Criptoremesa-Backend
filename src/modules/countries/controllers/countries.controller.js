@@ -28,15 +28,4 @@ countriesController.countriesCurrencies = (req, res, next) => {
   }
 };
 
-countriesController.getCountriesByPayMethod = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get countries by pay methods`);
-    ObjLog.log(`[${context}]: Sending service to get countries by pay methods`);
-
-    countriesService.getCountriesByPayMethod(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
 export default countriesController;

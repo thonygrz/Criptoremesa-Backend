@@ -109,4 +109,20 @@ banksRepository.getBankAccountByPayMethod = async (id_pay_method) => {
   }
 };
 
+countriesRepository.getBanksByPayMethod = async (id_pay_method) => {
+  try {
+    logger.info(`[${context}]: Getting banks by pay method from db`);
+    ObjLog.log(`[${context}]: Getting banks by pay method from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_banks_by_pay_method(${id_pay_method})`
+    );
+    if (resp.rows[0].sp_get_banks_by_pay_method)
+      return resp.rows[0].sp_get_banks_by_pay_method;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default banksRepository;

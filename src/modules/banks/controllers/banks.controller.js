@@ -62,4 +62,15 @@ banksController.getBankAccountByPayMethod = (req,res,next) =>{
   }
 }
 
+banksController.getBanksByPayMethod = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get banks by pay methods`);
+    ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
+
+    countriesService.getBanksByPayMethod(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default banksController;
