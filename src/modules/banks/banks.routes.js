@@ -29,7 +29,7 @@ banksRouter.get(
 );
 
 banksRouter.get(
-  "/getBankAccountByPayMethod/:id_pay_method",
+  "/accounts",
   // guard.verifyAdmin("/login"),
   banksController.getBankAccountByPayMethod
 );
