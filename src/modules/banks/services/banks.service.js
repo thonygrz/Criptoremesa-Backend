@@ -165,7 +165,7 @@ banksService.getBanksByPayMethod = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
     let data = await 
-    banksRepository.getBanksByPayMethod(req.query.id_pay_method);
+    banksRepository.getBanksByPayMethod(req.params.id_pay_method);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
