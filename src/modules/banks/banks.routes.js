@@ -34,7 +34,7 @@ banksRouter.get(
   banksController.getBankAccountByPayMethod
 );
 
-countriesRouter.get(
+banksRouter.get(
   "/:id_pay_method",
   // guard.verifyAdmin("/login"),
   countriesController.getBanksByPayMethod
