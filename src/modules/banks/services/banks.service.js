@@ -132,4 +132,31 @@ banksService.getBankAccountById = async (req, res, next) => {
   }
 };
 
+banksService.getBankAccountByPayMethod = async (req, res, next) => {
+  try {
+    let log  = logConst;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = "/banks/getBankAccountByPayMethod";
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+        log.success = false;
+        log.failed = true;
+        await authenticationPGRepository.insertLogMsg(log);
+        res.status(401).json({ message: "Unauthorized" });
+    }else{
+        logger.info(`[${context}]: Get bank account by pay method`);
+        ObjLog.log(`[${context}]: Get bank account by pay method`);
+        await authenticationPGRepository.insertLogMsg(log);
+        let data = {}
+          data = await banksRepository.getBankAccountByPayMethod(req.query.id_pay_method);
+        res.status(200).json(data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default banksService;

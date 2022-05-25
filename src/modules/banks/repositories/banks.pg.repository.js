@@ -89,4 +89,24 @@ banksRepository.getBankAccountById = async (id) => {
   }
 };
 
+banksRepository.getBankAccountByPayMethod = async (id_pay_method) => {
+  try {
+    logger.info(`[${context}]: Getting bank accounts from db`);
+    ObjLog.log(`[${context}]: Getting bank accounts from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+
+    const resp = await poolSM.query(
+      `select * from sp_get_bank_accounts_by_pay_method(${id_pay_method})`
+    );
+    let bank = resp.rows[0].sp_get_bank_accounts_by_pay_method[0];
+
+    bank.image = fs.readFileSync(
+      env.FILES_DIR + "/bank_logos/" + bank.ident_name + ".png"
+    );
+    return resp.rows[0].sp_get_bank_accounts_by_pay_method[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default banksRepository;

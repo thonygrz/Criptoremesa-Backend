@@ -28,4 +28,10 @@ banksRouter.get(
   banksController.getBankAccountById
 );
 
+banksRouter.get(
+  "/getBankAccountByPayMethod",
+  // guard.verifyAdmin("/login"),
+  banksController.getBankAccountByPayMethod
+);
+
 export default banksRouter;
