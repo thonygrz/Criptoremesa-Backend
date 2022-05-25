@@ -11,7 +11,7 @@ banksController.getBanks = (req, res, next) => {
     logger.info(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
     ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
 
-    
+
     banksService.getBanks(req, res, next);
   } catch (error) {
     next(error);
@@ -68,7 +68,7 @@ banksController.getBanksByPayMethod = (req, res, next) => {
     logger.info(`[${context}]: Sending service to get banks by pay methods`);
     ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
 
-    countriesService.getBanksByPayMethod(req, res, next);
+    banksService.getBanksByPayMethod(req, res, next);
   } catch (error) {
     next(error);
   }
