@@ -109,7 +109,7 @@ banksRepository.getBankAccountByPayMethod = async (id_pay_method) => {
   }
 };
 
-countriesRepository.getBanksByPayMethod = async (id_pay_method) => {
+banksRepository.getBanksByPayMethod = async (id_pay_method) => {
   try {
     logger.info(`[${context}]: Getting banks by pay method from db`);
     ObjLog.log(`[${context}]: Getting banks by pay method from db`);
