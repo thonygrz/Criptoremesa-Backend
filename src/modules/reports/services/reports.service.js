@@ -4,6 +4,7 @@ import reportsPGRepository from "../repositories/reports.pg.repository";
 import auth from "../../../utils/auth";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import { env, ENVIROMENTS } from "../../../utils/enviroment";
+import axios from 'axios'
 const reportsService = {};
 const context = "reports Service";
 const logConst = {
