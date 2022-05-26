@@ -108,7 +108,7 @@ ratesService.fullRates = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    if (!req.isAuthenticated() || !req.query.email_user || req.query.email_user === 'null' || env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+    if (!req.isAuthenticated() && req.query.email_user !== 'null' && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
