@@ -43,6 +43,12 @@ reportsService.reportAmountSentByBenef = async (req, res, next) => {
         req.params,
         req.query
       );
+
+      if (data.length > 0) {
+        let fullRateFromAPI = (await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${data[0].currency_iso_code}`)).data;
+        data.forEach(el => el.dollar_sum = fullRateFromAPI.rates[el.currency_iso_code] * el.local_sum)  
+      }
+
       res.status(200).json(data);
     }
   } catch (error) {
