@@ -117,8 +117,8 @@ banksRepository.getBanksByPayMethod = async (id_pay_method) => {
     const resp = await poolSM.query(
       `SELECT * FROM sp_get_banks_by_pay_method(${id_pay_method})`
     );
-    if (resp.rows[0].sp_get_banks_by_pay_method)
-      return resp.rows[0].sp_get_banks_by_pay_method;
+    if (resp.rows[0])
+      return resp.rows[0];
     else return null;
   } catch (error) {
     throw error;
