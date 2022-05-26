@@ -105,11 +105,36 @@ ratesService.userRates = async (req, res, next) => {
 
 ratesService.fullRates = async (req, res, next) => {
   try {
-
     let countryResp = null;
     let sess = null;
 
-    if ((req.query.email_user === 'null') || (req.isAuthenticated() && req.query.email_user && req.query.email_user !== 'null')) {
+    if (!req.isAuthenticated() || !req.query.email_user || req.query.email_user === 'null' || env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      req.session.destroy();
+
+      const resp = authenticationPGRepository.getIpInfo(
+        req.connection.remoteAddress
+      );
+      let countryResp = null;
+      sess = null;
+
+      if (resp) countryResp = resp.country_name;
+
+      if (await authenticationPGRepository.getSessionById(req.sessionID))
+        sess = req.sessionID;
+
+      const log = {
+        is_auth: req.isAuthenticated(),
+        success: false,
+        failed: true,
+        ip: req.connection.remoteAddress,
+        country: countryResp,
+        route: "/protected-route",
+        session: sess,
+      };
+      authenticationPGRepository.insertLogMsg(log);
+
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
       let data = await ratesPGRepository.fullRates(req.query);
       const resp = authenticationPGRepository.getIpInfo(
         req.connection.remoteAddress
@@ -141,32 +166,6 @@ ratesService.fullRates = async (req, res, next) => {
       }
       else
         next({message: 'There was an error getting Currency Freaks rate.'})
-    } else {
-      req.session.destroy();
-
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-
-      if (resp) countryResp = resp.country_name;
-
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/protected-route",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
-      res.status(401).json({ message: "Unauthorized" });
     }
   } catch (error) {
     next(error);
