@@ -46,7 +46,11 @@ reportsService.reportAmountSentByBenef = async (req, res, next) => {
       );
 
       if (data.length > 0) {
+
+        console.log('data: ',data)
+
         let fullRateFromAPI = (await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${data[0].currency_iso_code}`)).data;
+        console.log("🚀 ~ file: reports.service.js ~ line 53 ~ reportsService.reportAmountSentByBenef= ~ fullRateFromAPI", fullRateFromAPI)
         data.forEach(el => el.dollar_sum = fullRateFromAPI.rates[el.currency_iso_code] * el.local_sum)  
       }
 
