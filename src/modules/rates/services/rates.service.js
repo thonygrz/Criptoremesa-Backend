@@ -109,7 +109,7 @@ ratesService.fullRates = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    if (req.isAuthenticated() && req.query.email_user && req.query.email_user != 'null') {{
+    if (req.isAuthenticated() && req.query.email_user && req.query.email_user !== 'null') {
       let data = await ratesPGRepository.fullRates(req.query);
       const resp = authenticationPGRepository.getIpInfo(
         req.connection.remoteAddress
@@ -117,7 +117,7 @@ ratesService.fullRates = async (req, res, next) => {
       if (resp) countryResp = resp.country_name;
       if (await authenticationPGRepository.getSessionById(req.sessionID))
         sess = req.sessionID;
-
+        
       const log = {
         is_auth: req.isAuthenticated(),
         success: true,
