@@ -306,8 +306,15 @@ remittancesService.startPreRemittance = async (req, res, next) => {
 
     if (data.message === 'Pre-remittance succesfully inserted.'){
 
-      waitingPreRemittance(data.id_pre_remittance);
+      if (data.previous_id_pre_remittance){
+        redisClient.get(data.previous_id_pre_remittance, function (err, reply) {
+          // reply is null when the key is missing
+          console.log("Redis reply CANCELLED: ", reply);
+          clearTimeout(reply)
+        });
+      }
 
+      waitingPreRemittance(data.id_pre_remittance);
     }
 
     res.status(200).json(data);
