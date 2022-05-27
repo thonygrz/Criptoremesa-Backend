@@ -17,7 +17,7 @@ const httpsServer = https.createServer(
   {
     key: fs.readFileSync('/etc/ssl/certs/zero-ssl/private.key'),
     cert: fs.readFileSync('/etc/ssl/certs/zero-ssl/certificate.crt'),
-    ca: fs.readFileSync('/etc/ssl/certs/zero-ssl/ca_bundle.crt'),
+    ca: fs.readFileSync('/etc/ssl/certs/zero-ssl/ssl-bundle.crt'),
     requestCert: false,
     rejectUnauthorized: false
   },
