@@ -174,7 +174,7 @@ remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, 
                                                       ${limit === 'null' ? null : limit},
                                                       ${start_date === 'null' ? null : start_date},
                                                       ${end_date === 'null' ? null : end_date},
-                                                      ${mode === 'null' ? null : `${mode}`}
+                                                      ${mode === 'null' ? null : `'${mode}'`}
                                                     )`
     );
     if (resp.rows[0].sp_get_last_remittances_by_user)
