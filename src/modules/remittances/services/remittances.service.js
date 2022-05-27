@@ -309,7 +309,7 @@ remittancesService.startPreRemittance = async (req, res, next) => {
       if (data.previous_id_pre_remittance){
         redisClient.get(data.previous_id_pre_remittance, function (err, reply) {
           // reply is null when the key is missing
-          console.log("Redis reply CANCELLED: ", reply);
+          console.log("Redis reply TIMMY CANCELLED: ", reply);
           clearTimeout(reply)
         });
       }
