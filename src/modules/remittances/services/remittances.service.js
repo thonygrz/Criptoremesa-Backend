@@ -393,7 +393,7 @@ remittancesService.lastRemittances = async (req, res, next) => {
     let countryResp = null;
     let sess = null;
 
-    let data = await remittancesPGRepository.lastRemittances(req.params.email_user,req.query.limit,req.query.start_date,req.query.end_date);
+    let data = await remittancesPGRepository.lastRemittances(req.params.email_user,req.query.limit,req.query.start_date,req.query.end_date,req.query.mode);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );

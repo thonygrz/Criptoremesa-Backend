@@ -88,7 +88,7 @@ remittancesController.lastRemittances = (req, res, next) => {
     logger.info(`[${context}]: Sending service to get last ${userEmail} remittances`);
     ObjLog.log(`[${context}]: Sending service to get last ${userEmail} remittances`);
 
-    remittancesService.lastRemittances(req, res, next,userEmail);
+    remittancesService.lastRemittances(req, res, next);
   } catch (error) {
     next(error);
   }
