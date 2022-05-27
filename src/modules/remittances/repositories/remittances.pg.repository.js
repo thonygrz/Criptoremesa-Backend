@@ -151,7 +151,7 @@ remittancesPGRepository.getBankFee = async (body) => {
                                           ${body.id_pay_method}
                                           )`
     );
-    console.log("resp: ", resp.rows);
+    console.log("ban_fee de bd: ", resp.rows);
     if (resp.rows[0].sp_calculate_bank_fee[0])
       return resp.rows[0].sp_calculate_bank_fee[0];
     else return null;
