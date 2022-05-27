@@ -286,6 +286,7 @@ remittancesService.startPreRemittance = async (req, res, next) => {
     let sess = null;
 
     let data = await remittancesPGRepository.startPreRemittance(req.body);
+    console.log("🚀 ~ file: remittances.service.js ~ line 289 ~ remittancesService.startPreRemittance= ~ data", data)
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
