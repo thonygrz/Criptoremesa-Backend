@@ -144,6 +144,10 @@ remittancesPGRepository.getBankFee = async (body) => {
     logger.info(`[${context}]: Getting fee from db`);
     ObjLog.log(`[${context}]: Getting fee from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
+
+    console.log("id_origin_bank: ", id_origin_bank);
+    console.log("id_destiny_bank: ", id_destiny_bank);
+
     const resp = await poolSM.query(
       `SELECT * FROM sp_calculate_bank_fee(
                                           ${body.id_origin_bank},
