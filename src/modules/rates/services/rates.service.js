@@ -162,6 +162,7 @@ ratesService.fullRates = async (req, res, next) => {
       
       if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
         data.localAmountLimit = currentManualRate.amount_limit * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
+        data.vipAcum = data.vipAcum * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
         res.status(200).json(data);
       }
       else
