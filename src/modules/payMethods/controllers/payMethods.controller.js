@@ -6,13 +6,12 @@ const payMethodsController = {};
 const context = "pay Methods Controller";
 
 //AUTENTICACION CON PASSPORT
-payMethodsController.getPayMethodsByCountry = (req, res, next) => {
+payMethodsController.getPayMethodsByCountryAndCurrency = (req, res, next) => {
   try {
-    const countryId = req.params.country_id;
-    logger.info(`[${context}]: Sending service to get pay methods by Country`);
-    ObjLog.log(`[${context}]: Sending service to get pay methods by Country`);
+    logger.info(`[${context}]: Sending service to get pay methods by Country and Currency`);
+    ObjLog.log(`[${context}]: Sending service to get pay methods by Country and Currency`);
 
-    payMethodsService.getPayMethodsByCountry(req, res, next,countryId);
+    payMethodsService.getPayMethodsByCountryAndCurrency(req, res, next);
   } catch (error) {
     next(error);
   }

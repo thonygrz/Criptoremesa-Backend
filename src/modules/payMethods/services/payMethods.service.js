@@ -15,7 +15,7 @@ const logConst = {
   session: null,
 };
 
-payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origin) => {
+payMethodsService.getPayMethodsByCountryAndCurrency = async (req, res, next) => {
   try {
 
     let log  = logConst;
@@ -33,9 +33,9 @@ payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origi
     }
     else{
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get Pay Methods by Country`);
-      ObjLog.log(`[${context}]: Get Pay Methods by Country`);
-      data = await payMethodsRepository.getPayMethodsByCountry(countryId);
+      logger.info(`[${context}]: Get Pay Methods by Country and Currency`);
+      ObjLog.log(`[${context}]: Get Pay Methods by Country and Currency`);
+      data = await payMethodsRepository.getPayMethodsByCountryAndCurrency(req.query.id_country,req.query.id_currency);
       res.status(200).json(data);
     }
     
