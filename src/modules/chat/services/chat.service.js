@@ -155,7 +155,6 @@ chatService.sendMessage = async (req, res, next) => {
   }
 };
 
-
 chatService.getMessages = async (req, res, next,email_user) => {
   try {
     let log  = logConst;

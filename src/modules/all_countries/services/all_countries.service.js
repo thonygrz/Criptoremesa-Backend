@@ -16,7 +16,7 @@ all_countriesService.getall_countries = async (req, res, next) => {
 
     let data = await all_countriesPGRepository.getall_countries();
 
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
+    const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;

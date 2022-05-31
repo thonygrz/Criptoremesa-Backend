@@ -29,5 +29,4 @@ chatController.getMessages = (req, res, next) => {
   }
 };
 
-
 export default chatController;

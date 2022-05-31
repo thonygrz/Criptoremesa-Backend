@@ -1,4 +1,4 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -9,8 +9,8 @@ veriflevelsPGRepository.getveriflevels = async (body) => {
   try {
     logger.info(`[${context}]: Getting veriflevels from db`);
     ObjLog.log(`[${context}]: Getting veriflevels from db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
       `SELECT * FROM sec_cust.v_ms_verif_level_get_id_vl_by_service_utype_country(${body.id_service}::BIGINT,${body.id_services_utype}::BIGINT,${body.id_resid_country}::BIGINT)`
     );
     return resp.rows;
@@ -23,8 +23,8 @@ veriflevelsPGRepository.requestWholesalePartner = async (body) => {
   try {
     logger.info(`[${context}]: Requesting Wholesale Partner in db`);
     ObjLog.log(`[${context}]: Requesting Wholesale Partner in db`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    const resp = await pool.query(`SELECT * FROM SP_REQUEST_WHOLESALE_PARTNER(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(`SELECT * FROM SP_REQUEST_WHOLESALE_PARTNER(
       '${body.reasons}',
       '${body.strenghts}',
       '${body.remittance_service}',
@@ -67,9 +67,9 @@ veriflevelsPGRepository.notifications = async (email_user) => {
   try {
     logger.info(`[${context}]: Requesting notifications`);
     ObjLog.log(`[${context}]: Requesting notifications`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_notifications(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user);
+    const resp = await poolSM.query(`SELECT * FROM v_notifications(
       ${email_user}
     )`);
     return resp.rows[0].v_notifications;
@@ -82,9 +82,9 @@ veriflevelsPGRepository.deactivateNotification = async (id_notification) => {
   try {
     logger.info(`[${context}]: Deactivating notification`);
     ObjLog.log(`[${context}]: Deactivating notification`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(id_notification)
-    const resp = await pool.query(`SELECT * FROM sp_deactive_notification(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(id_notification);
+    const resp = await poolSM.query(`SELECT * FROM sp_deactive_notification(
       ${id_notification}
     )`);
     return resp.rows[0].sp_deactive_notification;
@@ -97,9 +97,9 @@ veriflevelsPGRepository.readNotification = async (id_notification) => {
   try {
     logger.info(`[${context}]: Deactivating notification`);
     ObjLog.log(`[${context}]: Deactivating notification`);
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(id_notification)
-    const resp = await pool.query(`SELECT * FROM sp_read_notification(
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(id_notification);
+    const resp = await poolSM.query(`SELECT * FROM sp_read_notification(
       ${id_notification}
     )`);
     return resp.rows[0].sp_read_notification;
@@ -108,14 +108,18 @@ veriflevelsPGRepository.readNotification = async (id_notification) => {
   }
 };
 
-veriflevelsPGRepository.getWholesalePartnerRequestsCountries = async (email_user) => {
+veriflevelsPGRepository.getWholesalePartnerRequestsCountries = async (
+  email_user
+) => {
   try {
     logger.info(`[${context}]: Getting countries from DB`);
     ObjLog.log(`[${context}]: Getting countries from DB`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_countries()`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user);
+    const resp = await poolSM.query(
+      `SELECT * FROM v_wholesale_partners_requests_countries()`
+    );
     return resp.rows[0].v_wholesale_partners_requests_countries;
   } catch (error) {
     throw error;
@@ -127,37 +131,53 @@ veriflevelsPGRepository.getMigrationStatus = async (email_user) => {
     logger.info(`[${context}]: Getting migration status from DB`);
     ObjLog.log(`[${context}]: Getting migration status from DB`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_migration_status()`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user);
+    const resp = await poolSM.query(`SELECT * FROM v_migration_status()`);
     return resp.rows[0].v_migration_status;
   } catch (error) {
     throw error;
   }
 };
 
-veriflevelsPGRepository.getDisapprovedVerifLevelsRequirements = async (email_user) => {
+veriflevelsPGRepository.getDisapprovedVerifLevelsRequirements = async (
+  email_user
+) => {
   try {
-    logger.info(`[${context}]: Getting Disapproved VerifLevels Requirements from DB`);
-    ObjLog.log(`[${context}]: Getting Disapproved VerifLevels Requirements from DB`);
+    logger.info(
+      `[${context}]: Getting Disapproved VerifLevels Requirements from DB`
+    );
+    ObjLog.log(
+      `[${context}]: Getting Disapproved VerifLevels Requirements from DB`
+    );
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_verif_levels_requirements_disapproved(${email_user})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user);
+    const resp = await poolSM.query(
+      `SELECT * FROM v_verif_levels_requirements_disapproved(${email_user})`
+    );
     return resp.rows[0].v_verif_levels_requirements_disapproved;
   } catch (error) {
     throw error;
   }
 };
 
-veriflevelsPGRepository.getDisapprovedWholesalePartnersRequirements = async (email_user) => {
+veriflevelsPGRepository.getDisapprovedWholesalePartnersRequirements = async (
+  email_user
+) => {
   try {
-    logger.info(`[${context}]: Getting Disapproved WholesalePartners Requirements from DB`);
-    ObjLog.log(`[${context}]: Getting Disapproved WholesalePartners Requirements from DB`);
+    logger.info(
+      `[${context}]: Getting Disapproved WholesalePartners Requirements from DB`
+    );
+    ObjLog.log(
+      `[${context}]: Getting Disapproved WholesalePartners Requirements from DB`
+    );
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements_disapproved(${email_user})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user);
+    const resp = await poolSM.query(
+      `SELECT * FROM v_wholesale_partners_requests_requirements_disapproved(${email_user})`
+    );
     return resp.rows[0].v_wholesale_partners_requests_requirements_disapproved;
   } catch (error) {
     throw error;
@@ -169,9 +189,11 @@ veriflevelsPGRepository.getLimitationsByCountry = async (id_country) => {
     logger.info(`[${context}]: Getting Limitations from DB`);
     ObjLog.log(`[${context}]: Getting Limitations from DB`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(id_country)
-    const resp = await pool.query(`SELECT * FROM get_limitations_by_country(${id_country})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(id_country);
+    const resp = await poolSM.query(
+      `SELECT * FROM get_limitations_by_country(${id_country})`
+    );
     return resp.rows[0].get_limitations_by_country;
   } catch (error) {
     throw error;
@@ -183,23 +205,29 @@ veriflevelsPGRepository.getVerifLevelRequirements = async (email_user) => {
     logger.info(`[${context}]: Getting requirements from DB`);
     ObjLog.log(`[${context}]: Getting requirements from DB`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_verif_levels_requirements(${email_user})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user);
+    const resp = await poolSM.query(
+      `SELECT * FROM v_verif_levels_requirements(${email_user})`
+    );
     return resp.rows[0].v_verif_levels_requirements;
   } catch (error) {
     throw error;
   }
 };
 
-veriflevelsPGRepository.getWholesalePartnerRequestsRequirementsByEmail = async (email_user) => {
+veriflevelsPGRepository.getWholesalePartnerRequestsRequirementsByEmail = async (
+  email_user
+) => {
   try {
     logger.info(`[${context}]: Getting requirements from DB`);
     ObjLog.log(`[${context}]: Getting requirements from DB`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user)
-    const resp = await pool.query(`SELECT * FROM v_wholesale_partners_requests_requirements_by_email(${email_user})`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log(email_user);
+    const resp = await poolSM.query(
+      `SELECT * FROM v_wholesale_partners_requests_requirements_by_email(${email_user})`
+    );
     return resp.rows[0].v_wholesale_partners_requests_requirements_by_email;
   } catch (error) {
     throw error;
@@ -211,9 +239,11 @@ veriflevelsPGRepository.validateRemittance = async (remittance) => {
     logger.info(`[${context}]: prooving from DB`);
     ObjLog.log(`[${context}]: prooving from DB`);
 
-    await pool.query("SET SCHEMA 'sec_cust'");
-    console.log('remittance',remittance)
-    const resp = await pool.query(`SELECT * FROM validate_remittance('${JSON.stringify(remittance)}')`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log("remittance", remittance);
+    const resp = await poolSM.query(
+      `SELECT * FROM validate_remittance('${JSON.stringify(remittance)}')`
+    );
     return resp.rows[0].validate_remittance;
   } catch (error) {
     throw error;

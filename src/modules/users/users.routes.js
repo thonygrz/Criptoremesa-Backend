@@ -208,4 +208,40 @@ usersRouter.post(
   usersController.deactivateUser
 );
 
+usersRouter.get(
+  "/referrals",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferrals
+);
+
+usersRouter.get(
+  "/:email_user/referrals/operations",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsOperations
+);
+
+usersRouter.get(
+  "/:email_user/referrals/totalByCountry",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsByCountry
+);
+
+usersRouter.get(
+  "/:email_user/referrals/totalByStatus",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsByStatus
+);
+
+usersRouter.post(
+  "/:email_user/ambassador/request",
+  // guard.verifyAdmin("/login"),
+  usersController.ambassadorRequest
+);
+
+usersRouter.head(
+  "/referrers/:cust_cr_cod_pub",
+  // guard.verifyAdmin("/login"),
+  usersController.verifReferrallByCodPub
+);
+
 export default usersRouter;

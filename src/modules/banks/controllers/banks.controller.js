@@ -8,14 +8,11 @@ const context = "banks Controller";
 //AUTENTICACION CON PASSPORT
 banksController.getBanks = (req, res, next) => {
   try {
-    const countryId = req.query.country_id;
-    const payMethodId = req.query.pay_method_id;
-    const currencyId = req.query.currency_id;
-    const origin = req.query.origin;
-    logger.info(`[${context}]: Sending service to get ${origin === true ? 'origin' : 'destiny'} banks`);
-    ObjLog.log(`[${context}]: Sending service to get ${origin === true ? 'origin' : 'destiny'} banks`);
+    logger.info(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
+    ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
 
-    banksService.getBanks(req, res, next,countryId,payMethodId,currencyId,origin);
+
+    banksService.getBanks(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -32,5 +29,49 @@ banksController.getBankById = (req,res,next) =>{
     next(error);
   }
 }
+
+banksController.getBankAccountsById = (req,res,next) =>{
+  try {
+    logger.info(`[${context}]: Sending service to get bank accounts`);
+    ObjLog.log(`[${context}]: Sending service to get bank accounts`);
+
+    banksService.getBankAccountsById(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+}
+
+banksController.getBankAccountById = (req,res,next) =>{
+  try {
+    logger.info(`[${context}]: Sending service to get bank account by id`);
+    ObjLog.log(`[${context}]: Sending service to get bank account by id`);
+
+    banksService.getBankAccountById(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+}
+
+banksController.getBankAccountByPayMethod = (req,res,next) =>{
+  try {
+    logger.info(`[${context}]: Sending service to get bank account by pay method`);
+    ObjLog.log(`[${context}]: Sending service to get bank account by pay method`);
+
+    banksService.getBankAccountByPayMethod(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+}
+
+banksController.getBanksByPayMethod = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get banks by pay methods`);
+    ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
+
+    banksService.getBanksByPayMethod(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default banksController;

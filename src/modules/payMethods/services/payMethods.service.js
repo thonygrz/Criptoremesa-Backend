@@ -15,7 +15,36 @@ const logConst = {
   session: null,
 };
 
-payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origin) => {
+payMethodsService.getPayMethodsByCountryAndCurrency = async (req, res, next) => {
+  try {
+
+    let log  = logConst;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    let data = {}
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }
+    else{
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Get Pay Methods by Country and Currency`);
+      ObjLog.log(`[${context}]: Get Pay Methods by Country and Currency`);
+      data = await payMethodsRepository.getPayMethodsByCountryAndCurrency(req.query.id_country,req.query.id_currency);
+      res.status(200).json(data);
+    }
+    
+  } catch (error) {
+    next(error);
+  }
+};
+
+payMethodsService.getPayMethodById = async (req, res, next) => {
   try {
 
     let log  = logConst;
@@ -35,7 +64,7 @@ payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origi
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Get Pay Methods by Country`);
       ObjLog.log(`[${context}]: Get Pay Methods by Country`);
-      data = await payMethodsRepository.getPayMethodsByCountry(countryId);
+      data = await payMethodsRepository.getPayMethodById(req.params.pay_method_id);
       res.status(200).json(data);
     }
     
@@ -44,7 +73,36 @@ payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origi
   }
 };
 
-payMethodsService.getPayMethodById = async (req, res, next,payMethodId) => {
+payMethodsService.deposit_method_by_country = async (req, res, next) => {
+  try {
+
+    let log  = logConst;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    let data = {}
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }
+    else{
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Get deposit Methods by Country`);
+      ObjLog.log(`[${context}]: Get deposit Methods by Country`);
+      data = await payMethodsRepository.deposit_method_by_country(req.params.id_country,req.params.id_bank);
+      res.status(200).json(data);
+    }
+    
+  } catch (error) {
+    next(error);
+  }
+};
+
+payMethodsService.depositMethodsByBank = async (req, res, next) => {
   try {
 
     let log  = logConst;
@@ -61,13 +119,14 @@ payMethodsService.getPayMethodById = async (req, res, next,payMethodId) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get Pay Method by Id ${payMethodId}`);
-      ObjLog.log(`[${context}]: Get Pay Method by Id ${payMethodId}`);
-      data = await payMethodsRepository.getPayMethodById(payMethodId);
+      logger.info(`[${context}]: Get Pay Method by bank`);
+      ObjLog.log(`[${context}]: Get Pay Method by bank`);
+      data = await payMethodsRepository.depositMethodsByBank(req.params.id_bank);
       res.status(200).json(data);
     }
   } catch (error) {
     next(error);
   }
 };
+
 export default payMethodsService;
