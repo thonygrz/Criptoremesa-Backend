@@ -29,7 +29,7 @@ export async function SocketServer(server) {
     // console.log('in connection: ', socket.id)
 
     socket.on("disconnect", (reason) => {
-      console.log(`DISCONNECT REASON: ${reason}`);
+      logger.warn(`DISCONNECT REASON: ${reason}`);
     });
 
     socket.on("connect_error", (err) => {
