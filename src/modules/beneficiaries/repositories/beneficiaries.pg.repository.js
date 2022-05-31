@@ -44,7 +44,8 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (
         ${body.id_doc_type},
         ${body.id_bank === null ? "null" : `'${body.id_bank}'`},
         '${emailUser}',
-        ${body.id_pay_method}
+        ${body.id_pay_method},
+        ${body.id_optional_field}
         )`
     );
     return resp.rows[0];
