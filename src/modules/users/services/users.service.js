@@ -2977,5 +2977,199 @@ usersService.deactivateUser = async (req, res, next) => {
   }
 };
 
+usersService.getReferrals = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.getReferrals(req.query.cust_cr_cod_pub);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/referrals",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getReferralsOperations = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.getReferralsOperations(req.params.email_user);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/referralsOperations",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getReferralsByCountry = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.getReferralsByCountry(req.params.email_user);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/referralsByCountry",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getReferralsByStatus = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.getReferralsByStatus(req.params.email_user);
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/referralsByStatus",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.ambassadorRequest = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    const mailResp = await mailSender.sendAmbassadorMail({
+      email_user: req.params.email_user
+    });
+
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/ambassadorRequest",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+    if (mailResp.mailResp && mailResp.mailResp === 'Connection timed out')
+    res.status(500).json({
+      mailResp
+    });
+    else
+    res.status(200).json({
+      mailResp
+    }); 
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.verifReferrallByCodPub = async (req, res, next) => {
+  try {
+    let countryResp = null;
+    let sess = null;
+
+    let data = await usersPGRepository.verifReferrallByCodPub(req.params.cust_cr_cod_pub);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/users/",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    console.log('devolvió esto el repo: ',data)
+    if (data.message === 'Exists public code.')
+      res.status(200).json();
+    else
+      res.status(400).json();
+  } catch (error) {
+    next(error);
+  }
+};   
+
 export default usersService;
 export { events };

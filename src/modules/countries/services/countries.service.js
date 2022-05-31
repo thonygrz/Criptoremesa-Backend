@@ -46,7 +46,7 @@ countriesService.countriesCurrencies = async (req, res, next) => {
 
     let countryResp = null;
     let sess = null;
-    let data = await countriesRepository.countriesCurrencies();
+    let data = await countriesRepository.countriesCurrencies(req.query.email_user ? req.query.email_user : null);
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -61,6 +61,36 @@ countriesService.countriesCurrencies = async (req, res, next) => {
       ip: req.connection.remoteAddress,
       country: countryResp,
       route: "/countries/countriesCurrencies",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+countriesService.getCountriesByPayMethod = async (req, res, next) => {
+  try {
+
+    let countryResp = null;
+    let sess = null;
+    let data = await countriesRepository.getCountriesByPayMethod(req.query.id_pay_method);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/countries/getCountriesByPayMethod",
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);

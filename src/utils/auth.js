@@ -6,6 +6,7 @@ import authenticationPGRepository from "../modules/authentication/repositories/a
 import bcrypt from "bcryptjs";
 import guard from "../utils/guard";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
+import { notifyChanges } from "../modules/sockets/sockets.coordinator"	
 
 const LocalStrategy = PassportLocal.Strategy;
 const context = "Authentication module";
@@ -19,7 +20,8 @@ const expressObj = {
   res: null,
   next: null,
   isAuthenticated: false,
-  userExists: false
+  userExists: false,
+  userActiveSession: false
 };
 
 // THIS SENDS A CUSTOM RESPONSE IF USER LOGS IN CORRECTLY
@@ -38,7 +40,12 @@ async function resp(user) {
     )
       sess = expressObj.req.sessionID;
 
-    if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
+    if (user.expired){
+      expressObj.res.status(401).send({
+        message: 'There is already an active session with this user. Try again in a few minutes.'
+      });
+    }
+    else if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
       const log = {
         is_auth: expressObj.req.isAuthenticated(),
         success: false,
@@ -50,9 +57,8 @@ async function resp(user) {
       };
       let response;
       if (user) {
-        // console.log("email: ", user.email_user);
         response = await authenticationPGRepository.loginFailed(user.email_user);
-        console.log("response: ", response);
+        console.log("loginFailed response: ", response);
       }
       await authenticationPGRepository.insertLogMsg(log);
       console.log('VERIFICAAAAAAAA:',{
@@ -89,7 +95,7 @@ async function resp(user) {
         captchaSuccess: true,
       });
     }
-    expressObj.next()
+      expressObj.next()
   } catch (error) {
     expressObj.next(error);
   }
@@ -177,14 +183,32 @@ passport.use(
               logger.info(`[${context}]: Successful login`);
               ObjLog.log(`[${context}]: Successful login`);
 
-              expressObj.isAuthenticated = true;
+              console.log("🚀 ~ file: auth.js ~ line 186 ~ email", email)
+              
+              expressObj.userActiveSession = await authenticationPGRepository.userHasAnActiveSession(email)
+              console.log("🚀 ~ file: auth.js ~ line 190 ~ expressObj.userActiveSession", expressObj.userActiveSession)
 
-              await resp(user);
+              if (expressObj.userActiveSession){
+                // req.session.destroy();
 
-              return done(null, user);
-              // expressObj.req = req;
+                req.session = null;
 
-              // return true;
+                user.expired = true
+
+                notifyChanges('login_attempt', {
+                  email_user: email
+                });
+
+                await resp(user);
+                
+                return done(null, false);
+              } else {
+                expressObj.isAuthenticated = true;
+
+                await resp(user);
+
+                return done(null, user);
+              }
             }
             logger.error(`[${context}]: User and password do not match`);
             ObjLog.log(`[${context}]: User and password do not match`);
@@ -224,16 +248,6 @@ passport.use(
           authenticationPGRepository.insertLogMsg(log);
           return done(null, false);
         }
-
-
-
-        // console.log("DENTRO DE LA STRATEGY");
-        // user = {
-        //   email_user: 'anthony@gmail.com',
-        //   name: "Thony"
-        // }
-        // return done(null, user);
-
       } catch (error) {
         throw error;
       }
@@ -287,7 +301,8 @@ export default {
         }
         let response = null;
         console.log('blockedOrNotVerified: ',blockedOrNotVerified)
-        if (!blockedOrNotVerified && !expressObj.isAuthenticated){
+        console.log('expressObj.isAuthenticated: ',expressObj.isAuthenticated)
+        if (!blockedOrNotVerified && !expressObj.isAuthenticated && !expressObj.userActiveSession){
             if (globalUser) {
               // console.log("email: ", globalUser.email_user);
               response = await authenticationPGRepository.loginFailed(globalUser.email_user);

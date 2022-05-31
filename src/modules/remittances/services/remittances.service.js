@@ -192,8 +192,6 @@ remittancesService.startRemittance = async (req, res, next) => {
       console.log("files ", files);
       console.log("fields ", fields);
 
-      console.log('JSONNN: ',JSON.parse(fields.remittance))
-
       Object.values(files).forEach((f) => {
         if (
           f.type === "image/png" ||
@@ -241,16 +239,12 @@ remittancesService.startRemittance = async (req, res, next) => {
             }
           });
 
-          let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=33d33c1a7a7748d496d548f9a1973ae6&symbols=${remittance.countryCurrency.isoCode}`);
-
-          console.log('fullRateFromAPI: ',fullRateFromAPI)
+          let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${remittance.countryCurrency.isoCode}`);
 
           let rateFromAPI = fullRateFromAPI.data.rates[remittance.countryCurrency.isoCode]
           rateFromAPI = parseFloat(rateFromAPI)
 
-          remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance / rateFromAPI).toFixed(2));
-
-          console.log('SE ENVIA ESTO AL REPO', remittance)
+          remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance / (rateFromAPI * 0.97)).toFixed(2));
 
           let data = await remittancesPGRepository.startRemittance(remittance);
 
@@ -279,9 +273,9 @@ function waitingPreRemittance(id_pre_remittance) {
     let resp = await remittancesPGRepository.expiredPreRemittance(id_pre_remittance);
     if (resp.email_user)
       notifyChanges('expired_remittance', resp);
-  }, 900000);
-  console.log('TIMMY: ',timmy)
-  console.log('JSON.stringify(obj): ',timmy[Symbol.toPrimitive]())
+  }, 300000);
+  // console.log('TIMMY: ',timmy)
+  // console.log('JSON.stringify(obj): ',timmy[Symbol.toPrimitive]())
   redisClient.set(id_pre_remittance.toString(), timmy[Symbol.toPrimitive]());
 }
 
@@ -292,6 +286,7 @@ remittancesService.startPreRemittance = async (req, res, next) => {
     let sess = null;
 
     let data = await remittancesPGRepository.startPreRemittance(req.body);
+    console.log("🚀 ~ file: remittances.service.js ~ line 289 ~ remittancesService.startPreRemittance= ~ data", data)
     const resp = authenticationPGRepository.getIpInfo(
       req.connection.remoteAddress
     );
@@ -312,8 +307,15 @@ remittancesService.startPreRemittance = async (req, res, next) => {
 
     if (data.message === 'Pre-remittance succesfully inserted.'){
 
-      waitingPreRemittance(data.id_pre_remittance);
+      if (data.previous_id_pre_remittance){
+        redisClient.get(data.previous_id_pre_remittance, function (err, reply) {
+          // reply is null when the key is missing
+          console.log("Redis reply TIMMY CANCELLED: ", reply);
+          clearTimeout(reply)
+        });
+      }
 
+      waitingPreRemittance(data.id_pre_remittance);
     }
 
     res.status(200).json(data);
@@ -377,13 +379,77 @@ remittancesService.cancelPreRemittance = async (req, res, next) => {
       session: sess,
     };
     authenticationPGRepository.insertLogMsg(log);
-    console.log('LO QUE SE VA A PASAR A REDIS: ',req.params.id_pre_remittance)
-    console.log('LO QUE SE VA A PASAR A REDIS to string: ',req.params.id_pre_remittance.toString())
+    // console.log('LO QUE SE VA A PASAR A REDIS: ',req.params.id_pre_remittance)
+    // console.log('LO QUE SE VA A PASAR A REDIS to string: ',req.params.id_pre_remittance.toString())
     redisClient.get(req.params.id_pre_remittance, function (err, reply) {
       // reply is null when the key is missing
       console.log("Redis reply CANCELLED: ", reply);
       clearTimeout(reply)
     });
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+remittancesService.lastRemittances = async (req, res, next) => {
+  try {
+
+    let countryResp = null;
+    let sess = null;
+
+    let data = await remittancesPGRepository.lastRemittances(req.params.email_user,req.query.limit,req.query.start_date,req.query.end_date,req.query.mode);
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/remittances/lastRemittances",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+remittancesService.getMinAmounts = async (req, res, next) => {
+  try {
+
+    let countryResp = null;
+    let sess = null;
+
+    let data = await remittancesPGRepository.getMinAmounts();
+    const resp = authenticationPGRepository.getIpInfo(
+      req.connection.remoteAddress
+    );
+    if (resp) countryResp = resp.country_name;
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      sess = req.sessionID;
+
+    const log = {
+      is_auth: req.isAuthenticated(),
+      success: true,
+      failed: false,
+      ip: req.connection.remoteAddress,
+      country: countryResp,
+      route: "/remittances/minAmount",
+      session: sess,
+    };
+    authenticationPGRepository.insertLogMsg(log);
 
     res.status(200).json(data);
   } catch (error) {

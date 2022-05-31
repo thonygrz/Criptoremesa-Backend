@@ -11,7 +11,7 @@ remittancesRouter.get(
 );
 
 remittancesRouter.get(
-  "/:email_user",
+  "/chat/:email_user",
   // guard.verifyAdmin("/login"),
   remittancesController.getRemittances
 );
@@ -44,6 +44,18 @@ remittancesRouter.delete(
   "/preRemittance/:id_pre_remittance",
   // guard.verifyAdmin("/login"),
   remittancesController.cancelPreRemittance
+);
+
+remittancesRouter.get(
+  "/:email_user",
+  // guard.verifyAdmin("/login"),
+  remittancesController.lastRemittances
+);
+
+remittancesRouter.get(
+  "/countries/minAmounts",
+  // guard.verifyAdmin("/login"),
+  remittancesController.getMinAmounts
 );
 
 export default remittancesRouter;

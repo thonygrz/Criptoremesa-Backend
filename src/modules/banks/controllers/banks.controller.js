@@ -11,6 +11,7 @@ banksController.getBanks = (req, res, next) => {
     logger.info(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
     ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
 
+
     banksService.getBanks(req, res, next);
   } catch (error) {
     next(error);
@@ -50,5 +51,27 @@ banksController.getBankAccountById = (req,res,next) =>{
     next(error);
   }
 }
+
+banksController.getBankAccountByPayMethod = (req,res,next) =>{
+  try {
+    logger.info(`[${context}]: Sending service to get bank account by pay method`);
+    ObjLog.log(`[${context}]: Sending service to get bank account by pay method`);
+
+    banksService.getBankAccountByPayMethod(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+}
+
+banksController.getBanksByPayMethod = (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending service to get banks by pay methods`);
+    ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
+
+    banksService.getBanksByPayMethod(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default banksController;
