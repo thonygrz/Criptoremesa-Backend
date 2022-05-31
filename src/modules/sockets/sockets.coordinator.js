@@ -28,6 +28,10 @@ export async function SocketServer(server) {
     ObjLog.log(`[${context}] New connection stablished`);
     // console.log('in connection: ', socket.id)
 
+    socket.on("disconnect", (reason) => {
+      console.log(`DISCONNECT REASON: ${reason}`);
+    });
+
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
     });
