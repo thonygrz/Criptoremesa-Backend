@@ -35,7 +35,7 @@ payMethodsService.getPayMethodsByCountryAndCurrency = async (req, res, next) => 
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Get Pay Methods by Country and Currency`);
       ObjLog.log(`[${context}]: Get Pay Methods by Country and Currency`);
-      data = await payMethodsRepository.getPayMethodsByCountryAndCurrency(req.query.id_country,req.query.id_currency);
+      data = await payMethodsRepository.getPayMethodsByCountryAndCurrency(req.query.id_country,req.query.id_currency,req.query.only_pay);
       res.status(200).json(data);
     }
     
