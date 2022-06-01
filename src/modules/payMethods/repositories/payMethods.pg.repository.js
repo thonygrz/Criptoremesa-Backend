@@ -5,15 +5,21 @@ import ObjLog from "../../../utils/ObjLog";
 const payMethodsRepository = {};
 const context = "pay Methods PG Repository";
 
-payMethodsRepository.getPayMethodsByCountryAndCurrency = async (idCountry,idCurrency) => {
+payMethodsRepository.getPayMethodsByCountryAndCurrency = async (idCountry,idCurrency,onlyPay) => {
   try {
     logger.info(`[${context}]: Getting Pay Methods by Country and Currency from db`);
     ObjLog.log(`[${context}]: Getting Pay Methods by Country and Currency from db`);
     await poolSM.query("SET SCHEMA 'msg_app'");
+    if (onlyPay && onlyPay === 'null') onlyPay = false
+    else if (onlyPay && onlyPay === 'false') onlyPay = false
+    else if (onlyPay && onlyPay === 'true') onlyPay = true
+    else if (!onlyPay) onlyPay = false
+
     const resp = await poolSM.query(
       `select * from msg_app.sp_ms_pay_methods_get(
                                                   ${idCountry},
-                                                  ${idCurrency}
+                                                  ${idCurrency},
+                                                  ${onlyPay}
                                                   )`
     );
     return resp.rows;
