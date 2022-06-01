@@ -45,7 +45,7 @@ reportsService.reportAmountSentByBenef = async (req, res, next) => {
         req.query
       );
 
-      if (data.length > 0) {
+      if (data && data.length > 0) {
 
         console.log('data: ',data)
 
