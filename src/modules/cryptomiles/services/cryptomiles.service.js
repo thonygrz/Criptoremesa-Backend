@@ -1,31 +1,38 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import cryptomilesPGRepository from "../repositories/cryptomiles.pg.repository";
-import auth from "../../../utils/auth";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
+
 const cryptomilesService = {};
 const context = "cryptomiles Service";
+
+// Se declara el objeto de Log
 const logConst = {
-  is_auth: undefined,
+  is_auth,
   success: true,
   failed: false,
-  ip: undefined,
-  country: undefined,
-  route: "/cryptomiles",
-  session: null,
+  ip,
+  country,
+  route,
+  session
 };
 
 cryptomilesService.insertCryptomile = async (req, res, next) => {
   try {
+    // Se llena la información del log
     let log  = logConst;
+
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
-    log.route = log.route;
-    let data = {}
+    log.route = req.method + ' ' + req.originalUrl;
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    let data
+
+    // se protege la ruta en produccion mas no en desarrollo
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
@@ -143,6 +150,7 @@ cryptomilesService.getAllCryptomiles = async (req, res, next) => {
       await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Getting all Cryptomiles`);
       ObjLog.log(`[${context}]: Getting all Cryptomiles`);
+      console.log('QUERY EN SERVICE',query)
       data = await cryptomilesPGRepository.getAllCryptomiles({
                                                               email_user: req.params.email_user,
                                                               ...req.query
