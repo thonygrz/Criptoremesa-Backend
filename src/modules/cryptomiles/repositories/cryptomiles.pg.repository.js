@@ -89,6 +89,7 @@ cryptomilesPGRepository.getAllCryptomiles = async (body) => {
                                                   ${body.active},
                                                   ${body.email_user == 'null' ? null : `'${body.email_user}'`},
                                                   ${body.id_currency == 'null' ? null : body.id_currency},
+                                                  ${body.id_country == 'null' ? null : body.id_country},
                                                   ${body.start_date == 'null' ? null : body.start_date},
                                                   ${body.end_date == 'null' ? null : body.end_date}
                                                   )`

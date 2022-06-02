@@ -2895,7 +2895,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
     authenticationPGRepository.insertLogMsg(log);
 
     if (data.msg === "Code generated") {
-      if (sendSMS(req.body.main_phone_full,`💰<Criptoremesa>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`))
+      if (sendSMS(req.body.main_phone_full,`💰<CriptoRemesa>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`))
       res.status(200).json({
         msg: data.msg
       })
