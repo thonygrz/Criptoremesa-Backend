@@ -6,7 +6,6 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 const authenticationController = {};
 const context = "Authentication Controller";
 
-
 // declaring log object
 const logConst = {
   is_auth: null,
@@ -18,10 +17,10 @@ const logConst = {
   session: null
 };
 
-//AUTENTICACION CON PASSPORT
+//PASSPORT AUTHENTICATION
 authenticationController.login = async (req, res, next) => {
   try {
-    // Se llena la información del log
+    // filling log object info
     let log  = logConst;
 
     log.is_auth = req.isAuthenticated()
@@ -31,6 +30,7 @@ authenticationController.login = async (req, res, next) => {
     if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
+    // calling service
     logger.info(`[${context}]: Sending service to login`);
     ObjLog.log(`[${context}]: Sending service to login`);
 
@@ -42,7 +42,7 @@ authenticationController.login = async (req, res, next) => {
 
 authenticationController.logout = async (req, res, next) => {
   try {
-    // Se llena la información del log
+    // filling log object info
     let log  = logConst;
 
     log.is_auth = req.isAuthenticated()
@@ -52,6 +52,7 @@ authenticationController.logout = async (req, res, next) => {
     if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
+    // calling service
     logger.info(`[${context}]: Sending service to logout`);
     ObjLog.log(`[${context}]: Sending service to logout`);
 
