@@ -1,8 +1,6 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import balancesPGRepository from "../repositories/balances.pg.repository";
-import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-import {env,ENVIROMENTS} from '../../../utils/enviroment'
 const balancesService = {};
 const context = "balances Service";
 
@@ -10,7 +8,7 @@ balancesService.getBalances = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting balances`);
     ObjLog.log(`[${context}]: Getting balances`);
-    data = await balancesPGRepository.getBalances(req.params.email_user);
+    let data = await balancesPGRepository.getBalances(req.params.email_user);
 
     if (!data.balances) data.balances = []
 
