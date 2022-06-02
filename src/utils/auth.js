@@ -4,13 +4,10 @@ import { logger } from "./logger";
 import ObjLog from "./ObjLog";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 import bcrypt from "bcryptjs";
-import guard from "../utils/guard";
-import ObjUserSessionData from "../utils/ObjUserSessionData";
 import { notifyChanges } from "../modules/sockets/sockets.coordinator"	
 
 const LocalStrategy = PassportLocal.Strategy;
 const context = "Authentication module";
-let ip = null;
 let user;
 let globalUser;
 let blockedOrNotVerified = false;
@@ -58,15 +55,8 @@ async function resp(user) {
       let response;
       if (user) {
         response = await authenticationPGRepository.loginFailed(user.email_user);
-        console.log("loginFailed response: ", response);
       }
       await authenticationPGRepository.insertLogMsg(log);
-      console.log('VERIFICAAAAAAAA:',{
-        user_blocked: user.user_blocked,
-        id_verif_level: user.id_verif_level,
-        verif_level_apb: user.verif_level_apb,
-        atcPhone: response ? response.atcPhone : 'NA'
-      })
       expressObj.res.status(400).send({
         user_blocked: user.user_blocked,
         id_verif_level: user.id_verif_level,
@@ -84,11 +74,6 @@ async function resp(user) {
         session: sess,
       };
       await authenticationPGRepository.insertLogMsg(log);
-      console.log('VERIFICAAAAAAAA:',{
-        isAuthenticated: expressObj.isAuthenticated,
-        user,
-        captchaSuccess: true,
-      })
       expressObj.res.status(200).send({
         isAuthenticated: expressObj.isAuthenticated,
         user,
@@ -118,9 +103,6 @@ passport.use(
         expressObj.isAuthenticated = false;
         expressObj.userExists = false;
         blockedOrNotVerified = false;
-
-        // console.log('auth: ',req.sessionID,
-        // req.connection.remoteAddress)
 
         await authenticationPGRepository.updateIPSession(
           req.sessionID,
@@ -169,8 +151,6 @@ passport.use(
             expressObj.userExists = true;
             globalUser = user;
 
-            // console.log('user: ',user)
-
             await authenticationPGRepository.updateIPUser(
               user.id_uuid,
               req.connection.remoteAddress,
@@ -183,10 +163,7 @@ passport.use(
               logger.info(`[${context}]: Successful login`);
               ObjLog.log(`[${context}]: Successful login`);
 
-              console.log("🚀 ~ file: auth.js ~ line 186 ~ email", email)
-              
               expressObj.userActiveSession = await authenticationPGRepository.userHasAnActiveSession(email)
-              console.log("🚀 ~ file: auth.js ~ line 190 ~ expressObj.userActiveSession", expressObj.userActiveSession)
 
               if (expressObj.userActiveSession){
                 // req.session.destroy();
@@ -257,17 +234,13 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   // PASSPORT LOOKS FOR THE ID AND STORE IT IN SESSION
-  console.log("serialize ");
   if (user) done(null, user.email_user);
 });
 
 passport.deserializeUser(async function (email_user, done) {
   try {
     // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS email_user
-    console.log("deserialize: ");
-
     const user = await authenticationPGRepository.getUserByEmail(email_user);
-
     done(null, user);
   } catch (error) {
     done(error);
@@ -281,41 +254,15 @@ export default {
       expressObj.res = res;
       expressObj.next = next;
 
-      // console.log("req.session antes de la strategy", req.session);
-      // console.log("req.user antes de la strategy", req.user);
-      // ObjUserSessionData.set({
-      //   session: {
-      //     session_id: req.session.id,
-      //     cookie: req.session.cookie,
-      //   },
-      //   user: req.user,
-      // });
-      // res.status(200).send("prooving");
-
-      // passport.authenticate("local")(req, res, next);
-
-      // passport.authenticate("local")(req, res, next);
       passport.authenticate("local", async function (err,user,info) {
         if (err) {
           return expressObj.next(err);
         }
         let response = null;
-        console.log('blockedOrNotVerified: ',blockedOrNotVerified)
-        console.log('expressObj.isAuthenticated: ',expressObj.isAuthenticated)
         if (!blockedOrNotVerified && !expressObj.isAuthenticated && !expressObj.userActiveSession){
             if (globalUser) {
-              // console.log("email: ", globalUser.email_user);
               response = await authenticationPGRepository.loginFailed(globalUser.email_user);
-              // console.log("response: ", response);
             }
-            // console.log('response: ',response)
-            console.log('VERIFICAAAAAAAA:',{
-              isAuthenticated: false,
-              loginAttempts: response ? response.login_attempts : 'NA',
-              atcPhone: response ? response.atcPhone : 'NA',
-              userExists: expressObj.userExists,
-              captchaSuccess: true,
-            })
             res.json({
               isAuthenticated: false,
               loginAttempts: response ? response.login_attempts : 'NA',
@@ -330,11 +277,6 @@ export default {
           });
           
         }
-        console.log("DENTRO DEL AUTHENTICATE");
-  
-        console.log("req.session despues de la strategy", req.session);
-        // console.log("req.user despues de la strategy", req.user);
-
         expressObj.next();
         req.login(user, function(err) {
           if (err) {
@@ -348,40 +290,6 @@ export default {
   },
   logout: async (req, res, next) => {
     try {
-      let countryResp = null;
-      let sess = null;
-
-      // console.log('req.user antes de hacer logout(): ',req.user)
-      // console.log('req.session antes de hacer logout(): ',req.session)
-      // console.log('req.sessionID antes de hacer logout(): ',req.sessionID)
-
-      // req.session.destroy();
-      // req.session.destroy((err) => res.redirect('/'));
-      req.logOut();
-      // req.session = null; 
-      // req.sessionID = null; 
-
-      // console.log('req.user despues de hacer logout(): ',req.user)
-      // console.log('req.session despues de hacer logout(): ',req.session)
-      // console.log('req.sessionID despues de hacer logout(): ',req.sessionID)
-
-      const resp = await authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      if (resp) countryResp = resp.country_name;
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: true,
-        failed: false,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/logout",
-        session: sess,
-      };
-      await authenticationPGRepository.insertLogMsg(log);
       res.status(200).json({ message: "Logged out succesfully" });
       next()
     } catch (error) {

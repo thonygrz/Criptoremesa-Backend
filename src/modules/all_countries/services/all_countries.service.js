@@ -1,6 +1,5 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
-import all_countriesPGRepository from "../repositories/all_countries.pg.repository";
 
 const all_countriesService = {};
 const context = "all_countries Service";
