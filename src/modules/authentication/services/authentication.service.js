@@ -9,8 +9,29 @@ import { env } from "../../../utils/enviroment";
 const authenticationService = {};
 const context = "Authentication Service";
 
+// Se declara el objeto de Log
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null
+};
+
 authenticationService.login = async (req, res, next) => {
   try {
+      // Se llena la información del log
+      let log  = logConst;
+
+      log.is_auth = req.isAuthenticated()
+      log.ip = req.connection.remoteAddress;
+      log.route = req.method + ' ' + req.originalUrl;
+      const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+      if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+      if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
       // logger.info(`[${context}]: Verifying captcha`);
       // ObjLog.log(`[${context}]: Verifying captcha`);
 
@@ -51,6 +72,16 @@ authenticationService.login = async (req, res, next) => {
 
 authenticationService.logout = (req, res, next) => {
   try {
+    // Se llena la información del log
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
     logger.info(`[${context}]: Sending module to logout`);
     ObjLog.log(`[${context}]: Sending module to logout`);
     auth.logout(req, res, next);

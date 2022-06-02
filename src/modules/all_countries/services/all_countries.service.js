@@ -7,32 +7,35 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 const all_countriesService = {};
 const context = "all_countries Service";
 
+// Se declara el objeto de Log
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null
+};
+
 all_countriesService.getall_countries = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-    logger.info(`[${context}]: Searching in DB`);
-    ObjLog.log(`[${context}]: Searching in DB`);
+    // Se llena la información del log
+    let log  = logConst;
 
-    let data = await all_countriesPGRepository.getall_countries();
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-    const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.clientIp,
-      country: countryResp,
-      route: "/all_countries/getActive",
-      session: sess,
-    };
+    let data
 
     authenticationPGRepository.insertLogMsg(log);
-
+    logger.info(`[${context}]: Searching in DB`);
+    ObjLog.log(`[${context}]: Searching in DB`);
+    data = await all_countriesPGRepository.getall_countries();
     res.status(200).json(data);
   } catch (error) {
     next(error);
