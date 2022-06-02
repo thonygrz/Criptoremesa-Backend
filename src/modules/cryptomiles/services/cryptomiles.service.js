@@ -9,13 +9,13 @@ const context = "cryptomiles Service";
 
 // Se declara el objeto de Log
 const logConst = {
-  is_auth,
+  is_auth: null,
   success: true,
   failed: false,
-  ip,
-  country,
-  route,
-  session
+  ip: null,
+  country: null,
+  route: null,
+  session: null
 };
 
 cryptomilesService.insertCryptomile = async (req, res, next) => {
