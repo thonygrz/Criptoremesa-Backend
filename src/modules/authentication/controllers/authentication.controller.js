@@ -19,7 +19,7 @@ const logConst = {
 };
 
 //AUTENTICACION CON PASSPORT
-authenticationController.login = (req, res, next) => {
+authenticationController.login = async (req, res, next) => {
   try {
     // Se llena la información del log
     let log  = logConst;
@@ -40,7 +40,7 @@ authenticationController.login = (req, res, next) => {
   }
 };
 
-authenticationController.logout = (req, res, next) => {
+authenticationController.logout = async (req, res, next) => {
   try {
     // Se llena la información del log
     let log  = logConst;
