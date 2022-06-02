@@ -70,7 +70,7 @@ authenticationService.login = async (req, res, next) => {
   }
 };
 
-authenticationService.logout = (req, res, next) => {
+authenticationService.logout = async (req, res, next) => {
   try {
     // Se llena la información del log
     let log  = logConst;
