@@ -43,20 +43,10 @@ async function resp(user) {
       });
     }
     else if (user.user_blocked || (user.id_verif_level === 0 && !user.verif_level_apb)) {
-      const log = {
-        is_auth: expressObj.req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: expressObj.req.connection.remoteAddress,
-        country: countryResp,
-        route: "/login",
-        session: sess,
-      };
       let response;
       if (user) {
         response = await authenticationPGRepository.loginFailed(user.email_user);
       }
-      await authenticationPGRepository.insertLogMsg(log);
       expressObj.res.status(400).send({
         user_blocked: user.user_blocked,
         id_verif_level: user.id_verif_level,
@@ -64,16 +54,6 @@ async function resp(user) {
         atcPhone: response ? response.atcPhone : 'NA'
       });
     } else {
-      const log = {
-        is_auth: expressObj.req.isAuthenticated(),
-        success: true,
-        failed: false,
-        ip: expressObj.req.connection.remoteAddress,
-        country: countryResp,
-        route: "/login",
-        session: sess,
-      };
-      await authenticationPGRepository.insertLogMsg(log);
       expressObj.res.status(200).send({
         isAuthenticated: expressObj.isAuthenticated,
         user,
@@ -130,17 +110,6 @@ passport.use(
             if (await authenticationPGRepository.getSessionById(req.sessionID))
             sess = req.sessionID;
 
-            const log = {
-              is_auth: req.isAuthenticated(),
-              success: false,
-              failed: true,
-              ip: req.connection.remoteAddress,
-              country: countryResp,
-              route: "/login",
-              session: sess,
-            };
-            authenticationPGRepository.insertLogMsg(log);
-
             await resp(user);
 
             done(null, false);
@@ -192,17 +161,6 @@ passport.use(
             if (await authenticationPGRepository.getSessionById(req.sessionID))
               sess = req.sessionID;
 
-            const log = {
-              is_auth: req.isAuthenticated(),
-              success: false,
-              failed: true,
-              ip: req.connection.remoteAddress,
-              country: countryResp,
-              route: "/login",
-              session: sess,
-            };
-            authenticationPGRepository.insertLogMsg(log);
-
             return done(null, false);
           }
           
@@ -213,16 +171,6 @@ passport.use(
           if (await authenticationPGRepository.getSessionById(req.sessionID))
             sess = req.sessionID;
 
-          const log = {
-            is_auth: req.isAuthenticated(),
-            success: false,
-            failed: true,
-            ip: req.connection.remoteAddress,
-            country: countryResp,
-            route: "/login",
-            session: sess,
-          };
-          authenticationPGRepository.insertLogMsg(log);
           return done(null, false);
         }
       } catch (error) {

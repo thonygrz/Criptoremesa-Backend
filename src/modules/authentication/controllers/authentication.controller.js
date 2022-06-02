@@ -29,6 +29,7 @@ authenticationController.login = async (req, res, next) => {
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    await authenticationPGRepository.insertLogMsg(log);
 
     // calling service
     logger.info(`[${context}]: Sending service to login`);
@@ -51,6 +52,7 @@ authenticationController.logout = async (req, res, next) => {
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
     if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    await authenticationPGRepository.insertLogMsg(log);
 
     // calling service
     logger.info(`[${context}]: Sending service to logout`);
