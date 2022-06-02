@@ -7,8 +7,8 @@ const context = "cryptomiles PG Repository";
 
 cryptomilesPGRepository.insertCryptomile = async (body) => {
   try {
-    logger.info(`[${context}]: Getting cryptomiles client from db`);
-    ObjLog.log(`[${context}]: Getting cryptomiles client from db`);
+    logger.info(`[${context}]: Inserting criptomile on db`);
+    ObjLog.log(`[${context}]: Inserting criptomile on db`);
     await poolSM.query("SET SCHEMA 'basics'");
     const resp = await poolCR.query(
       `SELECT * FROM basics.sp_ms_cryptomiles_insert(

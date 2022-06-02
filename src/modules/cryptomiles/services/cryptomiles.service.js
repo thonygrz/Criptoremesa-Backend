@@ -27,7 +27,7 @@ cryptomilesService.insertCryptomile = async (req, res, next) => {
     log.ip = req.connection.remoteAddress;
     log.route = req.method + ' ' + req.originalUrl;
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
     let data
