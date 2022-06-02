@@ -10,8 +10,8 @@ balancesService.getBalances = async (req, res, next) => {
     ObjLog.log(`[${context}]: Getting balances`);
     let data = await balancesPGRepository.getBalances(req.params.email_user);
 
-    if (!data.balances) data.balances = []
-
+    if (data.resid_currency){
+      if (!data.balances) data.balances = []
       if (!data.balances.find(b => b.id_currency == data.resid_currency.id_currency)){
         data.balances.push({
             balance: 0,
@@ -22,7 +22,9 @@ balancesService.getBalances = async (req, res, next) => {
             country_iso_code: data.resid_currency.country_iso_code,
             currency_iso_code: data.resid_currency.currency_iso_code,
         })
+      }
     }
+
     res.status(200).json(data);
   } catch (error) {
     next(error);

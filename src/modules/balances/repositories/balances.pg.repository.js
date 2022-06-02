@@ -12,8 +12,8 @@ balancesPGRepository.getBalances = async (email_user) => {
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM sp_get_balances_by_user(
-                                                '${email_user}'
-                                              )`
+                                              '${email_user}'
+                                            )`
     );
     return resp.rows[0].sp_get_balances_by_user;
   } catch (error) {
