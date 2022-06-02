@@ -52,14 +52,19 @@ cryptomilesService.insertCryptomile = async (req, res, next) => {
 
 cryptomilesService.getCryptomiles = async (req, res, next) => {
   try {
+    // Se llena la información del log
     let log  = logConst;
+
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
-    log.route = log.route;
-    let data = {}
+    log.route = req.method + ' ' + req.originalUrl;
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    let data
+
+    // se protege la ruta en produccion mas no en desarrollo
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
@@ -79,14 +84,19 @@ cryptomilesService.getCryptomiles = async (req, res, next) => {
 
 cryptomilesService.deactivateCryptomiles = async (req, res, next) => {
   try {
+    // Se llena la información del log
     let log  = logConst;
+
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
-    log.route = log.route;
-    let data = {}
+    log.route = req.method + ' ' + req.originalUrl;
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    let data
+
+    // se protege la ruta en produccion mas no en desarrollo
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
@@ -106,14 +116,19 @@ cryptomilesService.deactivateCryptomiles = async (req, res, next) => {
 
 cryptomilesService.activateCryptomiles = async (req, res, next) => {
   try {
+    // Se llena la información del log
     let log  = logConst;
+
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
-    log.route = log.route;
-    let data = {}
+    log.route = req.method + ' ' + req.originalUrl;
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    let data
+
+    // se protege la ruta en produccion mas no en desarrollo
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
@@ -133,14 +148,19 @@ cryptomilesService.activateCryptomiles = async (req, res, next) => {
 
 cryptomilesService.getAllCryptomiles = async (req, res, next) => {
   try {
+    // Se llena la información del log
     let log  = logConst;
+
     log.is_auth = req.isAuthenticated()
     log.ip = req.connection.remoteAddress;
-    log.route = log.route;
-    let data = {}
+    log.route = req.method + ' ' + req.originalUrl;
     const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    let data
+
+    // se protege la ruta en produccion mas no en desarrollo
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       log.success = false;
       log.failed = true;
