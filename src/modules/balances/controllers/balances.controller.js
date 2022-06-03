@@ -43,13 +43,15 @@ balancesController.getBalances = async (req, res, next) => {
 
       let finalResp = await balancesService.getBalances(req, res, next);
 
-      //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
-      await authenticationPGRepository.insertLogMsg(log);
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-      //sendind response to FE
-      res.status(finalResp.status).json(finalResp.data);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);

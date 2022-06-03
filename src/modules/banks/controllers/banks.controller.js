@@ -44,13 +44,15 @@ banksController.getBanks = async (req, res, next) => {
 
       let finalResp = await banksService.getBanks(req, res, next);
       
-      //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
-      await authenticationPGRepository.insertLogMsg(log);
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-      //sendind response to FE
-      res.status(finalResp.status).json(finalResp.data);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -83,13 +85,15 @@ banksController.getBankById = async (req,res,next) =>{
 
       let finalResp = await banksService.getBankById(req, res, next);
       
-      //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
-      await authenticationPGRepository.insertLogMsg(log);
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-      //sendind response to FE
-      res.status(finalResp.status).json(finalResp.data);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -122,13 +126,15 @@ banksController.getBankAccountsById = async (req,res,next) =>{
 
       let finalResp = await banksService.getBankAccountsById(req, res, next);
       
-      //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
-      await authenticationPGRepository.insertLogMsg(log);
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-      //sendind response to FE
-      res.status(finalResp.status).json(finalResp.data);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -161,13 +167,15 @@ banksController.getBankAccountById = async (req,res,next) =>{
 
       let finalResp = await banksService.getBankAccountById(req, res, next);
       
-      //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
-      await authenticationPGRepository.insertLogMsg(log);
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-      //sendind response to FE
-      res.status(finalResp.status).json(finalResp.data);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -200,13 +208,15 @@ banksController.getBankAccountByPayMethod = async (req,res,next) =>{
 
       let finalResp = await banksService.getBankAccountByPayMethod(req, res, next);
       
-      //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
-      await authenticationPGRepository.insertLogMsg(log);
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-      //sendind response to FE
-      res.status(finalResp.status).json(finalResp.data);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -239,13 +249,15 @@ banksController.getBanksByPayMethod = async (req, res, next) => {
 
       let finalResp = await banksService.getBanksByPayMethod(req, res, next);
       
-      //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
-      await authenticationPGRepository.insertLogMsg(log);
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-      //sendind response to FE
-      res.status(finalResp.status).json(finalResp.data);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);

@@ -35,13 +35,15 @@ all_countriesController.getall_countries = async (req, res, next) => {
     
     let finalResp = await all_countriesService.getall_countries(req, res, next);
 
-    //logging on DB
-    log.success = finalResp.success
-    log.failed = finalResp.failed
-    await authenticationPGRepository.insertLogMsg(log);
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
 
-    //sendind response to FE
-    res.status(finalResp.status).json(finalResp.data);
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
   } catch (error) {
     next(error);
   }
