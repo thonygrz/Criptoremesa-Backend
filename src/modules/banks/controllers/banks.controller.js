@@ -39,11 +39,18 @@ banksController.getBanks = async (req, res, next) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
       ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
 
-      banksService.getBanks(req, res, next);
+      let finalResp = await banksService.getBanks(req, res, next);
+      
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -75,7 +82,15 @@ banksController.getBankById = async (req,res,next) =>{
       logger.info(`[${context}]: Sending service to get bank by Id ${req.params.bank_id}`);
       ObjLog.log(`[${context}]: Sending service to get bank by Id ${req.params.bank_id}`);
 
-      banksService.getBankById(req, res, next);
+      let finalResp = await banksService.getBankById(req, res, next);
+      
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -107,7 +122,15 @@ banksController.getBankAccountsById = async (req,res,next) =>{
       logger.info(`[${context}]: Sending service to get bank accounts`);
       ObjLog.log(`[${context}]: Sending service to get bank accounts`);
 
-      banksService.getBankAccountsById(req, res, next);
+      let finalResp = await banksService.getBankAccountsById(req, res, next);
+      
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -139,7 +162,15 @@ banksController.getBankAccountById = async (req,res,next) =>{
       logger.info(`[${context}]: Sending service to get bank account by id`);
       ObjLog.log(`[${context}]: Sending service to get bank account by id`);
 
-      banksService.getBankAccountById(req, res, next);
+      let finalResp = await banksService.getBankAccountById(req, res, next);
+      
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -171,7 +202,15 @@ banksController.getBankAccountByPayMethod = async (req,res,next) =>{
       logger.info(`[${context}]: Sending service to get bank account by pay method`);
       ObjLog.log(`[${context}]: Sending service to get bank account by pay method`);
 
-      banksService.getBankAccountByPayMethod(req, res, next);
+      let finalResp = await banksService.getBankAccountByPayMethod(req, res, next);
+      
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -203,7 +242,15 @@ banksController.getBanksByPayMethod = async (req, res, next) => {
       logger.info(`[${context}]: Sending service to get banks by pay methods`);
       ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
 
-      banksService.getBanksByPayMethod(req, res, next);
+      let finalResp = await banksService.getBanksByPayMethod(req, res, next);
+      
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
