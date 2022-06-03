@@ -2,6 +2,7 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import banksService from "../services/banks.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
 
 const banksController = {};
 const context = "banks Controller";
