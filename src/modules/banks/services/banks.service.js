@@ -73,7 +73,6 @@ banksService.getBanksByPayMethod = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting banks by pay method`);
     ObjLog.log(`[${context}]: Getting banks by pay method`);
-    authenticationPGRepository.insertLogMsg(log);
     let data = await banksRepository.getBanksByPayMethod(req.params.id_pay_method);
     res.status(200).json(data);
   } catch (error) {
