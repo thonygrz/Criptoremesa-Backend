@@ -10,6 +10,7 @@ balancesPGRepository.getBalances = async (email_user) => {
     logger.info(`[${context}]: Getting balances from db`);
     ObjLog.log(`[${context}]: Getting balances from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log('EMAIL USEEEEEEEEEEER; ',email_user)
     const resp = await poolSM.query(
       `SELECT * FROM sp_get_balances_by_user(
                                               '${email_user}'

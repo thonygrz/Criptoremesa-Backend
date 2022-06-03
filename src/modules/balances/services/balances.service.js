@@ -14,18 +14,23 @@ balancesService.getBalances = async (req, res, next) => {
       if (!data.balances) data.balances = []
       if (!data.balances.find(b => b.id_currency == data.resid_currency.id_currency)){
         data.balances.push({
-            balance: 0,
-            email_user: req.params.email_user,
-            id_currency: data.resid_currency.id_currency,
-            currency_name: data.resid_currency.currency_name,
-            currency_type: data.resid_currency.currency_type,
-            country_iso_code: data.resid_currency.country_iso_code,
-            currency_iso_code: data.resid_currency.currency_iso_code,
+          balance: 0,
+          email_user: req.params.email_user,
+          id_currency: data.resid_currency.id_currency,
+          currency_name: data.resid_currency.currency_name,
+          currency_type: data.resid_currency.currency_type,
+          country_iso_code: data.resid_currency.country_iso_code,
+          currency_iso_code: data.resid_currency.currency_iso_code,
         })
       }
     }
-
-    res.status(200).json(data);
+    
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
   } catch (error) {
     next(error);
   }

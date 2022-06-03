@@ -38,11 +38,18 @@ balancesController.getBalances = async (req, res, next) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get balances`);
       ObjLog.log(`[${context}]: Sending service to get balances`);
 
-      balancesService.getBalances(req, res, next);
+      let finalResp = await balancesService.getBalances(req, res, next);
+
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
