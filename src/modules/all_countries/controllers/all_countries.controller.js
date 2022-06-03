@@ -30,11 +30,18 @@ all_countriesController.getall_countries = async (req, res, next) => {
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
     // calling service
-    await authenticationPGRepository.insertLogMsg(log);
     logger.info(`[${context}]: Sending service to get all_countries`);
     ObjLog.log(`[${context}]: Sending service to get all_countries`);
+    
+    let finalresp = await all_countriesService.getall_countries(req, res, next);
 
-    await all_countriesService.getall_countries(req, res, next);
+    //logging on DB
+    log.success = finalresp.success
+    log.failed = finalresp.failed
+    await authenticationPGRepository.insertLogMsg(log);
+
+    //sendind response to FE
+    res.status(finalresp.status).json(finalresp.data);
   } catch (error) {
     next(error);
   }
