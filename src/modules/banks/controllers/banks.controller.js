@@ -72,8 +72,8 @@ banksController.getBankById = async (req,res,next) =>{
     }else{
       // calling service
       await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Sending service to get bank by Id ${req.params.bankId}`);
-      ObjLog.log(`[${context}]: Sending service to get bank by Id ${req.params.bankId}`);
+      logger.info(`[${context}]: Sending service to get bank by Id ${req.params.bank_id}`);
+      ObjLog.log(`[${context}]: Sending service to get bank by Id ${req.params.bank_id}`);
 
       banksService.getBankById(req, res, next);
     }

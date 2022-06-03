@@ -24,9 +24,9 @@ banksService.getBanks = async (req, res, next) => {
 
 banksService.getBankById = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Getting bank by id ${req.params.bankId}`);
-    ObjLog.log(`[${context}]: Getting bank by id ${req.params.bankId}`);
-    let data = await banksRepository.getBankById(req.params.bankId);
+    logger.info(`[${context}]: Getting bank by id ${req.params.bank_id}`);
+    ObjLog.log(`[${context}]: Getting bank by id ${req.params.bank_id}`);
+    let data = await banksRepository.getBankById(req.params.bank_id);
     res.status(200).json(data);
   } catch (error) {
     next(error);
