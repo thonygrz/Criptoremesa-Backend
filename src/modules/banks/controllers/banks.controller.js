@@ -1,74 +1,209 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import banksService from "../services/banks.service";
+import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const banksController = {};
 const context = "banks Controller";
 
-//AUTENTICACION CON PASSPORT
-banksController.getBanks = (req, res, next) => {
+// declaring log object
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null
+};
+
+banksController.getBanks = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
-    ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
+    // filling log object info
+    let log  = logConst;
 
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-    banksService.getBanks(req, res, next);
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
+      ObjLog.log(`[${context}]: Sending service to get ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
+
+      banksService.getBanks(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 };
 
-banksController.getBankById = (req,res,next) =>{
+banksController.getBankById = async (req,res,next) =>{
   try {
-    const bankId = req.params.bank_id;
-    logger.info(`[${context}]: Sending service to get bank by Id ${bankId}`);
-    ObjLog.log(`[${context}]: Sending service to get bank by Id ${bankId}`);
+    // filling log object info
+    let log  = logConst;
 
-    banksService.getBankById(req, res, next,bankId);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Sending service to get bank by Id ${req.params.bankId}`);
+      ObjLog.log(`[${context}]: Sending service to get bank by Id ${req.params.bankId}`);
+
+      banksService.getBankById(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 }
 
-banksController.getBankAccountsById = (req,res,next) =>{
+banksController.getBankAccountsById = async (req,res,next) =>{
   try {
-    logger.info(`[${context}]: Sending service to get bank accounts`);
-    ObjLog.log(`[${context}]: Sending service to get bank accounts`);
+    // filling log object info
+    let log  = logConst;
 
-    banksService.getBankAccountsById(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Sending service to get bank accounts`);
+      ObjLog.log(`[${context}]: Sending service to get bank accounts`);
+
+      banksService.getBankAccountsById(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 }
 
-banksController.getBankAccountById = (req,res,next) =>{
+banksController.getBankAccountById = async (req,res,next) =>{
   try {
-    logger.info(`[${context}]: Sending service to get bank account by id`);
-    ObjLog.log(`[${context}]: Sending service to get bank account by id`);
+    // filling log object info
+    let log  = logConst;
 
-    banksService.getBankAccountById(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Sending service to get bank account by id`);
+      ObjLog.log(`[${context}]: Sending service to get bank account by id`);
+
+      banksService.getBankAccountById(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 }
 
-banksController.getBankAccountByPayMethod = (req,res,next) =>{
+banksController.getBankAccountByPayMethod = async (req,res,next) =>{
   try {
-    logger.info(`[${context}]: Sending service to get bank account by pay method`);
-    ObjLog.log(`[${context}]: Sending service to get bank account by pay method`);
+    // filling log object info
+    let log  = logConst;
 
-    banksService.getBankAccountByPayMethod(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Sending service to get bank account by pay method`);
+      ObjLog.log(`[${context}]: Sending service to get bank account by pay method`);
+
+      banksService.getBankAccountByPayMethod(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
 }
 
-banksController.getBanksByPayMethod = (req, res, next) => {
+banksController.getBanksByPayMethod = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get banks by pay methods`);
-    ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
+    // filling log object info
+    let log  = logConst;
 
-    banksService.getBanksByPayMethod(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      await authenticationPGRepository.insertLogMsg(log);
+      logger.info(`[${context}]: Sending service to get banks by pay methods`);
+      ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
+
+      banksService.getBanksByPayMethod(req, res, next);
+    }
   } catch (error) {
     next(error);
   }
