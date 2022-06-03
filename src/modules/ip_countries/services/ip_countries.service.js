@@ -1,41 +1,21 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import ip_countriesPGRepository from "../repositories/ip_countries.pg.repository";
-import auth from "../../../utils/auth";
-import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const ip_countriesService = {};
 const context = "ip_countries Service";
 
 ip_countriesService.getid_by_name = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-    logger.info(`[${context}]: Searching in DB`);
-    ObjLog.log(`[${context}]: Searching in DB`);
-
+    logger.info(`[${context}]: Sending service to get ip_countries`);
+    ObjLog.log(`[${context}]: Sending service to get ip_countries`);
     let data = await ip_countriesPGRepository.getid_by_name(req.params.id);
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/ip_countries/getIdByName/:id",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -43,32 +23,15 @@ ip_countriesService.getid_by_name = async (req, res, next) => {
 
 ip_countriesService.getip_countries = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-    logger.info(`[${context}]: Searching in DB`);
-    ObjLog.log(`[${context}]: Searching in DB`);
-
+    logger.info(`[${context}]: Sending service to get ip_countries`);
+    ObjLog.log(`[${context}]: Sending service to get ip_countries`);
     let data = await ip_countriesPGRepository.getip_countries();
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/ip_countries/getActive",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
