@@ -39,11 +39,20 @@ chatController.sendMessage = async (req, res, next) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to send message`);
       ObjLog.log(`[${context}]: Sending service to send message`);
 
-      chatService.sendMessage(req, res, next);
+      let finalResp = await chatService.sendMessage(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -71,11 +80,20 @@ chatController.getMessages = async (req, res, next) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get all message`);
       ObjLog.log(`[${context}]: Sending service to get all message`);
 
-      chatService.getMessages(req, res, next);
+      let finalResp = await chatService.getMessages(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);

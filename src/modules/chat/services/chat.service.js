@@ -96,7 +96,12 @@ chatService.sendMessage = async (req, res, next) => {
             file_path
           });
 
-          res.status(200).json({ message: "Message delivered" });
+          return {
+            data: { message: "Message delivered" },
+            status: 200,
+            success: true,
+            failed: false
+          }
         }
       } catch (error) {
         next(error);
@@ -119,7 +124,12 @@ chatService.getMessages = async (req, res, next) => {
       }
       })
     }
-    res.status(200).json(data);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
