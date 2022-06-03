@@ -39,11 +39,20 @@ beneficiariesController.getUserFrequentBeneficiaries = async (req, res, next) =>
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get All ${req.query.email_user} frequent Beneficiaries`);
       ObjLog.log(`[${context}]: Sending service to get All ${req.query.email_user} frequent Beneficiaries`);
 
-      beneficiariesService.getUserFrequentBeneficiaries(req, res, next);
+      let finalResp = await beneficiariesService.getUserFrequentBeneficiaries(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -71,10 +80,20 @@ beneficiariesController.createFrequentBeneficiary = async (req,res,next) =>{
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to insert ${req.query.email_user} frequent Beneficiary`);
       ObjLog.log(`[${context}]: Sending service to insert ${req.query.email_user} frequent Beneficiary`);
-      beneficiariesService.createFrequentBeneficiary(req, res, next);
+      
+      let finalResp = await beneficiariesService.createFrequentBeneficiary(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -102,11 +121,20 @@ beneficiariesController.deleteFrequentBeneficiary = async (req,res,next) =>{
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to delete frequent Beneficiary`);
       ObjLog.log(`[${context}]: Sending service to delete frequent Beneficiary`);
 
-      beneficiariesService.deleteFrequentBeneficiary(req, res, next);
+      let finalResp = await beneficiariesService.deleteFrequentBeneficiary(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -134,11 +162,20 @@ beneficiariesController.updateFrequentBeneficiary = async (req,res,next) =>{
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to update frequent Beneficiary`);
       ObjLog.log(`[${context}]: Sending service to update frequent Beneficiary`);
 
-      beneficiariesService.updateFrequentBeneficiary(req, res, next);
+      let finalResp = await beneficiariesService.updateFrequentBeneficiary(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);

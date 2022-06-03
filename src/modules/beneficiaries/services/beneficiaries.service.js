@@ -10,7 +10,12 @@ beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next) => {
     logger.info(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
     ObjLog.log(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
     let data = await beneficiariesRepository.getUserFrequentBeneficiaries(req.query.email_user);
-    res.status(200).json(data);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -22,9 +27,19 @@ beneficiariesService.createFrequentBeneficiary = async (req, res, next) => {
     ObjLog.log(`[${context}]: Creating frequent beneficiary for ${req.query.email_user}`);
     let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,req.query.email_user);
     if (data.id_beneficiary !== '')
-      res.status(200).json(data);
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false
+      }
     else 
-      res.status(500).json(data)
+      return {
+        data,
+        status: 500,
+        success: false,
+        failed: true
+      }
   } catch (error) {
     next(error);
   }
@@ -35,8 +50,20 @@ beneficiariesService.deleteFrequentBeneficiary = async (req, res, next) => {
     logger.info(`[${context}]: Deleting frequent beneficiary`);
     ObjLog.log(`[${context}]: Deleting frequent beneficiary`);
     let data = await beneficiariesRepository.deleteFrequentBeneficiary(req.params.beneficiaryId);
-    if (data.sp_ms_frequents_beneficiaries_delete === parseInt(req.params.beneficiaryId)) res.status(200).json(true);
-    else res.status(200).json(false);
+    if (data.sp_ms_frequents_beneficiaries_delete === parseInt(req.params.beneficiaryId)) 
+      return {
+        data: true,
+        status: 200,
+        success: true,
+        failed: false
+      }
+    else 
+      return {
+        data: false,
+        status: 200,
+        success: false,
+        failed: true
+      }
   } catch (error) {
     next(error);
   }
@@ -48,9 +75,19 @@ beneficiariesService.updateFrequentBeneficiary = async (req, res, next) => {
     ObjLog.log(`[${context}]: Updating frequent beneficiary`);
     let data = await beneficiariesRepository.updateFrequentBeneficiary(req.body,req.params.beneficiaryId);
     if (data[0].sp_ms_frequents_beneficiaries_update === '')
-      res.status(200).json(true);
+      return {
+        data: true,
+        status: 200,
+        success: true,
+        failed: false
+      }
     else 
-      res.status(500).json(false);
+      return {
+        data: false,
+        status: 200,
+        success: false,
+        failed: true
+      }
   } catch (error) {
     next(error);
   }

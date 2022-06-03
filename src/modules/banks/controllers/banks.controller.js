@@ -78,7 +78,6 @@ banksController.getBankById = async (req,res,next) =>{
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get bank by Id ${req.params.bank_id}`);
       ObjLog.log(`[${context}]: Sending service to get bank by Id ${req.params.bank_id}`);
 
@@ -118,7 +117,6 @@ banksController.getBankAccountsById = async (req,res,next) =>{
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get bank accounts`);
       ObjLog.log(`[${context}]: Sending service to get bank accounts`);
 
@@ -158,7 +156,6 @@ banksController.getBankAccountById = async (req,res,next) =>{
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get bank account by id`);
       ObjLog.log(`[${context}]: Sending service to get bank account by id`);
 
@@ -198,7 +195,6 @@ banksController.getBankAccountByPayMethod = async (req,res,next) =>{
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get bank account by pay method`);
       ObjLog.log(`[${context}]: Sending service to get bank account by pay method`);
 
@@ -238,7 +234,6 @@ banksController.getBanksByPayMethod = async (req, res, next) => {
       res.status(401).json({ message: "Unauthorized" });
     }else{
       // calling service
-      await authenticationPGRepository.insertLogMsg(log);
       logger.info(`[${context}]: Sending service to get banks by pay methods`);
       ObjLog.log(`[${context}]: Sending service to get banks by pay methods`);
 

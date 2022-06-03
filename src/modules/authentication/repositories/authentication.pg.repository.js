@@ -312,8 +312,6 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
 authenticationPGRepository.insertLogMsg = async (log) => {
   try {
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log('LOOOOOOOG:',log)
-    let sess = null;
     let resp = null;
     if (log.session != null) {
       resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(

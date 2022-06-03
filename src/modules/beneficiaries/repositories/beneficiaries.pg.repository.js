@@ -31,7 +31,6 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (
       `[${context}]: Inserting ${emailUser} new frequent beneficiary to db`
     );
     await poolSM.query("SET SCHEMA 'prc_mng'");
-    console.log("LLEGANDO: ", body);
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_insert(
         '${body.nickname}',
