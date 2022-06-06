@@ -9,7 +9,6 @@ import {join, resolve} from 'path'
 import fs from 'fs'
 import formidable from "formidable";
 import axios from 'axios'
-import { rejects } from "assert";
 
 const remittancesService = {};
 const context = "remittances Service";
