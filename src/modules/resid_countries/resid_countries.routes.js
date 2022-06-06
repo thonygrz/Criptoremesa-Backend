@@ -11,18 +11,6 @@ resid_countriesRouter.get(
 );
 
 resid_countriesRouter.get(
-  "/getActiveClient",
-  // guard.verifyAdmin("/login"),
-  resid_countriesController.getresid_countriesClient
-);
-
-resid_countriesRouter.get(
-  "/getIdByName/:id",
-  // guard.verifyAdmin("/login"),
-  resid_countriesController.getid_by_name
-);
-
-resid_countriesRouter.get(
   "/getISOCodeById/:id",
   // guard.verifyAdmin("/login"),
   resid_countriesController.getISOCodeById
