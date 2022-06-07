@@ -8,95 +8,27 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 const veriflevelsService = {};
 const context = "veriflevels Service";
 
-veriflevelsService.getveriflevels = async (req, res, next) => {
-  try {
-    let countryResp = null;
-    let sess = null;
 
-    logger.info(`[${context}]: Searching in DB`);
-    ObjLog.log(`[${context}]: Searching in DB`);
-
-    let data = await veriflevelsPGRepository.getveriflevels(req.body); 
-
-    const resp = authenticationPGRepository.getIpInfo(req.clientIp);
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.clientIp,
-      country: countryResp,
-      route: "/veriflevels/getActive",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
-  } catch (error) {
-    next(error);
-  }
-};
 
 veriflevelsService.requestWholesalePartner = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
+    logger.info(`[${context}]: Requesting Wholesale Partner profile`);
+    ObjLog.log(`[${context}]: Requesting Wholesale Partner profile`);
 
-    const dbResp = await veriflevelsPGRepository.requestWholesalePartner({
-      reasons: req.body.reasons,
-      strenghts: req.body.strenghts,
-      remittance_service: req.body.remittance_service,
-      old_resid_client_countries: req.body.old_resid_client_countries.join(),
-      profession: req.body.profession,
-      resid_country: req.body.resid_country,
-      migration_status: req.body.migration_status,
-      new_resid_client_countries: req.body.new_resid_client_countries.join(),
-      clients_number: req.body.clients_number.toString(),
-      monthly_amount: req.body.monthly_amount,
-      monetary_growth: req.body.monetary_growth,
-      clients_growth: req.body.clients_growth.toString(),
-      bussiness_name: req.body.bussiness_name,
-      web_page_exp: req.body.web_page_exp,
-      logo: req.body.logo,
-      email_user: req.body.email_user,
-      reasons_status: req.body.reasons_status,
-      strenghts_status: req.body.strenghts_status,
-      remittance_service_status: req.body.remittance_service_status,
-      old_resid_client_countries_status: req.body.old_resid_client_countries_status,
-      profession_status: req.body.profession_status,
-      resid_country_status: req.body.resid_country_status,
-      migration_status_status: req.body.migration_status_status,
-      new_resid_client_countries_status: req.body.new_resid_client_countries_status,
-      clients_number_status: req.body.clients_number_status,
-      monthly_amount_status: req.body.monthly_amount_status,
-      monetary_growth_status: req.body.monetary_growth_status,
-      clients_growth_status: req.body.clients_growth_status,
-      bussiness_name_status: req.body.bussiness_name_status,
-      web_page_exp_status: req.body.web_page_exp_status,
-      logo_status: req.body.logo_status
-    });
+    let request = req.body;
+    request.old_resid_client_countries = req.body.old_resid_client_countries.join();
+    request.new_resid_client_countries = req.body.new_resid_client_countries.join();
+    request.clients_number = req.body.clients_number.toString();
+    request.clients_growth = req.body.clients_growth.toString()
+    
+    const data = await veriflevelsPGRepository.requestWholesalePartner(request);
 
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/veriflevels/requestWholesalePartner",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(dbResp);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -104,33 +36,25 @@ veriflevelsService.requestWholesalePartner = async (req, res, next) => {
 
 veriflevelsService.notifications = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
+    logger.info(`[${context}]: Getting user notifications`);
+    ObjLog.log(`[${context}]: Getting user notifications`);
 
-    const dbResp = await veriflevelsPGRepository.notifications(req.params.email_user);
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/veriflevels/notifications",
-      session: sess,
-    };
-    console.log(log)
-    authenticationPGRepository.insertLogMsg(log);
-    if (dbResp === null)
-      res.status(200).json([]);
+    const data = await veriflevelsPGRepository.notifications(req.params.email_user);
+  
+    if (data === null)
+      return {
+        data: [],
+        status: 200,
+        success: true,
+        failed: false
+      }
     else
-    res.status(200).json(dbResp);
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false
+      }
   } catch (error) {
     next(error);
   }
