@@ -61,8 +61,20 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
-  logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
+  logger.debug(`[Request]: ${req.method} ${req.originalUrl}`);
   ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
+
+  if (req.session.views) {
+ 
+    // Increment the number of views.
+    req.session.views++
+
+    // Session will expires after 1 min
+    // of in activity
+  } else {
+      req.session.views = 1
+  }
+
   next();
 });
 
