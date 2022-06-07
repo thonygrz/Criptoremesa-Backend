@@ -71,15 +71,7 @@ ratesController.rateTypes = async (req, res, next) => {
     if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-    // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
-      log.success = false;
-      log.failed = true;
-      await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
-    }else{
-      // calling service
+    // calling service
     logger.info(`[${context}]: Sending service to get rate Types`);
     ObjLog.log(`[${context}]: Sending service to get rate Types`);
 
@@ -94,7 +86,6 @@ ratesController.rateTypes = async (req, res, next) => {
         //sendind response to FE
         res.status(finalResp.status).json(finalResp.data);
       }
-    }
   } catch (error) {
     next(error);
   }
