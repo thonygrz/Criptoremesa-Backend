@@ -532,6 +532,7 @@ usersPGRepository.verifReferrallByCodPub = async (cust_cr_cod_pub) => {
     logger.info(`[${context}]: Verifying referrall cod pub on db`);
     ObjLog.log(`[${context}]: Verifying referrall cod pub on db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
+    console.log('cust_cr_cod_pub: ',cust_cr_cod_pub)
     const resp = await poolSM.query(
       `SELECT * FROM sp_cod_pub_exists('${cust_cr_cod_pub}')`
     );

@@ -996,6 +996,8 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
 
 usersService.sendSMS = async (req, res, next) => {
   try {
+    logger.info(`[${context}]: Sending SMS`);
+    ObjLog.log(`[${context}]: Sending SMS`);
     res.status(200).json(sendSMS(req.body.phone_number, req.body.msg));
   } catch (error) {
     next(error);
@@ -1004,32 +1006,18 @@ usersService.sendSMS = async (req, res, next) => {
 
 usersService.verifyIdentUser = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Verifying ident user`);
+    ObjLog.log(`[${context}]: Verifying ident user`);
     let data = await usersPGRepository.verifyIdentUser(
       req.body.email_user,
       req.body.phone_number
     );
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/verifyIdentUser",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -1037,29 +1025,15 @@ usersService.verifyIdentUser = async (req, res, next) => {
 
 usersService.deactivateUser = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Deactivating user`);
+    ObjLog.log(`[${context}]: Deactivating user`);
     let data = await usersPGRepository.deactivateUser(req.body.email_user);
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/deactivateUser",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -1067,29 +1041,15 @@ usersService.deactivateUser = async (req, res, next) => {
 
 usersService.getReferrals = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting referrals`);
+    ObjLog.log(`[${context}]: Getting referrals`);
     let data = await usersPGRepository.getReferrals(req.query.cust_cr_cod_pub);
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/referrals",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -1097,31 +1057,17 @@ usersService.getReferrals = async (req, res, next) => {
 
 usersService.getReferralsOperations = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting referrals operations`);
+    ObjLog.log(`[${context}]: Getting referrals operations`);
     let data = await usersPGRepository.getReferralsOperations(
       req.params.email_user
     );
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/referralsOperations",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -1129,31 +1075,17 @@ usersService.getReferralsOperations = async (req, res, next) => {
 
 usersService.getReferralsByCountry = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting referrals by country`);
+    ObjLog.log(`[${context}]: Getting referrals by country`);
     let data = await usersPGRepository.getReferralsByCountry(
       req.params.email_user
     );
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/referralsByCountry",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -1161,31 +1093,17 @@ usersService.getReferralsByCountry = async (req, res, next) => {
 
 usersService.getReferralsByStatus = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting referrals by status`);
+    ObjLog.log(`[${context}]: Getting referrals by status`);
     let data = await usersPGRepository.getReferralsByStatus(
       req.params.email_user
     );
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/referralsByStatus",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -1193,72 +1111,60 @@ usersService.getReferralsByStatus = async (req, res, next) => {
 
 usersService.ambassadorRequest = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
+    logger.info(`[${context}]: Making ambassador request`);
+    ObjLog.log(`[${context}]: Making ambassador request`);
 
     const mailResp = await mailSender.sendAmbassadorMail({
       email_user: req.params.email_user,
     });
-
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/ambassadorRequest",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
     if (mailResp.mailResp && mailResp.mailResp === "Connection timed out")
-      res.status(500).json({
-        mailResp,
-      });
-    else
-      res.status(200).json({
-        mailResp,
-      });
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersService.verifReferrallByCodPub = async (req, res, next) => {
-  try {
-    let countryResp = null;
-    let sess = null;
-
-    let data = await usersPGRepository.verifReferrallByCodPub(
-      req.params.cust_cr_cod_pub
-    );
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
-      success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/users/",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    console.log("devolvió esto el repo: ", data);
-    if (data.message === "Exists public code.") res.status(200).json();
-    else res.status(400).json();
+      return {
+        data: {
+          mailResp,
+        },
+        status: 500,
+        success: false,
+        failed: true
+      }
+      else
+      return {
+        data: {
+          mailResp,
+        },
+        status: 200,
+        success: true,
+        failed: false
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
+  
+  usersService.verifReferrallByCodPub = async (req, res, next) => {
+    try {
+      logger.info(`[${context}]: Making ambassador request`);
+      ObjLog.log(`[${context}]: Making ambassador request`);
+      let data = await usersPGRepository.verifReferrallByCodPub(
+        req.params.cust_cr_cod_pub
+        );
+      if (data && data.message === "Exists public code.") 
+        return {
+          data: {
+            mesage: data.message
+          },
+          status: 200,
+          success: true,
+          failed: false
+        }
+      else 
+        return {
+          data: {
+            mesage: 'An error has ocurred.'
+          },
+          status: 500,
+          success: false,
+          failed: true
+        }
   } catch (error) {
     next(error);
   }
