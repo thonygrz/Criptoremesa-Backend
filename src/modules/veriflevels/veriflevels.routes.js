@@ -70,10 +70,4 @@ veriflevelsRouter.get(
   veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail
 );
 
-veriflevelsRouter.get(
-  "/validateRemittance",
-  // guard.verifyAdmin("/login"),
-  veriflevelsController.validateRemittance
-);
-
 export default veriflevelsRouter;
