@@ -210,9 +210,7 @@ usersService.files = async (req, res, next) => {
     });
 
     form.on("error", function (err) {
-      // console.log("An error has occured with form upload: ", err.message);
       fileError = true;
-      console.log("err::", err);
       next({
         message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
       });
@@ -281,15 +279,6 @@ usersService.files = async (req, res, next) => {
     next(error);
   }
 };
-
-let finalResp;
-function setfinalResp(resp) {
-  finalResp = resp;
-}
-
-function getfinalResp() {
-  return finalResp;
-}
 
 function createFile(f, email_user,level) {
   if (
@@ -780,6 +769,24 @@ usersService.forgotPassword = async (req, res, next) => {
   }
 };
 
+let finalResp
+function setfinalResp (resp) {
+  finalResp = resp
+}
+
+function getfinalResp () {
+  return finalResp
+}
+
+let matchPass
+function setMatchPass (match) {
+  matchPass = match
+}
+
+function getMatchPass () {
+  return matchPass
+}
+
 usersService.newPassword = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Checking new password`);
@@ -788,7 +795,7 @@ usersService.newPassword = async (req, res, next) => {
     let passwordList = await usersPGRepository.getLastPasswords(
       req.body.email_user
     );
-    let matchSome = false;
+    setMatchPass(false)
     let matchLast = true;
     let match = false;
 
@@ -808,38 +815,45 @@ usersService.newPassword = async (req, res, next) => {
         }
       }
     }
-
     if (matchLast) {
-      passwordList.forEach(async (p) => {
-        match = false;
-        match = await bcrypt.compare(req.body.new_password, p.password);
-
-        if (match) {
-          matchSome = true;
-          return {
-            data: { msg: "The password cannot be equal to last 3" },
-            status: 400,
-            success: false,
-            failed: true
+      await Promise.all(
+        passwordList.map(async (p) => {
+          match = false;
+          match = await bcrypt.compare(req.body.new_password, p.password);
+          if (match) {
+            setMatchPass(true)
+            setfinalResp({
+              data: { msg: "The password cannot be equal to last 3" },
+              status: 400,
+              success: false,
+              failed: true
+            })
           }
-        }
-      });
-
-      if (!matchSome) {
+        })
+      )
+      if (!getMatchPass()) {
         let newPass = await bcrypt.hash(req.body.new_password, 10);
 
         let data = await usersPGRepository.newPassword({
           email_user: req.body.email_user,
           new_password: newPass,
         });
-        return {
+        setfinalResp({
           data,
           status: 200,
           success: false,
           failed: true
-        }
+        })
       }
-    }
+    } else 
+      setfinalResp({
+                    data: {message: 'There was an error.'},
+                    status: 500,
+                    success: true,
+                    failed: false
+                  })
+
+    return getfinalResp()
   } catch (error) {
     next(error);
   }
