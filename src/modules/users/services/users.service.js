@@ -210,7 +210,9 @@ usersService.files = async (req, res, next) => {
     });
 
     form.on("error", function (err) {
+      // console.log("An error has occured with form upload: ", err.message);
       fileError = true;
+      console.log("err::", err);
       next({
         message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
       });
@@ -820,6 +822,7 @@ usersService.newPassword = async (req, res, next) => {
         passwordList.map(async (p) => {
           match = false;
           match = await bcrypt.compare(req.body.new_password, p.password);
+          
           if (match) {
             setMatchPass(true)
             setfinalResp({
