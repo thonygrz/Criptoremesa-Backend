@@ -2,9 +2,6 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import authenticationPGRepository from "../repositories/authentication.pg.repository";
 import auth from "../../../utils/auth";
-import axios from "axios";
-import { response } from "express";
-import { env } from "../../../utils/enviroment";
 
 const authenticationService = {};
 const context = "Authentication Service";
@@ -49,7 +46,7 @@ authenticationService.login = async (req, res, next) => {
   }
 };
 
-authenticationService.logout = (req, res, next) => {
+authenticationService.logout = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending module to logout`);
     ObjLog.log(`[${context}]: Sending module to logout`);

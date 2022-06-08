@@ -61,8 +61,20 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
-  logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
+  logger.debug(`[Request]: ${req.method} ${req.originalUrl}`);
   ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
+
+  if (req.session.views) {
+ 
+    // Increment the number of views.
+    req.session.views++
+
+    // Session will expires after 1 min
+    // of in activity
+  } else {
+      req.session.views = 1
+  }
+
   next();
 });
 
@@ -94,26 +106,28 @@ app.use(async function (err, req, res, next) {
   logger.error(err.message);
   ObjLog.log(err.message);
 
-  const resp = await authenticationPGRepository.getIpInfo(
-    req.connection.remoteAddress
-  );
-  let countryResp = null;
-  let sess = null;
-
-  if (resp) countryResp = resp.country_name;
-  if (req.sessionID)
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-  const log = {
-    is_auth: req.isAuthenticated(),
-    success: false,
-    failed: true,
-    ip: req.connection.remoteAddress,
-    country: countryResp,
+  // declaring log object
+  const logConst = {
+    is_auth: null,
+    success: true,
+    failed: false,
+    ip: null,
+    country: null,
     route: null,
-    session: sess,
+    session: null
   };
+
+  // filling log object info
+  let log  = logConst;
+
+  log.success = false;
+  log.failed = true;
+  log.is_auth = req.isAuthenticated()
+  log.ip = req.connection.remoteAddress;
+  log.route = req.method + ' ' + req.originalUrl;
+  const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+  if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+  if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
   await authenticationPGRepository.insertLogMsg(log);
 

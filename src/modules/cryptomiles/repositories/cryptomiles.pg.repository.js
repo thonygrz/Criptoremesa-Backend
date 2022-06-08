@@ -7,8 +7,8 @@ const context = "cryptomiles PG Repository";
 
 cryptomilesPGRepository.insertCryptomile = async (body) => {
   try {
-    logger.info(`[${context}]: Getting cryptomiles client from db`);
-    ObjLog.log(`[${context}]: Getting cryptomiles client from db`);
+    logger.info(`[${context}]: Inserting criptomile on db`);
+    ObjLog.log(`[${context}]: Inserting criptomile on db`);
     await poolSM.query("SET SCHEMA 'basics'");
     const resp = await poolCR.query(
       `SELECT * FROM basics.sp_ms_cryptomiles_insert(
@@ -84,11 +84,13 @@ cryptomilesPGRepository.getAllCryptomiles = async (body) => {
     logger.info(`[${context}]: Getting all cryptomiles from db`);
     ObjLog.log(`[${context}]: Getting all cryptomiles from db`);
     await poolSM.query("SET SCHEMA 'basics'");
+    console.log('BODY EN REPOOOOO',body)
     const resp = await poolCR.query(
       `SELECT * FROM basics.sp_cryptomiles_get_all(
                                                   ${body.active},
                                                   ${body.email_user == 'null' ? null : `'${body.email_user}'`},
                                                   ${body.id_currency == 'null' ? null : body.id_currency},
+                                                  ${body.id_country == 'null' ? null : body.id_country},
                                                   ${body.start_date == 'null' ? null : body.start_date},
                                                   ${body.end_date == 'null' ? null : body.end_date}
                                                   )`
