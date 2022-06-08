@@ -2,6 +2,8 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import authenticationPGRepository from "../repositories/authentication.pg.repository";
 import auth from "../../../utils/auth";
+import { env } from "../../../utils/enviroment";
+import axios from 'axios'
 
 const authenticationService = {};
 const context = "Authentication Service";

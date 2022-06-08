@@ -8,6 +8,7 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import { join, resolve } from "path";
+import axios from 'axios'
 
 const client = require("twilio")(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
@@ -58,48 +59,50 @@ usersService.createNewClient = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Creating new Client`);
     ObjLog.log(`[${context}]: Creating new Client`);
-    // if (!req.body.captcha) {
-    //   res.status(400).json({
-    //     captchaSuccess: false,
-    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
-    //   });
-    // } else {
-    //   // Secret key
-    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
+    if (!req.body.captcha) {
+      res.status(400).json({
+        captchaSuccess: false,
+        msg: "Ha ocurrido un error. Por favor completa el captcha",
+      });
+    } else {
+      // Secret key
+      const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-    //   // Verify URL
-    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+      // Verify URL
+      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
 
-    //   // Make a request to verifyURL
-    //   const body = await axios.get(verifyURL);
+      // Make a request to verifyURL
+      const body = await axios.get(verifyURL);
 
-    //   // // If not successful
-    //   if (body.data.success === false) {
-    //     res.status(500).json({
-    //       captchaSuccess: false,
-    //       msg: "Falló la verificación del Captcha",
-    //     });
-    //   } else {
-    //     // If successful
+      // // If not successful
+      if (body.data.success === false) {
+        res.status(500).json({
+          captchaSuccess: false,
+          msg: "Falló la verificación del Captcha",
+        });
+      } else {
+        // If successful
 
-    let password = await bcrypt.hash(req.body.password, 10);
-    let userObj = req.body;
+        let password = await bcrypt.hash(req.body.password, 10);
+        let userObj = req.body;
 
-    userObj.password = password;
-    userObj.last_ip_registred = req.connection.remoteAddress;
+        userObj.password = password;
+        userObj.last_ip_registred = req.connection.remoteAddress;
 
-    const response = await usersPGRepository.createNewClient(userObj);
+        const response = await usersPGRepository.createNewClient(userObj);
 
-    return {
-      data: {
-        msg: "User registred succesfully",
-        user: response,
-        captchaSuccess: true,
-      },
-      status: 200,
-      success: true,
-      failed: false,
-    };
+        return {
+          data: {
+            msg: "User registred succesfully",
+            user: response,
+            captchaSuccess: true,
+          },
+          status: 200,
+          success: true,
+          failed: false,
+        };
+      }
+    }
   } catch (error) {
     if (error.code === "23505") {
       next({
