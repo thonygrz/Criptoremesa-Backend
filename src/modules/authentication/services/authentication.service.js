@@ -8,39 +8,39 @@ const context = "Authentication Service";
 
 authenticationService.login = async (req, res, next) => {
   try {
-      // logger.info(`[${context}]: Verifying captcha`);
-      // ObjLog.log(`[${context}]: Verifying captcha`);
+      logger.info(`[${context}]: Verifying captcha`);
+      ObjLog.log(`[${context}]: Verifying captcha`);
 
-      // if (!req.body.captcha) {
-      //   res.status(500).json({
-      //     captchaSuccess: false,
-      //     msg: "Ha ocurrido un error. Por favor completa el captcha",
-      //   });
-      // } else {
-      //     // Secret key
-      //   const secretKey = env.reCAPTCHA_SECRET_KEY;
+      if (!req.body.captcha) {
+        res.status(500).json({
+          captchaSuccess: false,
+          msg: "Ha ocurrido un error. Por favor completa el captcha",
+        });
+      } else {
+          // Secret key
+        const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      //   // Verify URL
-      //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+        // Verify URL
+        const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
 
-      //   // Make a request to verifyURL
-      //   const body = await axios.get(verifyURL);
+        // Make a request to verifyURL
+        const body = await axios.get(verifyURL);
 
-      //   // If not successful
-      //   if (body.data.success === false) {
-      //     res
-      //       .status(500)
-      //       .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
-      //   }
-      //   else{
-      //       // If successful
+        // If not successful
+        if (body.data.success === false) {
+          res
+            .status(500)
+            .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
+        }
+        else{
+            // If successful
 
             logger.info(`[${context}]: Sending module to verify`);
             ObjLog.log(`[${context}]: Sending module to verify`);
 
             auth.verify(req, res, next);
-    //   }
-    // }
+      }
+    }
   } catch (error) {
     next(error);
   }
