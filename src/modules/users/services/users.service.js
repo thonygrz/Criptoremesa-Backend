@@ -298,7 +298,7 @@ function createFile(f, email_user,level) {
       let number = between(10000, 99999);
       pathName = join(
         env.FILES_DIR,
-        `/level-one-req-${email_user}_${number}_${f.name}`
+        `/level-${level}-req-${email_user}_${number}_${f.name}`
       );
       if (!fs.existsSync(pathName)) {
         exists = false;
