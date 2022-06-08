@@ -135,8 +135,7 @@ passport.use(
               expressObj.userActiveSession = await authenticationPGRepository.userHasAnActiveSession(email)
 
               if (expressObj.userActiveSession){
-                // req.session.destroy();
-
+                
                 req.session = null;
 
                 user.expired = true
@@ -238,6 +237,7 @@ export default {
   },
   logout: async (req, res, next) => {
     try {
+      req.session.destroy();
       res.status(200).json({ message: "Logged out succesfully" });
       next()
     } catch (error) {
