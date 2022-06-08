@@ -24,9 +24,13 @@ export async function SocketServer(server) {
   socketServer = io;
 
   io.on("connection", (socket) => {
-    logger.info(`[${context}] New connection stablished`);
+    logger.debug(`[${context}] New connection stablished`);
     ObjLog.log(`[${context}] New connection stablished`);
     // console.log('in connection: ', socket.id)
+
+    socket.on("disconnect", (reason) => {
+      logger.warn(`DISCONNECT REASON: ${reason}`);
+    });
 
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
@@ -75,7 +79,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("verif_code", async (val) => {
-      logger.info(`[${context}] Sending verif code notification`);
+      logger.debug(`[${context}] Sending verif code notification`);
       ObjLog.log(`[${context}] Sending verif code notification`);
 
       // console.log('socket from FE',socket.id)
@@ -97,7 +101,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("level_upgrade", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
       console.log('socket from Sixm',socket.id)
@@ -107,7 +111,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("from_pro_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from frontend`);
+      logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
       console.log('from_pro_chat from FE: ',socket.id)
@@ -117,7 +121,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("to_pro_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
       console.log('socket from Sixm',socket.id)
@@ -136,7 +140,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("chat_asign", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
       console.log('socket from Sixm',socket.id)
@@ -146,7 +150,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("from_basic_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from frontend`);
+      logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
       console.log('from_basic_chat from FE: ',socket.id)
@@ -156,7 +160,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("to_basic_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
       console.log('New id connection from FE: ',socket.id)
@@ -166,7 +170,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("get_rate", async (val) => {
-      logger.info(`[${context}] Receiving data from frontend`);
+      logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
       console.log('get_rate from FE: ',socket.id)
@@ -178,7 +182,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("get_bank_fee", async (val) => {
-      logger.info(`[${context}] Receiving data from frontend`);
+      logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
       console.log('get_rate from FE: ',socket.id)
@@ -191,7 +195,7 @@ export async function SocketServer(server) {
     });
 
     socket.on("rate_change", async (val) => {
-      logger.info(`[${context}] Receiving data from backend`);
+      logger.debug(`[${context}] Receiving data from backend`);
       ObjLog.log(`[${context}] Receiving data from backend`);
 
       console.log('rate_change from BE: ',socket.id)
@@ -204,7 +208,7 @@ export async function SocketServer(server) {
 
 export function notifyChanges(event, data) {
   try {
-    logger.info(`[${context}] Sending update notification to FE`);
+    logger.debug(`[${context}] Sending update notification to FE`);
     ObjLog.log(`[${context}] Sending update notification to FE`);
 
     let redisKey

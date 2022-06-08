@@ -1,45 +1,48 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import all_countriesService from "../services/all_countries.service";
-import { env,ENVIROMENTS } from "../../../utils/enviroment"
+import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const all_countriesController = {};
 const context = "all_countries Controller";
 
-//AUTENTICACION CON PASSPORT
+// declaring log object
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null
+};
+
 all_countriesController.getall_countries = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/getActive",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      logger.info(`[${context}]: Sending service to get all_countries`);
-      ObjLog.log(`[${context}]: Sending service to get all_countries`);
+    // filling log object info
+    let log  = logConst;
 
-      all_countriesService.getall_countries(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to get all_countries`);
+    ObjLog.log(`[${context}]: Sending service to get all_countries`);
+    
+    let finalResp = await all_countriesService.getall_countries(req, res, next);
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);

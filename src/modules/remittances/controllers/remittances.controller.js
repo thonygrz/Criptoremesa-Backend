@@ -1,105 +1,387 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import remittancesService from "../services/remittances.service";
+import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
+
 const remittancesController = {};
 const context = "remittances Controller";
 
-remittancesController.notificationTypes = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get notification types`);
-    ObjLog.log(`[${context}]: Sending service to get notification types`);
+// declaring log object
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null
+};
 
-    remittancesService.notificationTypes(req, res, next);
+remittancesController.notificationTypes = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      logger.info(`[${context}]: Sending service to get notification types`);
+      ObjLog.log(`[${context}]: Sending service to get notification types`);
+
+      let finalResp = await remittancesService.notificationTypes(req, res, next);
+    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.getRemittances = (req, res, next) => {
-  const userEmail = req.params.email_user;
+remittancesController.getRemittances = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get All ${userEmail} remittances`);
-    ObjLog.log(`[${context}]: Sending service to get All ${userEmail} remittances`);
+    // filling log object info
+    let log  = logConst;
 
-    remittancesService.getRemittances(req, res, next,userEmail);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      logger.info(`[${context}]: Sending service to get All ${req.params.email_user} remittances`);
+      ObjLog.log(`[${context}]: Sending service to get All ${req.params.email_user} remittances`);
+
+      let finalResp = await remittancesService.getRemittances(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.limitationsByCodPub = (req, res, next) => {
+remittancesController.limitationsByCodPub = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get limitations`);
-    ObjLog.log(`[${context}]: Sending service to get limitations`);
+    // filling log object info
+    let log  = logConst;
 
-    remittancesService.limitationsByCodPub(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      logger.info(`[${context}]: Sending service to get limitations`);
+      ObjLog.log(`[${context}]: Sending service to get limitations`);
+
+      let finalResp = await remittancesService.limitationsByCodPub(req, res, next);
+        
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.startRemittance = (req, res, next) => {
+remittancesController.startRemittance = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
     logger.info(`[${context}]: Sending service to start remittance`);
     ObjLog.log(`[${context}]: Sending service to start remittance`);
 
-    remittancesService.startRemittance(req, res, next);
+    let finalResp = await remittancesService.startRemittance(req, res, next);
+
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.startPreRemittance = (req, res, next) => {
+remittancesController.startPreRemittance = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
     logger.info(`[${context}]: Sending service to start pre remittance`);
     ObjLog.log(`[${context}]: Sending service to start pre remittance`);
 
-    remittancesService.startPreRemittance(req, res, next);
+    let finalResp = await remittancesService.startPreRemittance(req, res, next);
+          
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.getPreRemittanceByUser = (req, res, next) => {
+remittancesController.getPreRemittanceByUser = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
     logger.info(`[${context}]: Sending service to get pre remittance`);
     ObjLog.log(`[${context}]: Sending service to get pre remittance`);
 
-    remittancesService.getPreRemittanceByUser(req, res, next);
+    let finalResp = await remittancesService.getPreRemittanceByUser(req, res, next);
+            
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.cancelPreRemittance = (req, res, next) => {
+remittancesController.cancelPreRemittance = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
     logger.info(`[${context}]: Sending service to cancel pre remittance`);
     ObjLog.log(`[${context}]: Sending service to cancel pre remittance`);
 
-    remittancesService.cancelPreRemittance(req, res, next);
+    let finalResp = await remittancesService.cancelPreRemittance(req, res, next);
+              
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.lastRemittances = (req, res, next) => {
-  const userEmail = req.params.email_user;
+remittancesController.lastRemittances = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get last ${userEmail} remittances`);
-    ObjLog.log(`[${context}]: Sending service to get last ${userEmail} remittances`);
+    // filling log object info
+    let log  = logConst;
 
-    remittancesService.lastRemittances(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+    logger.info(`[${context}]: Sending service to get last ${req.params.email_user} remittances`);
+    ObjLog.log(`[${context}]: Sending service to get last ${req.params.email_user} remittances`);
+
+    let finalResp = await remittancesService.lastRemittances(req, res, next);
+                
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
 
-remittancesController.getMinAmounts = (req, res, next) => {
+remittancesController.getMinAmounts = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
     logger.info(`[${context}]: Sending service to get min amounts`);
     ObjLog.log(`[${context}]: Sending service to get min amounts`);
 
-    remittancesService.getMinAmounts(req, res, next);
+    let finalResp = await remittancesService.getMinAmounts(req, res, next);
+                  
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }

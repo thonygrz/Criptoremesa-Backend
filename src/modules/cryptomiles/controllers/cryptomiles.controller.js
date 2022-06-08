@@ -3,44 +3,47 @@ import ObjLog from "../../../utils/ObjLog";
 import cryptomilesService from "../services/cryptomiles.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
+
 const cryptomilesController = {};
 const context = "cryptomiles Controller";
 
-let sess = null;
+// declaring log object
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null
+};
 
 cryptomilesController.insertCryptomile = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
+    // filling log object info
+    let log  = logConst;
 
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-      if (resp) countryResp = resp.country_name;
+    // calling service
+    logger.info(`[${context}]: Sending service to insert cryptomile`);
+    ObjLog.log(`[${context}]: Sending service to insert cryptomile`);
 
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
+    let finalResp = await cryptomilesService.insertCryptomile(req, res, next);
+    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
 
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/cryptomiles",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      logger.info(`[${context}]: Sending service to insert cryptomile`);
-      ObjLog.log(`[${context}]: Sending service to insert cryptomile`);
-
-      cryptomilesService.insertCryptomile(req, res, next);
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -49,37 +52,39 @@ cryptomilesController.insertCryptomile = async (req, res, next) => {
 
 cryptomilesController.getCryptomiles = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-
-      if (resp) countryResp = resp.country_name;
-
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/cryptomiles",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+        // calling service
       logger.info(`[${context}]: Sending service to get cryptomiles`);
       ObjLog.log(`[${context}]: Sending service to get cryptomiles`);
 
-      cryptomilesService.getCryptomiles(req, res, next);
+      let finalResp = await cryptomilesService.getCryptomiles(req, res, next);
+      
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -88,37 +93,30 @@ cryptomilesController.getCryptomiles = async (req, res, next) => {
 
 cryptomilesController.deactivateCryptomiles = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
+    // filling log object info
+    let log  = logConst;
 
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-      if (resp) countryResp = resp.country_name;
+    // calling service
+    logger.info(`[${context}]: Sending service to deactivate cryptomiles`);
+    ObjLog.log(`[${context}]: Sending service to deactivate cryptomiles`);
 
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
+    let finalResp = await cryptomilesService.deactivateCryptomiles(req, res, next);
+    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
 
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/cryptomiles",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      logger.info(`[${context}]: Sending service to deactivate cryptomiles`);
-      ObjLog.log(`[${context}]: Sending service to deactivate cryptomiles`);
-
-      cryptomilesService.deactivateCryptomiles(req, res, next);
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -127,37 +125,30 @@ cryptomilesController.deactivateCryptomiles = async (req, res, next) => {
 
 cryptomilesController.activateCryptomiles = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
+    // filling log object info
+    let log  = logConst;
 
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-      if (resp) countryResp = resp.country_name;
+    // calling service
+    logger.info(`[${context}]: Sending service to activate cryptomiles`);
+    ObjLog.log(`[${context}]: Sending service to activate cryptomiles`);
 
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
+    let finalResp = await cryptomilesService.activateCryptomiles(req, res, next);
+    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
 
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/cryptomiles",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      logger.info(`[${context}]: Sending service to activate cryptomiles`);
-      ObjLog.log(`[${context}]: Sending service to activate cryptomiles`);
-
-      cryptomilesService.activateCryptomiles(req, res, next);
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);
@@ -166,37 +157,30 @@ cryptomilesController.activateCryptomiles = async (req, res, next) => {
 
 cryptomilesController.getAllCryptomiles = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
+    // filling log object info
+    let log  = logConst;
 
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-      if (resp) countryResp = resp.country_name;
+    // calling service
+    logger.info(`[${context}]: Sending service to get cryptomiles`);
+    ObjLog.log(`[${context}]: Sending service to get cryptomiles`);
 
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
+    let finalResp = await cryptomilesService.getAllCryptomiles(req, res, next);
+  
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
 
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/cryptomiles/all",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      logger.info(`[${context}]: Sending service to get cryptomiles`);
-      ObjLog.log(`[${context}]: Sending service to get cryptomiles`);
-
-      cryptomilesService.getAllCryptomiles(req, res, next);
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);

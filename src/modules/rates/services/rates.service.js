@@ -1,8 +1,7 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import ratesPGRepository from "../repositories/rates.pg.repository";
-import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-import { env, ENVIROMENTS } from "../../../utils/enviroment";
+import { env } from "../../../utils/enviroment";
 import {MANUAL_RATES} from '../constants/manualRates.constants'
 import axios from 'axios'
 
@@ -12,30 +11,15 @@ let events = {};
 
 ratesService.rangeRates = async (req, res, next) => {
   try {
-
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting range rates`);
+    ObjLog.log(`[${context}]: Getting range rates`);
     let data = await ratesPGRepository.rangeRates();
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/rates/rangeRates",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -43,30 +27,15 @@ ratesService.rangeRates = async (req, res, next) => {
 
 ratesService.rateTypes = async (req, res, next) => {
   try {
-
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting rate types`);
+    ObjLog.log(`[${context}]: Getting rate types`);
     let data = await ratesPGRepository.rateTypes();
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/rates/rateTypes",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -74,30 +43,15 @@ ratesService.rateTypes = async (req, res, next) => {
 
 ratesService.userRates = async (req, res, next) => {
   try {
-
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting user rates`);
+    ObjLog.log(`[${context}]: Getting user rates`);
     let data = await ratesPGRepository.userRates(req.query);
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/rates/userRates",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
@@ -105,69 +59,27 @@ ratesService.userRates = async (req, res, next) => {
 
 ratesService.fullRates = async (req, res, next) => {
   try {
-    let countryResp = null;
-    let sess = null;
+    logger.info(`[${context}]: Getting full rates`);
+    ObjLog.log(`[${context}]: Getting full rates`);
 
-    if (!req.isAuthenticated() && req.query.email_user !== 'null' && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
-      req.session.destroy();
+    let data = await ratesPGRepository.fullRates(req.query);
 
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
+    let currentManualRate = data.manualRates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
 
-      if (resp) countryResp = resp.country_name;
-
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/protected-route",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      let data = await ratesPGRepository.fullRates(req.query);
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      if (resp) countryResp = resp.country_name;
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-        
-      const log = {
-        is_auth: req.isAuthenticated(),
+    let fullRateFromAPI = (await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${currentManualRate.currency_origin_iso_code}`)).data;
+    
+    if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
+      data.localAmountLimit = currentManualRate.amount_limit * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
+      data.vipAcum = data.vipAcum * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
+      return {
+        data,
+        status: 200,
         success: true,
-        failed: false,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/rates/fullRates",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-
-      let currentManualRate = data.manualRates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
-
-      console.log('currentManualRate: ',currentManualRate)
-      
-      let fullRateFromAPI = (await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${currentManualRate.currency_origin_iso_code}`)).data;
-      
-      if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
-        data.localAmountLimit = currentManualRate.amount_limit * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
-        data.vipAcum = data.vipAcum * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
-        res.status(200).json(data);
+        failed: false
       }
-      else
-        next({message: 'There was an error getting Currency Freaks rate.'})
     }
+    else
+      next({message: 'There was an error getting Currency Freaks rate.'})
   } catch (error) {
     next(error);
   }
@@ -175,30 +87,15 @@ ratesService.fullRates = async (req, res, next) => {
 
 ratesService.promo = async (req, res, next) => {
   try {
-
-    let countryResp = null;
-    let sess = null;
-
+    logger.info(`[${context}]: Getting promo rates`);
+    ObjLog.log(`[${context}]: Getting promo rates`);
     let data = await ratesPGRepository.promo(req.query);
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
-    if (resp) countryResp = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      sess = req.sessionID;
-
-    const log = {
-      is_auth: req.isAuthenticated(),
+    return {
+      data,
+      status: 200,
       success: true,
-      failed: false,
-      ip: req.connection.remoteAddress,
-      country: countryResp,
-      route: "/rates/promo",
-      session: sess,
-    };
-    authenticationPGRepository.insertLogMsg(log);
-
-    res.status(200).json(data);
+      failed: false
+    }
   } catch (error) {
     next(error);
   }

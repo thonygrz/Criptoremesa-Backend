@@ -4,226 +4,121 @@ import usersService from "../services/users.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import limitByIpPGRepository from "../../limit_by_ip/repositories/limit_by_ip.pg.repository";
 import { env,ENVIROMENTS } from "../../../utils/enviroment";
+
 const usersController = {};
 const context = "users Controller";
-let sess = null;
 
-//AUTENTICACION CON PASSPORT
-usersController.getusers = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get users`);
-    ObjLog.log(`[${context}]: Sending service to get users`);
-
-    usersService.getusers(req, res, next);
-  } catch (error) {
-    next(error);
-  }
+// declaring log object
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null
 };
 
-usersController.getusersClient = (req, res, next) => {
+usersController.createNewClient = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to get users`);
-    ObjLog.log(`[${context}]: Sending service to get users`);
+    // filling log object info
+    let log  = logConst;
 
-    usersService.getusersClient(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-usersController.createUser = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to create user`);
-    ObjLog.log(`[${context}]: Sending service to create user`);
-
-    usersService.createUser(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.createUserClient = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to create user Client`);
-    ObjLog.log(`[${context}]: Sending service to create user Client`);
-
-    usersService.createUserClient(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.createNewClient = (req, res, next) => {
-  try {
+    // calling service
     logger.info(`[${context}]: Sending service to create new Client`);
     ObjLog.log(`[${context}]: Sending service to create new Client`);
 
-    usersService.createNewClient(req, res, next);
+    let finalResp = await usersService.createNewClient(req, res, next);
+    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.updateUserClient = (req, res, next) => {
+usersController.approveLevelCero = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to update user Client`);
-    ObjLog.log(`[${context}]: Sending service to update user Client`);
+    // filling log object info
+    let log  = logConst;
 
-    usersService.updateUserClient(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
 
-usersController.updateUserEmployee = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to update user Employee`);
-    ObjLog.log(`[${context}]: Sending service to update user Employee`);
-
-    usersService.updateUserEmployee(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.blockClient = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to update user Client`);
-    ObjLog.log(`[${context}]: Sending service to update user Client`);
-
-    usersService.blockClient(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.blockEmployee = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to update user Client`);
-    ObjLog.log(`[${context}]: Sending service to update user Client`);
-
-    usersService.blockEmployee(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.unblockClient = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to update user Client`);
-    ObjLog.log(`[${context}]: Sending service to update user Client`);
-
-    usersService.unblockClient(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.unblockEmployee = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to update user Client`);
-    ObjLog.log(`[${context}]: Sending service to update user Client`);
-
-    usersService.unblockEmployee(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getusersClientById = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to update user Client`);
-    ObjLog.log(`[${context}]: Sending service to update user Client`);
-
-    usersService.getusersClientById(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getusersEmployeeById = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get employee`);
-    ObjLog.log(`[${context}]: Sending service to get employee`);
-
-    usersService.getusersEmployeeById(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getEmployeePhonesById = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get employee phones`);
-    ObjLog.log(`[${context}]: Sending service to get employee phonest`);
-
-    usersService.getEmployeePhonesById(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getClientPhonesById = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get employee phones`);
-    ObjLog.log(`[${context}]: Sending service to get employee phonest`);
-
-    usersService.getClientPhonesById(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getDepartmentsByUserId = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get departments`);
-    ObjLog.log(`[${context}]: Sending service to get departments`);
-
-    usersService.getDepartmentsByUserId(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getDataFromSheetsClients = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get users`);
-    ObjLog.log(`[${context}]: Sending service to get users`);
-
-    usersService.getDataFromSheetsClients(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getDataFromSheetsEmployees = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get users`);
-    ObjLog.log(`[${context}]: Sending service to get users`);
-
-    usersService.getDataFromSheetsEmployees(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.approveLevelCero = (req, res, next) => {
-  try {
+    // calling service
     logger.info(`[${context}]: Sending service to approve level zero`);
     ObjLog.log(`[${context}]: Sending service to approve level zero`);
 
-    usersService.approveLevelCero(req, res, next);
+    let finalResp = await usersService.approveLevelCero(req, res, next);
+      
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.files = (req, res, next) => {
+usersController.files = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to download file`);
-    ObjLog.log(`[${context}]: Sending service to download file`);
+    // filling log object info
+    let log  = logConst;
 
-    usersService.files(req, res, next);
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      logger.info(`[${context}]: Sending service to download file`);
+      ObjLog.log(`[${context}]: Sending service to download file`);
+
+      let finalResp = await usersService.files(req, res, next);
+
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
@@ -231,37 +126,39 @@ usersController.files = (req, res, next) => {
 
 usersController.requestLevelOne1stQ = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/requestLevelOne1stQ",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to request level one`);
       ObjLog.log(`[${context}]: Sending service to request level one`);
 
-      usersService.requestLevelOne1stQ(req, res, next);
+      let finalResp = await usersService.requestLevelOne1stQ(req, res, next);
+
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -270,37 +167,39 @@ usersController.requestLevelOne1stQ = async (req, res, next) => {
 
 usersController.requestLevelOne2ndQ = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/requestLevelOne2ndQ",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to request level one`);
       ObjLog.log(`[${context}]: Sending service to request level one`);
 
-      usersService.requestLevelOne2ndQ(req, res, next);
+      let finalResp = await usersService.requestLevelOne2ndQ(req, res, next);
+
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -309,156 +208,39 @@ usersController.requestLevelOne2ndQ = async (req, res, next) => {
 
 usersController.requestLevelOne3rdQ = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/requestLevelOne3rdQ",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to request level one`);
       ObjLog.log(`[${context}]: Sending service to request level one`);
 
-      usersService.requestLevelOne3rdQ(req, res, next);
-    }
-  } catch (error) {
-    next(error);
-  }
-};
+      let finalResp = await usersService.requestLevelOne3rdQ(req, res, next);
 
-usersController.forgotPassword = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to verify email`);
-    ObjLog.log(`[${context}]: Sending service to verify email`);
-    usersService.forgotPassword(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
 
-usersController.newPassword = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to change password`);
-    ObjLog.log(`[${context}]: Sending service to change password`);
-    usersService.newPassword(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getusersClientByEmail = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to get Client`);
-    ObjLog.log(`[${context}]: Sending service to get Client`);
-
-    usersService.getusersClientByEmail(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.sendVerificationCodeByEmail = async (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to verify email`);
-    ObjLog.log(`[${context}]: Sending service to verify email`);
-    let resp = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeByEmail',req.connection.remoteAddress)
-    if (resp === 'Requests limit by ip hasnt been reached')
-      usersService.sendVerificationCodeByEmail(req, res, next);
-    else 
-      res.status(400).json({ msg: resp });
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.sendSMS = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to send SMS`);
-    ObjLog.log(`[${context}]: Sending service to send SMS`);
-    usersService.sendSMS(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.sendVerificationCodeBySMS = async (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to verify SMS`);
-    ObjLog.log(`[${context}]: Sending service to verify SMS`);
-    let resp = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeBySMS',req.connection.remoteAddress)
-    if (resp === 'Requests limit by ip hasnt been reached')
-      usersService.sendVerificationCodeBySMS(req, res, next);
-    else 
-      res.status(400).json({ msg: resp });
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.approveLevelOne = (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Sending service to approve level one`);
-    ObjLog.log(`[${context}]: Sending service to approve level one`);
-
-    usersService.approveLevelOne(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
-
-usersController.getLevelQuestions = async (req, res, next) => {
-  try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/getLevelQuestions",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      logger.info(`[${context}]: Sending service to get questions`);
-      ObjLog.log(`[${context}]: Sending service to get questions`);
-
-      usersService.getLevelQuestions(req, res, next);
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -467,58 +249,324 @@ usersController.getLevelQuestions = async (req, res, next) => {
 
 usersController.requestLevelTwo = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/getActirequestLevelTwove",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to request level two`);
       ObjLog.log(`[${context}]: Sending service to request level two`);
 
-      usersService.requestLevelTwo(req, res, next);
+      let finalResp = await usersService.requestLevelTwo(req, res, next);
+
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.verifyIdentUser = (req, res, next) => {
+usersController.forgotPassword = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to verify ident user`);
-    ObjLog.log(`[${context}]: Sending service to verify ident user`);
-    usersService.verifyIdentUser(req, res, next);
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to verify email`);
+    ObjLog.log(`[${context}]: Sending service to verify email`);
+
+    let finalResp = await usersService.forgotPassword(req, res, next);
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.deactivateUser = (req, res, next) => {
+usersController.newPassword = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Sending service to deactivate user`);
-    ObjLog.log(`[${context}]: Sending service to deactivate user`);
-    usersService.deactivateUser(req, res, next);
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to change password`);
+    ObjLog.log(`[${context}]: Sending service to change password`);
+
+    let finalResp = await usersService.newPassword(req, res, next);
+    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.sendVerificationCodeByEmail = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to verify email`);
+    ObjLog.log(`[${context}]: Sending service to verify email`);
+    let finalResp
+
+    let verif = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeByEmail',req.connection.remoteAddress)
+    if (verif === 'Requests limit by ip hasnt been reached') 
+      finalResp = await usersService.sendVerificationCodeByEmail(req, res, next);
+    else 
+      res.status(400).json({ msg: verif });
+
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+  
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.sendSMS = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to send SMS`);
+    ObjLog.log(`[${context}]: Sending service to send SMS`);
+    
+    let finalResp = await usersService.sendSMS(req, res, next);
+    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.sendVerificationCodeBySMS = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to verify SMS`);
+    ObjLog.log(`[${context}]: Sending service to verify SMS`);
+    let finalResp
+
+    let verif = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeBySMS',req.connection.remoteAddress)
+    if (verif === 'Requests limit by ip hasnt been reached')
+     finalResp = await usersService.sendVerificationCodeBySMS(req, res, next);
+    else 
+      res.status(400).json({ msg: verif });
+      
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.getLevelQuestions = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      logger.info(`[${context}]: Sending service to get questions`);
+      ObjLog.log(`[${context}]: Sending service to get questions`);
+
+      let finalResp = await usersService.getLevelQuestions(req, res, next);
+            
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.verifyIdentUser = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to verify ident user`);
+    ObjLog.log(`[${context}]: Sending service to verify ident user`);
+    
+    let finalResp = await usersService.verifyIdentUser(req, res, next);
+            
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.deactivateUser = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    }else{
+      // calling service
+      logger.info(`[${context}]: Sending service to deactivate user`);
+      ObjLog.log(`[${context}]: Sending service to deactivate user`);
+      
+      let finalResp = await usersService.deactivateUser(req, res, next);
+                
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
+    }
   } catch (error) {
     next(error);
   }
@@ -526,37 +574,39 @@ usersController.deactivateUser = (req, res, next) => {
 
 usersController.getReferrals = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/referrals",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
-      usersService.getReferrals(req, res, next);
+      let finalResp = await usersService.getReferrals(req, res, next);
+                
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -565,37 +615,39 @@ usersController.getReferrals = async (req, res, next) => {
 
 usersController.getReferralsOperations = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/referralsOperations",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
-      usersService.getReferralsOperations(req, res, next);
+      let finalResp = await usersService.getReferralsOperations(req, res, next);
+                
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -604,37 +656,39 @@ usersController.getReferralsOperations = async (req, res, next) => {
 
 usersController.getReferralsByCountry = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/totalByCountry",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
-      usersService.getReferralsByCountry(req, res, next);
+      let finalResp = await usersService.getReferralsByCountry(req, res, next);
+                
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -643,37 +697,39 @@ usersController.getReferralsByCountry = async (req, res, next) => {
 
 usersController.getReferralsByStatus = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
       req.session.destroy();
-  
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/totalByStatus",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
+      log.success = false;
+      log.failed = true;
+      await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    } else {
+    }else{
+      // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
-      usersService.getReferralsByStatus(req, res, next);
+      let finalResp = await usersService.getReferralsByStatus(req, res, next);
+                
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
@@ -682,48 +738,72 @@ usersController.getReferralsByStatus = async (req, res, next) => {
 
 usersController.ambassadorRequest = async (req, res, next) => {
   try {
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      req.session.destroy();
+      // filling log object info
+      let log  = logConst;
+
+      log.is_auth = req.isAuthenticated()
+      log.ip = req.connection.remoteAddress;
+      log.route = req.method + ' ' + req.originalUrl;
+      const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+      if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+      if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
   
-      const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
-      );
-      let countryResp = null;
-      sess = null;
-  
-      if (resp) countryResp = resp.country_name;
-  
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
-        sess = req.sessionID;
-  
-      const log = {
-        is_auth: req.isAuthenticated(),
-        success: false,
-        failed: true,
-        ip: req.connection.remoteAddress,
-        country: countryResp,
-        route: "/users/ambassadorRequest",
-        session: sess,
-      };
-      authenticationPGRepository.insertLogMsg(log);
-  
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
+      // protecting route in production but not in development
+      if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+        req.session.destroy();
+        log.success = false;
+        log.failed = true;
+        await authenticationPGRepository.insertLogMsg(log);
+        res.status(401).json({ message: "Unauthorized" });
+      }else{
+        // calling service
       logger.info(`[${context}]: Sending service to send ambassador Request questions`);
       ObjLog.log(`[${context}]: Sending service to send ambassador Request questions`);
 
-      usersService.ambassadorRequest(req, res, next);
+      let finalResp = await usersService.ambassadorRequest(req, res, next);
+                
+      if (finalResp) {
+        //logging on DB
+        log.success = finalResp.success
+        log.failed = finalResp.failed
+        await authenticationPGRepository.insertLogMsg(log);
+
+        //sendind response to FE
+        res.status(finalResp.status).json(finalResp.data);
+      }
     }
   } catch (error) {
     next(error);
   }
 };
 
-usersController.verifReferrallByCodPub = (req, res, next) => {
+usersController.verifReferrallByCodPub = async (req, res, next) => {
   try {
+    // filling log object info
+    let log  = logConst;
+
+    log.is_auth = req.isAuthenticated()
+    log.ip = req.connection.remoteAddress;
+    log.route = req.method + ' ' + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
+    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+
+    // calling service
     logger.info(`[${context}]: Sending service to verify referral`);
     ObjLog.log(`[${context}]: Sending service to verify referral`);
-    usersService.verifReferrallByCodPub(req, res, next);
+    
+    let finalResp = await usersService.verifReferrallByCodPub(req, res, next);
+                    
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success
+      log.failed = finalResp.failed
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
   } catch (error) {
     next(error);
   }
