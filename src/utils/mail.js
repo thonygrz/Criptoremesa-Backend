@@ -7,10 +7,10 @@ export default {
     try {
       let resp = await axios.post(`${env.MAIL_SENDER}/sendForgotPasswordMail`,body)
       console.log('Desde axios: ',resp.data);
-      this.log(body,resp.data)
+      log(body,resp.data)
       return resp.data;
     } catch (error) {
-      this.log(body,error)
+      log(body,error)
       console.log(error);
       return error;
     }
@@ -19,10 +19,10 @@ export default {
     try {
       let resp = await axios.post(`${env.MAIL_SENDER}/sendSignUpMail`,body)
       console.log('Desde axios: ',resp.data);
-      this.log(body,resp.data)
+      log(body,resp.data)
       return resp.data;
     } catch (error) {
-      this.log(body,error)
+      log(body,error)
       console.log(error);
       return error;
     }
@@ -31,10 +31,10 @@ export default {
     try {
       let resp = await axios.post(`${env.MAIL_SENDER}/sendAmbassadorMail`,body)
       console.log('Desde axios: ',resp.data);
-      this.log(body,resp.data)
+      log(body,resp.data)
       return resp.data;
     } catch (error) {
-      this.log(body,error)
+      log(body,error)
       console.log(error);
       return error;
     }
@@ -50,7 +50,7 @@ export default {
                                                                                             [body]);
       return resp.rows[0];
     } catch (error) {
-      this.log(body,error)
+      log(body,error)
       logger.error(error);
       throw error;
     }
