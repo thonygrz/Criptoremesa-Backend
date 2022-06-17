@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { env } from "../utils/enviroment";
 import { poolSM } from "../../src/db/pg.connection";
+import { logger } from "./utils/logger";
 
 async function log(body,response) {
   try {
