@@ -5,18 +5,19 @@ import { logger } from "../utils/logger";
 
 const context = "MAIL MODULE";
 
-async function log(body,response) {
+async function log(url,body,response) {
   try {
     logger.info(`[${context}]: Logging mail info in database`)
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(`SELECT * FROM sp_mail_logs_insert_call_to_mail_server(
+                                                                                              '${url}',
                                                                                               ($1),
                                                                                               '${response}'
                                                                                           )`,
                                                                                           [body]);
     return resp.rows[0];
   } catch (error) {
-    log(body,error)
+    log(url,body,error)
     logger.error(error);
     throw error;
   }
@@ -24,37 +25,40 @@ async function log(body,response) {
 
 export default {
   sendForgotPasswordMail: async (body) => {
+    let url = `${env.MAIL_SENDER}/sendForgotPasswordMail`
     try {
-      let resp = await axios.post(`${env.MAIL_SENDER}/sendForgotPasswordMail`,body)
+      let resp = await axios.post(url,body)
       console.log('Desde axios: ',resp.data);
-      log(body,resp.data)
+      log(url,body,resp.data)
       return resp.data;
     } catch (error) {
-      log(body,error)
+      log(url,body,error)
       console.log(error);
       return error;
     }
   },
   sendSignUpMail: async (body) => {
+    let url = `${env.MAIL_SENDER}/sendSignUpMail`
     try {
-      let resp = await axios.post(`${env.MAIL_SENDER}/sendSignUpMail`,body)
+      let resp = await axios.post(url,body)
       console.log('Desde axios: ',resp.data);
-      log(body,resp.data)
+      log(url,body,resp.data)
       return resp.data;
     } catch (error) {
-      log(body,error)
+      log(url,body,error)
       console.log(error);
       return error;
     }
   },
   sendAmbassadorMail: async (body) => {
+    let url = `${env.MAIL_SENDER}/sendAmbassadorMail`
     try {
-      let resp = await axios.post(`${env.MAIL_SENDER}/sendAmbassadorMail`,body)
+      let resp = await axios.post(url,body)
       console.log('Desde axios: ',resp.data);
-      log(body,resp.data)
+      log(url,body,resp.data)
       return resp.data;
     } catch (error) {
-      log(body,error)
+      log(url,body,error)
       console.log(error);
       return error;
     }
