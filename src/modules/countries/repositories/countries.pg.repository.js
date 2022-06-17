@@ -24,9 +24,8 @@ countriesRepository.countriesCurrencies = async (email_user) => {
     logger.info(`[${context}]: Getting countries and currencies from db`);
     ObjLog.log(`[${context}]: Getting countries and currencies from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    const resp = await poolSM.query(
-      `SELECT * FROM sp_get_countries_currencies(${email_user === null ? null : `'${email_user}'`})`
-    );
+
+    let resp = await poolSM.query(`SELECT * FROM sp_get_countries_currencies(${email_user === null ? null : `'${email_user}'`})`)
     if (resp.rows[0].sp_get_countries_currencies)
       return resp.rows[0].sp_get_countries_currencies;
     else return null;

@@ -8,7 +8,7 @@ import fs from "fs";
 import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import { join, resolve } from "path";
-import axios from 'axios'
+import axios from "axios";
 
 const client = require("twilio")(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
@@ -69,7 +69,9 @@ usersService.createNewClient = async (req, res, next) => {
       const secretKey = env.reCAPTCHA_SECRET_KEY;
 
       // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
+        req.body.captcha
+      }&remoteip=${req.header("Client-Ip")}`;
 
       // Make a request to verifyURL
       const body = await axios.get(verifyURL);
@@ -87,7 +89,7 @@ usersService.createNewClient = async (req, res, next) => {
         let userObj = req.body;
 
         userObj.password = password;
-        userObj.last_ip_registred = req.connection.remoteAddress;
+        userObj.last_ip_registred = req.header("Client-Ip");
 
         const response = await usersPGRepository.createNewClient(userObj);
 
@@ -134,7 +136,7 @@ usersService.files = async (req, res, next) => {
   try {
     // await usersPGRepository.unblockEmployee(req.params.id);
 
-    // const resp = authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
+    // const resp = authenticationPGRepository.getIpInfo(req.header('Client-Ip'));
     // if (resp) countryResp = resp.country_name;
     // if (await authenticationPGRepository.getSessionById(req.sessionID))
     //   sess = req.sessionID;
@@ -143,7 +145,7 @@ usersService.files = async (req, res, next) => {
     //   is_auth: req.isAuthenticated(),
     //   success: true,
     //   failed: false,
-    //   ip: req.connection.remoteAddress,
+    //   ip: req.header('Client-Ip'),
     //   country: countryResp,
     //   route: "/users/unblockEmployee",
     //   session: sess,
@@ -285,7 +287,7 @@ usersService.files = async (req, res, next) => {
   }
 };
 
-function createFile(f, email_user,level) {
+function createFile(f, email_user, level) {
   if (
     f &&
     (f.type === "image/png" ||
@@ -308,7 +310,8 @@ function createFile(f, email_user,level) {
         numbers.push(number);
         fs.rename(
           f.path,
-          env.FILES_DIR + `/level-${level}-req-${email_user}_${number}_${f.name}`,
+          env.FILES_DIR +
+            `/level-${level}-req-${email_user}_${number}_${f.name}`,
           (error) => {
             if (error) {
               next(error);
@@ -370,8 +373,8 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
 
     await new Promise((resolve, reject) => {
       form.parse(req, async function (err, fields, files) {
-        let doc_path = createFile(files.doc, fields.email_user,'one');
-        let selfie_path = createFile(files.selfie, fields.email_user,'one');
+        let doc_path = createFile(files.doc, fields.email_user, "one");
+        let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
         if (!fileError) {
           await usersPGRepository.requestLevelOne1stQ({
@@ -477,8 +480,8 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
 
     await new Promise((resolve, reject) => {
       form.parse(req, async function (err, fields, files) {
-        let doc_path = createFile(files.doc, fields.email_user,'one');
-        let selfie_path = createFile(files.selfie, fields.email_user,'one');
+        let doc_path = createFile(files.doc, fields.email_user, "one");
+        let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
         if (!fileError) {
           await usersPGRepository.requestLevelOne2ndQ({
@@ -574,8 +577,8 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
 
     await new Promise((resolve, reject) => {
       form.parse(req, async function (err, fields, files) {
-        let doc_path = createFile(files.doc, fields.email_user,'one');
-        let selfie_path = createFile(files.selfie, fields.email_user,'one');
+        let doc_path = createFile(files.doc, fields.email_user, "one");
+        let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
         if (!fileError) {
           await usersPGRepository.requestLevelOne3rdQ({
@@ -649,7 +652,6 @@ usersService.requestLevelTwo = async (req, res, next) => {
           part.mime === null
         )
       ) {
-
         fileError = true;
         form.emit("error");
       } else {
@@ -672,11 +674,13 @@ usersService.requestLevelTwo = async (req, res, next) => {
 
     await new Promise((resolve, reject) => {
       form.parse(req, async function (err, fields, files) {
-
-        let residency_proof_path = createFile(files.residency_proof, fields.email_user,'two');
+        let residency_proof_path = createFile(
+          files.residency_proof,
+          fields.email_user,
+          "two"
+        );
 
         if (!fileError) {
-
           JSON.parse(fields.answers).forEach((a) => {
             setAnswersToRepo(
               getAnswersToRepo() + `,\'${JSON.stringify(a)}\'::JSON`
@@ -697,7 +701,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
             data: { message: "Request succesfuly uploaded." },
             status: 200,
             success: true,
-            failed: false
+            failed: false,
           });
         } else
           setfinalResp({
@@ -706,7 +710,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
             success: false,
             failed: true,
           });
-          resolve();
+        resolve();
       });
     });
     return getfinalResp()
@@ -726,7 +730,7 @@ usersService.forgotPassword = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Forgot password request`);
     ObjLog.log(`[${context}]: Forgot password request`);
-    
+
     let user = await usersPGRepository.getusersClientByEmail(
       `'${req.body.email_user}'`
     );
@@ -754,42 +758,42 @@ usersService.forgotPassword = async (req, res, next) => {
 
       return {
         data: {
-                msg: data.msg,
-                mailResp,
-              },
+          msg: data.msg,
+          mailResp,
+        },
         status: 200,
         success: true,
-        failed: false
-      }
+        failed: false,
+      };
     } else if (data.msg === "The email does not exist") {
       return {
         data: { msg: data.msg },
         status: 400,
         success: false,
-        failed: true
-      }
+        failed: true,
+      };
     }
   } catch (error) {
     next(error);
   }
 };
 
-let finalResp
-function setfinalResp (resp) {
-  finalResp = resp
+let finalResp;
+function setfinalResp(resp) {
+  finalResp = resp;
 }
 
-function getfinalResp () {
-  return finalResp
+function getfinalResp() {
+  return finalResp;
 }
 
-let matchPass
-function setMatchPass (match) {
-  matchPass = match
+let matchPass;
+function setMatchPass(match) {
+  matchPass = match;
 }
 
-function getMatchPass () {
-  return matchPass
+function getMatchPass() {
+  return matchPass;
 }
 
 usersService.newPassword = async (req, res, next) => {
@@ -800,7 +804,7 @@ usersService.newPassword = async (req, res, next) => {
     let passwordList = await usersPGRepository.getLastPasswords(
       req.body.email_user
     );
-    setMatchPass(false)
+    setMatchPass(false);
     let matchLast = true;
     let match = false;
 
@@ -816,8 +820,8 @@ usersService.newPassword = async (req, res, next) => {
           data: { msg: "Incorrect last password" },
           status: 400,
           success: false,
-          failed: true
-        }
+          failed: true,
+        };
       }
     }
     if (matchLast) {
@@ -825,18 +829,18 @@ usersService.newPassword = async (req, res, next) => {
         passwordList.map(async (p) => {
           match = false;
           match = await bcrypt.compare(req.body.new_password, p.password);
-          
+
           if (match) {
-            setMatchPass(true)
+            setMatchPass(true);
             setfinalResp({
               data: { msg: "The password cannot be equal to last 3" },
               status: 400,
               success: false,
-              failed: true
-            })
+              failed: true,
+            });
           }
         })
-      )
+      );
       if (!getMatchPass()) {
         let newPass = await bcrypt.hash(req.body.new_password, 10);
 
@@ -848,18 +852,18 @@ usersService.newPassword = async (req, res, next) => {
           data,
           status: 200,
           success: false,
-          failed: true
-        })
+          failed: true,
+        });
       }
-    } else 
+    } else
       setfinalResp({
-                    data: {message: 'There was an error.'},
-                    status: 500,
-                    success: true,
-                    failed: false
-                  })
+        data: { message: "There was an error." },
+        status: 500,
+        success: true,
+        failed: false,
+      });
 
-    return getfinalResp()
+    return getfinalResp();
   } catch (error) {
     next(error);
   }
@@ -872,9 +876,7 @@ usersService.getusersClientByEmail = async (req, res, next) => {
 
     let data = await usersPGRepository.getusersClientByEmail(req.params.id);
 
-    const resp = authenticationPGRepository.getIpInfo(
-      req.connection.remoteAddress
-    );
+    const resp = authenticationPGRepository.getIpInfo(req.header("Client-Ip"));
     if (resp) countryResp = resp.country_name;
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       sess = req.sessionID;
@@ -883,7 +885,7 @@ usersService.getusersClientByEmail = async (req, res, next) => {
       is_auth: req.isAuthenticated(),
       success: true,
       failed: false,
-      ip: req.connection.remoteAddress,
+      ip: req.header("Client-Ip"),
       country: countryResp,
       route: "/users/getClientByEmail",
       session: sess,
@@ -923,20 +925,20 @@ usersService.sendVerificationCodeByEmail = async (req, res, next) => {
 
       return {
         data: {
-                msg: data.msg,
-                mailResp,
-              },
+          msg: data.msg,
+          mailResp,
+        },
         status: 200,
         success: true,
-        failed: false
-      }
+        failed: false,
+      };
     } else if (data.msg === "An error ocurred generating code.") {
       return {
         data: { msg: data.msg },
         status: 400,
         success: false,
-        failed: true
-      }
+        failed: true,
+      };
     }
   } catch (error) {
     next(error);
@@ -969,8 +971,8 @@ usersService.getLevelQuestions = async (req, res, next) => {
       data,
       status: 200,
       success: true,
-      failed: false
-    }
+      failed: false,
+    };
   } catch (error) {
     next(error);
   }
@@ -985,7 +987,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
       req.body.main_phone_full,
       "sms"
     );
-    
+
     if (data.msg === "Code generated") {
       if (
         sendSMS(
@@ -995,19 +997,19 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
       )
         return {
           data: {
-            msg: data.msg
+            msg: data.msg,
           },
           status: 200,
           success: true,
-          failed: false
-        }
+          failed: false,
+        };
     } else if (data.msg === "An error ocurred generating code.") {
       return {
         data: { msg: data.msg },
         status: 400,
         success: false,
-        failed: true
-      }
+        failed: true,
+      };
     }
   } catch (error) {
     next(error);
@@ -1036,8 +1038,8 @@ usersService.verifyIdentUser = async (req, res, next) => {
       data,
       status: 200,
       success: true,
-      failed: false
-    }
+      failed: false,
+    };
   } catch (error) {
     next(error);
   }
@@ -1052,8 +1054,8 @@ usersService.deactivateUser = async (req, res, next) => {
       data,
       status: 200,
       success: true,
-      failed: false
-    }
+      failed: false,
+    };
   } catch (error) {
     next(error);
   }
@@ -1068,8 +1070,8 @@ usersService.getReferrals = async (req, res, next) => {
       data,
       status: 200,
       success: true,
-      failed: false
-    }
+      failed: false,
+    };
   } catch (error) {
     next(error);
   }
@@ -1086,8 +1088,8 @@ usersService.getReferralsOperations = async (req, res, next) => {
       data,
       status: 200,
       success: true,
-      failed: false
-    }
+      failed: false,
+    };
   } catch (error) {
     next(error);
   }
@@ -1104,8 +1106,8 @@ usersService.getReferralsByCountry = async (req, res, next) => {
       data,
       status: 200,
       success: true,
-      failed: false
-    }
+      failed: false,
+    };
   } catch (error) {
     next(error);
   }
@@ -1122,8 +1124,8 @@ usersService.getReferralsByStatus = async (req, res, next) => {
       data,
       status: 200,
       success: true,
-      failed: false
-    }
+      failed: false,
+    };
   } catch (error) {
     next(error);
   }
@@ -1144,47 +1146,47 @@ usersService.ambassadorRequest = async (req, res, next) => {
         },
         status: 500,
         success: false,
-        failed: true
-      }
-      else
+        failed: true,
+      };
+    else
       return {
         data: {
           mailResp,
         },
         status: 200,
         success: true,
-        failed: false
-      }
-    } catch (error) {
-      next(error);
-    }
-  };
-  
-  usersService.verifReferrallByCodPub = async (req, res, next) => {
-    try {
-      logger.info(`[${context}]: Making ambassador request`);
-      ObjLog.log(`[${context}]: Making ambassador request`);
-      let data = await usersPGRepository.verifReferrallByCodPub(
-        req.params.cust_cr_cod_pub
-        );
-      if (data && data.message === "Exists public code.") 
-        return {
-          data: {
-            mesage: data.message
-          },
-          status: 200,
-          success: true,
-          failed: false
-        }
-      else 
-        return {
-          data: {
-            mesage: 'An error has ocurred.'
-          },
-          status: 500,
-          success: false,
-          failed: true
-        }
+        failed: false,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.verifReferrallByCodPub = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Making ambassador request`);
+    ObjLog.log(`[${context}]: Making ambassador request`);
+    let data = await usersPGRepository.verifReferrallByCodPub(
+      req.params.cust_cr_cod_pub
+    );
+    if (data && data.message === "Exists public code.")
+      return {
+        data: {
+          mesage: data.message,
+        },
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
   } catch (error) {
     next(error);
   }

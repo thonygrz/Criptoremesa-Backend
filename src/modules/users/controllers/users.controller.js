@@ -3,7 +3,7 @@ import ObjLog from "../../../utils/ObjLog";
 import usersService from "../services/users.service";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import limitByIpPGRepository from "../../limit_by_ip/repositories/limit_by_ip.pg.repository";
-import { env,ENVIROMENTS } from "../../../utils/enviroment";
+import { env, ENVIROMENTS } from "../../../utils/enviroment";
 
 const usersController = {};
 const context = "users Controller";
@@ -16,31 +16,42 @@ const logConst = {
   ip: null,
   country: null,
   route: null,
-  session: null
+  session: null,
 };
 
 usersController.createNewClient = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to create new Client`);
     ObjLog.log(`[${context}]: Sending service to create new Client`);
 
     let finalResp = await usersService.createNewClient(req, res, next);
-    
+
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE
@@ -54,25 +65,36 @@ usersController.createNewClient = async (req, res, next) => {
 usersController.approveLevelCero = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to approve level zero`);
     ObjLog.log(`[${context}]: Sending service to approve level zero`);
 
     let finalResp = await usersService.approveLevelCero(req, res, next);
-      
+
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE
@@ -86,23 +108,34 @@ usersController.approveLevelCero = async (req, res, next) => {
 usersController.files = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to download file`);
       ObjLog.log(`[${context}]: Sending service to download file`);
@@ -111,8 +144,13 @@ usersController.files = async (req, res, next) => {
 
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -127,23 +165,34 @@ usersController.files = async (req, res, next) => {
 usersController.requestLevelOne1stQ = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to request level one`);
       ObjLog.log(`[${context}]: Sending service to request level one`);
@@ -152,8 +201,13 @@ usersController.requestLevelOne1stQ = async (req, res, next) => {
 
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -168,23 +222,34 @@ usersController.requestLevelOne1stQ = async (req, res, next) => {
 usersController.requestLevelOne2ndQ = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to request level one`);
       ObjLog.log(`[${context}]: Sending service to request level one`);
@@ -193,8 +258,13 @@ usersController.requestLevelOne2ndQ = async (req, res, next) => {
 
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -209,23 +279,34 @@ usersController.requestLevelOne2ndQ = async (req, res, next) => {
 usersController.requestLevelOne3rdQ = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to request level one`);
       ObjLog.log(`[${context}]: Sending service to request level one`);
@@ -234,8 +315,13 @@ usersController.requestLevelOne3rdQ = async (req, res, next) => {
 
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -250,23 +336,34 @@ usersController.requestLevelOne3rdQ = async (req, res, next) => {
 usersController.requestLevelTwo = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to request level two`);
       ObjLog.log(`[${context}]: Sending service to request level two`);
@@ -275,8 +372,13 @@ usersController.requestLevelTwo = async (req, res, next) => {
 
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -291,14 +393,20 @@ usersController.requestLevelTwo = async (req, res, next) => {
 usersController.forgotPassword = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to verify email`);
@@ -308,8 +416,13 @@ usersController.forgotPassword = async (req, res, next) => {
 
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE
@@ -323,25 +436,36 @@ usersController.forgotPassword = async (req, res, next) => {
 usersController.newPassword = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to change password`);
     ObjLog.log(`[${context}]: Sending service to change password`);
 
     let finalResp = await usersService.newPassword(req, res, next);
-    
+
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE
@@ -355,35 +479,52 @@ usersController.newPassword = async (req, res, next) => {
 usersController.sendVerificationCodeByEmail = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to verify email`);
     ObjLog.log(`[${context}]: Sending service to verify email`);
-    let finalResp
+    let finalResp;
 
-    let verif = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeByEmail',req.connection.remoteAddress)
-    if (verif === 'Requests limit by ip hasnt been reached') 
-      finalResp = await usersService.sendVerificationCodeByEmail(req, res, next);
-    else 
-      res.status(400).json({ msg: verif });
+    let verif = await limitByIpPGRepository.verifyRouteByIp(
+      "/users/sendVerificationCodeByEmail",
+      req.header("Client-Ip")
+    );
+    if (verif === "Requests limit by ip hasnt been reached")
+      finalResp = await usersService.sendVerificationCodeByEmail(
+        req,
+        res,
+        next
+      );
+    else res.status(400).json({ msg: verif });
 
-      if (finalResp) {
-        //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
-        await authenticationPGRepository.insertLogMsg(log);
-  
-        //sendind response to FE
-        res.status(finalResp.status).json(finalResp.data);
-      }
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
   } catch (error) {
     next(error);
   }
@@ -392,25 +533,36 @@ usersController.sendVerificationCodeByEmail = async (req, res, next) => {
 usersController.sendSMS = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to send SMS`);
     ObjLog.log(`[${context}]: Sending service to send SMS`);
-    
+
     let finalResp = await usersService.sendSMS(req, res, next);
-    
+
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE
@@ -424,30 +576,43 @@ usersController.sendSMS = async (req, res, next) => {
 usersController.sendVerificationCodeBySMS = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to verify SMS`);
     ObjLog.log(`[${context}]: Sending service to verify SMS`);
-    let finalResp
+    let finalResp;
 
-    let verif = await limitByIpPGRepository.verifyRouteByIp('/users/sendVerificationCodeBySMS',req.connection.remoteAddress)
-    if (verif === 'Requests limit by ip hasnt been reached')
-     finalResp = await usersService.sendVerificationCodeBySMS(req, res, next);
-    else 
-      res.status(400).json({ msg: verif });
-      
+    let verif = await limitByIpPGRepository.verifyRouteByIp(
+      "/users/sendVerificationCodeBySMS",
+      req.header("Client-Ip")
+    );
+    if (verif === "Requests limit by ip hasnt been reached")
+      finalResp = await usersService.sendVerificationCodeBySMS(req, res, next);
+    else res.status(400).json({ msg: verif });
+
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE
@@ -461,33 +626,49 @@ usersController.sendVerificationCodeBySMS = async (req, res, next) => {
 usersController.getLevelQuestions = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
       let finalResp = await usersService.getLevelQuestions(req, res, next);
-            
+
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -502,25 +683,36 @@ usersController.getLevelQuestions = async (req, res, next) => {
 usersController.verifyIdentUser = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to verify ident user`);
     ObjLog.log(`[${context}]: Sending service to verify ident user`);
-    
+
     let finalResp = await usersService.verifyIdentUser(req, res, next);
-            
+
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE
@@ -534,33 +726,49 @@ usersController.verifyIdentUser = async (req, res, next) => {
 usersController.deactivateUser = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to deactivate user`);
       ObjLog.log(`[${context}]: Sending service to deactivate user`);
-      
+
       let finalResp = await usersService.deactivateUser(req, res, next);
-                
+
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -575,33 +783,49 @@ usersController.deactivateUser = async (req, res, next) => {
 usersController.getReferrals = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
       let finalResp = await usersService.getReferrals(req, res, next);
-                
+
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -616,33 +840,49 @@ usersController.getReferrals = async (req, res, next) => {
 usersController.getReferralsOperations = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
       let finalResp = await usersService.getReferralsOperations(req, res, next);
-                
+
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -657,33 +897,49 @@ usersController.getReferralsOperations = async (req, res, next) => {
 usersController.getReferralsByCountry = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
       let finalResp = await usersService.getReferralsByCountry(req, res, next);
-                
+
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -698,33 +954,49 @@ usersController.getReferralsByCountry = async (req, res, next) => {
 usersController.getReferralsByStatus = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;
       log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
       await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
-    }else{
+    } else {
       // calling service
       logger.info(`[${context}]: Sending service to get questions`);
       ObjLog.log(`[${context}]: Sending service to get questions`);
 
       let finalResp = await usersService.getReferralsByStatus(req, res, next);
-                
+
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -738,34 +1010,54 @@ usersController.getReferralsByStatus = async (req, res, next) => {
 
 usersController.ambassadorRequest = async (req, res, next) => {
   try {
-      // filling log object info
-      let log  = logConst;
+    // filling log object info
+    let log = logConst;
 
-      log.is_auth = req.isAuthenticated()
-      log.ip = req.connection.remoteAddress;
-      log.route = req.method + ' ' + req.originalUrl;
-      const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-      if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-      if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-  
-      // protecting route in production but not in development
-      if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        req.session.destroy();
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-      }else{
-        // calling service
-      logger.info(`[${context}]: Sending service to send ambassador Request questions`);
-      ObjLog.log(`[${context}]: Sending service to send ambassador Request questions`);
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    // protecting route in production but not in development
+    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
+      req.session.destroy();
+      log.success = false;
+      log.failed = true;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = 401;
+      log.response = { message: "Unauthorized" };
+      await authenticationPGRepository.insertLogMsg(log);
+      res.status(401).json({ message: "Unauthorized" });
+    } else {
+      // calling service
+      logger.info(
+        `[${context}]: Sending service to send ambassador Request questions`
+      );
+      ObjLog.log(
+        `[${context}]: Sending service to send ambassador Request questions`
+      );
 
       let finalResp = await usersService.ambassadorRequest(req, res, next);
-                
+
       if (finalResp) {
         //logging on DB
-        log.success = finalResp.success
-        log.failed = finalResp.failed
+        log.success = finalResp.success;
+        log.failed = finalResp.failed;
+        log.params = req.params;
+        log.query = req.query;
+        log.body = req.body;
+        log.status = finalResp.status;
+        log.response = finalResp.data;
         await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
@@ -780,25 +1072,36 @@ usersController.ambassadorRequest = async (req, res, next) => {
 usersController.verifReferrallByCodPub = async (req, res, next) => {
   try {
     // filling log object info
-    let log  = logConst;
+    let log = logConst;
 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
 
     // calling service
     logger.info(`[${context}]: Sending service to verify referral`);
     ObjLog.log(`[${context}]: Sending service to verify referral`);
-    
+
     let finalResp = await usersService.verifReferrallByCodPub(req, res, next);
-                    
+
     if (finalResp) {
       //logging on DB
-      log.success = finalResp.success
-      log.failed = finalResp.failed
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
 
       //sendind response to FE

@@ -14,23 +14,12 @@ const logConst = {
   ip: null,
   country: null,
   route: null,
-  session: null
+  session: null,
 };
 
 //PASSPORT AUTHENTICATION
 authenticationController.login = async (req, res, next) => {
   try {
-    // filling log object info
-    let log  = logConst;
-
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    await authenticationPGRepository.insertLogMsg(log);
-
     // calling service
     logger.info(`[${context}]: Sending service to login`);
     ObjLog.log(`[${context}]: Sending service to login`);
@@ -43,17 +32,6 @@ authenticationController.login = async (req, res, next) => {
 
 authenticationController.logout = async (req, res, next) => {
   try {
-    // filling log object info
-    let log  = logConst;
-
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    log.route = req.method + ' ' + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name ? resp.country_name : 'Probably Localhost';
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    await authenticationPGRepository.insertLogMsg(log);
-
     // calling service
     logger.info(`[${context}]: Sending service to logout`);
     ObjLog.log(`[${context}]: Sending service to logout`);

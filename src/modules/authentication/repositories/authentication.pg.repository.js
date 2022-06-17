@@ -312,28 +312,33 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
 authenticationPGRepository.insertLogMsg = async (log) => {
   try {
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    let resp = null;
-    if (log.session != null) {
-      resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
-        '${log.is_auth}',
-        '${log.success}',
-        '${log.failed}',
-        '${log.ip}',
-        '${log.country}',
-        '${log.route}',
-        '${log.session}'
-    )`);
-    } else {
-      resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
-        '${log.is_auth}',
-        '${log.success}',
-        '${log.failed}',
-        '${log.ip}',
-        '${log.country}',
-        '${log.route}',
-        ${log.session}
-    )`);
-    }
+    console.log('LOG EN REPO: ',log)
+    if (typeof log.response === 'string' || typeof log.response === 'number' || typeof log.response === 'boolean')
+      log.response = {response: log.response}
+    else
+      log.response = Object.assign({},log.response)
+    console.log("🚀 ~ file: authentication.pg.repository.js ~ line 317 ~ authenticationPGRepository.insertLogMsg= ~ log.response", log.response)
+    let resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
+                                                                            ${log.is_auth},
+                                                                            ${log.success},
+                                                                            ${log.failed},
+                                                                            '${log.ip}',
+                                                                            '${log.country}',
+                                                                            '${log.route}',
+                                                                            ($1),
+                                                                            ($2),
+                                                                            ($3),
+                                                                            ${log.status},
+                                                                            ($4),
+                                                                            ${log.session ? `'${log.session}'` : null}
+                                                                        )`,
+                                                                        [
+                                                                          log.params ? log.params : null,
+                                                                          log.query ? log.query : null,
+                                                                          log.body ? log.body : null,
+                                                                          log.response ? log.response : null,
+                                                                        ]                                                                        
+                                  );
 
     return resp.rows[0];
   } catch (error) {
