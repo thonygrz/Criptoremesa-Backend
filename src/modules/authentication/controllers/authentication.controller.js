@@ -6,17 +6,6 @@ import authenticationPGRepository from "../../authentication/repositories/authen
 const authenticationController = {};
 const context = "Authentication Controller";
 
-// declaring log object
-const logConst = {
-  is_auth: null,
-  success: true,
-  failed: false,
-  ip: null,
-  country: null,
-  route: null,
-  session: null,
-};
-
 //PASSPORT AUTHENTICATION
 authenticationController.login = async (req, res, next) => {
   try {

@@ -8,6 +8,17 @@ import axios from "axios";
 const authenticationService = {};
 const context = "Authentication Service";
 
+// declaring log object
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null,
+};
+
 authenticationService.login = async (req, res, next) => {
   try {
     // filling log object info
