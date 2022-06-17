@@ -3,6 +3,8 @@ import { env } from "../utils/enviroment";
 import { poolSM } from "../../src/db/pg.connection";
 import { logger } from "../utils/logger";
 
+const context = "MAIL MODULE";
+
 async function log(body,response) {
   try {
     logger.info(`[${context}]: Logging mail info in database`)
