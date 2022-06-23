@@ -13,7 +13,7 @@ operation_routesRepository.getoperation_routes = async () => {
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_get_operation_routes()`
     );
-    return resp.rows[0].sp_get_operation_routes;
+    return resp.rows[0].sp_get_operation_routes.operation_routes;
   } catch (error) {
     throw error;
   }

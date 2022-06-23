@@ -13,7 +13,7 @@ exchangesRepository.getExchangeRangeRates = async () => {
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_get_exchange_range_rates()`
     );
-    return resp.rows[0].sp_get_exchange_range_rates;
+    return resp.rows[0].sp_get_exchange_range_rates.range_rates;
   } catch (error) {
     throw error;
   }
@@ -27,7 +27,7 @@ exchangesRepository.getExchangeRates = async () => {
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_get_exchange_rates()`
     );
-    return resp.rows[0].sp_get_exchange_rates;
+    return resp.rows[0].sp_get_exchange_rates.rates;
   } catch (error) {
     throw error;
   }
