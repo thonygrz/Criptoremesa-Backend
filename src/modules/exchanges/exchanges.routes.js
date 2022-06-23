@@ -10,4 +10,10 @@ exchangesRouter.get(
   exchangesController.getExchangeRangeRates
 );
 
+exchangesRouter.get(
+  "/rates",
+  // guard.verifyAdmin("/login"),
+  exchangesController.getExchangeRates
+);
+
 export default exchangesRouter;

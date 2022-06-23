@@ -19,4 +19,18 @@ exchangesRepository.getExchangeRangeRates = async () => {
   }
 };
 
+exchangesRepository.getExchangeRates = async () => {
+  try {
+    logger.info(`[${context}]: Getting exchange rates from db`);
+    ObjLog.log(`[${context}]: Getting exchange rates from db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_get_exchange_rates()`
+    );
+    return resp.rows[0].sp_get_exchange_rates;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default exchangesRepository;

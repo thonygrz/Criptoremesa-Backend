@@ -23,4 +23,22 @@ exchangesService.getExchangeRangeRates = async (req, res, next) => {
   }
 };
 
+exchangesService.getExchangeRates = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting exchange rates`);
+    ObjLog.log(`[${context}]: Getting exchange rates`);
+
+    let data = await exchangesRepository.getExchangeRates();
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default exchangesService;
