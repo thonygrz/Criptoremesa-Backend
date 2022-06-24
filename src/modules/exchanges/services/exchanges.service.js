@@ -6,6 +6,7 @@ import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import {join, resolve} from 'path'
 import fs from 'fs'
 import formidable from "formidable";
+import axios from 'axios'
 
 const exchangesService = {};
 const context = "exchanges Service";
@@ -277,7 +278,7 @@ exchangesService.insertExchange = async (req, res, next) => {
             }) 
           } else 
                 setfinalResp({
-                        data: {message: 'There was an error with the file.'},
+                        data: {message: 'There was an error.'},
                         status: 500,
                         success: false,
                         failed: true
