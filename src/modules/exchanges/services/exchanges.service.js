@@ -7,6 +7,7 @@ import {join, resolve} from 'path'
 import fs from 'fs'
 import formidable from "formidable";
 import axios from 'axios'
+import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
 
 const exchangesService = {};
 const context = "exchanges Service";
