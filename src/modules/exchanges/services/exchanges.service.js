@@ -16,6 +16,15 @@ function between(min, max) {
   )
 }
 
+let finalResp
+function setfinalResp (resp) {
+  finalResp = resp
+}
+
+function getfinalResp () {
+  return finalResp
+}
+
 exchangesService.getExchangeRangeRates = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting exchanges`);
