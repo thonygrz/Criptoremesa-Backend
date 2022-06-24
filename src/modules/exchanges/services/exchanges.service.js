@@ -51,11 +51,11 @@ function waitingPreExchange(id_pre_exchange) {
   redisClient.set(id_pre_exchange.toString(), timmy[Symbol.toPrimitive]());
 }
 
-exchangesService.startPreexchange = async (req, res, next) => {
+exchangesService.startPreExchange = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Starting preexchange`);
     ObjLog.log(`[${context}]: Starting preexchange`);
-    let data = await exchangesRepository.startPreExchange(req.body);
+    let data = await exchangesRepository.startPreExchange(req.body.exchangeData);
     
     if (data.message === 'Pre-exchange succesfully inserted.'){
       
