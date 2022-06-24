@@ -23,19 +23,19 @@ exchangesRouter.post(
 );
 
 exchangesRouter.post(
-  "/preExchange",
+  "/pre_exchange",
   // guard.verifyAdmin("/login"),
   exchangesController.startPreExchange
 );
 
 exchangesRouter.get(
-  "/preExchange/:email_user",
+  "/pre_exchange/:email_user",
   // guard.verifyAdmin("/login"),
   exchangesController.getPreExchangeByUser
 );
 
 exchangesRouter.delete(
-  "/preExchange/:id_pre_exchange",
+  "/pre_exchange/:id_pre_exchange",
   // guard.verifyAdmin("/login"),
   exchangesController.cancelPreExchange
 );

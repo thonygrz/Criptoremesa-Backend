@@ -2,6 +2,10 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import exchangesRepository from "../repositories/exchanges.pg.repository";
 import redisClient from "../../../utils/redis";
+import {env,ENVIROMENTS} from '../../../utils/enviroment'
+import {join, resolve} from 'path'
+import fs from 'fs'
+import formidable from "formidable";
 
 const exchangesService = {};
 const context = "exchanges Service";
@@ -123,31 +127,159 @@ exchangesService.insertExchange = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Inserting exchange`);
     ObjLog.log(`[${context}]: Inserting exchange`);
+    let fileError = false;
 
-    let data
+    const form = formidable({
+      multiples: true,
+      uploadDir: env.FILES_DIR,
+      maxFileSize: 5 * 1024 * 1024,
+      keepExtensions: true,
+    });
 
-    if (req.query.type === 'COMPRA') {
-      data = await exchangesRepository.insertBuyExchange(req.body);
-    } 
-    else if (req.query.type === 'VENTA') {
-      data = await exchangesRepository.insertSellExchange(req.body);
-    }
-    else if (req.query.type === 'RETIRO') {
-      data = await exchangesRepository.insertWithdrawExchange(req.body);
-    }
-    else if (req.query.type === 'DEPOSITO') {
-      data = await exchangesRepository.insertDepositExchange(req.body);
-    }
-    else if (req.query.type === 'CONVERSION') {
-      data = await exchangesRepository.insertConversionExchange(req.body);
-    }
+    form.onPart = async (part) => {
+      if (
+        !fileError &&
+        !(
+          part.mime === "image/png" ||
+          part.mime === "image/jpg" ||
+          part.mime === "image/jpeg" ||
+          part.mime === "image/gif" ||
+          part.mime === "application/pdf" ||
+          part.mime === null
+        )
+      ) {
+        fileError = true;
+        form.emit("error");
+      } else {
+        await form.handlePart(part);
+      }
+    };
 
-    return {
-      data,
-      status: 200,
-      success: true,
-      failed: false
-    }
+    form.on("error", function (err) {
+      if (fileError) {
+        next({
+          message: `Uno o varios archivos no tienen formato permitido`,
+        });
+      } else {
+        fileError = true;
+
+        next({
+          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+        });
+      }
+    });
+    let numbers = []
+
+    await new Promise((resolve,reject) => {
+      form.parse(req, async function (err, fields, files) {
+
+        Object.values(files).forEach((f) => {
+          if (
+            f.type === "image/png" ||
+            f.type === "image/jpg" ||
+            f.type === "image/jpeg" ||
+            f.type === "image/gif" ||
+            f.type === "application/pdf" 
+          ) {
+  
+            let exists = true
+            let pathName
+            while (exists){
+                let number = between(10000,99999);
+                pathName = join(env.FILES_DIR,`/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`)
+                if (!fs.existsSync(pathName)){
+                    exists = false
+                    numbers.push(number)
+                    fs.rename(
+                      f.path,
+                      form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`,
+                      (error) => {
+                        if (error) {
+                          next(error);
+                        }
+                      }
+                    );
+                }
+            }
+          }
+        });
+        if (!fileError) {
+          let exchange = JSON.parse(fields.exchange)
+  
+          Object.values(files).forEach((f,i) => {
+            if (
+              f.type === "image/png" ||
+              f.type === "image/jpg" ||
+              f.type === "image/jpeg" ||
+              f.type === "image/gif" ||
+              f.type === "application/pdf" 
+            ) {
+              exchange.captures[i].path = form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${numbers[i]}_${f.name}`
+            }
+          });
+  
+          let data
+
+          if (req.query.type === 'COMPRA') {
+            
+            let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${exchange.route.origin_iso_code}&symbols=${exchange.originCountry.iso_cod},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
+            
+            let localRateFromAPI = fullRateFromAPI.data.rates[exchange.route.origin_iso_code]
+            localRateFromAPI = parseFloat(localRateFromAPI)
+            
+            let dollarRateFromAPI = fullRateFromAPI.data.USD
+            localRateFromAPI = parseFloat(localRateFromAPI)
+            
+            exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
+            exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
+            
+            data = await exchangesRepository.insertBuyExchange(exchange);
+          } 
+          else if (req.query.type === 'VENTA') {
+            data = await exchangesRepository.insertSellExchange(exchange);
+          }
+          else if (req.query.type === 'RETIRO') {
+            data = await exchangesRepository.insertWithdrawExchange(exchange);
+          }
+          else if (req.query.type === 'DEPOSITO') {
+            data = await exchangesRepository.insertDepositExchange(exchange);
+          }
+          else if (req.query.type === 'CONVERSION') {
+            data = await exchangesRepository.insertConversionExchange(exchange);
+          }
+          
+          if (data.message === 'Exchange started' && data.id_pre_exchange) {
+            redisClient.get(data.id_pre_exchange, function (err, reply) {
+              // reply is null when the key is missing
+              clearTimeout(parseInt(reply))
+            });
+          }
+      
+          setfinalResp({
+                        data,
+                        status: 200,
+                        success: true,
+                        failed: false
+                      }) 
+        } 
+        else 
+          setfinalResp({
+            data: {message: 'There was an error with the file.'},
+            status: 500,
+            success: false,
+            failed: true
+          })
+        resolve()
+      });
+    })
+    
+
+    return getfinalResp() ? getfinalResp() : {
+                                                data: {message: 'There was an error.'},
+                                                status: 500,
+                                                success: false,
+                                                failed: true
+                                              }
   } catch (error) {
     next(error);
   }
