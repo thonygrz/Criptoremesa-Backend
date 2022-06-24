@@ -254,7 +254,7 @@ exchangesService.insertExchange = async (req, res, next) => {
             data = await exchangesRepository.insertConversionExchange(exchange);
           }
           
-          if (data.message === 'Exchange started' && data.id_pre_exchange) {
+          if (data && data.message === 'Exchange started' && data.id_pre_exchange) {
             redisClient.get(data.id_pre_exchange, function (err, reply) {
               // reply is null when the key is missing
               clearTimeout(parseInt(reply))
