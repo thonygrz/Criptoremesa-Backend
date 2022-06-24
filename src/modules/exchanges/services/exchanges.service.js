@@ -10,6 +10,12 @@ import formidable from "formidable";
 const exchangesService = {};
 const context = "exchanges Service";
 
+function between(min, max) {  
+  return Math.floor(
+    Math.random() * (max - min + 1) + min
+  )
+}
+
 exchangesService.getExchangeRangeRates = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting exchanges`);
