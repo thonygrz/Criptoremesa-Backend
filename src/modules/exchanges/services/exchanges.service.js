@@ -268,15 +268,21 @@ exchangesService.insertExchange = async (req, res, next) => {
               // reply is null when the key is missing
               clearTimeout(parseInt(reply))
             });
+
+            setfinalResp({
+              data,
+              status: 200,
+              success: true,
+              failed: false
+            }) 
+          } else 
+                setfinalResp({
+                        data: {message: 'There was an error with the file.'},
+                        status: 500,
+                        success: false,
+                        failed: true
+                      })
           }
-      
-          setfinalResp({
-                        data,
-                        status: 200,
-                        success: true,
-                        failed: false
-                      }) 
-        } 
         else 
           setfinalResp({
             data: {message: 'There was an error with the file.'},
