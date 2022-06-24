@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import exchangesRepository from "../repositories/exchanges.pg.repository";
+import redisClient from "../../../utils/redis";
 
 const exchangesService = {};
 const context = "exchanges Service";
@@ -29,6 +30,83 @@ exchangesService.getExchangeRates = async (req, res, next) => {
     ObjLog.log(`[${context}]: Getting exchange rates`);
 
     let data = await exchangesRepository.getExchangeRates();
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+function waitingPreExchange(id_pre_exchange) {
+  const timmy = setTimeout(async () => {
+    let resp = await exchangesRepository.expiredPreExchange(id_pre_exchange);
+    if (resp.email_user)
+      notifyChanges('expired_exchange', resp);
+  }, 300000);
+  redisClient.set(id_pre_exchange.toString(), timmy[Symbol.toPrimitive]());
+}
+
+exchangesService.startPreexchange = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Starting preexchange`);
+    ObjLog.log(`[${context}]: Starting preexchange`);
+    let data = await exchangesRepository.startPreExchange(req.body);
+    
+    if (data.message === 'Pre-exchange succesfully inserted.'){
+      
+      if (data.previous_id_pre_exchange){
+        redisClient.get(data.previous_id_pre_exchange, function (err, reply) {
+          // reply is null when the key is missing
+          clearTimeout(reply)
+        });
+      }
+      
+      waitingPreExchange(data.id_pre_exchange);
+    }
+      
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exchangesService.getPreExchangeByUser = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting preexchange by user`);
+    ObjLog.log(`[${context}]: Getting preexchange by user`);
+    let data = await exchangesRepository.getPreExchangeByUser(req.params.email_user);
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exchangesService.cancelPreExchange = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Canceling preexchange by user`);
+    ObjLog.log(`[${context}]: Canceling preexchange by user`);
+
+    redisClient.get(req.params.id_pre_exchange, function (err, reply) {
+      // reply is null when the key is missing
+      clearTimeout(reply)
+    });
+    let data = await exchangesRepository.cancelPreExchange(req.params.id_pre_exchange);
 
     return {
       data,

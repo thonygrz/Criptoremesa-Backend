@@ -33,6 +33,72 @@ exchangesRepository.getExchangeRates = async () => {
   }
 };
 
+exchangesRepository.startPreExchange = async (body) => {
+  try {
+    logger.info(`[${context}]: Starting pre exchange on db`);
+    ObjLog.log(`[${context}]: Starting pre exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_store_pre_exchange('${JSON.stringify(body)}','${
+        body.email_user
+      }')`
+    );
+    if (resp.rows[0].sp_store_pre_exchange)
+      return resp.rows[0].sp_store_pre_exchange;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.expiredPreExchange = async (id_pre_exchange) => {
+  try {
+    logger.info(`[${context}]: Expiring pre exchange on db`);
+    ObjLog.log(`[${context}]: Expiring pre exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_expire_pre_exchange(${id_pre_exchange})`
+    );
+    if (resp.rows[0].sp_expire_pre_exchange)
+      return resp.rows[0].sp_expire_pre_exchange;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.getPreExchangeByUser = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting pre exchange on db`);
+    ObjLog.log(`[${context}]: Getting pre exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM get_pre_exchange_by_user('${email_user}')`
+    );
+    if (resp.rows[0].get_pre_exchange_by_user)
+      return resp.rows[0].get_pre_exchange_by_user;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.cancelPreExchange = async (id_pre_exchange) => {
+  try {
+    logger.info(`[${context}]: Getting pre exchange on db`);
+    ObjLog.log(`[${context}]: Getting pre exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_cancel_pre_exchange(${id_pre_exchange})`
+    );
+    if (resp.rows[0].sp_cancel_pre_exchange)
+      return resp.rows[0].sp_cancel_pre_exchange;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 exchangesRepository.insertBuyExchange = async (body) => {
   try {
     logger.info(`[${context}]: Inserting buy exchange on db`);

@@ -22,4 +22,22 @@ exchangesRouter.post(
   exchangesController.insertExchange
 );
 
+exchangesRouter.post(
+  "/preExchange",
+  // guard.verifyAdmin("/login"),
+  exchangesController.startPreExchange
+);
+
+exchangesRouter.get(
+  "/preExchange/:email_user",
+  // guard.verifyAdmin("/login"),
+  exchangesController.getPreExchangeByUser
+);
+
+exchangesRouter.delete(
+  "/preExchange/:id_pre_exchange",
+  // guard.verifyAdmin("/login"),
+  exchangesController.cancelPreExchange
+);
+
 export default exchangesRouter;
