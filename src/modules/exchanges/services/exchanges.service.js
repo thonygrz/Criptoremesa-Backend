@@ -41,4 +41,38 @@ exchangesService.getExchangeRates = async (req, res, next) => {
   }
 };
 
+exchangesService.insertExchange = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Inserting exchange`);
+    ObjLog.log(`[${context}]: Inserting exchange`);
+
+    let data
+
+    if (req.query.type === 'COMPRA') {
+      data = await exchangesRepository.insertBuyExchange(req.body);
+    } 
+    else if (req.query.type === 'VENTA') {
+      data = await exchangesRepository.insertSellExchange(req.body);
+    }
+    else if (req.query.type === 'RETIRO') {
+      data = await exchangesRepository.insertWithdrawExchange(req.body);
+    }
+    else if (req.query.type === 'DEPOSITO') {
+      data = await exchangesRepository.insertDepositExchange(req.body);
+    }
+    else if (req.query.type === 'CONVERSION') {
+      data = await exchangesRepository.insertConversionExchange(req.body);
+    }
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default exchangesService;

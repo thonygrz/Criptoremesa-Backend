@@ -16,4 +16,10 @@ exchangesRouter.get(
   exchangesController.getExchangeRates
 );
 
+exchangesRouter.post(
+  "/",
+  // guard.verifyAdmin("/login"),
+  exchangesController.insertExchange
+);
+
 export default exchangesRouter;

@@ -33,4 +33,94 @@ exchangesRepository.getExchangeRates = async () => {
   }
 };
 
+exchangesRepository.insertBuyExchange = async (body) => {
+  try {
+    logger.info(`[${context}]: Inserting buy exchange on db`);
+    ObjLog.log(`[${context}]: Inserting buy exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_lnk_cr_exchange_init(
+                                                      ($1),
+                                                      'Compra'
+                                                    )`,
+                                                    [body]
+    );
+    return resp.rows[0].sp_lnk_cr_exchange_init;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.insertSellExchange = async (body) => {
+  try {
+    logger.info(`[${context}]: Inserting buy exchange on db`);
+    ObjLog.log(`[${context}]: Inserting buy exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_lnk_cr_exchange_init(
+                                                      ($1),
+                                                      'Venta'
+                                                    )`,
+                                                    [body]
+    );
+    return resp.rows[0].sp_lnk_cr_exchange_init;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.insertWithdrawExchange = async (body) => {
+  try {
+    logger.info(`[${context}]: Inserting buy exchange on db`);
+    ObjLog.log(`[${context}]: Inserting buy exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_lnk_cr_exchange_init(
+                                                      ($1),
+                                                      'Retiro'
+                                                    )`,
+                                                    [body]
+    );
+    return resp.rows[0].sp_lnk_cr_exchange_init;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.insertDepositExchange = async (body) => {
+  try {
+    logger.info(`[${context}]: Inserting buy exchange on db`);
+    ObjLog.log(`[${context}]: Inserting buy exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_lnk_cr_exchange_init(
+                                                      ($1),
+                                                      'Depósito'
+                                                    )`,
+                                                    [body]
+    );
+    return resp.rows[0].sp_lnk_cr_exchange_init;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.insertConversionExchange = async (body) => {
+  try {
+    logger.info(`[${context}]: Inserting buy exchange on db`);
+    ObjLog.log(`[${context}]: Inserting buy exchange on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_lnk_cr_exchange_init(
+                                                      ($1),
+                                                      'Conversión'
+                                                    )`,
+                                                    [body]
+    );
+    return resp.rows[0].sp_lnk_cr_exchange_init;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default exchangesRepository;
