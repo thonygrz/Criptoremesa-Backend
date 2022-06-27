@@ -40,4 +40,10 @@ exchangesRouter.delete(
   exchangesController.cancelPreExchange
 );
 
+exchangesRouter.get(
+  "/limits",
+  // guard.verifyAdmin("/login"),
+  exchangesController.getAmountLimits
+);
+
 export default exchangesRouter;

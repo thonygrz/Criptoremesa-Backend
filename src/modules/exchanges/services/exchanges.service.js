@@ -308,4 +308,22 @@ exchangesService.insertExchange = async (req, res, next) => {
   }
 };
 
+exchangesService.getAmountLimits = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting exchange amount limits`);
+    ObjLog.log(`[${context}]: Getting exchange amount limits`);
+
+    let data = await exchangesRepository.getAmountLimits(req.query);
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default exchangesService;
