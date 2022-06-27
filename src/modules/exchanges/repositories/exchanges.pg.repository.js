@@ -196,12 +196,19 @@ exchangesRepository.getAmountLimits = async (query) => {
   try {
     logger.info(`[${context}]: Getting exchange amount limits from db`);
     ObjLog.log(`[${context}]: Getting exchange amount limits from db`);
+
+    console.log('QUERYYY: ',`SELECT * FROM prc_mng.sp_get_exchange_limits(
+      ${query.id_operation_route === 'null' ? null : query.id_operation_route},
+      ${query.id_verification === 'null' ? null : query.id_verification},
+      ${query.id_exchange_type === 'null' ? null : query.id_exchange_type}
+    )`)
+
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_get_exchange_limits(
                                                       ${query.id_operation_route === 'null' ? null : query.id_operation_route},
                                                       ${query.id_verification === 'null' ? null : query.id_verification},
-                                                      ${query.id_exchange_type === 'null' ? null : query.id_exchange_type},
+                                                      ${query.id_exchange_type === 'null' ? null : query.id_exchange_type}
                                                     )`
     );
     return resp.rows[0].sp_get_exchange_limits;
