@@ -582,7 +582,7 @@ usersPGRepository.getUserAccounts = async (email_user) => {
                                                   '${email_user}'
                                                 )`
     );
-    if (resp.rows[0]) return resp.rows[0];
+    if (resp.rows) return resp.rows;
     else return null;
   } catch (error) {
     throw error;
