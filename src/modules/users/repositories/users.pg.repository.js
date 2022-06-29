@@ -543,4 +543,68 @@ usersPGRepository.verifReferrallByCodPub = async (cust_cr_cod_pub) => {
   }
 };
 
+usersPGRepository.insertUserAccount = async (body,email_user) => {
+  try {
+    logger.info(`[${context}]: Inserting user account on db`);
+    ObjLog.log(`[${context}]: Inserting user account on db`);
+    console.log("🚀 ~ file: users.pg.repository.js ~ line 547 ~ usersPGRepository.insertUserAccount= ~ body", body)
+
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_ms_user_accounts_insert(
+                                                  ${email_user === null ? null : `'${email_user}'`},
+                                                  ${body.owner_name === null ? null : `'${body.owner_name}'`},
+                                                  ${body.owner_id === null ? null : `'${body.owner_id}'`},
+                                                  ${body.account_id === null ? null : `'${body.account_id}'`},
+                                                  ${body.account_type === null ? null : `'${body.account_type}'`},
+                                                  ${body.phone_number === null ? null : `'${body.phone_number}'`},
+                                                  ${body.email === null ? null : `'${body.email}'`},
+                                                  ${body.id_doc_type}, 
+                                                  ${body.id_bank}, 
+                                                  ${body.id_pay_method}, 
+                                                  ${body.id_optional_field}
+                                                )`
+    );
+    if (resp.rows[0]) return resp.rows[0];
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.getUserAccounts = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Getting user accounts from db`);
+    ObjLog.log(`[${context}]: Getting user accounts from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_ms_user_accounts_get_all(
+                                                  '${email_user}'
+                                                )`
+    );
+    if (resp.rows[0]) return resp.rows[0];
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.deleteUserAccount = async (email_user) => {
+  try {
+    logger.info(`[${context}]: Deleting user account on db`);
+    ObjLog.log(`[${context}]: Deleting user account on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_ms_user_accounts_delete(
+                                                  '${email_user}'
+                                                )`
+    );
+    console.log("🚀 ~ file: users.pg.repository.js ~ line 603 ~ usersPGRepository.deleteUserAccount ~ resp.rows[0].sp_ms_user_accounts_delete", resp.rows[0].sp_ms_user_accounts_delete)
+    if (resp.rows[0]) return resp.rows[0].sp_ms_user_accounts_delete;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default usersPGRepository;
