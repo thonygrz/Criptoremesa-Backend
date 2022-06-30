@@ -217,4 +217,26 @@ exchangesRepository.getAmountLimits = async (query) => {
   }
 };
 
+exchangesRepository.getExchangesByUser = async (query) => {
+  try {
+    logger.info(`[${context}]: Getting exchanges by user from db`);
+    ObjLog.log(`[${context}]: Getting exchanges by user from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_last_exchanges_by_user(
+                                                      ${query.email_user === 'null' ? null : `'${query.email_user}'`},
+                                                      ${query.limit === 'null' ? null : query.limit},
+                                                      ${query.start_date === 'null' ? null : query.start_date},
+                                                      ${query.end_date === 'null' ? null : query.end_date},
+                                                      'app'
+                                                    )`
+    );
+    if (resp.rows[0].sp_get_last_exchanges_by_user)
+      return resp.rows[0].sp_get_last_exchanges_by_user;
+    else return [];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default exchangesRepository;

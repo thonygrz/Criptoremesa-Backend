@@ -46,4 +46,10 @@ exchangesRouter.get(
   exchangesController.getAmountLimits
 );
 
+exchangesRouter.get(
+  "/",
+  // guard.verifyAdmin("/login"),
+  exchangesController.getExchangesByUser
+);
+
 export default exchangesRouter;

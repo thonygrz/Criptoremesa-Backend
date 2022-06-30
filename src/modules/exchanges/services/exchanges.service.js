@@ -326,4 +326,26 @@ exchangesService.getAmountLimits = async (req, res, next) => {
   }
 };
 
+exchangesService.getExchangesByUser = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting exchanges by user`);
+    ObjLog.log(`[${context}]: Getting exchanges by user`);
+
+    redisClient.get(req.params.id_pre_exchange, function (err, reply) {
+      // reply is null when the key is missing
+      clearTimeout(reply)
+    });
+    let data = await exchangesRepository.getExchangesByUser(req.query);
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default exchangesService;
