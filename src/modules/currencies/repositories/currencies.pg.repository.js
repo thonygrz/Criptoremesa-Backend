@@ -33,4 +33,18 @@ currenciesRepository.getDestinyCurrenciesByCountry = async (idCountry) => {
   }
 };
 
+currenciesRepository.getCurrenciesByType = async (type) => {
+  try {
+    logger.info(`[${context}]: Getting currencies by type from db`);
+    ObjLog.log(`[${context}]: Getting currencies by type from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `select * from sec_cust.sp_get_currencies_by_type(${type ? `'${type}'` : null})`
+    );
+    return resp.rows[0].sp_get_currencies_by_type;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default currenciesRepository;
