@@ -12,8 +12,6 @@ balancesService.getBalances = async (req, res, next) => {
     let data = await balancesPGRepository.getBalances(req.params.email_user);
     let currencyData = await currenciesPGRepository.getCurrenciesByType('crypto')
 
-    console.log('currencyData',currencyData)
-
     if (data.resid_currency){
       if (!data.balances) data.balances = []
       if (!data.balances.find(b => b.id_currency == data.resid_currency.id_currency)){
@@ -28,7 +26,7 @@ balancesService.getBalances = async (req, res, next) => {
         })
       }
       currencyData.forEach(cu => {
-        if (!data.balances.find(b => b.id_currency = cu.id_currency)){
+        if (!data.balances.find(b => b.id_currency === cu.id_currency)){
           data.balances.push({
             balance: 0,
             email_user: req.params.email_user,
