@@ -28,15 +28,17 @@ balancesService.getBalances = async (req, res, next) => {
         })
       }
       currencyData.forEach(cu => {
-        data.balances.push({
-          balance: 0,
-          email_user: req.params.email_user,
-          id_currency: cu.id_currency,
-          currency_name: cu.name,
-          currency_type: cu.type,
-          country_iso_code: null,
-          currency_iso_code: cu.iso_cod,
-        })
+        if (!data.balances.find(b => b.id_currency = cu.id_currency)){
+          data.balances.push({
+            balance: 0,
+            email_user: req.params.email_user,
+            id_currency: cu.id_currency,
+            currency_name: cu.name,
+            currency_type: cu.type,
+            country_iso_code: null,
+            currency_iso_code: cu.iso_cod,
+          })
+        }
       });
     }
     
