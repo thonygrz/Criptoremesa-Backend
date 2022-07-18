@@ -273,6 +273,7 @@ exchangesService.insertExchange = async (req, res, next) => {
     let exchange = JSON.parse(getFields().exchange)
 
     let data
+    console.log("🚀 ~ file: exchanges.service.js ~ line 278 ~ exchangesService.insertExchange= ~ req.query", req.query)
 
     if (req.query.type === 'COMPRA') {
       
