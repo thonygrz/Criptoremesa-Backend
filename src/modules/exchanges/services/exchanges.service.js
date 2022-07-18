@@ -287,19 +287,19 @@ exchangesService.insertExchange = async (req, res, next) => {
       exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
       exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
       
-      data = await exchangesRepository.insertBuyExchange(exchange,req.query.type);
+      data = await exchangesRepository.insertBuyExchange(exchange);
     } 
     else if (req.query.type === 'VENTA') {
-      data = await exchangesRepository.insertSellExchange(exchange,req.query.type);
+      data = await exchangesRepository.insertSellExchange(exchange);
     }
     else if (req.query.type === 'RETIRO') {
-      data = await exchangesRepository.insertWithdrawExchange(exchange,req.query.type);
+      data = await exchangesRepository.insertWithdrawExchange(exchange);
     }
     else if (req.query.type === 'DEPOSITO') {
-      data = await exchangesRepository.insertDepositExchange(exchange,req.query.type);
+      data = await exchangesRepository.insertDepositExchange(exchange);
     }
     else if (req.query.type === 'CONVERSION') {
-      data = await exchangesRepository.insertConversionExchange(exchange,req.query.type);
+      data = await exchangesRepository.insertConversionExchange(exchange);
     }
       console.log("🚀 ~ file: exchanges.service.js ~ line 291 ~ data", data)
       if (data && data.message === 'Exchange started' && data.id_pre_exchange) {
