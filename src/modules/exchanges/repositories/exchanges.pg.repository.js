@@ -124,9 +124,10 @@ exchangesRepository.insertSellExchange = async (body) => {
   try {
     logger.info(`[${context}]: Inserting sell exchange on db`);
     ObjLog.log(`[${context}]: Inserting sell exchange on db`);
-
+    
     body.mode = 'app'
-
+    
+    console.log("🚀 ~ InsertSellExchange")
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_lnk_cr_exchange_init(
