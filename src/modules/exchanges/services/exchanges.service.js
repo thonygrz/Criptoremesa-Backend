@@ -19,12 +19,90 @@ function between(min, max) {
 }
 
 let finalResp
+let fields
 function setfinalResp (resp) {
   finalResp = resp
 }
 
 function getfinalResp () {
   return finalResp
+}
+
+function setFields (newFields) {
+  fields = newFields
+}
+
+function getFields () {
+  return fields
+}
+
+async function formHandler(form,req,fileError){
+  let numbers = []
+
+  await new Promise(function (resolve,reject) {
+    form.parse(req, async function (err, fields, files) {
+      if (err) {
+        reject(err) 
+        return
+      }
+        Object.values(files).forEach((f) => {
+          if (
+            f.type === "image/png" ||
+            f.type === "image/jpg" ||
+            f.type === "image/jpeg" ||
+            f.type === "image/gif" ||
+            f.type === "application/pdf" 
+          ) {
+  
+            let exists = true
+            let pathName
+            while (exists){
+                let number = between(10000,99999);
+                pathName = join(env.FILES_DIR,`/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`)
+                if (!fs.existsSync(pathName)){
+                    exists = false
+                    numbers.push(number)
+                    fs.rename(
+                      f.path,
+                      form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`,
+                      (error) => {
+                        if (error) {
+                          next(error);
+                        }
+                      }
+                    );
+                }
+            }
+          }
+        });
+        if (!fileError) {
+  
+          Object.values(files).forEach((f,i) => {
+            if (
+              f.type === "image/png" ||
+              f.type === "image/jpg" ||
+              f.type === "image/jpeg" ||
+              f.type === "image/gif" ||
+              f.type === "application/pdf" 
+            ) {
+              exchange.captures[i].path = form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${numbers[i]}_${f.name}`
+            }
+          });
+  
+          // se guardan los fields para utilizar el objeto de exchange
+  
+          setFields(fields)
+          }
+        else 
+          setfinalResp({
+            data: {message: 'There was an error with the file.'},
+            status: 500,
+            success: false,
+            failed: true
+          })
+        resolve()
+    });
+  })
 }
 
 exchangesService.getExchangeRangeRates = async (req, res, next) => {
@@ -185,120 +263,75 @@ exchangesService.insertExchange = async (req, res, next) => {
         });
       }
     });
-    let numbers = []
 
-    await new Promise((resolve,reject) => {
-      form.parse(req, async function (err, fields, files) {
+    await formHandler(form,req,fileError)
 
-        Object.values(files).forEach((f) => {
-          if (
-            f.type === "image/png" ||
-            f.type === "image/jpg" ||
-            f.type === "image/jpeg" ||
-            f.type === "image/gif" ||
-            f.type === "application/pdf" 
-          ) {
-  
-            let exists = true
-            let pathName
-            while (exists){
-                let number = between(10000,99999);
-                pathName = join(env.FILES_DIR,`/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`)
-                if (!fs.existsSync(pathName)){
-                    exists = false
-                    numbers.push(number)
-                    fs.rename(
-                      f.path,
-                      form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`,
-                      (error) => {
-                        if (error) {
-                          next(error);
-                        }
-                      }
-                    );
-                }
-            }
-          }
+    if (getfinalResp()) return getfinalResp()
+
+    // se obtiene el objeto de exchange
+
+    let exchange = JSON.parse(getFields().exchange)
+
+    let data
+
+    if (req.query.type === 'COMPRA') {
+      
+      let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${exchange.route.origin_iso_code}&symbols=${exchange.originCountry.iso_cod},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
+      
+      let localRateFromAPI = fullRateFromAPI.data.rates[exchange.route.origin_iso_code]
+      localRateFromAPI = parseFloat(localRateFromAPI)
+      
+      let dollarRateFromAPI = fullRateFromAPI.data.USD
+      localRateFromAPI = parseFloat(localRateFromAPI)
+      
+      exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
+      exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
+      
+      data = await exchangesRepository.insertBuyExchange(exchange,req.query.type);
+    } 
+    else if (req.query.type === 'VENTA') {
+      data = await exchangesRepository.insertSellExchange(exchange,req.query.type);
+    }
+    else if (req.query.type === 'RETIRO') {
+      data = await exchangesRepository.insertWithdrawExchange(exchange,req.query.type);
+    }
+    else if (req.query.type === 'DEPOSITO') {
+      data = await exchangesRepository.insertDepositExchange(exchange,req.query.type);
+    }
+    else if (req.query.type === 'CONVERSION') {
+      data = await exchangesRepository.insertConversionExchange(exchange,req.query.type);
+    }
+      console.log("🚀 ~ file: exchanges.service.js ~ line 291 ~ data", data)
+      if (data && data.message === 'Exchange started' && data.id_pre_exchange) {
+        redisClient.get(data.id_pre_exchange, function (err, reply) {
+          // reply is null when the key is missing
+          clearTimeout(parseInt(reply))
         });
-        if (!fileError) {
-          let exchange = JSON.parse(fields.exchange)
-  
-          Object.values(files).forEach((f,i) => {
-            if (
-              f.type === "image/png" ||
-              f.type === "image/jpg" ||
-              f.type === "image/jpeg" ||
-              f.type === "image/gif" ||
-              f.type === "application/pdf" 
-            ) {
-              exchange.captures[i].path = form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${numbers[i]}_${f.name}`
-            }
-          });
-  
-          let data
 
-          if (req.query.type === 'COMPRA') {
-            
-            let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${exchange.route.origin_iso_code}&symbols=${exchange.originCountry.iso_cod},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
-            
-            let localRateFromAPI = fullRateFromAPI.data.rates[exchange.route.origin_iso_code]
-            localRateFromAPI = parseFloat(localRateFromAPI)
-            
-            let dollarRateFromAPI = fullRateFromAPI.data.USD
-            localRateFromAPI = parseFloat(localRateFromAPI)
-            
-            exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
-            exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
-            
-            data = await exchangesRepository.insertBuyExchange(exchange);
-          } 
-          else if (req.query.type === 'VENTA') {
-            data = await exchangesRepository.insertSellExchange(exchange);
-          }
-          else if (req.query.type === 'RETIRO') {
-            data = await exchangesRepository.insertWithdrawExchange(exchange);
-          }
-          else if (req.query.type === 'DEPOSITO') {
-            data = await exchangesRepository.insertDepositExchange(exchange);
-          }
-          else if (req.query.type === 'CONVERSION') {
-            data = await exchangesRepository.insertConversionExchange(exchange);
-          }
-          
-          if (data && data.message === 'Exchange started' && data.id_pre_exchange) {
-            redisClient.get(data.id_pre_exchange, function (err, reply) {
-              // reply is null when the key is missing
-              clearTimeout(parseInt(reply))
-            });
-
-            setfinalResp({
-              data,
-              status: 200,
-              success: true,
-              failed: false
-            }) 
-          } else 
-                setfinalResp({
-                        data: {message: 'There was an error.'},
-                        status: 500,
-                        success: false,
-                        failed: true
-                      })
-          }
-        else 
+        setfinalResp({
+          data,
+          status: 200,
+          success: true,
+          failed: false
+        }) 
+      } 
+      else if (data && data.message === 'Exchange started') {
+        setfinalResp({
+          data,
+          status: 200,
+          success: true,
+          failed: false
+        }) 
+    }else 
           setfinalResp({
-            data: {message: 'There was an error with the file.'},
-            status: 500,
-            success: false,
-            failed: true
-          })
-        resolve()
-      });
-    })
-    
+                  data: {message: 'There was an error.'},
+                  status: 500,
+                  success: false,
+                  failed: true
+                })
 
     return getfinalResp() ? getfinalResp() : {
-                                                data: {message: 'There was an error.'},
+                                                data: {message: 'There was an error..'},
                                                 status: 500,
                                                 success: false,
                                                 failed: true
