@@ -92,6 +92,8 @@ async function formHandler(form,req,fileError){
           }
         });
 
+        fields.exchange = exchange
+
         // se guardan los fields para utilizar el objeto de exchange
 
         setFields(fields)
@@ -273,7 +275,7 @@ exchangesService.insertExchange = async (req, res, next) => {
 
     // se obtiene el objeto de exchange
 
-    let exchange = JSON.parse(getFields().exchange)
+    let exchange = getFields().exchange
 
     let data
     console.log("🚀 ~ file: exchanges.service.js ~ line 278 ~ exchangesService.insertExchange= ~ req.query", req.query)
