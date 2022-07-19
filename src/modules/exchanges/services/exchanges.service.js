@@ -38,14 +38,49 @@ function getFields () {
 
 async function formHandler(form,req,fileError){
   let numbers = []
-
+  
   await new Promise(function (resolve,reject) {
     form.parse(req, async function (err, fields, files) {
       if (err) {
         reject(err) 
         return
       }
-        Object.values(files).forEach((f) => {
+      
+      let exchange = JSON.parse(fields.exchange)
+
+      Object.values(files).forEach((f) => {
+        if (
+          f.type === "image/png" ||
+          f.type === "image/jpg" ||
+          f.type === "image/jpeg" ||
+          f.type === "image/gif" ||
+          f.type === "application/pdf" 
+        ) {
+
+          let exists = true
+          let pathName
+          while (exists){
+              let number = between(10000,99999);
+              pathName = join(env.FILES_DIR,`/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`)
+              if (!fs.existsSync(pathName)){
+                  exists = false
+                  numbers.push(number)
+                  fs.rename(
+                    f.path,
+                    form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`,
+                    (error) => {
+                      if (error) {
+                        next(error);
+                      }
+                    }
+                  );
+              }
+          }
+        }
+      });
+      if (!fileError) {
+
+        Object.values(files).forEach((f,i) => {
           if (
             f.type === "image/png" ||
             f.type === "image/jpg" ||
@@ -53,46 +88,14 @@ async function formHandler(form,req,fileError){
             f.type === "image/gif" ||
             f.type === "application/pdf" 
           ) {
-  
-            let exists = true
-            let pathName
-            while (exists){
-                let number = between(10000,99999);
-                pathName = join(env.FILES_DIR,`/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`)
-                if (!fs.existsSync(pathName)){
-                    exists = false
-                    numbers.push(number)
-                    fs.rename(
-                      f.path,
-                      form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${number}_${f.name}`,
-                      (error) => {
-                        if (error) {
-                          next(error);
-                        }
-                      }
-                    );
-                }
-            }
+            exchange.captures[i].path = form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${numbers[i]}_${f.name}`
           }
         });
-        if (!fileError) {
-  
-          Object.values(files).forEach((f,i) => {
-            if (
-              f.type === "image/png" ||
-              f.type === "image/jpg" ||
-              f.type === "image/jpeg" ||
-              f.type === "image/gif" ||
-              f.type === "application/pdf" 
-            ) {
-              exchange.captures[i].path = form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${numbers[i]}_${f.name}`
-            }
-          });
-  
-          // se guardan los fields para utilizar el objeto de exchange
-  
-          setFields(fields)
-          }
+
+        // se guardan los fields para utilizar el objeto de exchange
+
+        setFields(fields)
+        }
         else 
           setfinalResp({
             data: {message: 'There was an error with the file.'},
