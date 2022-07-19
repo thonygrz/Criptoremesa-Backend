@@ -266,7 +266,7 @@ exchangesService.insertExchange = async (req, res, next) => {
 
     await formHandler(form,req,fileError)
 
-    if (getfinalResp()) return getfinalResp()
+    if (getfinalResp() && getfinalResp().data.message === 'There was an error with the file.') return getfinalResp()
 
     // se obtiene el objeto de exchange
 
