@@ -80,32 +80,32 @@ async function formHandler(form,req,fileError){
       });
       if (!fileError) {
 
-        Object.values(files).forEach((f,i) => {
-          if (
-            f.type === "image/png" ||
-            f.type === "image/jpg" ||
-            f.type === "image/jpeg" ||
-            f.type === "image/gif" ||
-            f.type === "application/pdf" 
-          ) {
-            exchange.captures[i].path = form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${numbers[i]}_${f.name}`
-          }
-        });
-
-        fields.exchange = exchange
-
-        // se guardan los fields para utilizar el objeto de exchange
-
-        setFields(fields)
+      Object.values(files).forEach((f,i) => {
+        if (
+          f.type === "image/png" ||
+          f.type === "image/jpg" ||
+          f.type === "image/jpeg" ||
+          f.type === "image/gif" ||
+          f.type === "application/pdf" 
+        ) {
+          exchange.captures[i].path = form.uploadDir + `/exchange-${JSON.parse(fields.exchange).email_user}_${numbers[i]}_${f.name}`
         }
-        else 
-          setfinalResp({
-            data: {message: 'There was an error with the file.'},
-            status: 500,
-            success: false,
-            failed: true
-          })
-        resolve()
+      });
+
+      fields.exchange = exchange
+
+      // se guardan los fields para utilizar el objeto de exchange
+
+      setFields(fields)
+      }
+      else 
+        setfinalResp({
+          data: {message: 'There was an error with the file.'},
+          status: 500,
+          success: false,
+          failed: true
+        })
+      resolve()
     });
   })
 }
