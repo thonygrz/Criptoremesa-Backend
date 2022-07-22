@@ -55,6 +55,6 @@ router.use("/cryptomiles", cryptomilesRouter);
 router.use("/reports", reportsRouter);
 router.use("/operation_routes", operationRoutesRouter);
 router.use("/exchanges", exchangesRouter);
-router.use("/wallets", exchangesRouter);
+router.use("/wallets", walletsRouter);
 
 export default router;
