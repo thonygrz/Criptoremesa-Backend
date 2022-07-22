@@ -9,14 +9,14 @@ walletsRepository.getWallets = async (onlyCompany) => {
   try {
     logger.info(`[${context}]: Getting wallets from db`);
     ObjLog.log(`[${context}]: Getting wallets from db`);
-    await poolSM.query("SET SCHEMA 'msg_app'");
+    await poolSM.query("SET SCHEMA 'prc_mng'");
 
     onlyCompany = onlyCompany === 'null' ? null :  onlyCompany
-
+    console.log()
     const resp = await poolSM.query(
-      `select * from msg_app.sp_get_wallets(
-                                                  ${onlyCompany}
-                                                  )`
+      `select * from prc_mng.sp_get_wallets(
+                                              ${onlyCompany}
+                                            )`
     );
     if (resp.rows[0].sp_get_wallets)
       return resp.rows[0].sp_get_wallets;
