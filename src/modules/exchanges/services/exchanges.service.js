@@ -8,6 +8,7 @@ import fs from 'fs'
 import formidable from "formidable";
 import axios from 'axios'
 import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
+import cryptoValidator from  'multicoin-address-validator'
 
 const exchangesService = {};
 const context = "exchanges Service";
@@ -299,7 +300,12 @@ exchangesService.insertExchange = async (req, res, next) => {
       data = await exchangesRepository.insertSellExchange(exchange);
     }
     else if (req.query.type === 'RETIRO') {
-      data = await exchangesRepository.insertWithdrawExchange(exchange);
+      if(exchange.wallet && cryptoValidator.validate(exchange.wallet.number,exchange.network.name))
+        data = await exchangesRepository.insertWithdrawExchange(exchange);
+      else
+        data = {
+                message: 'Invalid address.'
+              }
     }
     else if (req.query.type === 'DEPOSITO') {
       data = await exchangesRepository.insertDepositExchange(exchange);
@@ -307,7 +313,6 @@ exchangesService.insertExchange = async (req, res, next) => {
     else if (req.query.type === 'CONVERSION') {
       data = await exchangesRepository.insertConversionExchange(exchange);
     }
-      console.log("🚀 ~ file: exchanges.service.js ~ line 291 ~ data", data)
       if (data && data.message === 'Exchange started' && data.id_pre_exchange) {
         redisClient.get(data.id_pre_exchange, function (err, reply) {
           // reply is null when the key is missing
@@ -328,13 +333,22 @@ exchangesService.insertExchange = async (req, res, next) => {
           success: true,
           failed: false
         }) 
-    }else 
-          setfinalResp({
-                  data: {message: 'There was an error.'},
-                  status: 500,
-                  success: false,
-                  failed: true
-                })
+      }
+      else if (data && data.message === 'Invalid address.') {
+        setfinalResp({
+          data,
+          status: 403,
+          success: false,
+          failed: true
+        }) 
+      }
+      else 
+        setfinalResp({
+                data: {message: 'There was an error.'},
+                status: 500,
+                success: false,
+                failed: true
+              })
 
     return getfinalResp() ? getfinalResp() : {
                                                 data: {message: 'There was an error..'},
