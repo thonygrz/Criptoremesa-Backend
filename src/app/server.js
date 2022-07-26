@@ -54,6 +54,7 @@ app.use(
       "https://www.sixmap.nimobot.com",
       "http://192.168.0.105:8080",
       "http://186.167.250.194:8080",
+      "http://172.20.10.5:8081"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
