@@ -10,6 +10,8 @@ usersPGRepository.createNewClient = async (body) => {
     logger.info(`[${context}]: Inserting new client in db`);
     ObjLog.log(`[${context}]: Inserting new client in db`);
 
+    console.log('LO QUE SE VA A INSERTAR: ',body)
+
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp =
       await poolSM.query(`SELECT * FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT_NEW(
