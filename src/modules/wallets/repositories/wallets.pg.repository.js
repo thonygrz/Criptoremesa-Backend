@@ -12,7 +12,6 @@ walletsRepository.getWallets = async (onlyCompany) => {
     await poolSM.query("SET SCHEMA 'prc_mng'");
 
     onlyCompany = onlyCompany === 'null' ? null :  onlyCompany
-    console.log()
     const resp = await poolSM.query(
       `select * from prc_mng.sp_get_wallets(
                                               ${onlyCompany}

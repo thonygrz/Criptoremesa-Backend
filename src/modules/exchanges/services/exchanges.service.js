@@ -12,6 +12,8 @@ import cryptoValidator from  'multicoin-address-validator'
 
 const exchangesService = {};
 const context = "exchanges Service";
+let finalResp
+let fields
 
 function between(min, max) {  
   return Math.floor(
@@ -19,8 +21,6 @@ function between(min, max) {
   )
 }
 
-let finalResp
-let fields
 function setfinalResp (resp) {
   finalResp = resp
 }
@@ -308,47 +308,51 @@ exchangesService.insertExchange = async (req, res, next) => {
               }
     }
     else if (req.query.type === 'DEPOSITO') {
-      data = await exchangesRepository.insertDepositExchange(exchange);
+
+      
+
+      // data = await exchangesRepository.insertDepositExchange(exchange);
     }
     else if (req.query.type === 'CONVERSION') {
       data = await exchangesRepository.insertConversionExchange(exchange);
     }
-      if (data && data.message === 'Exchange started' && data.id_pre_exchange) {
-        redisClient.get(data.id_pre_exchange, function (err, reply) {
-          // reply is null when the key is missing
-          clearTimeout(parseInt(reply))
-        });
+    
+    if (data && data.message === 'Exchange started' && data.id_pre_exchange) {
+      redisClient.get(data.id_pre_exchange, function (err, reply) {
+        // reply is null when the key is missing
+        clearTimeout(parseInt(reply))
+      });
 
-        setfinalResp({
-          data,
-          status: 200,
-          success: true,
-          failed: false
-        }) 
-      } 
-      else if (data && data.message === 'Exchange started') {
-        setfinalResp({
-          data,
-          status: 200,
-          success: true,
-          failed: false
-        }) 
-      }
-      else if (data && data.message === 'Invalid address.') {
-        setfinalResp({
-          data,
-          status: 403,
-          success: false,
-          failed: true
-        }) 
-      }
-      else 
-        setfinalResp({
-                data: {message: 'There was an error.'},
-                status: 500,
-                success: false,
-                failed: true
-              })
+      setfinalResp({
+        data,
+        status: 200,
+        success: true,
+        failed: false
+      }) 
+    } 
+    else if (data && data.message === 'Exchange started') {
+      setfinalResp({
+        data,
+        status: 200,
+        success: true,
+        failed: false
+      }) 
+    }
+    else if (data && data.message === 'Invalid address.') {
+      setfinalResp({
+        data,
+        status: 403,
+        success: false,
+        failed: true
+      }) 
+    }
+    else 
+      setfinalResp({
+              data: {message: 'There was an error.'},
+              status: 500,
+              success: false,
+              failed: true
+            })
 
     return getfinalResp() ? getfinalResp() : {
                                                 data: {message: 'There was an error..'},
