@@ -68,6 +68,8 @@ usersService.createNewClient = async (req, res, next) => {
       // Secret key
       const secretKey = env.reCAPTCHA_SECRET_KEY;
 
+      console.log('ANTES DEL CAPTCHA: ')
+
       // Verify URL
       const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
         req.body.captcha
@@ -75,6 +77,8 @@ usersService.createNewClient = async (req, res, next) => {
 
       // Make a request to verifyURL
       const body = await axios.get(verifyURL);
+
+      console.log('DESPUES DEL CAPTCHA: ')
 
       // // If not successful
       if (body.data.success === false) {
