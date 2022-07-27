@@ -445,6 +445,15 @@ exchangesService.getExchangesByUser = async (req, res, next) => {
       clearTimeout(reply)
     });
     let data = await exchangesRepository.getExchangesByUser(req.query);
+    data.forEach(el=>{
+      if (el.captures){
+        el.captures.forEach(capture=>{
+          capture.content = fs.readFileSync(
+            capture.content
+          );
+        })
+      }
+    })
 
     return {
       data,
