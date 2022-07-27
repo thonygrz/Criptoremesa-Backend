@@ -252,4 +252,22 @@ exchangesRepository.getExchangesByUser = async (query) => {
   }
 };
 
+exchangesRepository.getTransactionByConfNum = async (confNum) => {
+  try {
+    logger.info(`[${context}]: Getting transaction by confirmation number from db`);
+    ObjLog.log(`[${context}]: Getting transaction by confirmation number from db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_transaction_by_conf_number(
+                                                        '${confNum}'
+                                                      )`
+    );
+    if (resp.rows[0].sp_get_transaction_by_conf_number)
+      return resp.rows[0].sp_get_transaction_by_conf_number;
+    else return [];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default exchangesRepository;
