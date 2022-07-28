@@ -322,6 +322,7 @@ exchangesService.insertExchange = async (req, res, next) => {
           success: false,
           failed: true
         })
+        return getfinalResp()
       } else {
         data = await exchangesRepository.insertDepositExchange(exchange);
       }
