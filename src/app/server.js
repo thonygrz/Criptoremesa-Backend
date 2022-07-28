@@ -15,6 +15,9 @@ import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 
+//jobs
+import transactionsJob from '../utils/jobs/transactions'
+
 // SETTINGS
 const app = express();
 app.set("port", env.PORT || 3000);

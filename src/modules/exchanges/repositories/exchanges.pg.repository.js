@@ -270,4 +270,36 @@ exchangesRepository.getTransactionByConfNum = async (confNum) => {
   }
 };
 
+exchangesRepository.getUnconfirmedTransactions = async () => {
+  try {
+    logger.info(`[${context}]: Getting unconfirmed transactions from db`);
+    ObjLog.log(`[${context}]: Getting unconfirmed transactions from db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_unconfirmed_exchanges()`
+    );
+    if (resp.rows[0].sp_get_unconfirmed_exchanges)
+      return resp.rows[0].sp_get_unconfirmed_exchanges;
+    else return [];
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.confirmTransaction = async (confNum) => {
+  try {
+    logger.info(`[${context}]: Confirming transaction on db`);
+    ObjLog.log(`[${context}]: Confirming transaction on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT prc_mng.sp_confirm_exchange(${confNum})`
+    );
+    if (resp.rows[0].sp_confirm_exchange)
+      return resp.rows[0].sp_confirm_exchange;
+    else return [];
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default exchangesRepository;

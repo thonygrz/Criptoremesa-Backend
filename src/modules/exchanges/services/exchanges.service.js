@@ -312,50 +312,19 @@ exchangesService.insertExchange = async (req, res, next) => {
     }
     else if (req.query.type === 'DEPOSITO') {
 
-      // let oldTransaction = await exchangesRepository.getTransactionByConfNum(exchange.captures[0].ref);
-      // console.log("🚀 ~ oldTransaction", oldTransaction)
+      let oldTransaction = await exchangesRepository.getTransactionByConfNum(exchange.captures[0].ref);
+      console.log("🚀 ~ oldTransaction", oldTransaction)
 
-      // if (oldTransaction === []) {
-      //   setfinalResp({
-      //     data: {message: 'Txid already used.'},
-      //     status: 403,
-      //     success: false,
-      //     failed: true
-      //   })
-      // } else {
-      //     // USDT-Tron
-      //     if (exchange.network.name === 'Tron') {
-      //       // se obtiene la transaccion
-      
-      //         let USDTtransf = await tronAPI.getTransactionByTxId(exchange.captures[0].ref)
-      //         console.log("🚀 ~ USDTtransf", USDTtransf.data)
-      
-              
-      //       // se valida txid y wallet destino para activar job
-      //         console.log("🚀 ~ file: USDTtransf.data.hash", USDTtransf.data.hash)
-      //         console.log("🚀 ~ file: exchange.captures[0].ref", exchange.captures[0].ref)
-      //         console.log("🚀 ~ file: USDTtransf.data.tokenTransferInfo.to_address", USDTtransf.data.tokenTransferInfo.to_address)
-      //         console.log("🚀 ~ file: exchange.wallet.number", exchange.wallet.number)
-              
-      //         if (USDTtransf.data.hash === exchange.captures[0].ref && USDTtransf.data.tokenTransferInfo.to_address === exchange.wallet.number)
-      //           transactionsJob.setTxid(exchange.captures[0].ref,exchange.network.name)
-      //     }
-      //     else if (exchange.network.name === 'Bitcoin') {
-      //       // BTC-Bitcoin
-      //         // se obtiene la transaccion
-        
-      //           let BTCtransf = await bitcoinAPI.getTransactionByTxId(exchange.captures[0].ref)
-      //           console.log("🚀 ~ BTCtransf", BTCtransf.data.data)
-        
-      //         // se valida txid y wallet destino para activar job
-
-      //           let transactionWithDestinyAddress = BTCtransf.data.data.outputs.find(el=> el.addresses.find(ad=>ad === exchange.wallet.number))
-                
-      //           if (BTCtransf.data.data && transactionWithDestinyAddress)
-      //             transactionsJob.setTxid(exchange.captures[0].ref,exchange.network.name)
-      //     }
-        //  }
+      if (oldTransaction === []) {
+        setfinalResp({
+          data: {message: 'Txid already used.'},
+          status: 403,
+          success: false,
+          failed: true
+        })
+      } else {
         data = await exchangesRepository.insertDepositExchange(exchange);
+      }
     }
     else if (req.query.type === 'CONVERSION') {
       data = await exchangesRepository.insertConversionExchange(exchange);
