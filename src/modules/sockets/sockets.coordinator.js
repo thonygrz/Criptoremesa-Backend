@@ -216,12 +216,18 @@ export function notifyChanges(event, data) {
     if (data.email_user) redisKey = data.email_user
     else if (data.uniq_id) redisKey = data.uniq_id  
 
-    redisClient.get(redisKey, function (err, reply) {
-      // reply is null when the key is missing
-      console.log("Redis id socket reply: ", reply);
-      console.log("socket sending to FE: ", data);
-      socketServer.sockets.to(reply).emit(event, data);
-    });
+    if (redisKey) {
+      redisClient.get(redisKey, function (err, reply) {
+        // reply is null when the key is missing
+        logger.debug(`Sendind socket to FE. Redis id: ${reply}. Data: ${data}`);
+        socketServer.sockets.to(reply).emit(event, data);
+      });
+    } else if (data.api) {
+      logger.debug(`Sendind API socket to FE. Data: ${data}`)
+      socketServer.sockets.emit(event, data);
+    } else {
+      logger.error('Socket id not found in Redis')
+    }
       
     // socketServer.sockets.emit(event, data);
   } catch (error) {

@@ -14,6 +14,7 @@ let pgSession = require("connect-pg-simple")(session);
 import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
+import ws from '../utils/binanceSocket'
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
