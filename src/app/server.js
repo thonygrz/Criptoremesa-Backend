@@ -14,6 +14,7 @@ let pgSession = require("connect-pg-simple")(session);
 import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
+import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
 import ws from '../utils/binanceSocket'
 
 //jobs
@@ -192,5 +193,26 @@ app.use(async function (err, req, res,next) {
     res.status(500).send(serverError);
   }
 });
+
+// GLOBAL VARIABLES
+
+global.routes = []
+
+export function replaceOperationRoute(val){
+  routes.forEach((el,i) => {
+    if (el.id_operation_route === val.operationRoute.id_operation_route) 
+    el = val.operationRoute.id_operation_route
+  })
+}
+
+if (routes.length === 0) {
+  operationRoutesRepository.getoperation_routes().then((val) => {
+    routes = val
+  })
+  console.log(routes,'routes')
+}
+
+console.log("🚀 ~  routes", routes)
+
 
 export default app;

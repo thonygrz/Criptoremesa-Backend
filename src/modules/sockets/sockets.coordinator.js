@@ -7,6 +7,7 @@ import chatPGRepository from "../chat/repositories/chat.pg.repository";
 import ratesPGRepository from "../rates/repositories/rates.pg.repository";
 import usersPGRepository from "../users/repositories/users.pg.repository";
 import remittancesPGRepository from "../remittances/repositories/remittances.pg.repository";
+// import {replaceOperationRoute} from '../../app/server'
 
 import fs from "fs";
 
@@ -202,6 +203,26 @@ export async function SocketServer(server) {
       console.log('val from BE: ',val)
 
       socketServer.emit('rate_change', val);
+    });
+
+    socket.on("operation_route_update", async (val) => {
+      logger.debug(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      console.log('socket from Sixm',socket.id)
+      console.log('val from Sixm',val)
+
+      // replaceOperationRoute(val)
+
+      routes.forEach((el,i) => {
+        if (el.id_operation_route === val.operationRoute.id_operation_route) 
+        routes[i].profit_margin = val.operationRoute.profit_margin
+        routes[i].percent_limit = val.operationRoute.percent_limit
+      })
+
+      // console.log('routesss: ',routes)
+      // console.log('cambio de route: ',routes.find(e => e.id_operation_route === 19))
+
     });
   });
 }
