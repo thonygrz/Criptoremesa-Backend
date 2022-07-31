@@ -209,8 +209,8 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
-      console.log('socket from Sixm',socket.id)
-      console.log('val from Sixm',val)
+      // console.log('socket from Sixm',socket.id)
+      // console.log('val from Sixm',val)
 
       // replaceOperationRoute(val)
 
@@ -229,8 +229,10 @@ export async function SocketServer(server) {
 
 export function notifyChanges(event, data) {
   try {
-    logger.debug(`[${context}] Sending update notification to FE`);
-    ObjLog.log(`[${context}] Sending update notification to FE`);
+    if (!data.api) {
+      logger.debug(`[${context}] Sending update notification to FE`);
+      ObjLog.log(`[${context}] Sending update notification to FE`);
+    }
 
     let redisKey
 
@@ -244,7 +246,7 @@ export function notifyChanges(event, data) {
         socketServer.sockets.to(reply).emit(event, data);
       });
     } else if (data.api) {
-      logger.debug(`Sendind API socket to FE. Data: ${data}`)
+      // logger.debug(`Sendind API socket to FE. Data: ${data}`)
       socketServer.sockets.emit(event, data);
     } else {
       logger.error('Socket id not found in Redis')

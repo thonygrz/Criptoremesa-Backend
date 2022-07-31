@@ -23,12 +23,34 @@ ws2.onmessage = (event) => {
     data.route = routes.find((r) => r.origin_country === "Binance" && r.destiny_country === "Binance" && r.origin_iso_code === 'BTC' && r.destiny_iso_code === 'USDT')
     data.reverseRoute = routes.find((r) => r.origin_country === "Binance" && r.destiny_country === "Binance" && r.origin_iso_code === 'USDT' && r.destiny_iso_code === 'BTC')
     
-    let profit = JSON.parse(event.data).p - (JSON.parse(event.data).p * data.route.profit_margin / 100)
-    data.sellPrice = JSON.parse(event.data).p - profit
-    data.buyPrice = JSON.parse(event.data).p + profit
+    if (data.route) {
+        let binancePrice = parseFloat(JSON.parse(event.data).p)
+        let profit = binancePrice * data.route.profit_margin / 100
+        let limit = binancePrice * data.route.percent_limit / 100
+        let revBinancePrice = 1 / binancePrice
+        let revProfit = revBinancePrice * data.route.profit_margin / 100
+        let revLimit = revBinancePrice * data.route.percent_limit / 100
+        data.sellPrice = binancePrice - profit
+        data.sellLimit = data.sellPrice + limit
+        data.buyPrice = revBinancePrice + revProfit
+        data.buyLimit = data.buyPrice - revLimit
 
-    console.log('BTC->USDT')
-    console.log(data)
+        console.log('------------------------------')
+        console.log('---------COMPRA--------')
+        console.log('binancePrice: ',binancePrice)
+        console.log('profit: ',profit)
+        console.log('limit: ',limit)
+        console.log('data.sellPrice: ',data.sellPrice)
+        console.log('data.sellLimit: ',data.sellLimit)
+        console.log('---------VENTA--------')
+        console.log('revBinancePrice: ',revBinancePrice)
+        console.log('revProfit: ',revProfit)
+        console.log('revLimit: ',revLimit)
+        console.log('data.buyPrice: ',data.buyPrice)
+        console.log('data.buyLimit: ',data.buyLimit)
+    }
+    // console.log('BTC->USDT')
+    // console.log(data)
     notifyChanges('btc_usdt_price',data.route ? data : 'Server cannot get routes')
 }
 

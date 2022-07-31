@@ -209,10 +209,6 @@ if (routes.length === 0) {
   operationRoutesRepository.getoperation_routes().then((val) => {
     routes = val
   })
-  console.log(routes,'routes')
 }
-
-console.log("🚀 ~  routes", routes)
-
 
 export default app;
