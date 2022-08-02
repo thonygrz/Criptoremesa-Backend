@@ -15,7 +15,7 @@ import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
-import ws from '../utils/binanceSocket'
+import ws from '../utils/websocketTradeAPIs'
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
