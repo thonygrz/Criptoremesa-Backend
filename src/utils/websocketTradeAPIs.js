@@ -104,6 +104,5 @@ krakenSocket.onmessage = (event) => {
 
         // console.log('BTC->USDT')
         // console.log('DATA: ',data)
-    } else 
-        console.log('KRAKEN WS: ',eventObj)
+    }
 }
