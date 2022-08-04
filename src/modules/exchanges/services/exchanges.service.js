@@ -12,6 +12,7 @@ import cryptoValidator from  'multicoin-address-validator'
 import tronAPI from '../../../utils/crypto/tron'
 import bitcoinAPI from '../../../utils/crypto/bitcoin'
 import transactionsJob from '../../../utils/jobs/transactions'
+import binanceClient from '../../../utils/binanceService'
 
 const exchangesService = {};
 const context = "exchanges Service";
@@ -38,6 +39,26 @@ function setFields (newFields) {
 
 function getFields () {
   return fields
+}
+
+function getCryptoPair(crypto1,crypto2) {
+  let pair
+
+  if ((crypto1 === 'USDT' && crypto2 === 'BTC') || (crypto1 === 'BTC' && crypto2 === 'USDT'))
+    pair = 'BTCUSDT'
+  
+  return pair
+}
+
+function getCryptoSide(crypto1,crypto2) {
+  let side
+
+  if ((crypto1 === 'USDT' && crypto2 === 'BTC'))
+    side = 'BUY'
+  else if (crypto1 === 'BTC' && crypto2 === 'USDT')
+    side = 'SELL'
+  
+    return side
 }
 
 async function formHandler(form,req,fileError){
@@ -328,7 +349,54 @@ exchangesService.insertExchange = async (req, res, next) => {
       }
     }
     else if (req.query.type === 'CONVERSION') {
+
+      
+      // console.log('account RESP: ', await binanceClient.getAccountInfo())
+      // console.log('allOrders RESP: ', await binanceClient.myTrades())
+
       data = await exchangesRepository.insertConversionExchange(exchange);
+
+      if (data.message === 'Exchange started') {
+        let resp = await binanceClient.newOrder({
+                                                  symbol: getCryptoPair(exchange.route.origin_iso_code,exchange.route.destiny_iso_code),
+                                                  side: getCryptoSide(exchange.route.origin_iso_code,exchange.route.destiny_iso_code),
+                                                  type: 'LIMIT',
+                                                  timeInForce: 'IOC',
+                                                  price: exchange.limit,
+                                                  quantity: getCryptoSide(exchange.route.origin_iso_code,exchange.route.destiny_iso_code) === 'BUY' ? exchange.destinyDepositedAmount : exchange.originDepositedAmount
+                                                })
+        console.log("🚀 ~ resp", resp)
+        await exchangesRepository.insertExchangeResponse(data.exchangePubID,resp)
+
+        if (resp.status === 'EXPIRED') {
+          await exchangesRepository.setExternalTransactionStatus(data.exchangePubID,'failed')
+
+          setfinalResp({
+            data: {message: 'Operation could not be executed immediately.'},
+            status: 403,
+            success: false,
+            failed: true
+          })
+        } else if (resp.status === 'FILLED') {
+          await exchangesRepository.setExternalTransactionStatus(data.exchangePubID,'successful')
+
+          setfinalResp({
+            data,
+            status: 200,
+            success: true,
+            failed: false
+          })
+        } else if (resp.status === 'NO_FUNDS'){
+          await exchangesRepository.setExternalTransactionStatus(data.exchangePubID,'failed')
+
+          setfinalResp({
+            data: resp,
+            status: 403,
+            success: false,
+            failed: true
+          })
+        }
+      }
     }
 
     // setfinalResp({
@@ -383,6 +451,7 @@ exchangesService.insertExchange = async (req, res, next) => {
                                                 failed: true
                                               }
   } catch (error) {
+    console.log(error)
     next(error);
   }
 };

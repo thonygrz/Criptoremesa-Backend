@@ -302,4 +302,41 @@ exchangesRepository.confirmTransaction = async (confNum) => {
   }
 };
 
+exchangesRepository.setExternalTransactionStatus = async (idExchangePub,status) => {
+  try {
+    logger.info(`[${context}]: Setting ${status} status on db`);
+    ObjLog.log(`[${context}]: Setting ${status} status on db`);
+    
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_set_external_transaction_status(
+                                                                  ${idExchangePub ? `'${idExchangePub}'` : null},
+                                                                  ${status ? `'${status}'` : null},
+                                                                )`
+    );
+    return resp.rows[0].sp_set_external_transaction_status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exchangesRepository.insertExchangeResponse = async (idExchangePub,response) => {
+  try {
+    logger.info(`[${context}]: Inserting exchange response on db`);
+    ObjLog.log(`[${context}]: Inserting exchange response on db`);
+    
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM prc_mng.sp_insert_exchange_response(
+                                                          ${idExchangePub ? `'${idExchangePub}'` : null},
+                                                          ($1),
+                                                        )`,
+                                                        [response]
+    );
+    return resp.rows[0].sp_insert_exchange_response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default exchangesRepository;
