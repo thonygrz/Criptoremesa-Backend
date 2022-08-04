@@ -307,6 +307,9 @@ exchangesRepository.setExternalTransactionStatus = async (idExchangePub,status) 
     logger.info(`[${context}]: Setting ${status} status on db`);
     ObjLog.log(`[${context}]: Setting ${status} status on db`);
     
+    console.log('idExchangePub: ',idExchangePub)
+    console.log('status: ',status)
+
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_set_external_transaction_status(
