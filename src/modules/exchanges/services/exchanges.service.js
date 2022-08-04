@@ -363,12 +363,20 @@ exchangesService.insertExchange = async (req, res, next) => {
                                                   type: 'LIMIT',
                                                   timeInForce: 'IOC',
                                                   price: exchange.limit,
-                                                  quantity: getCryptoSide(exchange.route.origin_iso_code,exchange.route.destiny_iso_code) === 'BUY' ? exchange.destinyDepositedAmount : exchange.originDepositedAmount
+                                                  quantity: parseFloat((getCryptoSide(exchange.route.origin_iso_code,exchange.route.destiny_iso_code) === 'BUY' ? exchange.destinyDepositedAmount : exchange.originDepositedAmount).toFixed(5))
                                                 })
         console.log("🚀 ~ resp", resp)
         await exchangesRepository.insertExchangeResponse(data.exchangePubID,resp)
 
-        if (resp.status === 'EXPIRED') {
+        if (!resp){
+          setfinalResp({
+            data: {message: 'External operation could not bet executed.'},
+            status: 500,
+            success: false,
+            failed: true
+          })
+        }
+        else if (resp.status === 'EXPIRED') {
           await exchangesRepository.setExternalTransactionStatus(data.exchangePubID,'failed')
 
           setfinalResp({
