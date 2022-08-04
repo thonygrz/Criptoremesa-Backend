@@ -367,7 +367,7 @@ exchangesService.insertExchange = async (req, res, next) => {
                                                   quantity: parseFloat((getCryptoSide(exchange.route.origin_iso_code,exchange.route.destiny_iso_code) === 'BUY' ? exchange.destinyDepositedAmount : exchange.originDepositedAmount).toFixed(5))
                                                 })
         console.log("🚀 ~ resp", resp)
-        await exchangesRepository.insertExchangeResponse(data.exchangePubID,resp)
+        await exchangesRepository.insertExchangeResponse(data.id_exchange_pub,resp)
 
         if (!resp){
           setfinalResp({
