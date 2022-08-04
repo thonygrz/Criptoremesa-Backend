@@ -15,9 +15,8 @@ const fs = require("fs");
 
 const httpsServer = https.createServer(
   {
-    key: fs.readFileSync('/etc/ssl/certs/zero-ssl/private.key'),
-    cert: fs.readFileSync('/etc/ssl/certs/zero-ssl/certificate.crt'),
-    ca: fs.readFileSync('/etc/ssl/certs/zero-ssl/ssl-bundle.crt'),
+    key: fs.readFileSync(path.join(__dirname, "utils", "cert", "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "utils", "cert", "cert.pem")),
     requestCert: true,
     rejectUnauthorized: false
   },

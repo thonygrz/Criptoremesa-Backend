@@ -378,7 +378,7 @@ exchangesService.insertExchange = async (req, res, next) => {
                   }
         }
         else if (resp.status === 'EXPIRED') {
-          await exchangesRepository.setExternalTransactionStatus(data.exchangePubID,'failed')
+          await exchangesRepository.setExternalTransactionStatus(data.id_exchange_pub,'failed')
 
           return {
                   data: {message: 'Operation could not be executed immediately.'},
@@ -387,7 +387,7 @@ exchangesService.insertExchange = async (req, res, next) => {
                   failed: true
                 }
         } else if (resp.status === 'FILLED') {
-          await exchangesRepository.setExternalTransactionStatus(data.exchangePubID,'successful')
+          await exchangesRepository.setExternalTransactionStatus(data.id_exchange_pub,'successful')
 
           setfinalResp({
             data,
@@ -396,7 +396,7 @@ exchangesService.insertExchange = async (req, res, next) => {
             failed: false
           })
         } else if (resp.status === 'NO_FUNDS'){
-          await exchangesRepository.setExternalTransactionStatus(data.exchangePubID,'failed')
+          await exchangesRepository.setExternalTransactionStatus(data.id_exchange_pub,'failed')
 
           return {
                     data: resp,
