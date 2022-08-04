@@ -329,7 +329,7 @@ exchangesRepository.insertExchangeResponse = async (idExchangePub,response) => {
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_insert_exchange_response(
                                                           ${idExchangePub ? `'${idExchangePub}'` : null},
-                                                          ($1),
+                                                          ($1)
                                                         )`,
                                                         [response]
     );
