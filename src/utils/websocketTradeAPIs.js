@@ -18,13 +18,13 @@ binanceSocket.onmessage = (event) => {
         let binancePrice = parseFloat(JSON.parse(event.data).p)
         let profit = binancePrice * data.route.profit_margin / 100
         let limit = binancePrice * data.route.percent_limit / 100
-        data.sellPrice = binancePrice - profit
-        data.sellLimit = binancePrice - limit
-        data.buyPrice = binancePrice + profit
-        data.buyLimit = binancePrice + limit
-        data.realPrice = binancePrice
-        data.profit = profit
-        data.limit = limit
+        data.sellPrice = parseFloat((binancePrice - profit).toFixed(2))
+        data.sellLimit = parseFloat((binancePrice - limit).toFixed(2))
+        data.buyPrice = parseFloat((binancePrice + profit).toFixed(2))
+        data.buyLimit = parseFloat((binancePrice + limit).toFixed(2))
+        data.realPrice = parseFloat(binancePrice.toFixed(2))
+        data.profit = parseFloat(profit.toFixed(2))
+        data.limit = parseFloat(limit.toFixed(2))
 
         // console.log('------------------------------------')
         // console.log('------------PRECIO BINANCE----------')
