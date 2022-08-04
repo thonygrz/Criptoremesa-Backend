@@ -1,7 +1,6 @@
 import { env } from '../utils/enviroment'
 import axios from 'axios'
 import crypto, { sign } from 'crypto'
-import exchangesRepository from "../repositories/exchanges.pg.repository";
 
 // let client = new Spot(apiKey, apiSecret)
 
