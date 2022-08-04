@@ -326,6 +326,8 @@ exchangesRepository.insertExchangeResponse = async (idExchangePub,response) => {
     ObjLog.log(`[${context}]: Inserting exchange response on db`);
     
     await poolSM.query("SET SCHEMA 'prc_mng'");
+
+    console.log('SE VA A INSERTAR LA RESPUESTA DE BINANCE: ',idExchangePub)
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_insert_exchange_response(
                                                           ${idExchangePub ? `'${idExchangePub}'` : null},

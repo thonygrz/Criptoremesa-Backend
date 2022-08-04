@@ -40,7 +40,6 @@ client.newOrder = async function (data) {
     
         return await request('POST','order',query,{})
     } catch (error) {
-        console.log(error)
         if (error.response.data.msg === 'Account has insufficient balance for requested action.') {
             return {
                         status: 'NO_FUNDS',

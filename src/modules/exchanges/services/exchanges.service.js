@@ -355,6 +355,7 @@ exchangesService.insertExchange = async (req, res, next) => {
       // console.log('allOrders RESP: ', await binanceClient.myTrades())
 
       data = await exchangesRepository.insertConversionExchange(exchange);
+      console.log("🚀 ~ data", data)
 
       if (data.message === 'Exchange started') {
         let resp = await binanceClient.newOrder({
