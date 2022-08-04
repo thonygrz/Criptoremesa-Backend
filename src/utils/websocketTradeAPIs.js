@@ -23,7 +23,9 @@ binanceSocket.onmessage = (event) => {
         data.buyPrice = binancePrice + profit
         data.buyLimit = binancePrice + limit
         data.realPrice = binancePrice
-        
+        data.profit = profit
+        data.limit = limit
+
         // console.log('------------------------------------')
         // console.log('------------PRECIO BINANCE----------')
         // console.log('binancePrice: ',binancePrice)
