@@ -335,6 +335,7 @@ exchangesService.insertExchange = async (req, res, next) => {
 
       let oldTransaction = await exchangesRepository.getTransactionByConfNum(exchange.captures[0].ref);
       console.log("🚀 ~ oldTransaction", oldTransaction)
+      console.log('antes del if')
 
       if (oldTransaction.length > 0) {
         console.log('ifffffffffff')
