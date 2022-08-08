@@ -337,6 +337,7 @@ exchangesService.insertExchange = async (req, res, next) => {
       console.log("🚀 ~ oldTransaction", oldTransaction)
 
       if (oldTransaction.length > 0) {
+        console.log('ifffffffffff')
         setfinalResp({
           data: {message: 'Txid already used.'},
           status: 403,
