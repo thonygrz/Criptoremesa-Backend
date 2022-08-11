@@ -1,6 +1,7 @@
 import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
+import fs from 'fs'
 
 const wholesale_partnersRepository = {};
 const context = "wholesale_partners PG Repository";
