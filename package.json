@@ -44,6 +44,7 @@
     "google-spreadsheet": "^3.1.15",
     "helmet": "^4.4.1",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "multicoin-address-validator": "^0.5.10",
     "node-cron": "^3.0.1",
     "nodemailer": "^6.6.3",
