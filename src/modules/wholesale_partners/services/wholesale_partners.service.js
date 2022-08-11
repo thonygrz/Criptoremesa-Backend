@@ -40,9 +40,7 @@ wholesale_partnersService.getWholesalePartnerInfo = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting wholesale_partner`);
     ObjLog.log(`[${context}]: Getting wholesale_partner`);
-    console.log('req.file service: ',req.file)
-    req.body.logo = req.file.path
-    req.body.email_user = req.params.email_user
+
     let data = await wholesale_partnersRepository.getWholesalePartnerInfo(req.params.slug);
 
     let finalResp 
