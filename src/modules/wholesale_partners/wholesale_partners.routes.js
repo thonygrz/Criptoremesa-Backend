@@ -23,4 +23,10 @@ wholesale_partnersRouter.post(
   wholesale_partnersController.insertWholesalePartnerInfo
 );
 
+wholesale_partnersRouter.get(
+  "/:slug",
+  // guard.verifyAdmin("/login"),
+  wholesale_partnersController.getWholesalePartnerInfo
+);
+
 export default wholesale_partnersRouter;
