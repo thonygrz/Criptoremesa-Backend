@@ -10,7 +10,7 @@ usersPGRepository.createNewClient = async (body) => {
     logger.info(`[${context}]: Inserting new client in db`);
     ObjLog.log(`[${context}]: Inserting new client in db`);
 
-    console.log('LO QUE SE VA A INSERTAR: ',body)
+    // console.log('LO QUE SE VA A INSERTAR: ',body)
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp =
@@ -534,7 +534,7 @@ usersPGRepository.verifReferrallByCodPub = async (cust_cr_cod_pub) => {
     logger.info(`[${context}]: Verifying referrall cod pub on db`);
     ObjLog.log(`[${context}]: Verifying referrall cod pub on db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log('cust_cr_cod_pub: ',cust_cr_cod_pub)
+    // console.log('cust_cr_cod_pub: ',cust_cr_cod_pub)
     const resp = await poolSM.query(
       `SELECT * FROM sp_cod_pub_exists('${cust_cr_cod_pub}')`
     );
@@ -549,7 +549,7 @@ usersPGRepository.insertUserAccount = async (body,email_user) => {
   try {
     logger.info(`[${context}]: Inserting user account on db`);
     ObjLog.log(`[${context}]: Inserting user account on db`);
-    console.log("🚀 ~ file: users.pg.repository.js ~ line 547 ~ usersPGRepository.insertUserAccount= ~ body", body)
+    // console.log("🚀 ~ file: users.pg.repository.js ~ line 547 ~ usersPGRepository.insertUserAccount= ~ body", body)
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
@@ -601,7 +601,7 @@ usersPGRepository.deleteUserAccount = async (email_user) => {
                                                   '${email_user}'
                                                 )`
     );
-    console.log("🚀 ~ file: users.pg.repository.js ~ line 603 ~ usersPGRepository.deleteUserAccount ~ resp.rows[0].sp_ms_user_accounts_delete", resp.rows[0].sp_ms_user_accounts_delete)
+    // console.log("🚀 ~ file: users.pg.repository.js ~ line 603 ~ usersPGRepository.deleteUserAccount ~ resp.rows[0].sp_ms_user_accounts_delete", resp.rows[0].sp_ms_user_accounts_delete)
     if (resp.rows[0]) return resp.rows[0].sp_ms_user_accounts_delete;
     else return null;
   } catch (error) {
