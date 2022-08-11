@@ -42,10 +42,16 @@ wholesale_partnersRepository.getWholesalePartnerInfo = async (slug) => {
                                                                 ${slug ? `'${slug}'` : null }
                                                               )`
     );
-    if (resp.rows[0].sp_get_wholesale_partner_info)
+    if (resp.rows[0].sp_get_wholesale_partner_info){
+      let info = resp.rows[0].get_bank_account_by_id[0];
+
+      info.logo = fs.readFileSync(
+        info.logo
+      );
       return resp.rows[0].sp_get_wholesale_partner_info;
+    }
     else 
-      []
+      null
   } catch (error) {
     throw error;
   }
