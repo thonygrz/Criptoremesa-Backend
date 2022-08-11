@@ -31,9 +31,7 @@ wholesale_partnersRepository.insertWholesalePartnerInfo = async (body) => {
   }
 };
 
-getWholesalePartnerInfo
-
-wholesale_partnersRepository.insertWholesalePartnerInfo = async (slug) => {
+wholesale_partnersRepository.getWholesalePartnerInfo = async (slug) => {
   try {
     logger.info(`[${context}]: Inserting wholesale_partner info from db`);
     ObjLog.log(`[${context}]: Inserting wholesale_partner info from db`);
