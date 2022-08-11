@@ -21,19 +21,17 @@ cron.schedule(`*/${timeSec} * * * * *`, async () => {
             validTxid = false
             if (transaction.nameCurrency === 'USDT') {
                 let USDTtransf = (await tronAPI.getTransactionByTxId(transaction.confirmationNumber)).data
-                console.log('USDTtransf.srConfirmList.length',USDTtransf.srConfirmList.length)
                 console.log('USDTtransf.confirmations',USDTtransf.confirmations)
-                confNum = USDTtransf.srConfirmList.length
+                confNum = USDTtransf.confirmations
                 
                 if (USDTtransf.hash === transaction.confirmationNumber && USDTtransf.tokenTransferInfo.to_address === transaction.wallet)
                 validTxid = true
             }
             else if (transaction.nameCurrency === 'BTC') {
                 let BTCtransf = (await bitcoinAPI.getTransactionByTxId(transaction.confirmationNumber)).data
-                console.log('BTCtransf.data.outputs.length',BTCtransf.data.outputs.length)
                 console.log('BTCtransf.confirmations',BTCtransf.confirmations)
                 
-                confNum = BTCtransf.data.outputs.length
+                confNum = BTCtransf.confirmations
 
                 let transactionWithDestinyAddress = BTCtransf.data.outputs.find(el=> el.addresses.find(ad=>ad === transaction.wallet))
 

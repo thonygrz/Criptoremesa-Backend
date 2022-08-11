@@ -21,6 +21,7 @@ import reportsRouter from '../modules/reports/reports.routes';
 import operationRoutesRouter from '../modules/operation_routes/operation_routes.routes';
 import exchangesRouter from '../modules/exchanges/exchanges.routes';
 import walletsRouter from '../modules/wallets/wallets.routes';
+import wholesale_partnersRouter from '../modules/wholesale_partners/wholesale_partners.routes';
 const router = Router();  
 
 router.post("/login", authenticationController.login);
@@ -56,5 +57,6 @@ router.use("/reports", reportsRouter);
 router.use("/operation_routes", operationRoutesRouter);
 router.use("/exchanges", exchangesRouter);
 router.use("/wallets", walletsRouter);
+router.use("/wholesale_partners", wholesale_partnersRouter);
 
 export default router;
