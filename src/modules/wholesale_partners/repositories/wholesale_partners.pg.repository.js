@@ -65,17 +65,11 @@ wholesale_partnersRepository.getWholesalePartnerRates = async () => {
     logger.info(`[${context}]: Getting wholesale_partner rates from db`);
     ObjLog.log(`[${context}]: Getting wholesale_partner rates from db`);
     await poolSM.query("SET SCHEMA 'prc_mng'");
-    console.log("🚀 ~ resp1", resp)
 
     const resp = await poolSM.query(
       `select * from sec_cust.sp_get_wholesale_partner_rates()`
     );
     if (resp.rows[0].sp_get_wholesale_partner_rates){
-      let info = resp.rows[0].sp_get_wholesale_partner_rates;
-
-      info.logo = fs.readFileSync(
-        info.logo
-      );
       return resp.rows[0].sp_get_wholesale_partner_rates;
     }
     else 
