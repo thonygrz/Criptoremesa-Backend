@@ -205,7 +205,7 @@ remittancesPGRepository.getInfoForRateApi = async (emailUser) => {
     ObjLog.log(`[${context}]: Getting info for rate API from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
-      `SELECT * FROM sp_get_info_for_rate_api(${emailUser ? `${emailUser}` : null})`
+      `SELECT * FROM sp_get_info_for_rate_api(${emailUser ? `'${emailUser}'` : null})`
     );
     if (resp.rows[0].sp_get_info_for_rate_api)
       return resp.rows[0].sp_get_info_for_rate_api;
