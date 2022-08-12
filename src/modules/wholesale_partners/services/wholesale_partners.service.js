@@ -59,8 +59,8 @@ wholesale_partnersService.getWholesalePartnerInfo = async (req, res, next) => {
 
 wholesale_partnersService.getWholesalePartnerRates = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Getting wholesale_partner`);
-    ObjLog.log(`[${context}]: Getting wholesale_partner`);
+    logger.info(`[${context}]: Getting wholesale_partner rates`);
+    ObjLog.log(`[${context}]: Getting wholesale_partner rates`);
 
     let data = await wholesale_partnersRepository.getWholesalePartnerRates();
 

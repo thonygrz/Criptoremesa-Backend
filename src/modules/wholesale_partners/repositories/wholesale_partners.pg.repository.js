@@ -62,8 +62,8 @@ wholesale_partnersRepository.getWholesalePartnerInfo = async (slug) => {
 
 wholesale_partnersRepository.getWholesalePartnerRates = async () => {
   try {
-    logger.info(`[${context}]: Inserting wholesale_partner info from db`);
-    ObjLog.log(`[${context}]: Inserting wholesale_partner info from db`);
+    logger.info(`[${context}]: Getting wholesale_partner rates from db`);
+    ObjLog.log(`[${context}]: Getting wholesale_partner rates from db`);
     await poolSM.query("SET SCHEMA 'prc_mng'");
     console.log("🚀 ~ resp1", resp)
 
