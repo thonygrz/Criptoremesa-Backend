@@ -24,7 +24,7 @@ wholesale_partnersRouter.post(
 );
 
 wholesale_partnersRouter.get(
-  "/:slug",
+  "/site_info/:slug",
   // guard.verifyAdmin("/login"),
   wholesale_partnersController.getWholesalePartnerInfo
 );
