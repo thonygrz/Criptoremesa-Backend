@@ -173,29 +173,56 @@ remittancesService.startRemittance = async (req, res, next) => {
               remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}_${numbers[i]}_${f.name}`
             }
           });
-  
-          let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${remittance.countryCurrency.isoCode}`);
-  
-          let rateFromAPI = fullRateFromAPI.data.rates[remittance.countryCurrency.isoCode]
-          rateFromAPI = parseFloat(rateFromAPI)
-  
-          remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance / (rateFromAPI * 0.97)).toFixed(2));
-  
-          let data = await remittancesPGRepository.startRemittance(remittance);
+
+          // se obtiene informacion necesaria para encontrar las tasas
+
+            let infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.id_client);
+
+          // se obtienen las tasas de la API
+
+            let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},${infoForApi.wholesale_partner_origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
           
-          if (data.message === 'Remittance started' && data.id_pre_remittance) {
-            redisClient.get(data.id_pre_remittance, function (err, reply) {
-              // reply is null when the key is missing
-              clearTimeout(parseInt(reply))
-            });
-          }
+          // se obtienen las tasas de la moneda local del usuario y en dólares
       
-          setfinalResp({
-                        data,
-                        status: 200,
-                        success: true,
-                        failed: false
-                      }) 
+            let localRateFromAPI = fullRateFromAPI.data.rates[infoForApi.origin_currency_iso_code]
+            localRateFromAPI = parseFloat(localRateFromAPI)
+
+            let WPRateFromAPI = fullRateFromAPI.data.rates[infoForApi.wholesale_partner_origin_currency_iso_code]
+            WPRateFromAPI = parseFloat(WPRateFromAPI)
+            
+            let dollarRateFromAPI = fullRateFromAPI.data.USD
+            localRateFromAPI = parseFloat(localRateFromAPI)
+            
+          // se pasa el monto final en dólares, en la moneda local del usuario y la ganancia del AM
+          
+            remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (dollarRateFromAPI * 0.97)).toFixed(2));
+            remittance.totalOriginRemittanceInLocalCurrency = parseFloat((remittance.totalOriginRemittance * (localRateFromAPI * 0.97)).toFixed(2));
+            
+            let totalWPlocalCurrencyOriginRemittance = parseFloat((remittance.totalOriginRemittance * WPRateFromAPI).toFixed(2));
+            remittance.wholesalePartnerProfitLocalCurrency = (totalWPlocalCurrencyOriginRemittance * (infoForApi.wholesale_partner_info.percent_profit)) / 100
+            remittance.wholesalePartnerProfitDollar = (remittance.totalDollarOriginRemittance * (infoForApi.wholesale_partner_info.percent_profit)) / 100
+
+          // se inicia la remesa en bd
+          
+            let data = await remittancesPGRepository.startRemittance(remittance);
+          
+          // se detiene la preremesa si la hay
+
+            if (data.message === 'Remittance started' && data.id_pre_remittance) {
+              redisClient.get(data.id_pre_remittance, function (err, reply) {
+                // reply is null when the key is missing
+                clearTimeout(parseInt(reply))
+              });
+            }
+      
+          // se asigna la respuesta al FE
+
+            setfinalResp({
+                          data,
+                          status: 200,
+                          success: true,
+                          failed: false
+                        }) 
         } 
         else 
           setfinalResp({

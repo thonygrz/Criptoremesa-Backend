@@ -307,16 +307,22 @@ exchangesService.insertExchange = async (req, res, next) => {
 
     if (req.query.type === 'COMPRA') {
       
-      let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${exchange.route.origin_iso_code}&symbols=${exchange.originCountry.iso_cod},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
+      // se obtienen las tasas de la API
+
+        let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${exchange.route.origin_iso_code}&symbols=${exchange.originCountry.iso_cod},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
       
-      let localRateFromAPI = fullRateFromAPI.data.rates[exchange.route.origin_iso_code]
-      localRateFromAPI = parseFloat(localRateFromAPI)
+      // se obtienen las tasas de la moneda local del usuario y en dólares
+
+        let localRateFromAPI = fullRateFromAPI.data.rates[exchange.route.origin_iso_code]
+        localRateFromAPI = parseFloat(localRateFromAPI)
+        
+        let dollarRateFromAPI = fullRateFromAPI.data.USD
+        localRateFromAPI = parseFloat(localRateFromAPI)
       
-      let dollarRateFromAPI = fullRateFromAPI.data.USD
-      localRateFromAPI = parseFloat(localRateFromAPI)
-      
-      exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
-      exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
+      // se pasa el monto final en dólares y en la moneda local del usuario
+
+        exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
+        exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
       
       data = await exchangesRepository.insertBuyExchange(exchange);
     } 

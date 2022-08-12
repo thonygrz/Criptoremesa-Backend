@@ -199,4 +199,20 @@ remittancesPGRepository.getMinAmounts = async () => {
   }
 };
 
+remittancesPGRepository.getInfoForRateApi = async (idUser) => {
+  try {
+    logger.info(`[${context}]: Getting info for rate API from db`);
+    ObjLog.log(`[${context}]: Getting info for rate API from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_info_for_rate_api(${idUser})`
+    );
+    if (resp.rows[0].sp_get_info_for_rate_api)
+      return resp.rows[0].sp_get_info_for_rate_api;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default remittancesPGRepository;
