@@ -176,12 +176,14 @@ remittancesService.startRemittance = async (req, res, next) => {
 
           // se obtiene informacion necesaria para encontrar las tasas
 
-          console.log("🚀 ~ remittance.id_client", remittance.id_client)
+            console.log("🚀 ~ remittance.id_client", remittance.id_client)
             let infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.id_client);
+            console.log("🚀 ~ infoForApi", infoForApi)
 
           // se obtienen las tasas de la API
 
             let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},${infoForApi.wholesale_partner_origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
+            console.log("🚀 ~ fullRateFromAPI", fullRateFromAPI)
           
           // se obtienen las tasas de la moneda local del usuario y en dólares
       
@@ -205,6 +207,7 @@ remittancesService.startRemittance = async (req, res, next) => {
 
           // se inicia la remesa en bd
           
+            console.log("🚀 ~ remittance", remittance)
             let data = await remittancesPGRepository.startRemittance(remittance);
           
           // se detiene la preremesa si la hay
