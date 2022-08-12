@@ -57,4 +57,25 @@ wholesale_partnersService.getWholesalePartnerInfo = async (req, res, next) => {
   }
 };
 
+wholesale_partnersService.getWholesalePartnerRates = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting wholesale_partner`);
+    ObjLog.log(`[${context}]: Getting wholesale_partner`);
+
+    let data = await wholesale_partnersRepository.getWholesalePartnerRates();
+
+    let finalResp 
+    finalResp = {
+                  data,
+                  status: 200,
+                  success: true,
+                  failed: false
+                }
+
+    return finalResp
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default wholesale_partnersService;

@@ -29,4 +29,10 @@ wholesale_partnersRouter.get(
   wholesale_partnersController.getWholesalePartnerInfo
 );
 
+wholesale_partnersRouter.get(
+  "/rates",
+  // guard.verifyAdmin("/login"),
+  wholesale_partnersController.getWholesalePartnerRates
+);
+
 export default wholesale_partnersRouter;
