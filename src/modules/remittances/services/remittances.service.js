@@ -193,13 +193,13 @@ remittancesService.startRemittance = async (req, res, next) => {
             let WPRateFromAPI = fullRateFromAPI.data.rates[infoForApi.wholesale_partner_origin_currency_iso_code]
             WPRateFromAPI = parseFloat(WPRateFromAPI)
             
-            let dollarRateFromAPI = fullRateFromAPI.data.USD
+            let dollarRateFromAPI = fullRateFromAPI.data.rates.USD
             localRateFromAPI = parseFloat(localRateFromAPI)
             
           // se pasa el monto final en dólares, en la moneda local del usuario y la ganancia del AM
           
-            remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (parseFloat(dollarRateFromAPI) * 0.97)).toFixed(2));
-            remittance.totalOriginRemittanceInLocalCurrency = parseFloat((remittance.totalOriginRemittance * (parseFloat(localRateFromAPI) * 0.97)).toFixed(2));
+            remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (dollarRateFromAPI * 0.97)).toFixed(2));
+            remittance.totalOriginRemittanceInLocalCurrency = parseFloat((remittance.totalOriginRemittance * (localRateFromAPI * 0.97)).toFixed(2));
             
             let totalWPlocalCurrencyOriginRemittance = parseFloat((remittance.totalOriginRemittance * WPRateFromAPI).toFixed(2));
             
