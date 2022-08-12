@@ -176,6 +176,7 @@ remittancesService.startRemittance = async (req, res, next) => {
 
           // se obtiene informacion necesaria para encontrar las tasas
 
+          console.log("🚀 ~ remittance.id_client", remittance.id_client)
             let infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.id_client);
 
           // se obtienen las tasas de la API
