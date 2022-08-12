@@ -205,6 +205,9 @@ remittancesService.startRemittance = async (req, res, next) => {
             
             console.log("🚀 ~ totalWPlocalCurrencyOriginRemittance", totalWPlocalCurrencyOriginRemittance)
             console.log("🚀 ~ infoForApi.wholesale_partner_info.percent_profit", infoForApi.wholesale_partner_info.percent_profit)
+
+            console.log("🚀 ~ totalWPlocalCurrencyOriginRemittance", typeof totalWPlocalCurrencyOriginRemittance)
+            console.log("🚀 ~ infoForApi.wholesale_partner_info.percent_profit", typeof infoForApi.wholesale_partner_info.percent_profit)
             
             remittance.wholesalePartnerProfitLocalCurrency = (totalWPlocalCurrencyOriginRemittance * (infoForApi.wholesale_partner_info.percent_profit)) / 100
             remittance.wholesalePartnerProfitDollar = (remittance.totalDollarOriginRemittance * (infoForApi.wholesale_partner_info.percent_profit)) / 100
