@@ -236,6 +236,10 @@ passport.deserializeUser(async function (email_user, done) {
   try {
     // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS email_user
     const user = await authenticationPGRepository.getUserByEmail(email_user);
+
+      user.logo = fs.readFileSync(
+        user.logo
+      );
     done(null, user);
   } catch (error) {
     done(error);
