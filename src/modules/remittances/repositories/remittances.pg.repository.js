@@ -199,13 +199,13 @@ remittancesPGRepository.getMinAmounts = async () => {
   }
 };
 
-remittancesPGRepository.getInfoForRateApi = async (idUser) => {
+remittancesPGRepository.getInfoForRateApi = async (emailUser) => {
   try {
     logger.info(`[${context}]: Getting info for rate API from db`);
     ObjLog.log(`[${context}]: Getting info for rate API from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
-      `SELECT * FROM sp_get_info_for_rate_api(${idUser})`
+      `SELECT * FROM sp_get_info_for_rate_api(${emailUser ? `${emailUser}` : null})`
     );
     if (resp.rows[0].sp_get_info_for_rate_api)
       return resp.rows[0].sp_get_info_for_rate_api;
