@@ -56,7 +56,7 @@ usersPGRepository.createNewClient = async (body) => {
       '${body.second_phone_full}',
       '${body.delegated_phone_code}',
       '${body.delegated_phone_full}',
-      ${body.id_wholesale_partner ? `'${body.id_wholesale_partner}'` : null})
+      ${body.slug ? `'${body.slug}'` : null})
       ;`);
     return resp.rows;
   } catch (error) {
