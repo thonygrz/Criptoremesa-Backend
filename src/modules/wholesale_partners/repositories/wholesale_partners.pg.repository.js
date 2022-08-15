@@ -60,6 +60,27 @@ wholesale_partnersRepository.getWholesalePartnerInfo = async (slug) => {
   }
 };
 
+wholesale_partnersRepository.getWholesalePartnerRates = async (slug) => {
+  try {
+    logger.info(`[${context}]: Getting wholesale_partner rates from db`);
+    ObjLog.log(`[${context}]: Getting wholesale_partner rates from db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+
+    const resp = await poolSM.query(
+      `select * from sec_cust.sp_get_wholesale_partner_rates(
+                                                              '${slug}'
+                                                            )`
+    );
+    if (resp.rows[0].sp_get_wholesale_partner_rates){
+      return resp.rows[0].sp_get_wholesale_partner_rates;
+    }
+    else 
+      []
+  } catch (error) {
+    throw error;
+  }
+};
+
 wholesale_partnersRepository.getWholesalePartnerClients = async (slug,full) => {
   try {
     logger.info(`[${context}]: Getting wholesale_partner clients from db`);

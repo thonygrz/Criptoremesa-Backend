@@ -340,7 +340,7 @@ remittancesService.lastRemittances = async (req, res, next) => {
     logger.info(`[${context}]: Getting last remittances by user`);
     ObjLog.log(`[${context}]: Getting last remittances by user`);
     
-    let data = await remittancesPGRepository.lastRemittances(req.params.email_user,req.query.limit,req.query.start_date,req.query.end_date,req.query.mode);
+    let data = await remittancesPGRepository.lastRemittances(req.params.email_user,req.query.limit,req.query.start_date,req.query.end_date,req.query.mode,req.query.only_wholesale_partner);
 
     return {
       data,

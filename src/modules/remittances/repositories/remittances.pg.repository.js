@@ -162,7 +162,7 @@ remittancesPGRepository.getBankFee = async (body) => {
   }
 };
 
-remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, end_date,mode) => {
+remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, end_date,mode, only_wholesale_partner) => {
   try {
     logger.info(`[${context}]: Getting last remittances on db`);
     ObjLog.log(`[${context}]: Getting last remittances on db`);
@@ -172,7 +172,8 @@ remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, 
                                                       ${limit === 'null' ? null : limit},
                                                       ${start_date === 'null' ? null : start_date},
                                                       ${end_date === 'null' ? null : end_date},
-                                                      ${mode === 'null' ? null : `'${mode}'`}
+                                                      ${mode === 'null' ? null : `'${mode}'`},
+                                                      ${only_wholesale_partner}
                                                     )`
     );
     if (resp.rows[0].sp_get_last_remittances_by_user)
