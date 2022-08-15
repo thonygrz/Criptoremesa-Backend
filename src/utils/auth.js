@@ -330,6 +330,7 @@ export default {
   },
   logout: async (req, res, next) => {
     try {
+      log.is_auth = req.isAuthenticated();
       req.session.destroy();
       log.success = true;
       log.failed = false;
