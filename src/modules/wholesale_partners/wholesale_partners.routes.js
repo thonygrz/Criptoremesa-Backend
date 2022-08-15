@@ -30,7 +30,7 @@ wholesale_partnersRouter.get(
 );
 
 wholesale_partnersRouter.get(
-  "/rates",
+  "/rates/:slug",
   // guard.verifyAdmin("/login"),
   wholesale_partnersController.getWholesalePartnerRates
 );
