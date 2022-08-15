@@ -312,12 +312,12 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
 authenticationPGRepository.insertLogMsg = async (log) => {
   try {
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log('LOG EN REPO: ',log)
+    // console.log('LOG EN REPO: ',log)
     if (typeof log.response === 'string' || typeof log.response === 'number' || typeof log.response === 'boolean')
       log.response = {response: log.response}
     else
       log.response = Object.assign({},log.response)
-    console.log("🚀 ~ file: authentication.pg.repository.js ~ line 317 ~ authenticationPGRepository.insertLogMsg= ~ log.response", log.response)
+    // console.log("🚀 ~ file: authentication.pg.repository.js ~ line 317 ~ authenticationPGRepository.insertLogMsg= ~ log.response", log.response)
     let resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
                                                                             ${log.is_auth},
                                                                             ${log.success},
