@@ -5,6 +5,7 @@ import ObjLog from "./ObjLog";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 import bcrypt from "bcryptjs";
 import { notifyChanges } from "../modules/sockets/sockets.coordinator";
+import fs from 'fs';
 
 const LocalStrategy = PassportLocal.Strategy;
 const context = "Authentication module";
@@ -142,6 +143,13 @@ passport.use(
 
         // if (guard.getUsernameField() === "email")
         user = await authenticationPGRepository.getUserByEmail(email);
+
+        // console.log('USER OBTENIDO🔴:',user)
+
+        user.wholesale_partner_info.logo = fs.readFileSync(
+          user.wholesale_partner_info.logo
+        );
+        console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
         // else
         //   user = await authenticationPGRepository.getUserByUsername(username);
 
@@ -229,18 +237,16 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   // PASSPORT LOOKS FOR THE ID AND STORE IT IN SESSION
+  // console.log('SERIALIZE🔵')
   if (user) done(null, user.email_user);
 });
 
 passport.deserializeUser(async function (email_user, done) {
   try {
     // PASSPORT LOOKS FOR THE USER OBJECT WITH THE PREVIOUS email_user
+    // console.log('DESERIALIZE🟠')
+
     const user = await authenticationPGRepository.getUserByEmail(email_user);
-    
-    user.wholesale_partner_info.logo = fs.readFileSync(
-      user.wholesale_partner_info.logo
-    );
-    console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
     done(null, user);
   } catch (error) {
     done(error);
@@ -326,6 +332,7 @@ export default {
   },
   logout: async (req, res, next) => {
     try {
+      log.is_auth = req.isAuthenticated();
       req.session.destroy();
       log.success = true;
       log.failed = false;
