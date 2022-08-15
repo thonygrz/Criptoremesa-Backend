@@ -240,6 +240,7 @@ passport.deserializeUser(async function (email_user, done) {
     user.wholesale_partner_info.logo = fs.readFileSync(
       user.wholesale_partner_info.logo
     );
+    console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
     done(null, user);
   } catch (error) {
     done(error);
