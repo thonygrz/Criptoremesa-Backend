@@ -103,4 +103,26 @@ wholesale_partnersRepository.getWholesalePartnerClients = async (slug,full) => {
   }
 };
 
+wholesale_partnersRepository.getWholesalePartnerClientRemittances = async (slug,full) => {
+  try {
+    logger.info(`[${context}]: Getting wholesale_partner clients remittances from db`);
+    ObjLog.log(`[${context}]: Getting wholesale_partner clients remittances from db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+
+    const resp = await poolSM.query(
+      `select * from sec_cust.sp_get_wholesale_partner_client_remittances(
+                                                                            '${slug}',
+                                                                            ${full}
+                                                                          )`
+    );
+    if (resp.rows[0].sp_get_wholesale_partner_client_remittances){
+      return resp.rows[0].sp_get_wholesale_partner_client_remittances;
+    }
+    else 
+      []
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default wholesale_partnersRepository;

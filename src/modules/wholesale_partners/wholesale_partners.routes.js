@@ -41,5 +41,11 @@ wholesale_partnersRouter.get(
   wholesale_partnersController.getWholesalePartnerClients
 );
 
+wholesale_partnersRouter.get(
+  "/clients-remittances/:slug",
+  // guard.verifyAdmin("/login"),
+  wholesale_partnersController.getWholesalePartnerClientRemittances
+);
+
 
 export default wholesale_partnersRouter;

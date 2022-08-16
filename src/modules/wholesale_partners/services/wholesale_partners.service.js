@@ -99,4 +99,25 @@ wholesale_partnersService.getWholesalePartnerClients = async (req, res, next) =>
   }
 };
 
+wholesale_partnersService.getWholesalePartnerClientRemittances = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting wholesale_partner clients remittances`);
+    ObjLog.log(`[${context}]: Getting wholesale_partner clients remittances`);
+
+    let data = await wholesale_partnersRepository.getWholesalePartnerClientRemittances(req.params.slug,req.query.full);
+
+    let finalResp 
+    finalResp = {
+                  data,
+                  status: 200,
+                  success: true,
+                  failed: false
+                }
+
+    return finalResp
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default wholesale_partnersService;
