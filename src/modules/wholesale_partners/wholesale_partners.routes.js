@@ -47,5 +47,11 @@ wholesale_partnersRouter.get(
   wholesale_partnersController.getWholesalePartnerClientRemittances
 );
 
+wholesale_partnersRouter.put(
+  "/percent-profit/:slug",
+  // guard.verifyAdmin("/login"),
+  wholesale_partnersController.changeWholesalePartnerPercentProfit
+);
+
 
 export default wholesale_partnersRouter;

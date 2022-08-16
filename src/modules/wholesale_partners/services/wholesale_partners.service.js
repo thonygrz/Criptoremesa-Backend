@@ -120,4 +120,25 @@ wholesale_partnersService.getWholesalePartnerClientRemittances = async (req, res
   }
 };
 
+wholesale_partnersService.changeWholesalePartnerPercentProfit = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Changing wholesale_partner percent profit`);
+    ObjLog.log(`[${context}]: Changing wholesale_partner percent profit`);
+
+    let data = await wholesale_partnersRepository.changeWholesalePartnerPercentProfit(req.params.slug,req.query.full);
+
+    let finalResp 
+    finalResp = {
+                  data,
+                  status: 200,
+                  success: true,
+                  failed: false
+                }
+
+    return finalResp
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default wholesale_partnersService;

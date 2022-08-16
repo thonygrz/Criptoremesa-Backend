@@ -125,4 +125,26 @@ wholesale_partnersRepository.getWholesalePartnerClientRemittances = async (slug,
   }
 };
 
+wholesale_partnersRepository.changeWholesalePartnerPercentProfit = async (slug,percentProfit) => {
+  try {
+    logger.info(`[${context}]: Changing wholesale_partner percent profit on db`);
+    ObjLog.log(`[${context}]: Changing wholesale_partner percent profit on db`);
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+
+    const resp = await poolSM.query(
+      `select * from sec_cust.sp_update_percent_profit(
+                                                        ${percentProfit},
+                                                        '${slug}'
+                                                      )`
+    );
+    if (resp.rows[0].sp_update_percent_profit){
+      return resp.rows[0].sp_update_percent_profit;
+    }
+    else 
+      []
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default wholesale_partnersRepository;
