@@ -125,7 +125,7 @@ wholesale_partnersService.changeWholesalePartnerPercentProfit = async (req, res,
     logger.info(`[${context}]: Changing wholesale_partner percent profit`);
     ObjLog.log(`[${context}]: Changing wholesale_partner percent profit`);
 
-    let data = await wholesale_partnersRepository.changeWholesalePartnerPercentProfit(req.params.slug,req.query.full);
+    let data = await wholesale_partnersRepository.changeWholesalePartnerPercentProfit(req.params.slug,req.body.percentProfit);
 
     let finalResp 
     finalResp = {
