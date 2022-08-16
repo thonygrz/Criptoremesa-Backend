@@ -174,11 +174,18 @@ remittancesService.startRemittance = async (req, res, next) => {
             }
           });
 
+          // se calcula la ganancia del AM en caso de haber
+
+            if (remittance.rateValue.operation === 'mul')
+              remittance.totalWholesalePartnerOriginAmount = remittance.totalOriginRemittance / remittance.rateValue.wholesale_partner_rate_factor
+            else if (remittance.rateValue.operation === 'div')
+              remittance.totalWholesalePartnerOriginAmount = remittance.totalOriginRemittance * remittance.rateValue.wholesale_partner_rate_factor
+        
+              remittance.wholesalePartnerProfit = Math.abs(remittance.totalOriginRemittance - remittance.totalWholesalePartnerOriginAmount)
+
           // se obtiene informacion necesaria para encontrar las tasas
 
-            console.log("🚀 ~ remittance.email_user", remittance.email_user)
             let infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.email_user);
-            console.log("🚀 ~ infoForApi", infoForApi)
 
           // se obtienen las tasas de la API
 
@@ -194,23 +201,15 @@ remittancesService.startRemittance = async (req, res, next) => {
             WPRateFromAPI = parseFloat(WPRateFromAPI)
             
             let dollarRateFromAPI = fullRateFromAPI.data.rates.USD
-            localRateFromAPI = parseFloat(localRateFromAPI)
+            dollarRateFromAPI = parseFloat(dollarRateFromAPI)
             
-          // se pasa el monto final en dólares, en la moneda local del usuario y la ganancia del AM
+          // se pasa el monto final y ganancia del AM en dólares, en la moneda local del usuario y la ganancia del AM
           
             remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (dollarRateFromAPI * 0.97)).toFixed(2));
             remittance.totalOriginRemittanceInLocalCurrency = parseFloat((remittance.totalOriginRemittance * (localRateFromAPI * 0.97)).toFixed(2));
             
-            let totalWPlocalCurrencyOriginRemittance = parseFloat((remittance.totalOriginRemittance * WPRateFromAPI).toFixed(2));
-            
-            console.log("🚀 ~ totalWPlocalCurrencyOriginRemittance", totalWPlocalCurrencyOriginRemittance)
-            console.log("🚀 ~ infoForApi.wholesale_partner_info.percent_profit", infoForApi.wholesale_partner_info.percent_profit)
-
-            console.log("🚀 ~ totalWPlocalCurrencyOriginRemittance", typeof totalWPlocalCurrencyOriginRemittance)
-            console.log("🚀 ~ infoForApi.wholesale_partner_info.percent_profit", typeof infoForApi.wholesale_partner_info.percent_profit)
-            
-            remittance.wholesalePartnerProfitLocalCurrency = (totalWPlocalCurrencyOriginRemittance * (infoForApi.wholesale_partner_info.percent_profit)) / 100
-            remittance.wholesalePartnerProfitDollar = (remittance.totalDollarOriginRemittance * (infoForApi.wholesale_partner_info.percent_profit)) / 100
+            remittance.wholesalePartnerProfitLocalCurrency = parseFloat((remittance.wholesalePartnerProfit * WPRateFromAPI).toFixed(2));
+            remittance.wholesalePartnerProfitDollar = parseFloat((remittance.wholesalePartnerProfit * dollarRateFromAPI).toFixed(2));
 
           // se inicia la remesa en bd
           
