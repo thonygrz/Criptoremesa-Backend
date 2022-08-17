@@ -207,7 +207,7 @@ remittancesService.startRemittance = async (req, res, next) => {
           // se pasa el monto final y ganancia del AM en dólares, en la moneda local del usuario y la ganancia del AM
           
             remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (dollarRateFromAPI * 0.97)).toFixed(2));
-            remittance.totalOriginRemittanceInLocalCurrency = parseFloat((remittance.totalOriginRemittance * (localRateFromAPI * 0.97)).toFixed(2));
+            remittance.totalOriginRemittanceInLocalCurrency = parseFloat(remittance.totalOriginRemittance * (localRateFromAPI).toFixed(2));
             
             remittance.wholesalePartnerProfitLocalCurrency = parseFloat((remittance.wholesalePartnerProfit * WPRateFromAPI).toFixed(2));
             remittance.wholesalePartnerProfitDollar = parseFloat((remittance.wholesalePartnerProfit * dollarRateFromAPI).toFixed(2));
