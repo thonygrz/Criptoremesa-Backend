@@ -176,10 +176,11 @@ remittancesService.startRemittance = async (req, res, next) => {
 
           // se calcula la ganancia del AM en caso de haber
 
+            remittance.totalWholesalePartnerOriginAmount = remittance.totalOriginRemittance
             if (remittance.rateValue.operation === 'mul')
-              remittance.totalWholesalePartnerOriginAmount = remittance.totalOriginRemittance / remittance.rateValue.wholesale_partner_rate_factor
+              remittance.totalOriginRemittance = remittance.totalDestinationRemittance / remittance.rateValue.rate_factor
             else if (remittance.rateValue.operation === 'div')
-              remittance.totalWholesalePartnerOriginAmount = remittance.totalOriginRemittance * remittance.rateValue.wholesale_partner_rate_factor
+              remittance.totalOriginRemittance = remittance.totalDestinationRemittance * remittance.rateValue.rate_factor
         
               remittance.wholesalePartnerProfit = Math.abs(remittance.totalOriginRemittance - remittance.totalWholesalePartnerOriginAmount)
 
