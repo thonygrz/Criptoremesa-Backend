@@ -47,4 +47,10 @@ reportsRouter.get(
   reportsController.reportRatesTakenAdvantageOf
 );
 
+reportsRouter.get(
+  "/wholesale_partners",
+  // guard.verifyAdmin("/login"),
+  reportsController.wholesalePartnersReports
+);
+
 export default reportsRouter;
