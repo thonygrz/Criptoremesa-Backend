@@ -48,7 +48,7 @@ reportsRouter.get(
 );
 
 reportsRouter.get(
-  "/wholesale_partners",
+  "/wholesale_partners/:slug",
   // guard.verifyAdmin("/login"),
   reportsController.wholesalePartnersReports
 );
