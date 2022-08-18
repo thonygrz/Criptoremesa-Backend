@@ -172,7 +172,7 @@ reportsPGRepository.wholesalePartnersReports = async (slug) => {
                                                     '${slug}'
                                                 )`
     );
-    return resp.rows[0].wholesale_partner_reports.report;
+    return resp.rows[0].wholesale_partner_reports;
   } catch (error) {
     throw error;
   }
