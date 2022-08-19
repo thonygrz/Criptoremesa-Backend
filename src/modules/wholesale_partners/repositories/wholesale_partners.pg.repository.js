@@ -119,7 +119,7 @@ wholesale_partnersRepository.getWholesalePartnerClientRemittances = async (slug,
       return resp.rows[0].sp_get_wholesale_partner_client_remittances;
     }
     else 
-      []
+      return []
   } catch (error) {
     throw error;
   }
