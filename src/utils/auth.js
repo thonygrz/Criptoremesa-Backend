@@ -146,10 +146,13 @@ passport.use(
 
         // console.log('USER OBTENIDO🔴:',user)
 
-        user.wholesale_partner_info.logo = fs.readFileSync(
-          user.wholesale_partner_info.logo
-        );
-        console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
+        if (user.wholesale_partner_info) {
+          user.wholesale_partner_info.logo = fs.readFileSync(
+            user.wholesale_partner_info.logo
+          );
+          console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
+        }
+
         // else
         //   user = await authenticationPGRepository.getUserByUsername(username);
 
