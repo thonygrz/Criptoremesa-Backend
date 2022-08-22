@@ -68,6 +68,8 @@ usersService.createNewClient = async (req, res, next) => {
       // Secret key
       const secretKey = env.reCAPTCHA_SECRET_KEY;
 
+      console.log('ANTES DEL CAPTCHA: ')
+
       // Verify URL
       const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
         req.body.captcha
@@ -75,6 +77,8 @@ usersService.createNewClient = async (req, res, next) => {
 
       // Make a request to verifyURL
       const body = await axios.get(verifyURL);
+
+      console.log('DESPUES DEL CAPTCHA: ')
 
       // // If not successful
       if (body.data.success === false) {
@@ -1170,6 +1174,93 @@ usersService.verifReferrallByCodPub = async (req, res, next) => {
       req.params.cust_cr_cod_pub
     );
     if (data && data.message === "Exists public code.")
+      return {
+        data: {
+          mesage: data.message,
+        },
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.insertUserAccount = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Inserting user account`);
+    ObjLog.log(`[${context}]: Inserting user account`);
+    let data = await usersPGRepository.insertUserAccount(
+      req.body,
+      req.params.email_user
+    );
+    if (data)
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getUserAccounts = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting user account`);
+    ObjLog.log(`[${context}]: Getting user account`);
+    let data = await usersPGRepository.getUserAccounts(
+      req.params.email_user
+    );
+    if (data)
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.deleteUserAccount = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting user account`);
+    ObjLog.log(`[${context}]: Getting user account`);
+    let data = await usersPGRepository.deleteUserAccount(
+      req.params.email_user
+    );
+    if (data && data.message)
       return {
         data: {
           mesage: data.message,

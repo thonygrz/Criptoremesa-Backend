@@ -14,6 +14,11 @@ let pgSession = require("connect-pg-simple")(session);
 import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
+import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
+import ws from '../utils/websocketTradeAPIs'
+
+//jobs
+import transactionsJob from '../utils/jobs/transactions'
 
 // SETTINGS
 const app = express();
@@ -54,6 +59,8 @@ app.use(
       "https://www.sixmap.nimobot.com",
       "http://192.168.0.105:8080",
       "http://186.167.250.194:8080",
+      "http://172.20.10.5:8081",
+      "http://localhost:8082"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
@@ -187,5 +194,22 @@ app.use(async function (err, req, res,next) {
     res.status(500).send(serverError);
   }
 });
+
+// GLOBAL VARIABLES
+
+global.routes = []
+
+export function replaceOperationRoute(val){
+  routes.forEach((el,i) => {
+    if (el.id_operation_route === val.operationRoute.id_operation_route) 
+    el = val.operationRoute.id_operation_route
+  })
+}
+
+if (routes.length === 0) {
+  operationRoutesRepository.getoperation_routes().then((val) => {
+    routes = val
+  })
+}
 
 export default app;

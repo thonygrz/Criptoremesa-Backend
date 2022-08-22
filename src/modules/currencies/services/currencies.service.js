@@ -12,6 +12,8 @@ currenciesService.getCurrenciesByCountry = async (req, res, next) => {
     let data
     if (req.query.origin === true)
       data = await currencyRepository.getOriginCurrenciesByCountry(req.query.country_id);
+    else if (!req.query.country_id)
+      data = await currencyRepository.getCurrenciesByType(req.query.type);
     else 
       data = await currencyRepository.getDestinyCurrenciesByCountry(req.query.country_id);
     return {

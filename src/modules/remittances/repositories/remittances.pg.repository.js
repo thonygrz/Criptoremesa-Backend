@@ -162,7 +162,7 @@ remittancesPGRepository.getBankFee = async (body) => {
   }
 };
 
-remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, end_date,mode) => {
+remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, end_date,mode, only_wholesale_partner) => {
   try {
     logger.info(`[${context}]: Getting last remittances on db`);
     ObjLog.log(`[${context}]: Getting last remittances on db`);
@@ -172,7 +172,8 @@ remittancesPGRepository.lastRemittances = async (email_user, limit, start_date, 
                                                       ${limit === 'null' ? null : limit},
                                                       ${start_date === 'null' ? null : start_date},
                                                       ${end_date === 'null' ? null : end_date},
-                                                      ${mode === 'null' ? null : `'${mode}'`}
+                                                      ${mode === 'null' ? null : `'${mode}'`},
+                                                      ${only_wholesale_partner}
                                                     )`
     );
     if (resp.rows[0].sp_get_last_remittances_by_user)
@@ -193,6 +194,22 @@ remittancesPGRepository.getMinAmounts = async () => {
     );
     if (resp.rows[0].sp_get_remittance_min_amounts)
       return resp.rows[0].sp_get_remittance_min_amounts;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+remittancesPGRepository.getInfoForRateApi = async (emailUser) => {
+  try {
+    logger.info(`[${context}]: Getting info for rate API from db`);
+    ObjLog.log(`[${context}]: Getting info for rate API from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_info_for_rate_api(${emailUser ? `'${emailUser}'` : null})`
+    );
+    if (resp.rows[0].sp_get_info_for_rate_api)
+      return resp.rows[0].sp_get_info_for_rate_api;
     else return null;
   } catch (error) {
     throw error;

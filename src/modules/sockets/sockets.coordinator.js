@@ -7,6 +7,7 @@ import chatPGRepository from "../chat/repositories/chat.pg.repository";
 import ratesPGRepository from "../rates/repositories/rates.pg.repository";
 import usersPGRepository from "../users/repositories/users.pg.repository";
 import remittancesPGRepository from "../remittances/repositories/remittances.pg.repository";
+// import {replaceOperationRoute} from '../../app/server'
 
 import fs from "fs";
 
@@ -106,7 +107,7 @@ export async function SocketServer(server) {
 
       console.log('socket from Sixm',socket.id)
       console.log('val from Sixm',val)
-      
+    
       notifyChanges('level_upgrade', val);
     });
 
@@ -203,25 +204,53 @@ export async function SocketServer(server) {
 
       socketServer.emit('rate_change', val);
     });
+
+    socket.on("operation_route_update", async (val) => {
+      logger.debug(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      // console.log('socket from Sixm',socket.id)
+      // console.log('val from Sixm',val)
+
+      // replaceOperationRoute(val)
+
+      routes.forEach((el,i) => {
+        if (el.id_operation_route === val.operationRoute.id_operation_route) 
+        routes[i].profit_margin = val.operationRoute.profit_margin
+        routes[i].percent_limit = val.operationRoute.percent_limit
+      })
+
+      // console.log('routesss: ',routes)
+      // console.log('cambio de route: ',routes.find(e => e.id_operation_route === 19))
+
+    });
   });
 }
 
 export function notifyChanges(event, data) {
   try {
-    logger.debug(`[${context}] Sending update notification to FE`);
-    ObjLog.log(`[${context}] Sending update notification to FE`);
+    if (!data.api) {
+      logger.debug(`[${context}] Sending update notification to FE`);
+      ObjLog.log(`[${context}] Sending update notification to FE`);
+    }
 
     let redisKey
 
     if (data.email_user) redisKey = data.email_user
     else if (data.uniq_id) redisKey = data.uniq_id  
 
-    redisClient.get(redisKey, function (err, reply) {
-      // reply is null when the key is missing
-      console.log("Redis id socket reply: ", reply);
-      console.log("socket sending to FE: ", data);
-      socketServer.sockets.to(reply).emit(event, data);
-    });
+    if (redisKey) {
+      redisClient.get(redisKey, function (err, reply) {
+        // reply is null when the key is missing
+        logger.debug(`Sendind socket to FE. Redis id: ${reply}. Data: ${data}`);
+        socketServer.sockets.to(reply).emit(event, data);
+      });
+    } else if (data.api) {
+      // logger.debug(`Sendind API socket to FE. Data: ${data}`)
+      socketServer.sockets.emit(event, data);
+    } else {
+      logger.error('Socket id not found in Redis')
+    }
       
     // socketServer.sockets.emit(event, data);
   } catch (error) {

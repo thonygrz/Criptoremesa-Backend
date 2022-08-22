@@ -173,29 +173,68 @@ remittancesService.startRemittance = async (req, res, next) => {
               remittance.captures[i].path = form.uploadDir + `/remittance-${JSON.parse(fields.remittance).email_user}_${numbers[i]}_${f.name}`
             }
           });
-  
-          let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${remittance.countryCurrency.isoCode}`);
-  
-          let rateFromAPI = fullRateFromAPI.data.rates[remittance.countryCurrency.isoCode]
-          rateFromAPI = parseFloat(rateFromAPI)
-  
-          remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance / (rateFromAPI * 0.97)).toFixed(2));
-  
-          let data = await remittancesPGRepository.startRemittance(remittance);
+
+          // se calcula la ganancia del AM en caso de haber
+
+            if (remittance.rateValue.wholesale_partner_rate_factor) {
+              remittance.totalWholesalePartnerOriginAmount = remittance.totalOriginRemittance
+              if (remittance.rateValue.operation === 'mul')
+                remittance.totalOriginRemittance = remittance.totalDestinationRemittance / remittance.rateValue.rate_factor
+              else if (remittance.rateValue.operation === 'div')
+                remittance.totalOriginRemittance = remittance.totalDestinationRemittance * remittance.rateValue.rate_factor
           
-          if (data.message === 'Remittance started' && data.id_pre_remittance) {
-            redisClient.get(data.id_pre_remittance, function (err, reply) {
-              // reply is null when the key is missing
-              clearTimeout(parseInt(reply))
-            });
-          }
+                remittance.wholesalePartnerProfit = Math.abs(remittance.totalOriginRemittance - remittance.totalWholesalePartnerOriginAmount)
+            }
+
+          // se obtiene informacion necesaria para encontrar las tasas
+
+            let infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.email_user);
+
+          // se obtienen las tasas de la API
+
+            let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},${infoForApi.wholesale_partner_origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
+          
+          // se obtienen las tasas de la moneda local del usuario y en dólares
       
-          setfinalResp({
-                        data,
-                        status: 200,
-                        success: true,
-                        failed: false
-                      }) 
+            let localRateFromAPI = fullRateFromAPI.data.rates[infoForApi.origin_currency_iso_code]
+            localRateFromAPI = parseFloat(localRateFromAPI)
+
+            let WPRateFromAPI = fullRateFromAPI.data.rates[infoForApi.wholesale_partner_origin_currency_iso_code]
+            WPRateFromAPI = parseFloat(WPRateFromAPI)
+            
+            let dollarRateFromAPI = fullRateFromAPI.data.rates.USD
+            dollarRateFromAPI = parseFloat(dollarRateFromAPI)
+            
+          // se pasa el monto final y ganancia del AM en dólares, en la moneda local del usuario y la ganancia del AM
+          
+            remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (dollarRateFromAPI * 0.97)).toFixed(2));
+            remittance.totalOriginRemittanceInLocalCurrency = parseFloat(remittance.totalOriginRemittance * (localRateFromAPI).toFixed(2));
+            
+            if (remittance.rateValue.wholesale_partner_rate_factor) {
+              remittance.wholesalePartnerProfitLocalCurrency = parseFloat((remittance.wholesalePartnerProfit * WPRateFromAPI).toFixed(2));
+              remittance.wholesalePartnerProfitDollar = parseFloat((remittance.wholesalePartnerProfit * dollarRateFromAPI).toFixed(2));
+            }
+          // se inicia la remesa en bd
+          
+            let data = await remittancesPGRepository.startRemittance(remittance);
+          
+          // se detiene la preremesa si la hay
+
+            if (data.message === 'Remittance started' && data.id_pre_remittance) {
+              redisClient.get(data.id_pre_remittance, function (err, reply) {
+                // reply is null when the key is missing
+                clearTimeout(parseInt(reply))
+              });
+            }
+      
+          // se asigna la respuesta al FE
+
+            setfinalResp({
+                          data,
+                          status: 200,
+                          success: true,
+                          failed: false
+                        }) 
         } 
         else 
           setfinalResp({
@@ -302,7 +341,7 @@ remittancesService.lastRemittances = async (req, res, next) => {
     logger.info(`[${context}]: Getting last remittances by user`);
     ObjLog.log(`[${context}]: Getting last remittances by user`);
     
-    let data = await remittancesPGRepository.lastRemittances(req.params.email_user,req.query.limit,req.query.start_date,req.query.end_date,req.query.mode);
+    let data = await remittancesPGRepository.lastRemittances(req.params.email_user,req.query.limit,req.query.start_date,req.query.end_date,req.query.mode,req.query.only_wholesale_partner);
 
     return {
       data,

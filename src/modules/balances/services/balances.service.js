@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import balancesPGRepository from "../repositories/balances.pg.repository";
+import currenciesPGRepository from "../../currencies/repositories/currencies.pg.repository";
 const balancesService = {};
 const context = "balances Service";
 
@@ -9,6 +10,7 @@ balancesService.getBalances = async (req, res, next) => {
     logger.info(`[${context}]: Getting balances`);
     ObjLog.log(`[${context}]: Getting balances`);
     let data = await balancesPGRepository.getBalances(req.params.email_user);
+    let currencyData = await currenciesPGRepository.getCurrenciesByType('crypto')
 
     if (data.resid_currency){
       if (!data.balances) data.balances = []
@@ -23,6 +25,19 @@ balancesService.getBalances = async (req, res, next) => {
           currency_iso_code: data.resid_currency.currency_iso_code,
         })
       }
+      currencyData.forEach(cu => {
+        if (!data.balances.find(b => b.id_currency === cu.id_currency)){
+          data.balances.push({
+            balance: 0,
+            email_user: req.params.email_user,
+            id_currency: cu.id_currency,
+            currency_name: cu.name,
+            currency_type: cu.type,
+            country_iso_code: null,
+            currency_iso_code: cu.iso_cod,
+          })
+        }
+      });
     }
     
     return {
