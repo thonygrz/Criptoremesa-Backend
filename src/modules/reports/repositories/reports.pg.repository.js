@@ -162,4 +162,20 @@ reportsPGRepository.reportRatesTakenAdvantageOf = async (email_user) => {
   }
 };
 
+reportsPGRepository.wholesalePartnersReports = async (slug) => {
+  try {
+    logger.info(`[${context}]: Getting report from db`);
+    ObjLog.log(`[${context}]: Getting report from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM wholesale_partner_reports(
+                                                    '${slug}'
+                                                )`
+    );
+    return resp.rows[0].wholesale_partner_reports;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default reportsPGRepository;

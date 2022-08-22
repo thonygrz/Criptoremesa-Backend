@@ -144,4 +144,22 @@ reportsService.reportRatesTakenAdvantageOf = async (req, res, next) => {
   }
 };
 
+reportsService.wholesalePartnersReports = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting report`);
+    ObjLog.log(`[${context}]: Getting report`);
+    let data = await reportsPGRepository.wholesalePartnersReports(
+      req.params.slug
+    );
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default reportsService;

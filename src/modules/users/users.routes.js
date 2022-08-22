@@ -130,4 +130,22 @@ usersRouter.head(
   usersController.verifReferrallByCodPub
 );
 
+usersRouter.post(
+  "/accounts/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.insertUserAccount
+);
+
+usersRouter.get(
+  "/accounts/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.getUserAccounts
+);
+
+usersRouter.delete(
+  "/accounts/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.deleteUserAccount
+);
+
 export default usersRouter;

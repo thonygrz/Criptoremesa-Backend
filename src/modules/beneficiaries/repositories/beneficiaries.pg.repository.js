@@ -34,14 +34,14 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_insert(
         '${body.nickname}',
-        ${body.owner_name === null ? "null" : `'${body.owner_name}'`},
-        ${body.identification === null ? "null" : `'${body.identification}'`},
-        ${body.account === null ? "null" : `'${body.account}'`},
-        ${body.account_type === null ? "null" : `'${body.account_type}'`},
-        ${body.phone_number === null ? "null" : `'${body.phone_number}'`},
-        ${body.email === null ? "null" : `'${body.email}'`},
+        ${body.owner_name === null ? null : `'${body.owner_name}'`},
+        ${body.identification === null ? null : `'${body.identification}'`},
+        ${body.account === null ? null : `'${body.account}'`},
+        ${body.account_type === null ? null : `'${body.account_type}'`},
+        ${body.phone_number === null ? null : `'${body.phone_number}'`},
+        ${body.email === null ? null : `'${body.email}'`},
         ${body.id_doc_type},
-        ${body.id_bank === null ? "null" : `'${body.id_bank}'`},
+        ${body.id_bank === null ? null : `'${body.id_bank}'`},
         '${emailUser}',
         ${body.id_pay_method},
         ${body.id_optional_field}

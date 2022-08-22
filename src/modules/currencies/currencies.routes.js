@@ -10,5 +10,4 @@ currenciesRouter.get(
   currenciesController.getCurrenciesByCountry
 );
 
-
 export default currenciesRouter;
