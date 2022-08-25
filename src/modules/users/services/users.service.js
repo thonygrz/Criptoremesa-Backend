@@ -9,6 +9,7 @@ import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import { join, resolve } from "path";
 import axios from "axios";
+import whatsapp from "../../../utils/whatsapp";
 
 const client = require("twilio")(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
@@ -52,6 +53,17 @@ async function sendSMS(to, body) {
     // return message.data
   } catch (error) {
     next(error);
+  }
+}
+
+async function sendWhatsappMessage(to, body) {
+  try {
+    return await whatsapp.sendWhatsappMessage(
+      to,
+      body
+    )
+  } catch (error) {
+    return error;
   }
 }
 
@@ -1020,10 +1032,61 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
   }
 };
 
+usersService.sendVerificationCodeByWhatsApp = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending verification code by Whatsapp`);
+    ObjLog.log(`[${context}]: Sending verification code by Whatsapp`);
+
+    let data = await usersPGRepository.generateCode(
+      req.body.main_phone_full,
+      'whatsapp'
+    );
+    console.log('data: ',data)
+
+    if (data.msg === "Code generated") {
+      const whaResp =  await sendWhatsappMessage(
+          req.body.main_phone_full,
+          `💰<CriptoRemesa>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
+        )
+        console.log('whaResp: ',whaResp)
+      if (
+        whaResp.status === 'Message sended'
+      )
+        return {
+          data: {
+            msg: data.msg,
+          },
+          status: 200,
+          success: true,
+          failed: false,
+        };
+    } else if (data.msg === "An error ocurred generating code.") {
+      return {
+        data: { msg: data.msg },
+        status: 400,
+        success: false,
+        failed: true,
+      };
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 usersService.sendSMS = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending SMS`);
     ObjLog.log(`[${context}]: Sending SMS`);
+    res.status(200).json(sendSMS(req.body.phone_number, req.body.msg));
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.sendWhatsApp = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending WhatsApp message`);
+    ObjLog.log(`[${context}]: Sending WhatsApp message`);
     res.status(200).json(sendSMS(req.body.phone_number, req.body.msg));
   } catch (error) {
     next(error);
