@@ -182,14 +182,14 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     };
     await poolSM.query("SET SCHEMA 'sec_emp'");
 
-    console.log("ip a pasar en get_ip_info()", ip);
+    logger.silly(`ip a pasar en get_ip_info(): ${ip}`);
 
     let resp = await poolSM.query(
       `SELECT *
     FROM get_ip_info('${ip}')`
     );
 
-    console.log("pais de la ip", resp.rows[0]);
+    logger.silly(`pais de la ip ${resp.rows[0]}`);
 
     if (resp.rows[0] === undefined) {
       ipInfo.network = "Probably localhost";
@@ -211,6 +211,11 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     valsArray.push(ip);
     valsArray.push(ipInfo.city_name);
 
+    let userResp = await poolSM.query(`SELECT * FROM sec_cust.get_user_by_id('${uuid_user}')`);
+
+    let fullUser = userResp.rows[0];
+    console.log("fullUser: ", fullUser);
+
     //UPDATE USER
     await poolSM.query("SET SCHEMA 'sec_cust'");
 
@@ -223,13 +228,9 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
         ($3)
       )
       `,
-      [colsArray, valsArray, uuid_user]
+      [colsArray, valsArray, fullUser.email_user]
     );
     //UPDATE SESSION
-    resp = await poolSM.query(`SELECT * FROM get_user_by_id('${uuid_user}')`);
-
-    let fullUser = resp.rows[0];
-    console.log("fullUser: ", fullUser);
 
     colsArray = [];
     valsArray = [];

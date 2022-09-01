@@ -5,7 +5,7 @@ const beneficiariesRouter = Router();
 
 
 beneficiariesRouter.get(
-  "/frequentBeneficiaries",
+  "/frequentBeneficiaries/:email_user",
   // guard.verifyAdmin("/login"),
   beneficiariesController.getUserFrequentBeneficiaries
 );

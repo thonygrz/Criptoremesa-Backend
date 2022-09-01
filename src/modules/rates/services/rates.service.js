@@ -45,7 +45,7 @@ ratesService.userRates = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting user rates`);
     ObjLog.log(`[${context}]: Getting user rates`);
-    let data = await ratesPGRepository.userRates(req.query);
+    let data = await ratesPGRepository.userRates(req.query,req.params.email_user);
     return {
       data,
       status: 200,
@@ -62,7 +62,7 @@ ratesService.fullRates = async (req, res, next) => {
     logger.info(`[${context}]: Getting full rates`);
     ObjLog.log(`[${context}]: Getting full rates`);
 
-    let data = await ratesPGRepository.fullRates(req.query);
+    let data = await ratesPGRepository.fullRates(req.query,req.params.email_user);
 
     let currentManualRate = data.manualRates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
 

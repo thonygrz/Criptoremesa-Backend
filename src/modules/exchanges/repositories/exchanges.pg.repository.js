@@ -235,9 +235,12 @@ exchangesRepository.getExchangesByUser = async (query) => {
     logger.info(`[${context}]: Getting exchanges by user from db`);
     ObjLog.log(`[${context}]: Getting exchanges by user from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
+
+    let decodedValue = decodeURIComponent(query.email_user)
+
     const resp = await poolSM.query(
       `SELECT * FROM sp_get_last_exchanges_by_user(
-                                                      ${query.email_user === 'null' ? null : `'${query.email_user}'`},
+                                                      ${decodedValue === 'null' ? null : `'${decodedValue}'`},
                                                       ${query.limit === 'null' ? null : query.limit},
                                                       ${query.start_date === 'null' ? null : query.start_date},
                                                       ${query.end_date === 'null' ? null : query.end_date},

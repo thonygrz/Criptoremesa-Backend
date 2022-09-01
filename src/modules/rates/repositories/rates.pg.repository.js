@@ -54,7 +54,7 @@ ratesPGRepository.rateTypes = async () => {
   }
 };
 
-ratesPGRepository.userRates = async (body) => {
+ratesPGRepository.userRates = async (body,emailUser) => {
   try {
     logger.info(`[${context}]: Looking for userRates on db`);
     ObjLog.log(`[${context}]: Looking for userRates on db`);
@@ -65,7 +65,7 @@ ratesPGRepository.userRates = async (body) => {
         ${body.id_origin_currency},
         ${body.id_destiny_country},
         ${body.id_destiny_currency},
-        '${body.email_user}'
+        '${emailUser}'
       )`
     );
     if (resp.rows) {
@@ -76,7 +76,7 @@ ratesPGRepository.userRates = async (body) => {
   }
 };
 
-ratesPGRepository.fullRates = async (body) => {
+ratesPGRepository.fullRates = async (body,emailUser) => {
   try {
     logger.info(`[${context}]: Looking for fullRates on db`);
     ObjLog.log(`[${context}]: Looking for fullRates on db`);
@@ -87,7 +87,7 @@ ratesPGRepository.fullRates = async (body) => {
         ${body.id_origin_currency},
         ${body.id_destiny_country},
         ${body.id_destiny_currency},
-        '${body.email_user}'
+        '${emailUser}'
       )`
     );
     if (resp.rows) {

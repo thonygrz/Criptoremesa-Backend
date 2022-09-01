@@ -321,8 +321,8 @@ exchangesService.insertExchange = async (req, res, next) => {
       
       // se pasa el monto final en dólares y en la moneda local del usuario
 
-        exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
-        exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
+        exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97))).toFixed(2);
+        exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97))).toFixed(2);
       
       data = await exchangesRepository.insertBuyExchange(exchange);
     } 

@@ -174,6 +174,9 @@ remittancesService.startRemittance = async (req, res, next) => {
             }
           });
 
+          let fullRateFromAPI
+          let infoForApi
+
           // se calcula la ganancia del AM en caso de haber
 
             if (remittance.rateValue.wholesale_partner_rate_factor) {
@@ -184,16 +187,26 @@ remittancesService.startRemittance = async (req, res, next) => {
                 remittance.totalOriginRemittance = remittance.totalDestinationRemittance * remittance.rateValue.rate_factor
           
                 remittance.wholesalePartnerProfit = Math.abs(remittance.totalOriginRemittance - remittance.totalWholesalePartnerOriginAmount)
+
+                // se obtiene informacion necesaria para encontrar las tasas
+      
+                  infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.email_user);
+                  console.log('remittance.email_user',remittance.email_user)
+                  console.log('infoForApi',infoForApi)
+                // se obtienen las tasas de la API
+      
+                  fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},${infoForApi.wholesale_partner_origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
+            } else {
+              // se obtiene informacion necesaria para encontrar las tasas
+          
+                infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.email_user);
+                console.log('remittance.email_user',remittance.email_user)
+                console.log('infoForApi',infoForApi)
+              // se obtienen las tasas de la API
+    
+                fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
             }
 
-          // se obtiene informacion necesaria para encontrar las tasas
-
-            let infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.email_user);
-
-          // se obtienen las tasas de la API
-
-            let fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},${infoForApi.wholesale_partner_origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
-          
           // se obtienen las tasas de la moneda local del usuario y en dólares
       
             let localRateFromAPI = fullRateFromAPI.data.rates[infoForApi.origin_currency_iso_code]
@@ -207,12 +220,18 @@ remittancesService.startRemittance = async (req, res, next) => {
             
           // se pasa el monto final y ganancia del AM en dólares, en la moneda local del usuario y la ganancia del AM
           
-            remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (dollarRateFromAPI * 0.97)).toFixed(2));
-            remittance.totalOriginRemittanceInLocalCurrency = parseFloat(remittance.totalOriginRemittance * (localRateFromAPI).toFixed(2));
+            remittance.totalDollarOriginRemittance = parseFloat((remittance.totalOriginRemittance * (dollarRateFromAPI * 0.97))).toFixed(2);
+            remittance.totalOriginRemittanceInLocalCurrency = parseFloat(remittance.totalOriginRemittance * (localRateFromAPI)).toFixed(2);
             
+            logger.silly(`remittance.totalDollarOriginRemittance: ${remittance.totalDollarOriginRemittance}`)
+            logger.silly(`dollarRateFromAPI: ${dollarRateFromAPI}`)
+            logger.silly(`localRateFromAPI: ${localRateFromAPI}`)
+            logger.silly(`remittance.totalOriginRemittance: ${remittance.totalOriginRemittance}`)
+            logger.silly(`remittance.totalOriginRemittanceInLocalCurrency: ${remittance.totalOriginRemittanceInLocalCurrency}`)
+
             if (remittance.rateValue.wholesale_partner_rate_factor) {
-              remittance.wholesalePartnerProfitLocalCurrency = parseFloat((remittance.wholesalePartnerProfit * WPRateFromAPI).toFixed(2));
-              remittance.wholesalePartnerProfitDollar = parseFloat((remittance.wholesalePartnerProfit * dollarRateFromAPI).toFixed(2));
+              remittance.wholesalePartnerProfitLocalCurrency = parseFloat((remittance.wholesalePartnerProfit * WPRateFromAPI)).toFixed(2);
+              remittance.wholesalePartnerProfitDollar = parseFloat((remittance.wholesalePartnerProfit * dollarRateFromAPI)).toFixed(2);
             }
           // se inicia la remesa en bd
           

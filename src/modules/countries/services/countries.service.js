@@ -27,8 +27,10 @@ countriesService.countriesCurrencies = async (req, res, next) => {
     logger.info(`[${context}]: Getting countries currencies`);
     ObjLog.log(`[${context}]: Getting countries currencies`);
 
+    let decodedValue = decodeURIComponent(req.query.email_user)
+
     let data = await countriesRepository.countriesCurrencies(
-      req.query.email_user ? req.query.email_user : null
+      decodedValue ? decodedValue : null
     );
     return {
       data,

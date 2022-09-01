@@ -751,6 +751,9 @@ usersService.forgotPassword = async (req, res, next) => {
       `'${req.body.email_user}'`
     );
 
+      console.log('req.body.email_user: ',req.body.email_user)
+      console.log('user: ',user)
+
     let data = await usersPGRepository.generateCode(
       req.body.email_user,
       "email"

@@ -120,10 +120,10 @@ beneficiariesController.createFrequentBeneficiary = async (req, res, next) => {
     } else {
       // calling service
       logger.info(
-        `[${context}]: Sending service to insert ${req.query.email_user} frequent Beneficiary`
+        `[${context}]: Sending service to insert ${req.body.email_user} frequent Beneficiary`
       );
       ObjLog.log(
-        `[${context}]: Sending service to insert ${req.query.email_user} frequent Beneficiary`
+        `[${context}]: Sending service to insert ${req.body.email_user} frequent Beneficiary`
       );
 
       let finalResp = await beneficiariesService.createFrequentBeneficiary(

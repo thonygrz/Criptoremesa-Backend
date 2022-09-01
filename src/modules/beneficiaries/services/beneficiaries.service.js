@@ -9,7 +9,7 @@ beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
     ObjLog.log(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
-    let data = await beneficiariesRepository.getUserFrequentBeneficiaries(req.query.email_user);
+    let data = await beneficiariesRepository.getUserFrequentBeneficiaries(req.params.email_user);
     return {
       data,
       status: 200,
@@ -25,7 +25,7 @@ beneficiariesService.createFrequentBeneficiary = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Creating frequent beneficiary for ${req.query.email_user}`);
     ObjLog.log(`[${context}]: Creating frequent beneficiary for ${req.query.email_user}`);
-    let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,req.query.email_user);
+    let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,req.body.email_user);
     if (data.id_beneficiary !== '')
       return {
         data,

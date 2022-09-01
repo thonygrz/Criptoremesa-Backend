@@ -141,48 +141,32 @@ wholesale_partnersController.getWholesalePartnerInfo = async (
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       log.session = req.sessionID;
 
-    // protecting route in production but not in development
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
-      req.session.destroy();
-      log.success = false;
-      log.failed = true;
+    logger.info(
+      `[${context}]: Sending service to get wholesale_partner info`
+    );
+    ObjLog.log(
+      `[${context}]: Sending service to get wholesale_partner info`
+    );
+
+    let finalResp = await wholesale_partnersService.getWholesalePartnerInfo(
+      req,
+      res,
+      next
+    );
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
       log.params = req.params;
       log.query = req.query;
       log.body = req.body;
-      log.status = 401;
-      log.response = { message: "Unauthorized" };
+      log.status = finalResp.status;
+      log.response = finalResp.data;
       await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
-    } 
-    else {
-      // calling service
-      logger.info(
-        `[${context}]: Sending service to get wholesale_partner info`
-      );
-      ObjLog.log(
-        `[${context}]: Sending service to get wholesale_partner info`
-      );
 
-      let finalResp = await wholesale_partnersService.getWholesalePartnerInfo(
-        req,
-        res,
-        next
-      );
-
-      if (finalResp) {
-        //logging on DB
-        log.success = finalResp.success;
-        log.failed = finalResp.failed;
-        log.params = req.params;
-        log.query = req.query;
-        log.body = req.body;
-        log.status = finalResp.status;
-        log.response = finalResp.data;
-        await authenticationPGRepository.insertLogMsg(log);
-
-        //sendind response to FE
-        res.status(finalResp.status).json(finalResp.data);
-      }
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
     }
   } catch (error) {
     next(error);

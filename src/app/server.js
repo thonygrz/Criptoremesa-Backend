@@ -16,19 +16,22 @@ import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
 import ws from '../utils/websocketTradeAPIs'
+import bodyParser from "body-parser";
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
 
 // SETTINGS
 const app = express();
+app.use(bodyParser.json({limit: '50mb'})); 
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.set("port", env.PORT || 3000);
-const opts = {
-  multiples: true,
-  uploadDir: env.FILES_DIR,
-  maxFileSize: 2 * 1024 * 1024,
-  keepExtensions: true,
-};
+// const opts = {
+//   multiples: true,
+//   uploadDir: env.FILES_DIR,
+//   maxFileSize: 2 * 1024 * 1024,
+//   keepExtensions: true,
+// };
 
 // MIDDLEWARES
 app.use(morgan("dev", { stream: logger.stream }));
@@ -60,7 +63,8 @@ app.use(
       "http://192.168.0.105:8080",
       "http://186.167.250.194:8080",
       "http://172.20.10.5:8081",
-      "http://localhost:8082"
+      "http://localhost:8082",
+      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3004"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
