@@ -350,7 +350,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 10 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -457,7 +457,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 10 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -554,7 +554,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 10 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -652,7 +652,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 10 * 1024 * 1024,
       keepExtensions: true,
     });
 
