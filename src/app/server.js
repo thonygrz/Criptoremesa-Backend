@@ -219,11 +219,11 @@ if (routes.length === 0) {
 
 // ENV WHA MESSAGE
 
-if (env.NOTIFY_ENV = 'TRUE') {
+if (env.NOTIFY_ENV === 'TRUE') {
   let msg
 
-  if (env.PG_DB_SM_NAME = 'sixmap-tig') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧑🏻‍💻*DEV*\n\n⚠️NO UTILIZAR nimobot'
-  else if (env.PG_DB_SM_NAME = 'sixmap-cg') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧪*TEST*\n\n✅Testers pueden utilizar nimobot'
+  if (env.PG_DB_SM_NAME === 'sixmap-tig') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧑🏻‍💻*DEV*\n\n⚠️NO UTILIZAR nimobot'
+  else if (env.PG_DB_SM_NAME === 'sixmap-cg') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧪*TEST*\n\n✅Testers pueden utilizar nimobot'
   
   whatsapp.sendGroupWhatsappMessage(msg)
 }
