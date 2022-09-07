@@ -17,6 +17,7 @@ import authenticationPGRepository from "../modules/authentication/repositories/a
 import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
 import ws from '../utils/websocketTradeAPIs'
 import bodyParser from "body-parser";
+import whatsapp from "../utils/whatsapp";
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
@@ -214,6 +215,17 @@ if (routes.length === 0) {
   operationRoutesRepository.getoperation_routes().then((val) => {
     routes = val
   })
+}
+
+// ENV WHA MESSAGE
+
+if (env.NOTIFY_ENV === 'TRUE') {
+  let msg
+
+  if (env.PG_DB_SM_NAME === 'sixmap-tig') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧑🏻‍💻*DEV*\n\n⚠️NO UTILIZAR nimobot'
+  else if (env.PG_DB_SM_NAME === 'sixmap-cg') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧪*TEST*\n\n✅Testers pueden utilizar nimobot'
+  
+  whatsapp.sendGroupWhatsappMessage(msg)
 }
 
 export default app;

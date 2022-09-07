@@ -32,4 +32,20 @@ export default {
         return error;
       }
     },
+    sendGroupWhatsappMessage: async (msg) => {
+      logger.info(`[${context}]: Sending group Whatsapp message`)
+      let url = `${env.MESSAGE_SERVER_BASE_URL}/chats/group/send`
+      console.log('url',url)
+      let body = {
+        msg
+      }
+      try {
+        let resp = (await axios.post(url,body, { httpsAgent: agent })).data
+        console.log('resp: ',resp)
+        return resp;
+      } catch (error) {
+        return error;
+      }
+    },
+
 };
