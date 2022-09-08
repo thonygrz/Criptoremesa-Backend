@@ -4,6 +4,8 @@ import ratesPGRepository from "../repositories/rates.pg.repository";
 import { env } from "../../../utils/enviroment";
 import {MANUAL_RATES} from '../constants/manualRates.constants'
 import axios from 'axios'
+import awsLambda from "../../../utils/awsLambda";
+import { createLogger } from "winston";
 
 const ratesService = {};
 const context = "rates Service";
@@ -69,7 +71,12 @@ ratesService.fullRates = async (req, res, next) => {
     let fullRateFromAPI = (await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${currentManualRate.currency_origin_iso_code}`)).data;
     
     if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
-      data.localAmountLimit = currentManualRate.amount_limit * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
+      console.log(currentManualRate)
+      console.log(fullRateFromAPI)
+      let respo = await awsLambda.getLocalAmountLimit(currentManualRate,fullRateFromAPI)
+      logger.silly(`respo: ${respo}`)
+
+      data.localAmountLimit = respo
       data.vipAcum = data.vipAcum * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
       return {
         data,

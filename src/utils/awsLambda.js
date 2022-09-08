@@ -19,4 +19,8 @@ awsLambda.comparePasswords = async function (pass1,pass2) {
     return await request('POST','comparePassword',null,{pass1,pass2})
 }
 
+awsLambda.getLocalAmountLimit = async function (currentManualRate,fullRateFromAPI) {
+    return await request('POST','getLocalAmountLimit',null,{currentManualRate,fullRateFromAPI})
+}
+
 export default awsLambda;
