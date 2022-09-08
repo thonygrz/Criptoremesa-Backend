@@ -3,9 +3,9 @@ import PassportLocal from "passport-local";
 import { logger } from "./logger";
 import ObjLog from "./ObjLog";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
-import bcrypt from "bcryptjs";
 import { notifyChanges } from "../modules/sockets/sockets.coordinator";
 import fs from 'fs';
+import awsLambda from "./awsLambda";
 
 const LocalStrategy = PassportLocal.Strategy;
 const context = "Authentication module";
@@ -186,7 +186,11 @@ passport.use(
               req.sessionID
             );
 
-            let match = await bcrypt.compare(password, user.password);
+            // AWS LAMBDA
+            
+            console.log('awsLambda: ',await awsLambda.comparePasswords(password, user.password))
+
+            let match = await awsLambda.comparePasswords(password, user.password);
 
             if (match) {
               logger.info(`[${context}]: Successful login`);

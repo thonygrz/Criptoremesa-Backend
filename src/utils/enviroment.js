@@ -26,7 +26,8 @@ export const env = {
     NOTIFY_ENV: process.env.NOTIFY_ENV,
     CURRENCY_FREAKS_API_KEY: process.env.CURRENCY_FREAKS_API_KEY,
     BINANCE_API_KEY: process.env.BINANCE_API_KEY,
-    BINANCE_SECRET_KEY: process.env.BINANCE_SECRET_KEY
+    BINANCE_SECRET_KEY: process.env.BINANCE_SECRET_KEY,
+    AWS_LAMBDA: process.env.AWS_LAMBDA
 };
 
 export const ENVIROMENTS = {
