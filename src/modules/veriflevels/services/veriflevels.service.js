@@ -171,6 +171,15 @@ veriflevelsService.getLimitationsByCountry = async (req, res, next) => {
     const bdResp = await veriflevelsPGRepository.getLimitationsByCountry(
       req.params.id
     );
+
+    bdResp.limitations.forEach(e => {
+      if (e.destiny_countries.length > 0)
+        e.destiny_countries.forEach(c => {
+          if (c.country_iso_code === 'DO')
+            c.viewing_name = 'Rep. Dominicana'
+        })
+    });
+
     return {
       data: bdResp,
       status: 200,
