@@ -27,7 +27,7 @@ usersPGRepository.createNewClient = async (body) => {
       '${body.verif_level_apb}',
       '${body.multi_country}',
       '${body.gender}',
-      null,
+      '${body.date_birth}',
       null,
       '${body.main_phone}',
       '${body.main_phone_wha}',
@@ -56,7 +56,8 @@ usersPGRepository.createNewClient = async (body) => {
       '${body.second_phone_full}',
       '${body.delegated_phone_code}',
       '${body.delegated_phone_full}',
-      ${body.slug ? `'${body.slug}'` : null})
+      ${body.slug ? `'${body.slug}'` : null},
+      ${body.pol_exp_per})
       ;`);
     return resp.rows;
   } catch (error) {
@@ -218,13 +219,12 @@ usersPGRepository.requestLevelOne1stQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
+    logger.silly(body)
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_1st_Q(
-        '${body.date_birth}',
         '${body.state_name}',
         '${body.resid_city}',
-        '${body.pol_exp_per}',
         '${body.email_user}',
         '${body.id_ident_doc_type}',
         '${body.ident_doc_number}',
@@ -232,7 +232,8 @@ usersPGRepository.requestLevelOne1stQ = async (body) => {
         '${body.doc_path}',
         '${body.selfie_path}',
         '${body.main_sn_platf}',
-        '${body.user_main_sn_platf}'
+        '${body.user_main_sn_platf}',
+        '${body.address}'
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -246,13 +247,12 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
+    logger.silly(body)
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_2nd_Q(
-        '${body.date_birth}',
         '${body.state_name}',
         '${body.resid_city}',
-        '${body.pol_exp_per}',
         '${body.email_user}',
         '${body.id_country}',
         '${body.ident_doc_number}',
@@ -260,7 +260,8 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
         '${body.doc_path}',
         '${body.selfie_path}',
         '${body.main_sn_platf}',
-        '${body.user_main_sn_platf}'
+        '${body.user_main_sn_platf}',
+        '${body.address}'
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -274,13 +275,12 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
+    logger.silly(body)
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_3rd_Q(
-        '${body.date_birth}',
         '${body.state_name}',
         '${body.resid_city}',
-        '${body.pol_exp_per}',
         '${body.email_user}',
         ${body.id_country},
         '${body.ident_doc_number}',
@@ -288,7 +288,8 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
         '${body.doc_path}',
         '${body.selfie_path}',
         '${body.main_sn_platf}',
-        '${body.user_main_sn_platf}'
+        '${body.user_main_sn_platf}',
+        '${body.address}'
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -400,12 +401,15 @@ usersPGRepository.requestLevelTwo = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level two in db`);
     ObjLog.log(`[${context}]: Requesting level two in db`);
+    logger.silly(body)
+
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_TWO(
         '${body.funds_source}',
         '${body.residency_proof_path}',
         ${body.answers},
+        ${body.other_industry ? `'${body.other_industry}'` : null},
         '${body.email_user}'
         )`
     );

@@ -30,10 +30,12 @@ async function sendSMS(to, body) {
         to,
       })
       .then((message) => {
+        logger.silly(message)
         return message;
       })
       .catch((err) => {
-        next(error);
+        logger.silly(err)
+        next(err);
       });
     // const params = new url.URLSearchParams({
     //   To: to,
@@ -71,34 +73,34 @@ usersService.createNewClient = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Creating new Client`);
     ObjLog.log(`[${context}]: Creating new Client`);
-    if (!req.body.captcha) {
-      res.status(400).json({
-        captchaSuccess: false,
-        msg: "Ha ocurrido un error. Por favor completa el captcha",
-      });
-    } else {
-      // Secret key
-      const secretKey = env.reCAPTCHA_SECRET_KEY;
+    // if (!req.body.captcha) {
+    //   res.status(400).json({
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   });
+    // } else {
+    //   // Secret key
+    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      console.log('ANTES DEL CAPTCHA: ')
+    //   console.log('ANTES DEL CAPTCHA: ')
 
-      // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
-        req.body.captcha
-      }&remoteip=${req.header("Client-Ip")}`;
+    //   // Verify URL
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
+    //     req.body.captcha
+    //   }&remoteip=${req.header("Client-Ip")}`;
 
-      // Make a request to verifyURL
-      const body = await axios.get(verifyURL);
+    //   // Make a request to verifyURL
+    //   const body = await axios.get(verifyURL);
 
-      console.log('DESPUES DEL CAPTCHA: ')
+    //   console.log('DESPUES DEL CAPTCHA: ')
 
-      // // If not successful
-      if (body.data.success === false) {
-        res.status(500).json({
-          captchaSuccess: false,
-          msg: "Falló la verificación del Captcha",
-        });
-      } else {
+    //   // // If not successful
+    //   if (body.data.success === false) {
+    //     res.status(500).json({
+    //       captchaSuccess: false,
+    //       msg: "Falló la verificación del Captcha",
+    //     });
+    //   } else {
         // If successful
 
         let password = await bcrypt.hash(req.body.password, 10);
@@ -119,8 +121,8 @@ usersService.createNewClient = async (req, res, next) => {
           success: true,
           failed: false,
         };
-      }
-    }
+      // }
+    // }
   } catch (error) {
     if (error.code === "23505") {
       next({
@@ -392,12 +394,12 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         let doc_path = createFile(files.doc, fields.email_user, "one");
         let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
+        logger.silly(fields)
+
         if (!fileError) {
           await usersPGRepository.requestLevelOne1stQ({
-            date_birth: fields.date_birth,
             state_name: fields.state_name,
             resid_city: fields.resid_city,
-            pol_exp_per: fields.pol_exp_per,
             email_user: fields.email_user,
             id_ident_doc_type: fields.id_ident_doc_type,
             ident_doc_number: fields.ident_doc_number,
@@ -406,6 +408,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
             selfie_path: selfie_path,
             main_sn_platf: fields.main_sn_platf,
             user_main_sn_platf: fields.user_main_sn_platf,
+            address: fields.domicile_address,
           });
 
           setfinalResp({
@@ -499,6 +502,8 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
         let doc_path = createFile(files.doc, fields.email_user, "one");
         let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
+        logger.silly(fields)
+
         if (!fileError) {
           await usersPGRepository.requestLevelOne2ndQ({
             date_birth: fields.date_birth,
@@ -513,6 +518,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
             selfie_path: selfie_path,
             main_sn_platf: fields.main_sn_platf,
             user_main_sn_platf: fields.user_main_sn_platf,
+            address: fields.domicile_address
           });
 
           setfinalResp({
@@ -596,6 +602,8 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
         let doc_path = createFile(files.doc, fields.email_user, "one");
         let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
+        logger.silly(fields)
+
         if (!fileError) {
           await usersPGRepository.requestLevelOne3rdQ({
             date_birth: fields.date_birth,
@@ -610,6 +618,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
             selfie_path: selfie_path,
             main_sn_platf: fields.main_sn_platf,
             user_main_sn_platf: fields.user_main_sn_platf,
+            address: fields.domicile_address
           });
 
           setfinalResp({
@@ -706,10 +715,13 @@ usersService.requestLevelTwo = async (req, res, next) => {
           setAnswersToRepo(getAnswersToRepo() + "]::json[]");
           setAnswersToRepo(getAnswersToRepo().replace(",", ""));
 
+          logger.silly(fields)
+
           await usersPGRepository.requestLevelTwo({
             funds_source: fields.funds_source,
             residency_proof_path: residency_proof_path,
             answers: getAnswersToRepo(),
+            other_industry: fields.other_industry === 'null' ? null : fields.other_industry,
             email_user: fields.email_user,
           });
 

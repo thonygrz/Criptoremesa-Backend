@@ -216,6 +216,11 @@ veriflevelsService.getVerifLevelRequirements = async (req, res, next) => {
           el.req_use_path = residency_proof;
       });
     }
+    logger.silly({
+      level_one: bdResp.level_one,
+      level_two: bdResp.level_two,
+      email_user: bdResp.email_user,
+    })
     return {
       data: {
         level_one: bdResp.level_one,

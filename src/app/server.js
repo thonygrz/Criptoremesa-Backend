@@ -24,6 +24,11 @@ import transactionsJob from '../utils/jobs/transactions'
 
 // SETTINGS
 const app = express();
+
+// si no se quiere enviar nunca 304
+// app.disable('etag');
+
+
 app.use(bodyParser.json({limit: '50mb'})); 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.set("port", env.PORT || 3000);
