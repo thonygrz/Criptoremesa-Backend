@@ -716,6 +716,24 @@ usersService.requestLevelTwo = async (req, res, next) => {
           setAnswersToRepo(getAnswersToRepo().replace(",", ""));
 
           logger.silly(fields)
+          console.log('ALERT: ',JSON.parse(fields.answers)[2].answers[0])
+          console.log('ALERT: ',JSON.parse(fields.answers)[2].answers[0].alert)
+
+          if(JSON.parse(fields.answers)[2].answers[0].alert && JSON.parse(fields.answers)[2].answers[0].alert === true){
+            let mailResp = mailSender.sendIndustryAlertMail({
+              email_user: fields.email_user,
+              from: 'no-reply@criptoremesa.com',
+              to: 'registro@criptoremesa.com',
+              subject: `Alerta de Industria`,
+              title: `Alerta de Industria`,
+              subtitle: `Alerta de Industria`,
+              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria ${JSON.parse(fields.answers)[2].answers[0].answer}`,
+              secondParagraph: 'Favor tomar las acciones necesarias.',
+              mailType: `Alerta`
+            })
+
+            logger.silly(mailResp)
+          }
 
           await usersPGRepository.requestLevelTwo({
             funds_source: fields.funds_source,

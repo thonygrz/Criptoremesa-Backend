@@ -223,17 +223,17 @@ usersPGRepository.requestLevelOne1stQ = async (body) => {
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_1st_Q(
-        '${body.state_name}',
-        '${body.resid_city}',
-        '${body.email_user}',
-        '${body.id_ident_doc_type}',
-        '${body.ident_doc_number}',
-        '${body.occupation}',
-        '${body.doc_path}',
-        '${body.selfie_path}',
-        '${body.main_sn_platf}',
-        '${body.user_main_sn_platf}',
-        '${body.address}'
+        ${body.state_name === 'null' ? `''` : `'${body.state_name}'`},
+        ${body.resid_city === 'null' ? `''` : `'${body.resid_city}'`},
+        ${body.email_user === 'null' ? `''` : `'${body.email_user}'`},
+        ${body.id_ident_doc_type === 'null' ? `''` : `'${body.id_ident_doc_type}'`},
+        ${body.ident_doc_number === 'null' ? `''` : `'${body.ident_doc_number}'`},
+        ${body.occupation === 'null' ? `''` : `'${body.occupation}'`},
+        ${body.doc_path === 'null' ? `''` : `'${body.doc_path}'`},
+        ${body.selfie_path === 'null' ? `''` : `'${body.selfie_path}'`},
+        ${body.main_sn_platf === 'null' ? `''` : `'${body.main_sn_platf}'`},
+        ${body.user_main_sn_platf === 'null' ? `''` : `'${body.user_main_sn_platf}'`},
+        ${body.address === 'null' ? `''` : `'${body.address}'`}
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -259,7 +259,7 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
         '${body.occupation}',
         '${body.doc_path}',
         '${body.selfie_path}',
-        '${body.main_sn_platf}',
+        ${body.main_sn_platf === 'null' ? `''` : `'${body.main_sn_platf}'`},
         '${body.user_main_sn_platf}',
         '${body.address}'
         )`
@@ -287,7 +287,7 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
         '${body.occupation}',
         '${body.doc_path}',
         '${body.selfie_path}',
-        '${body.main_sn_platf}',
+        ${body.main_sn_platf === 'null' ? `''` : `'${body.main_sn_platf}'`},
         '${body.user_main_sn_platf}',
         '${body.address}'
         )`
@@ -402,6 +402,7 @@ usersPGRepository.requestLevelTwo = async (body) => {
     logger.info(`[${context}]: Requesting level two in db`);
     ObjLog.log(`[${context}]: Requesting level two in db`);
     logger.silly(body)
+    logger.silly(body.answers)
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(

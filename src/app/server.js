@@ -70,7 +70,8 @@ app.use(
       "http://186.167.250.194:8080",
       "http://172.20.10.5:8081",
       "http://localhost:8082",
-      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3004"
+      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3004",
+      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3009"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,

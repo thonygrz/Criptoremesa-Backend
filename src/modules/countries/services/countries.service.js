@@ -30,7 +30,8 @@ countriesService.countriesCurrencies = async (req, res, next) => {
     let decodedValue = decodeURIComponent(req.query.email_user)
 
     let data = await countriesRepository.countriesCurrencies(
-      decodedValue ? decodedValue : null
+      decodedValue ? decodedValue : null,
+      req.query.countriesType
     );
     return {
       data,

@@ -196,6 +196,8 @@ veriflevelsPGRepository.getVerifLevelRequirements = async (email_user) => {
     const resp = await poolSM.query(
       `SELECT * FROM v_verif_levels_requirements('${email_user}')`
     );
+      logger.silly(resp.rows[0].v_verif_levels_requirements)
+
     return resp.rows[0].v_verif_levels_requirements;
   } catch (error) {
     throw error;
