@@ -19,7 +19,7 @@ export default {
           {
             type: 'whatsapp',
             number: tlf,
-            conn: 4
+            conn: 6
           }
         ],
         msg
