@@ -97,7 +97,6 @@ remittancesController.getRemittances = async (req, res, next) => {
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       log.session = req.sessionID;
 
-      console.log('req.isAuthenticated(): ',req.isAuthenticated())
     // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();

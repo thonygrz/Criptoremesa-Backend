@@ -49,8 +49,6 @@ binanceSocket.onmessage = (event) => {
 let krakenSocket = new WebSocket('wss://ws.kraken.com')
 
 krakenSocket.onopen = function(event) {
-    console.log('Connected to: ' + event)
-
     krakenSocket.onclose = () => {
         console.log('KRAKEN WS CLOSED ')
     }

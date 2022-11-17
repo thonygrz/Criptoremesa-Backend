@@ -84,7 +84,6 @@ cryptomilesPGRepository.getAllCryptomiles = async (body) => {
     logger.info(`[${context}]: Getting all cryptomiles from db`);
     ObjLog.log(`[${context}]: Getting all cryptomiles from db`);
     await poolSM.query("SET SCHEMA 'basics'");
-    console.log('BODY EN REPOOOOO',body)
     const resp = await poolCR.query(
       `SELECT * FROM basics.sp_cryptomiles_get_all(
                                                   ${body.active},

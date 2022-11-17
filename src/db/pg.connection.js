@@ -2,7 +2,6 @@ import { Pool, Client } from 'pg';
 import { logger } from "../utils/logger";
 import ObjLog from "../utils/ObjLog";
 import { env } from "../utils/enviroment";
-import { notifyChanges } from "../modules/sockets/sockets.coordinator";
 
 const connectionDbSixmap = {
   user: env.PG_DB_SM_USER,
@@ -32,9 +31,9 @@ poolSM
     ObjLog.log("PG-DB-SM is connected");
     poolSM.on(
       'connect', clientSM => {
-        clientSM.on('notice', notice => {
-          console.log(notice.message)
-        })
+        // clientSM.on('notice', notice => {
+        //   console.log(notice.message)
+        // })
       }
     )
   })
@@ -54,9 +53,9 @@ poolCR
     ObjLog.log("PG-DB-CR is connected");
     poolCR.on(
       'connect', clientCR => {
-        clientCR.on('notice', notice => {
-          console.log(notice.message)
-        })
+        // clientCR.on('notice', notice => {
+        //   console.log(notice.message)
+        // })
       }
     )
   })
@@ -65,25 +64,3 @@ poolCR
     ObjLog.log(`PGDBCR is not connected: ${err}`);
     clientCR.end();
   });
-
-// client.connect()
-// .then(response => {
-//   logger.info("PG-DB client-listener is connected");
-//   ObjLog.log("PG-DB client-listener is connected");
-
-//   // // Se escuchan los canales
-//   // client.query("listen level_upgrade");
-
-//   // Se recibe el evento y se envía al FE
-//   // client.on('notification', async (data) => {
-//   //     if (data.channel === "level_upgrade") {
-//   //         const level = JSON.parse(data.payload);
-//   //         notifyChanges(data.channel, level);
-//   //     }
-//   // });
-// })
-// .catch(err => {
-//     logger.error(`PG-DB client-listener is not connected: ${err}`);
-//     client.end();
-// });
-

@@ -191,8 +191,6 @@ remittancesService.startRemittance = async (req, res, next) => {
                 // se obtiene informacion necesaria para encontrar las tasas
       
                   infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.email_user);
-                  console.log('remittance.email_user',remittance.email_user)
-                  console.log('infoForApi',infoForApi)
                 // se obtienen las tasas de la API
       
                   fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},${infoForApi.wholesale_partner_origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);
@@ -200,8 +198,6 @@ remittancesService.startRemittance = async (req, res, next) => {
               // se obtiene informacion necesaria para encontrar las tasas
           
                 infoForApi = await remittancesPGRepository.getInfoForRateApi(remittance.email_user);
-                console.log('remittance.email_user',remittance.email_user)
-                console.log('infoForApi',infoForApi)
               // se obtienen las tasas de la API
     
                 fullRateFromAPI = await axios.get(`https://api.currencyfreaks.com/latest?base=${remittance.countryCurrency.isoCode}&symbols=${infoForApi.origin_currency_iso_code},USD&apikey=${env.CURRENCY_FREAKS_API_KEY}`);

@@ -150,7 +150,7 @@ passport.use(
           user.wholesale_partner_info.logo = fs.readFileSync(
             user.wholesale_partner_info.logo
           );
-          console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
+          // console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
         }
 
         // else

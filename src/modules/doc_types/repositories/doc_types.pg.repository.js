@@ -10,8 +10,6 @@ doc_typesPGRepository.getDocTypes = async (query) => {
     logger.info(`[${context}]: Getting doc_types client from db`);
     ObjLog.log(`[${context}]: Getting doc_types client from db`);
 
-    console.log(query)
-
     if (query.person_type === 'Jurídico')
       query.person_type = 'Jurídica'
 

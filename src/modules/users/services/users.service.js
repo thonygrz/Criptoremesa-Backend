@@ -234,17 +234,15 @@ usersService.files = async (req, res, next) => {
     });
 
     form.on("error", function (err) {
-      // console.log("An error has occured with form upload: ", err.message);
       fileError = true;
-      console.log("err::", err);
       next({
         message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
       });
     });
 
     form.on("field", (name, value) => {
-      console.log("field name: ", name);
-      console.log("field value: ", value);
+      // console.log("field name: ", name);
+      // console.log("field value: ", value);
     });
 
     form.on("file", function (field, file) {
@@ -252,9 +250,6 @@ usersService.files = async (req, res, next) => {
       filePath = file.path;
       fileSize = file.size;
       fileType = file.type;
-      console.log("filePath on", filePath);
-      console.log("fileSize on", fileSize);
-      console.log("fileType on", fileType);
     });
 
     // form.onPart = function (part) {
@@ -267,9 +262,6 @@ usersService.files = async (req, res, next) => {
     //   }
     // };
     form.parse(req, function (err, fields, files) {
-      console.log("fileError ", fileError);
-      console.log("fileType ", fileType);
-
       if (
         !fileError &&
         (fileType === "image/png" ||
@@ -293,9 +285,6 @@ usersService.files = async (req, res, next) => {
           }
         });
       } else {
-        console.log("filePath ", filePath);
-        console.log("fileSize ", fileSize);
-        console.log("fileType ", fileType);
         next({
           message: `El archivo subido no tiene un formato permitido`,
         });
@@ -713,8 +702,6 @@ usersService.requestLevelTwo = async (req, res, next) => {
           setAnswersToRepo(getAnswersToRepo().replace(",", ""));
 
           logger.silly(fields)
-          console.log('ALERT: ',JSON.parse(fields.answers)[2].answers[0])
-          console.log('ALERT: ',JSON.parse(fields.answers)[2].answers[0].alert)
 
           if(JSON.parse(fields.answers)[2].answers[0].alert && JSON.parse(fields.answers)[2].answers[0].alert === true){
             let mailResp = mailSender.sendIndustryAlertMail({
@@ -777,10 +764,6 @@ usersService.forgotPassword = async (req, res, next) => {
     let user = await usersPGRepository.getusersClientByEmail(
       `'${req.body.email_user.toLowerCase()}'`
     );
-
-      console.log('req.body.email_user: ',req.body.email_user)
-      console.log('user: ',user)
-
     let data = await usersPGRepository.generateCode(
       req.body.email_user,
       "email"
@@ -1071,14 +1054,12 @@ usersService.sendVerificationCodeByWhatsApp = async (req, res, next) => {
       req.body.main_phone_full,
       'whatsapp'
     );
-    console.log('data: ',data)
 
     if (data.msg === "Code generated") {
       const whaResp =  await sendWhatsappMessage(
           req.body.main_phone_full,
           `💰<CriptoRemesa>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
         )
-        console.log('whaResp: ',whaResp)
       if (
         whaResp.status === 'Message sended'
       )

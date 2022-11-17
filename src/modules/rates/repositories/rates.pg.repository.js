@@ -19,7 +19,6 @@ ratesPGRepository.getRate = async (body) => {
                                       ${body.id_rate_type}
                                       )`
     );
-    console.log("ROWS: ", resp.rows);
     if (resp.rows.length > 1) return resp.rows;
     else if ((resp.rows.length = 1)) return resp.rows[0].sp_ms_cr_rate_get;
     else return null;
