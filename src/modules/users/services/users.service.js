@@ -10,6 +10,7 @@ import mailSender from "../../../utils/mail";
 import { join, resolve } from "path";
 import axios from "axios";
 import whatsapp from "../../../utils/whatsapp";
+import fileNamer from "../../../utils/filesName";
 
 const client = require("twilio")(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
@@ -452,102 +453,100 @@ function getAnswersToRepo() {
 
 usersService.requestLevelOne2ndQ = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Requesting level one 2nd question`);
-    ObjLog.log(`[${context}]: Requesting level one 2nd question`);
+      logger.info(`[${context}]: Requesting level one 2nd question`);
+      ObjLog.log(`[${context}]: Requesting level one 2nd question`);
 
-    let fileError = false;
+  let fileError = false;
 
-    const form = formidable({
-      multiples: true,
-      uploadDir: env.FILES_DIR,
-      maxFileSize: 10 * 1024 * 1024,
-      keepExtensions: true,
-    });
+  const form = formidable({
+    multiples: true,
+    uploadDir: env.FILES_DIR,
+    maxFileSize: 10 * 1024 * 1024,
+    keepExtensions: true,
+  });
 
-    form.onPart = (part) => {
-      if (
-        !fileError &&
-        !(
-          part.mime === "image/png" ||
-          part.mime === "image/jpg" ||
-          part.mime === "image/jpeg" ||
-          part.mime === "image/gif" ||
-          part.mime === "application/pdf" ||
-          part.mime === null
-        )
-      ) {
-        fileError = true;
-        form.emit("error");
-      } else {
-        form.handlePart(part);
-      }
-    };
+  form.onPart = (part) => {
+    if (
+      !fileError &&
+      !(
+        part.mime === "image/png" ||
+        part.mime === "image/jpg" ||
+        part.mime === "image/jpeg" ||
+        part.mime === "image/gif" ||
+        part.mime === "application/pdf" ||
+        part.mime === null
+      )
+    ) {
+      fileError = true;
+      form.emit("error");
+    } else {
+      form.handlePart(part);
+    }
+  };
 
-    form.on("error", function (err) {
-      if (fileError) {
-        next({
-          message: `Uno o varios archivos no tienen formato permitido`,
-        });
-      } else {
-        fileError = true;
-
-        next({
-          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
-        });
-      }
-    });
-
-    await new Promise((resolve, reject) => {
-      form.parse(req, async function (err, fields, files) {
-        let doc_path = createFile(files.doc, fields.email_user, "one");
-        let selfie_path = createFile(files.selfie, fields.email_user, "one");
-
-        logger.silly(fields)
-
-        if (!fileError) {
-          await usersPGRepository.requestLevelOne2ndQ({
-            date_birth: fields.date_birth,
-            state_name: fields.state_name,
-            resid_city: fields.resid_city,
-            pol_exp_per: fields.pol_exp_per,
-            email_user: fields.email_user,
-            id_country: fields.id_country,
-            ident_doc_number: fields.ident_doc_number,
-            occupation: fields.occupation,
-            doc_path: doc_path,
-            selfie_path: selfie_path,
-            main_sn_platf: fields.main_sn_platf,
-            user_main_sn_platf: fields.user_main_sn_platf,
-            address: fields.domicile_address
-          });
-
-          setfinalResp({
-            data: { message: "Request succesfuly uploaded." },
-            status: 200,
-            success: true,
-            failed: false,
-          });
-        } else
-          setfinalResp({
-            data: { message: "There was an error with the file." },
-            status: 500,
-            success: false,
-            failed: true,
-          });
-        resolve();
+  form.on("error", function (err) {
+    if (fileError) {
+      next({
+        message: `Uno o varios archivos no tienen formato permitido`,
       });
-    });
-    return getfinalResp()
-      ? getfinalResp()
-      : {
-          data: { message: "There was an error." },
+    } else {
+      fileError = true;
+
+      next({
+        message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+      });
+    }
+  });
+
+  await new Promise((resolve, reject) => {
+    form.parse(req, async function (err, fields, files) {
+      let doc_path = createFile(files.doc, fields.email_user, "one");
+      let selfie_path = createFile(files.selfie, fields.email_user, "one");
+
+      logger.silly(fields)
+
+      if (!fileError) {
+          await usersPGRepository.requestLevelOne2ndQ({
+              state_name: fields.state_name,
+              resid_city: fields.resid_city,
+              email_user: fields.email_user,
+              id_country: fields.id_country,
+              ident_doc_number: fields.ident_doc_number,
+              occupation: fields.occupation,
+              doc_path: doc_path,
+              selfie_path: selfie_path,
+              main_sn_platf: fields.main_sn_platf,
+              user_main_sn_platf: fields.user_main_sn_platf,
+              address: fields.domicile_address
+          });
+
+      setfinalResp({
+          data: { message: "Request succesfuly uploaded." },
+          status: 200,
+          success: true,
+          failed: false,
+      });
+      } else
+      setfinalResp({
+          data: { message: "There was an error with the file." },
           status: 500,
           success: false,
           failed: true,
-        };
-  } catch (error) {
-    next(error);
-  }
+      });
+      resolve();
+  });
+  });
+  return getfinalResp()
+  ? getfinalResp()
+  : {
+      data: { message: "There was an error." },
+      status: 500,
+      success: false,
+      failed: true,
+      };
+} catch (error) {
+  next(error);
+}
 };
 
 usersService.requestLevelOne3rdQ = async (req, res, next) => {
@@ -606,10 +605,8 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
 
         if (!fileError) {
           await usersPGRepository.requestLevelOne3rdQ({
-            date_birth: fields.date_birth,
             state_name: fields.state_name,
             resid_city: fields.resid_city,
-            pol_exp_per: fields.pol_exp_per,
             email_user: fields.email_user,
             id_country: fields.id_country,
             ident_doc_number: fields.ident_doc_number,
@@ -778,7 +775,7 @@ usersService.forgotPassword = async (req, res, next) => {
     ObjLog.log(`[${context}]: Forgot password request`);
 
     let user = await usersPGRepository.getusersClientByEmail(
-      `'${req.body.email_user}'`
+      `'${req.body.email_user.toLowerCase()}'`
     );
 
       console.log('req.body.email_user: ',req.body.email_user)
@@ -1361,6 +1358,35 @@ usersService.deleteUserAccount = async (req, res, next) => {
         data: {
           mesage: data.message,
         },
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getFileName = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting file name`);
+    ObjLog.log(`[${context}]: Getting file name`);
+    let data = await fileNamer.getFileName(
+      req.body.email,
+      req.body.fileInfo
+    );
+    if (data)
+      return {
+        data,
         status: 200,
         success: true,
         failed: false,

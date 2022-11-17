@@ -154,4 +154,10 @@ usersRouter.delete(
   usersController.deleteUserAccount
 );
 
+usersRouter.post(
+  "/fileName",
+  // guard.verifyAdmin("/login"),
+  usersController.getFileName
+);
+
 export default usersRouter;

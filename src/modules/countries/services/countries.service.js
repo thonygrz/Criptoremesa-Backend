@@ -46,6 +46,9 @@ countriesService.countriesCurrencies = async (req, res, next) => {
 
 countriesService.getCountriesByPayMethod = async (req, res, next) => {
   try {
+    logger.info(`[${context}]: Getting Countries by pay method`);
+    ObjLog.log(`[${context}]: Getting Countries by pay method`);
+
     let countryResp = null;
     let sess = null;
     let data = await countriesRepository.getCountriesByPayMethod(

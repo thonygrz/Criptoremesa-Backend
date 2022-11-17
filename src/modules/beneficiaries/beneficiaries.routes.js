@@ -28,4 +28,10 @@ beneficiariesRouter.put(
   beneficiariesController.updateFrequentBeneficiary
 );
 
+beneficiariesRouter.get(
+  "/contact-required/:id_country",
+  // guard.verifyAdmin("/login"),
+  beneficiariesController.contactRequired
+);
+
 export default beneficiariesRouter;

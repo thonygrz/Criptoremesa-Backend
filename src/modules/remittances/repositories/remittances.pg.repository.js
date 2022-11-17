@@ -55,6 +55,9 @@ remittancesPGRepository.startRemittance = async (body) => {
     logger.info(`[${context}]: Starting remittance on db`);
     ObjLog.log(`[${context}]: Starting remittance on db`);
     await poolSM.query("SET SCHEMA 'msg_app'");
+
+    console.log(body.beneficiariesInfo.beneficiaries)
+
     const resp = await poolSM.query(
       `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
       );

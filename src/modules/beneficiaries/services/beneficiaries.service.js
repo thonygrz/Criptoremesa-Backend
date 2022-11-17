@@ -93,4 +93,28 @@ beneficiariesService.updateFrequentBeneficiary = async (req, res, next) => {
   }
 };
 
+beneficiariesService.contactRequired = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Updating frequent beneficiary`);
+    ObjLog.log(`[${context}]: Updating frequent beneficiary`);
+    let data = await beneficiariesRepository.contactRequired(req.params.id_country);
+    if (data.message)
+      return {
+        data,
+        status: 500,
+        success: true,
+        failed: true
+      }
+    else 
+      return {
+        data,
+        status: 200,
+        success: false,
+        failed: true
+      }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default beneficiariesService;

@@ -142,7 +142,7 @@ passport.use(
         ObjLog.log(`[${context}]: Checking user`);
 
         // if (guard.getUsernameField() === "email")
-        user = await authenticationPGRepository.getUserByEmail(email);
+        user = await authenticationPGRepository.getUserByEmail(email.toLowerCase());
 
         // console.log('USER OBTENIDO🔴:',user)
 

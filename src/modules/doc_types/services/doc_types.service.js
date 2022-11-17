@@ -9,7 +9,8 @@ doc_typesService.getDocTypes = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting Doc Types`);
     ObjLog.log(`[${context}]: Getting Doc Types`);
-    let data = await doc_typesPGRepository.getDocTypes();
+    console.log('req.query:',req.query)
+    let data = await doc_typesPGRepository.getDocTypes(req.query);
     return {
       data,
       status: 200,

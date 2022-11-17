@@ -282,4 +282,49 @@ beneficiariesController.updateFrequentBeneficiary = async (req, res, next) => {
   }
 };
 
+beneficiariesController.contactRequired = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log = logConst;
+
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    logger.info(
+      `[${context}]: Sending service to get countries and currencies`
+    );
+    ObjLog.log(`[${context}]: Sending service to get countries that require beneficiaries contact`);
+
+    let finalResp = await beneficiariesService.contactRequired(req, res, next);
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
+      await authenticationPGRepository.insertLogMsg(log);
+
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default beneficiariesController;

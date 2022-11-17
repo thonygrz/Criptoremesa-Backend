@@ -89,18 +89,18 @@ krakenSocket.onmessage = (event) => {
             data.buyLimit = krakenPrice + limit
             data.realPrice = krakenPrice
             
-            console.log('------------------------------------')
-            console.log('------------PRECIO KRAKEN----------')
-            console.log('krakenPrice: ',krakenPrice)
-            console.log('profit: ',profit)
-            console.log('limit: ',limit)
-            console.log('---------VENTA--------')
-            console.log('data.sellPrice: ',data.sellPrice)
-            console.log('data.sellLimit: ',data.sellLimit)
-            console.log('---------COMPRA--------')
-            console.log('data.buyPrice: ',data.buyPrice)
-            console.log('data.buyLimit: ',data.buyLimit)
-            console.log('------------------------------------')
+            // console.log('------------------------------------')
+            // console.log('------------PRECIO KRAKEN----------')
+            // console.log('krakenPrice: ',krakenPrice)
+            // console.log('profit: ',profit)
+            // console.log('limit: ',limit)
+            // console.log('---------VENTA--------')
+            // console.log('data.sellPrice: ',data.sellPrice)
+            // console.log('data.sellLimit: ',data.sellLimit)
+            // console.log('---------COMPRA--------')
+            // console.log('data.buyPrice: ',data.buyPrice)
+            // console.log('data.buyLimit: ',data.buyLimit)
+            // console.log('------------------------------------')
             notifyChanges('kraken_prices',data.route ? data : 'Server cannot get routes')
         }
 
