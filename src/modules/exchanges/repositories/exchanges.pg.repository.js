@@ -268,7 +268,7 @@ exchangesRepository.getTransactionByConfNum = async (confNum) => {
 
 exchangesRepository.getUnconfirmedTransactions = async () => {
   try {
-    logger.info(`[${context}]: Getting unconfirmed transactions from db`);
+    logger.debug(`[${context}]: Getting unconfirmed transactions from db`);
     ObjLog.log(`[${context}]: Getting unconfirmed transactions from db`);
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(

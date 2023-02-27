@@ -17,7 +17,7 @@ export const logger = createLogger({
     ),
     transports: [
         new transports.Console({
-            level: 'silly',
+            level: 'info',
         })
     ]
 });
