@@ -31,9 +31,9 @@ poolSM
     ObjLog.log("PG-DB-SM is connected");
     poolSM.on(
       'connect', clientSM => {
-        // clientSM.on('notice', notice => {
-        //   console.log(notice.message)
-        // })
+        clientSM.on('notice', notice => {
+          console.log(notice.message)
+        })
       }
     )
   })
@@ -53,9 +53,9 @@ poolCR
     ObjLog.log("PG-DB-CR is connected");
     poolCR.on(
       'connect', clientCR => {
-        // clientCR.on('notice', notice => {
-        //   console.log(notice.message)
-        // })
+        clientCR.on('notice', notice => {
+          console.log(notice.message)
+        })
       }
     )
   })

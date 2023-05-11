@@ -83,7 +83,7 @@ usersRouter.post(
 );
 
 usersRouter.get(
-  "/getLevelQuestions",
+  "/getLevelQuestions/:id_resid_country",
   // guard.verifyAdmin("/login"),
   usersController.getLevelQuestions
 );
@@ -158,6 +158,18 @@ usersRouter.post(
   "/fileName",
   // guard.verifyAdmin("/login"),
   usersController.getFileName
+);
+
+usersRouter.get(
+  "/migrated/:id",
+  // guard.verifyAdmin("/login"),
+  usersController.getMigratedInfo
+);
+
+usersRouter.get(
+  "/validate/:email",
+  // guard.verifyAdmin("/login"),
+  usersController.validateEmail
 );
 
 export default usersRouter;

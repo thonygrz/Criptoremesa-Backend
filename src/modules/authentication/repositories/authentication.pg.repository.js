@@ -184,7 +184,7 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     FROM get_ip_info('${ip}')`
     );
 
-    logger.silly(`pais de la ip ${resp.rows[0]}`);
+    // logger.silly(`pais de la ip ${resp.rows[0].country_name}`);
 
     if (resp.rows[0] === undefined) {
       ipInfo.network = "Probably localhost";

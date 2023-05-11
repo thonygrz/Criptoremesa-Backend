@@ -154,8 +154,13 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
+      console.log('get_bank_fee: ',val)
+
       let fee = await remittancesPGRepository.getBankFee(val);
       fee.email_user = val.email_user
+
+      console.log('response: ',fee)
+
       notifyChanges('get_bank_fee', fee);
     });
 

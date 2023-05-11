@@ -26,7 +26,7 @@ const router = Router();
 
 router.post("/login", authenticationController.login);
 
-router.get("/logout", authenticationController.logout);
+router.get("/logout/:email_user", authenticationController.logout);
 
 router.get("/", authenticationController.logout);
 

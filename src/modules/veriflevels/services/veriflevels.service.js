@@ -219,12 +219,14 @@ veriflevelsService.getVerifLevelRequirements = async (req, res, next) => {
     logger.silly({
       level_one: bdResp.level_one,
       level_two: bdResp.level_two,
+      user: bdResp.user,
       email_user: bdResp.email_user,
     })
     return {
       data: {
         level_one: bdResp.level_one,
         level_two: bdResp.level_two,
+        user: bdResp.user,
         email_user: bdResp.email_user,
       },
       status: 200,
