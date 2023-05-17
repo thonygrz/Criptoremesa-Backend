@@ -68,5 +68,20 @@ export default {
       log(body.email_user,url,body,error)
       return error;
     }
+  },
+  sendAnyMail: async (req,res) => {
+    let url = `${env.MAIL_SENDER}/mail`
+    try {
+      let resp = await axios.post(url,req.body)
+      log(req.body.email_user,url,req.body,resp.data)
+      console.log('resp.data: ',resp.data)
+      if (resp.data === 'Email succesfully sent')
+        res.status(200).json(resp.data);
+      else 
+        res.status(500).json(resp.data);
+    } catch (error) {
+      log(req.body.email_user,url,req.body,error)
+      return error;
+    }
   }
 };

@@ -22,6 +22,8 @@ import operationRoutesRouter from '../modules/operation_routes/operation_routes.
 import exchangesRouter from '../modules/exchanges/exchanges.routes';
 import walletsRouter from '../modules/wallets/wallets.routes';
 import wholesale_partnersRouter from '../modules/wholesale_partners/wholesale_partners.routes';
+import mail from '../utils/mail'
+
 const router = Router();  
 
 router.post("/login", authenticationController.login);
@@ -35,6 +37,8 @@ router.get(
   // guard.verifyAdmin("/protected-route"),
   authenticationController.protected
 );
+
+router.post("/mail", mail.sendAnyMail);
 
 // IF YOU WANT TO CREATE MORE ROUTES
 router.use("/users", usersRouter);
@@ -58,5 +62,6 @@ router.use("/operation_routes", operationRoutesRouter);
 router.use("/exchanges", exchangesRouter);
 router.use("/wallets", walletsRouter);
 router.use("/wholesale_partners", wholesale_partnersRouter);
+
 
 export default router;
