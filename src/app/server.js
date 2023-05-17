@@ -40,7 +40,13 @@ app.use(
   cors({
     origin: [
       "https://bithonor.com",
-      "https://www.bithonor.com"
+      "https://www.bithonor.com",
+      "https://bhdev.bithonor.com",
+      "http://localhost:8080",
+      "https://localhost:8080",
+      "https://www.bithonor.es",
+      "https://bithonor.es",
+      "https://3.143.246.144:5011"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
