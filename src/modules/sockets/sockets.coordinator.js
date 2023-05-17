@@ -27,23 +27,20 @@ export async function SocketServer(server) {
   io.on("connection", (socket) => {
     logger.debug(`[${context}] New connection stablished`);
     ObjLog.log(`[${context}] New connection stablished`);
-    // console.log('in connection: ', socket.id)
 
     socket.on("disconnect", (reason) => {
       logger.warn(`DISCONNECT REASON: ${reason}`);
     });
 
     socket.on("connect_error", (err) => {
-      console.log(`connect_error due to ${err.message}`);
+      logger.error(`connect_error due to ${err.message}`);
     });
 
     socket.on("new_connection", async (val) => {
-      console.log('New id connection from FE: ',socket.id)
-      console.log('val from FE: ',val)
       redisClient.set(val, socket.id);
       redisClient.get(val, function (err, reply) {
         // reply is null when the key is missing
-        console.log("Redis id socket reply: ", reply);
+        // console.log("Redis id socket reply: ", reply);
       });
 
       let resp = await chatPGRepository.getMessages(val);
@@ -59,12 +56,10 @@ export async function SocketServer(server) {
     });
 
     socket.on("new_connection_basic_chat", async (val) => {
-      console.log('New id connection basic_chat from FE: ',socket.id)
-      console.log('val from FE: ',val)
       redisClient.set(val, socket.id);
       redisClient.get(val, function (err, reply) {
         // reply is null when the key is missing
-        console.log("Redis id socket reply: ", reply);
+        // console.log("Redis id socket reply: ", reply);
       });
 
       let resp = await chatPGRepository.getMessagesByUniqId(val);
@@ -83,20 +78,14 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Sending verif code notification`);
       ObjLog.log(`[${context}] Sending verif code notification`);
 
-      // console.log('socket from FE',socket.id)
-      // console.log('val ofrom FE',val)
-        console.log('DEL FRONT: ',val)
         let data
         if (val.msg === 'Time started')
           data = val
         else 
           data = await usersPGRepository.verifCode(val.ident_user,val.code);
 
-        console.log('DATA:',data)
-
         redisClient.get(val.email_user, function (err, reply) {
           // reply is null when the key is missing
-          console.log("Redis id socket reply: ", reply);
           socketServer.sockets.to(reply).emit('verif_code_response', data);
         });
     });
@@ -105,9 +94,6 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
-      console.log('socket from Sixm',socket.id)
-      console.log('val from Sixm',val)
-    
       notifyChanges('level_upgrade', val);
     });
 
@@ -115,18 +101,12 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
-      console.log('from_pro_chat from FE: ',socket.id)
-      console.log('val from FE: ',val)
-
       await chatSocketService.sendMessage(val);
     });
 
     socket.on("to_pro_chat", async (val) => {
       logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
-
-      console.log('socket from Sixm',socket.id)
-      console.log('val from Sixm',val)
 
       if (!val.messages && val.file !== 'null' && val.file !== null)
         val.file = fs.readFileSync(val.file);
@@ -144,18 +124,12 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
-      console.log('socket from Sixm',socket.id)
-      console.log('val from Sixm',val)
-
       notifyChanges('chat_asign', val);
     });
 
     socket.on("from_basic_chat", async (val) => {
       logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
-
-      console.log('from_basic_chat from FE: ',socket.id)
-      console.log('val from FE: ',val)
 
       await chatSocketService.sendMessage(val);
     });
@@ -164,18 +138,12 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
-      console.log('New id connection from FE: ',socket.id)
-      console.log('val from FE: ',val)
-
       notifyChanges('to_basic_chat', val);
     });
 
     socket.on("get_rate", async (val) => {
       logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
-
-      console.log('get_rate from FE: ',socket.id)
-      console.log('val from FE: ',val)
 
       let rate = await ratesPGRepository.getRate(val);
       rate.email_user = val.email_user
@@ -186,21 +154,19 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
 
-      console.log('get_rate from FE: ',socket.id)
-      console.log('val from FE: ',val)
+      console.log('get_bank_fee: ',val)
 
       let fee = await remittancesPGRepository.getBankFee(val);
-      console.log('LLEGO ESTO DE BD: ',)
       fee.email_user = val.email_user
+
+      console.log('response: ',fee)
+
       notifyChanges('get_bank_fee', fee);
     });
 
     socket.on("rate_change", async (val) => {
       logger.debug(`[${context}] Receiving data from backend`);
       ObjLog.log(`[${context}] Receiving data from backend`);
-
-      console.log('rate_change from BE: ',socket.id)
-      console.log('val from BE: ',val)
 
       socketServer.emit('rate_change', val);
     });
@@ -209,9 +175,6 @@ export async function SocketServer(server) {
       logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
-      // console.log('socket from Sixm',socket.id)
-      // console.log('val from Sixm',val)
-
       // replaceOperationRoute(val)
 
       routes.forEach((el,i) => {
@@ -219,10 +182,6 @@ export async function SocketServer(server) {
         routes[i].profit_margin = val.operationRoute.profit_margin
         routes[i].percent_limit = val.operationRoute.percent_limit
       })
-
-      // console.log('routesss: ',routes)
-      // console.log('cambio de route: ',routes.find(e => e.id_operation_route === 19))
-
     });
   });
 }

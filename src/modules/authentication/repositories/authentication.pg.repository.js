@@ -120,15 +120,10 @@ authenticationPGRepository.updateIPSession = async (sessionID, ip) => {
     };
     await poolSM.query("SET SCHEMA 'sec_emp'");
 
-    console.log("ip a pasar en get_ip_info()", ip);
-    console.log("sessionID a pasar a sp_session_obj_update()", sessionID);
-
     let resp = await poolSM.query(
       `SELECT *
     FROM get_ip_info('${ip}')`
     );
-
-    console.log("pais de la ip", resp.rows[0]);
 
     if (resp.rows[0] === undefined) {
       ipInfo.network = "Probably localhost";
@@ -182,14 +177,14 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     };
     await poolSM.query("SET SCHEMA 'sec_emp'");
 
-    console.log("ip a pasar en get_ip_info()", ip);
+    logger.silly(`ip a pasar en get_ip_info(): ${ip}`);
 
     let resp = await poolSM.query(
       `SELECT *
     FROM get_ip_info('${ip}')`
     );
 
-    console.log("pais de la ip", resp.rows[0]);
+    // logger.silly(`pais de la ip ${resp.rows[0].country_name}`);
 
     if (resp.rows[0] === undefined) {
       ipInfo.network = "Probably localhost";
@@ -211,6 +206,10 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     valsArray.push(ip);
     valsArray.push(ipInfo.city_name);
 
+    let userResp = await poolSM.query(`SELECT * FROM sec_cust.get_user_by_id('${uuid_user}')`);
+
+    let fullUser = userResp.rows[0];
+
     //UPDATE USER
     await poolSM.query("SET SCHEMA 'sec_cust'");
 
@@ -223,13 +222,9 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
         ($3)
       )
       `,
-      [colsArray, valsArray, uuid_user]
+      [colsArray, valsArray, fullUser.email_user]
     );
     //UPDATE SESSION
-    resp = await poolSM.query(`SELECT * FROM get_user_by_id('${uuid_user}')`);
-
-    let fullUser = resp.rows[0];
-    console.log("fullUser: ", fullUser);
 
     colsArray = [];
     valsArray = [];
@@ -286,10 +281,6 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
     valsArray.push(fullUser.id_resid_country);
     valsArray.push(fullUser.id_nationality_country);
 
-    console.log("sessionID a pasar a sp_session_obj_update()", sessionID);
-    console.log("colsArray a pasar a sp_session_obj_update()", colsArray);
-    console.log("valsArray a pasar a sp_session_obj_update()", valsArray);
-
     resp = await poolCR.query(
       `
       SELECT *
@@ -302,7 +293,6 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
       `,
       [colsArray, valsArray, sessionID]
     );
-    console.log("RESPONDIENDO: ", resp.rows[0].sp_session_obj_update);
     return resp.rows;
   } catch (error) {
     throw error;
@@ -312,12 +302,10 @@ authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
 authenticationPGRepository.insertLogMsg = async (log) => {
   try {
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    // console.log('LOG EN REPO: ',log)
     if (typeof log.response === 'string' || typeof log.response === 'number' || typeof log.response === 'boolean')
       log.response = {response: log.response}
     else
       log.response = Object.assign({},log.response)
-    // console.log("🚀 ~ file: authentication.pg.repository.js ~ line 317 ~ authenticationPGRepository.insertLogMsg= ~ log.response", log.response)
     let resp = await poolSM.query(`SELECT * FROM SP_LOGS_ACTIONS_OBJ_INSERT(
                                                                             ${log.is_auth},
                                                                             ${log.success},
@@ -352,13 +340,10 @@ authenticationPGRepository.getIpInfo = async (ip) => {
     ObjLog.log(`[${context}]: Getting ipInfo from DB`);
     await poolSM.query("SET SCHEMA 'sec_emp'");
 
-    console.log("ip a pasar en get_ip_info()", ip);
-
     let resp = await poolSM.query(
       `SELECT *
         FROM get_ip_info('${ip}')`
     );
-    console.log("pais de la ip", resp.rows[0]);
     if (resp.rows[0] === undefined) return "Probably localhost";
     return resp.rows[0];
   } catch (error) {
@@ -382,10 +367,8 @@ authenticationPGRepository.getSessionById = async (id) => {
   try {
     logger.info(`[${context}]: Getting session from db`);
     ObjLog.log(`[${context}]: Getting session from db`);
-    console.log('ID ANTES DE SESSION: ',id)
     await poolSM.query("SET SCHEMA 'basics'");
     const resp = await poolCR.query(`SELECT * FROM basics.get_session_by_id('${id}')`);
-    console.log("session from db: ", resp.rows[0]);
     return resp.rows[0];
   } catch (error) {
     throw error;

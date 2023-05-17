@@ -16,7 +16,6 @@ limit_by_ipPGRepository.verifyRouteByIp = async (route, ip) => {
         '${ip}'
       )`
     );
-    console.log(resp.rows[0].sp_verify_route_by_ip);
     return resp.rows[0].sp_verify_route_by_ip.message;
   } catch (error) {
     throw error;

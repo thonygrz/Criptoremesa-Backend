@@ -29,12 +29,10 @@ export default {
     let url = `${env.MAIL_SENDER}/sendForgotPasswordMail`
     try {
       let resp = await axios.post(url,body)
-      console.log('Desde axios: ',resp.data);
       log(body.email_user,url,body,resp.data)
       return resp.data;
     } catch (error) {
       log(body.email_user,url,body,error)
-      console.log(error);
       return error;
     }
   },
@@ -42,12 +40,10 @@ export default {
     let url = `${env.MAIL_SENDER}/sendSignUpMail`
     try {
       let resp = await axios.post(url,body)
-      console.log('Desde axios: ',resp.data);
       log(body.email_user,url,body,resp.data)
       return resp.data;
     } catch (error) {
       log(body.email_user,url,body,error)
-      console.log(error);
       return error;
     }
   },
@@ -55,12 +51,21 @@ export default {
     let url = `${env.MAIL_SENDER}/sendAmbassadorMail`
     try {
       let resp = await axios.post(url,body)
-      console.log('Desde axios: ',resp.data);
       log(body.email_user,url,body,resp.data)
       return resp.data;
     } catch (error) {
       log(body.email_user,url,body,error)
-      console.log(error);
+      return error;
+    }
+  },
+  sendIndustryAlertMail: async (body) => {
+    let url = `${env.MAIL_SENDER}/mail`
+    try {
+      let resp = await axios.post(url,body)
+      log(body.email_user,url,body,resp.data)
+      return resp.data;
+    } catch (error) {
+      log(body.email_user,url,body,error)
       return error;
     }
   }

@@ -81,7 +81,7 @@ banksRepository.getBankAccountById = async (id) => {
     let bank = resp.rows[0].get_bank_account_by_id[0];
 
     bank.image = fs.readFileSync(
-      env.FILES_DIR + "/bank_logos/" + bank.ident_name + ".png"
+      env.LOCAL_FILES_DIR + "/bank_logos/" + bank.ident_name + ".png"
     );
     return resp.rows[0].get_bank_account_by_id[0];
   } catch (error) {

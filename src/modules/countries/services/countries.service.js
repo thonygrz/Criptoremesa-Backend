@@ -27,8 +27,11 @@ countriesService.countriesCurrencies = async (req, res, next) => {
     logger.info(`[${context}]: Getting countries currencies`);
     ObjLog.log(`[${context}]: Getting countries currencies`);
 
+    let decodedValue = decodeURIComponent(req.query.email_user)
+
     let data = await countriesRepository.countriesCurrencies(
-      req.query.email_user ? req.query.email_user : null
+      decodedValue ? decodedValue : null,
+      req.query.countriesType
     );
     return {
       data,
@@ -43,6 +46,9 @@ countriesService.countriesCurrencies = async (req, res, next) => {
 
 countriesService.getCountriesByPayMethod = async (req, res, next) => {
   try {
+    logger.info(`[${context}]: Getting Countries by pay method`);
+    ObjLog.log(`[${context}]: Getting Countries by pay method`);
+
     let countryResp = null;
     let sess = null;
     let data = await countriesRepository.getCountriesByPayMethod(

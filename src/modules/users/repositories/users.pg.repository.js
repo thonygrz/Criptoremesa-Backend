@@ -10,55 +10,22 @@ usersPGRepository.createNewClient = async (body) => {
     logger.info(`[${context}]: Inserting new client in db`);
     ObjLog.log(`[${context}]: Inserting new client in db`);
 
-    console.log('LO QUE SE VA A INSERTAR: ',body)
-
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp =
       await poolSM.query(`SELECT * FROM sec_cust.SP_MS_SIXMAP_USERS_INSERT_NEW(
-      '${body.first_name}',
-      '${body.second_name}',
-      '${body.last_name}',
-      '${body.second_last_name}',
-      null,
-      '${body.email_user}',
-      '${body.password}',
-      '${body.cust_cr_cod_pub}',
-      '${body.cod_rank}',
-      '${body.verif_level_apb}',
-      '${body.multi_country}',
-      '${body.gender}',
-      null,
-      null,
-      '${body.main_phone}',
-      '${body.main_phone_wha}',
-      '${body.second_phone}',
-      '${body.second_phone_wha}',
-      '${body.delegated_phone}',
-      '${body.delegated_phone_wha}',
-      null,
-      null,
-      '${body.referral_node}',
-      null,
-      null,
-      '${body.ok_legal_terms}',
-      '${body.date_legacy_reg}',
-      null,
-      null,
-      null,
-      null,
-      null, 
-      '${body.id_resid_country}', 
-      '${body.id_nationality_country}',
-      null,
-      '${body.main_phone_code}',
-      '${body.main_phone_full}',
-      '${body.second_phone_code}',
-      '${body.second_phone_full}',
-      '${body.delegated_phone_code}',
-      '${body.delegated_phone_full}',
-      ${body.slug ? `'${body.slug}'` : null})
+        '${body.first_name}',
+        '${body.second_name}',
+        '${body.last_name}',
+        '${body.second_last_name}',
+        '${body.email_user}',
+        '${body.password}',
+        '${body.referral_node}',
+        ${body.ok_legal_terms},
+        ${body.id_resid_country}, 
+        ${body.slug ? `'${body.slug}'` : null})
       ;`);
-    return resp.rows;
+
+    return resp.rows[0].sp_ms_sixmap_users_insert_new;
   } catch (error) {
     throw error;
   }
@@ -218,21 +185,35 @@ usersPGRepository.requestLevelOne1stQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
+    logger.silly(body)
     await poolSM.query("SET SCHEMA 'sec_cust'");
+
+console.log('REPO BODY: ', body)
+
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_1st_Q(
-        '${body.date_birth}',
-        '${body.state_name}',
-        '${body.resid_city}',
-        '${body.pol_exp_per}',
-        '${body.email_user}',
-        '${body.id_ident_doc_type}',
-        '${body.ident_doc_number}',
-        '${body.occupation}',
-        '${body.doc_path}',
-        '${body.selfie_path}',
-        '${body.main_sn_platf}',
-        '${body.user_main_sn_platf}'
+        ${body.state_name === null ? null : `'${body.state_name}'`},
+        ${body.resid_city === null ? null : `'${body.resid_city}'`},
+        ${body.email_user === null ? null : `'${body.email_user}'`},
+        ${body.id_ident_doc_type === null ? null : `'${body.id_ident_doc_type}'`},
+        ${body.ident_doc_number === null ? null : `'${body.ident_doc_number}'`},
+        ${body.occupation === null ? null : `'${body.occupation}'`},
+        ${body.doc_path === null ? null : `'${body.doc_path}'`},
+        ${body.selfie_path === null ? null : `'${body.selfie_path}'`},
+        ${body.main_sn_platf === null ? null : `'${body.main_sn_platf}'`},
+        ${body.user_main_sn_platf === null ? null : `'${body.user_main_sn_platf}'`},
+        ${body.address === null ? null : `'${body.address}'`},
+        ${body.gender === null ? null : `'${body.gender}'`},
+        ${body.id_nationality_country === null ? null : `'${body.id_nationality_country}'`},
+        ${body.main_phone === null ? null : `'${body.main_phone}'`},
+        ${body.main_phone_code === null ? null : `'${body.main_phone_code}'`},
+        ${body.main_phone_full === null ? null : `'${body.main_phone_full}'`},
+        ${body.pol_exp_per},
+        ${body.truthful_information},
+        ${body.lawful_funds},
+        ${body.legal_terms},
+        ${body.new_password === null ? null : `'${body.new_password}'`},
+        ${body.new_email === null ? null : `'${body.new_email}'`}
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -246,21 +227,35 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
+    logger.silly(body)
     await poolSM.query("SET SCHEMA 'sec_cust'");
+
+    console.log('REPO BODY: ', body)
+
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_2nd_Q(
-        '${body.date_birth}',
-        '${body.state_name}',
-        '${body.resid_city}',
-        '${body.pol_exp_per}',
-        '${body.email_user}',
-        '${body.id_country}',
-        '${body.ident_doc_number}',
-        '${body.occupation}',
-        '${body.doc_path}',
-        '${body.selfie_path}',
-        '${body.main_sn_platf}',
-        '${body.user_main_sn_platf}'
+        ${body.state_name === null ? null : `'${body.state_name}'`},
+        ${body.resid_city === null ? null : `'${body.resid_city}'`},
+        ${body.email_user === null ? null : `'${body.email_user}'`},
+        ${body.id_country === null ? null : `'${body.id_country}'`},
+        ${body.ident_doc_number === null ? null : `'${body.ident_doc_number}'`},
+        ${body.occupation === null ? null : `'${body.occupation}'`},
+        ${body.doc_path === null ? null : `'${body.doc_path}'`},
+        ${body.selfie_path === null ? null : `'${body.selfie_path}'`},
+        ${body.main_sn_platf === null ? null : `'${body.main_sn_platf}'`},
+        ${body.user_main_sn_platf === null ? null : `'${body.user_main_sn_platf}'`},
+        ${body.address === null ? null : `'${body.address}'`},
+        ${body.gender === null ? null : `'${body.gender}'`},
+        ${body.id_nationality_country === null ? null : `'${body.id_nationality_country}'`},
+        ${body.main_phone === null ? null : `'${body.main_phone}'`},
+        ${body.main_phone_code === null ? null : `'${body.main_phone_code}'`},
+        ${body.main_phone_full === null ? null : `'${body.main_phone_full}'`},
+        ${body.pol_exp_per},
+        ${body.truthful_information},
+        ${body.lawful_funds},
+        ${body.legal_terms},
+        ${body.new_password === null ? null : `'${body.new_password}'`},
+        ${body.new_email === null ? null : `'${body.new_email}'`}
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -274,21 +269,32 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level one in db`);
     ObjLog.log(`[${context}]: Requesting level one in db`);
+    logger.silly(body)
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_3rd_Q(
-        '${body.date_birth}',
-        '${body.state_name}',
-        '${body.resid_city}',
-        '${body.pol_exp_per}',
-        '${body.email_user}',
-        ${body.id_country},
-        '${body.ident_doc_number}',
-        '${body.occupation}',
-        '${body.doc_path}',
-        '${body.selfie_path}',
-        '${body.main_sn_platf}',
-        '${body.user_main_sn_platf}'
+        ${body.state_name === null ? null : `'${body.state_name}'`},
+        ${body.resid_city === null ? null : `'${body.resid_city}'`},
+        ${body.email_user === null ? null : `'${body.email_user}'`},
+        ${body.id_country === null ? null : `'${body.id_country}'`},
+        ${body.ident_doc_number === null ? null : `'${body.ident_doc_number}'`},
+        ${body.occupation === null ? null : `'${body.occupation}'`},
+        ${body.doc_path === null ? null : `'${body.doc_path}'`},
+        ${body.selfie_path === null ? null : `'${body.selfie_path}'`},
+        ${body.main_sn_platf === null ? null : `'${body.main_sn_platf}'`},
+        ${body.user_main_sn_platf === null ? null : `'${body.user_main_sn_platf}'`},
+        ${body.address === null ? null : `'${body.address}'`},
+        ${body.gender === null ? null : `'${body.gender}'`},
+        ${body.id_nationality_country === null ? null : `'${body.id_nationality_country}'`},
+        ${body.main_phone === null ? null : `'${body.main_phone}'`},
+        ${body.main_phone_code === null ? null : `'${body.main_phone_code}'`},
+        ${body.main_phone_full === null ? null : `'${body.main_phone_full}'`},
+        ${body.pol_exp_per},
+        ${body.truthful_information},
+        ${body.lawful_funds},
+        ${body.legal_terms},
+        ${body.new_password === null ? null : `'${body.new_password}'`},
+        ${body.new_email === null ? null : `'${body.new_email}'`}
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -382,13 +388,13 @@ usersPGRepository.getLevelQuestions = async () => {
   }
 };
 
-usersPGRepository.getLevelAnswers = async () => {
+usersPGRepository.getLevelAnswers = async (id_resid_country) => {
   try {
     logger.info(`[${context}]: Getting answers from db`);
     ObjLog.log(`[${context}]: Getting answers from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
-      `SELECT * FROM v_level_answers_get_active()`
+      `SELECT * FROM v_level_answers_get_active(${id_resid_country})`
     );
     return resp.rows;
   } catch (error) {
@@ -400,11 +406,14 @@ usersPGRepository.requestLevelTwo = async (body) => {
   try {
     logger.info(`[${context}]: Requesting level two in db`);
     ObjLog.log(`[${context}]: Requesting level two in db`);
+    logger.silly(body)
+    logger.silly(body.answers)
+
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_TWO(
-        '${body.funds_source}',
         '${body.residency_proof_path}',
+        '${body.job_title}',
         ${body.answers},
         '${body.email_user}'
         )`
@@ -535,7 +544,6 @@ usersPGRepository.verifReferrallByCodPub = async (cust_cr_cod_pub) => {
     logger.info(`[${context}]: Verifying referrall cod pub on db`);
     ObjLog.log(`[${context}]: Verifying referrall cod pub on db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log('cust_cr_cod_pub: ',cust_cr_cod_pub)
     const resp = await poolSM.query(
       `SELECT * FROM sp_cod_pub_exists('${cust_cr_cod_pub}')`
     );
@@ -550,7 +558,6 @@ usersPGRepository.insertUserAccount = async (body,email_user) => {
   try {
     logger.info(`[${context}]: Inserting user account on db`);
     ObjLog.log(`[${context}]: Inserting user account on db`);
-    console.log("🚀 ~ file: users.pg.repository.js ~ line 547 ~ usersPGRepository.insertUserAccount= ~ body", body)
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
@@ -602,8 +609,41 @@ usersPGRepository.deleteUserAccount = async (email_user) => {
                                                   '${email_user}'
                                                 )`
     );
-    console.log("🚀 ~ file: users.pg.repository.js ~ line 603 ~ usersPGRepository.deleteUserAccount ~ resp.rows[0].sp_ms_user_accounts_delete", resp.rows[0].sp_ms_user_accounts_delete)
     if (resp.rows[0]) return resp.rows[0].sp_ms_user_accounts_delete;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.getMigratedInfo = async (id) => {
+  try {
+    logger.info(`[${context}]: Getting migrated info from db`);
+    ObjLog.log(`[${context}]: Getting migrated info from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM get_migrated_info_to_complete(
+                                                  ${id}
+                                                )`
+    );
+    if (resp.rows) return resp.rows[0].get_migrated_info_to_complete;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
+usersPGRepository.validateEmail = async (email) => {
+  try {
+    logger.info(`[${context}]: Validating email on db`);
+    ObjLog.log(`[${context}]: Validating email on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM validate_email(
+                                      '${email}'
+                                    )`
+    );
+    if (resp.rows[0]) return resp.rows[0].validate_email;
     else return null;
   } catch (error) {
     throw error;

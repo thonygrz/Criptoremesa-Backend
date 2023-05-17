@@ -17,13 +17,13 @@ ratesRouter.get(
 );
 
 ratesRouter.get(
-  "/userRates",
+  "/userRates/:email_user",
   // guard.verifyAdmin("/login"),
   ratesController.userRates
 );
 
 ratesRouter.get(
-  "/fullRates",
+  "/fullRates/:email_user",
   // guard.verifyAdmin("/login"),
   ratesController.fullRates
 );

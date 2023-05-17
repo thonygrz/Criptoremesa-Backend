@@ -45,7 +45,7 @@ ratesService.userRates = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting user rates`);
     ObjLog.log(`[${context}]: Getting user rates`);
-    let data = await ratesPGRepository.userRates(req.query);
+    let data = await ratesPGRepository.userRates(req.query,req.params.email_user);
     return {
       data,
       status: 200,
@@ -62,24 +62,24 @@ ratesService.fullRates = async (req, res, next) => {
     logger.info(`[${context}]: Getting full rates`);
     ObjLog.log(`[${context}]: Getting full rates`);
 
-    let data = await ratesPGRepository.fullRates(req.query);
+    let data = await ratesPGRepository.fullRates(req.query,req.params.email_user);
 
-    let currentManualRate = data.manualRates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
+    // let currentManualRate = data.manualRates.find(e => e.rate_type_name === MANUAL_RATES.VIPF )
 
-    let fullRateFromAPI = (await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${currentManualRate.currency_origin_iso_code}`)).data;
+    // let fullRateFromAPI = (await axios.get(`https://api.currencyfreaks.com/latest?apikey=${env.CURRENCY_FREAKS_API_KEY}&symbols=${currentManualRate.currency_origin_iso_code}`)).data;
     
-    if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
-      data.localAmountLimit = currentManualRate.amount_limit * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
-      data.vipAcum = data.vipAcum * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
+    // if (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code]){
+    //   data.localAmountLimit = currentManualRate.amount_limit * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
+    //   data.vipAcum = data.vipAcum * (fullRateFromAPI.rates[currentManualRate.currency_origin_iso_code] * 0.97)
       return {
         data,
         status: 200,
         success: true,
         failed: false
       }
-    }
-    else
-      next({message: 'There was an error getting Currency Freaks rate.'})
+    // }
+    // else
+    //   next({message: 'There was an error getting Currency Freaks rate.'})
   } catch (error) {
     next(error);
   }

@@ -86,7 +86,6 @@ cryptomilesService.getAllCryptomiles = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting all Cryptomiles`);
     ObjLog.log(`[${context}]: Getting all Cryptomiles`);
-    console.log('QUERY EN SERVICE',req.query)
     let data = await cryptomilesPGRepository.getAllCryptomiles({
                                                             email_user: req.params.email_user,
                                                             ...req.query

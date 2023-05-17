@@ -573,6 +573,49 @@ usersController.sendSMS = async (req, res, next) => {
   }
 };
 
+usersController.sendVerificationCodeByWhatsApp = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log = logConst;
+
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to send SMS`);
+    ObjLog.log(`[${context}]: Sending service to send SMS`);
+
+    let finalResp = await usersService.sendVerificationCodeByWhatsApp(req, res, next);
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 usersController.sendVerificationCodeBySMS = async (req, res, next) => {
   try {
     // filling log object info
@@ -1221,6 +1264,135 @@ usersController.deleteUserAccount = async (req, res, next) => {
     ObjLog.log(`[${context}]: Sending service to get user accounts`);
 
     let finalResp = await usersService.deleteUserAccount(req, res, next);
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.getFileName = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log = logConst;
+
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to get file name`);
+    ObjLog.log(`[${context}]: Sending service to get file name`);
+
+    let finalResp = await usersService.getFileName(req, res, next);
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.getMigratedInfo = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log = logConst;
+
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to get migrated info`);
+    ObjLog.log(`[${context}]: Sending service to get migrated info`);
+
+    let finalResp = await usersService.getMigratedInfo(req, res, next);
+
+    if (finalResp) {
+      //logging on DB
+      log.success = finalResp.success;
+      log.failed = finalResp.failed;
+      log.params = req.params;
+      log.query = req.query;
+      log.body = req.body;
+      log.status = finalResp.status;
+      log.response = finalResp.data;
+      await authenticationPGRepository.insertLogMsg(log);
+
+      //sendind response to FE
+      res.status(finalResp.status).json(finalResp.data);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersController.validateEmail = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log = logConst;
+
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Sending service to validate email`);
+    ObjLog.log(`[${context}]: Sending service to validate email`);
+
+    let finalResp = await usersService.validateEmail(req, res, next);
 
     if (finalResp) {
       //logging on DB

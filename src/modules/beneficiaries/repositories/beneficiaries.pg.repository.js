@@ -31,10 +31,13 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (
       `[${context}]: Inserting ${emailUser} new frequent beneficiary to db`
     );
     await poolSM.query("SET SCHEMA 'prc_mng'");
+
+    logger.silly(body)
+
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_ms_frequents_beneficiaries_insert(
-        '${body.nickname}',
-        ${body.owner_name === null ? null : `'${body.owner_name}'`},
+        $$${body.nickname}$$,
+        ${body.owner_name === null ? null : `$$${body.owner_name}$$`},
         ${body.identification === null ? null : `'${body.identification}'`},
         ${body.account === null ? null : `'${body.account}'`},
         ${body.account_type === null ? null : `'${body.account_type}'`},
@@ -44,7 +47,13 @@ beneficiariesPGRepository.createFrequentBeneficiary = async (
         ${body.id_bank === null ? null : `'${body.id_bank}'`},
         '${emailUser}',
         ${body.id_pay_method},
-        ${body.id_optional_field}
+        ${body.id_optional_field},
+        '${body.relation_type}',
+        2,
+        ${body.notification.email_notif === null ? null : `'${body.notification.email_notif}'`},
+        ${body.notification.phone_notif === null ? null : `'${body.notification.phone_notif}'`},
+        ${body.notification.address_notif === null ? null : `'${body.notification.address_notif}'`},
+        ${body.notification.city_notif === null ? null : `'${body.notification.city_notif}'`}
         )`
     );
     return resp.rows[0];
@@ -81,6 +90,21 @@ beneficiariesPGRepository.updateFrequentBeneficiary = async (
       )}$$::jsonb)`
     );
     return resp.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+beneficiariesPGRepository.contactRequired = async (id_country) => {
+  try {
+    logger.info(`[${context}]: Getting countries that require beneficiaries contact from db`);
+    ObjLog.log(`[${context}]: Getting countries that require beneficiaries contact from db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+
+    let resp = await poolSM.query(`SELECT * FROM sp_get_required_contact_countries(${id_country})`)
+    if (resp.rows[0].sp_get_required_contact_countries)
+      return resp.rows[0].sp_get_required_contact_countries;
+    else return null;
   } catch (error) {
     throw error;
   }

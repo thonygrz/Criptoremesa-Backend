@@ -9,7 +9,7 @@ beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
     ObjLog.log(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
-    let data = await beneficiariesRepository.getUserFrequentBeneficiaries(req.query.email_user);
+    let data = await beneficiariesRepository.getUserFrequentBeneficiaries(req.params.email_user);
     return {
       data,
       status: 200,
@@ -25,7 +25,7 @@ beneficiariesService.createFrequentBeneficiary = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Creating frequent beneficiary for ${req.query.email_user}`);
     ObjLog.log(`[${context}]: Creating frequent beneficiary for ${req.query.email_user}`);
-    let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,req.query.email_user);
+    let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,req.body.email_user);
     if (data.id_beneficiary !== '')
       return {
         data,
@@ -84,6 +84,30 @@ beneficiariesService.updateFrequentBeneficiary = async (req, res, next) => {
     else 
       return {
         data: false,
+        status: 200,
+        success: false,
+        failed: true
+      }
+  } catch (error) {
+    next(error);
+  }
+};
+
+beneficiariesService.contactRequired = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Updating frequent beneficiary`);
+    ObjLog.log(`[${context}]: Updating frequent beneficiary`);
+    let data = await beneficiariesRepository.contactRequired(req.params.id_country);
+    if (data.message)
+      return {
+        data,
+        status: 500,
+        success: true,
+        failed: true
+      }
+    else 
+      return {
+        data,
         status: 200,
         success: false,
         failed: true

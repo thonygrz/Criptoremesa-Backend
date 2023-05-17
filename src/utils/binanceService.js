@@ -36,7 +36,6 @@ client.getAccountInfo = async function () {
 client.newOrder = async function (data) {
     try {
         let query = `symbol=${data.symbol}&side=${data.side}&type=${data.type}&timeInForce=${data.timeInForce}&quantity=${data.quantity}&price=${data.price}&timestamp=${Date.now()}`
-        console.log("🚀 ~ file: binanceService.js ~ line 39 ~ query", query)
     
         return await request('POST','order',query,{})
     } catch (error) {

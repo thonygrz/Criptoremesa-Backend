@@ -281,6 +281,8 @@ reportsController.reportRemittancesByStatus = async (req, res, next) => {
       log.session = req.sessionID;
 
     // protecting route in production but not in development
+    logger.silly(`req.isAuthenticated(): ${req.isAuthenticated()}`)
+    logger.silly(`env.ENVIROMENT: ${env.ENVIROMENT}`)
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
       log.success = false;

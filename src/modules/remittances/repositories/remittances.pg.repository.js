@@ -55,6 +55,7 @@ remittancesPGRepository.startRemittance = async (body) => {
     logger.info(`[${context}]: Starting remittance on db`);
     ObjLog.log(`[${context}]: Starting remittance on db`);
     await poolSM.query("SET SCHEMA 'msg_app'");
+
     const resp = await poolSM.query(
       `SELECT * FROM sp_lnk_cr_remittances_init('${JSON.stringify(body)}')`
       );
@@ -143,9 +144,6 @@ remittancesPGRepository.getBankFee = async (body) => {
     ObjLog.log(`[${context}]: Getting fee from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
 
-    console.log("id_origin_bank: ", body.id_origin_bank);
-    console.log("id_destiny_bank: ", body.id_destiny_bank);
-
     const resp = await poolSM.query(
       `SELECT * FROM sp_calculate_bank_fee(
                                           ${body.id_origin_bank},
@@ -153,7 +151,6 @@ remittancesPGRepository.getBankFee = async (body) => {
                                           ${body.id_pay_method}
                                           )`
     );
-    console.log("ban_fee de bd: ", resp.rows);
     if (resp.rows[0].sp_calculate_bank_fee[0])
       return resp.rows[0].sp_calculate_bank_fee[0];
     else return null;

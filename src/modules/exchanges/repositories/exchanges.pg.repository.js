@@ -127,7 +127,6 @@ exchangesRepository.insertSellExchange = async (body) => {
     
     body.mode = 'app'
     
-    console.log("🚀 ~ InsertSellExchange")
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_lnk_cr_exchange_init(
@@ -210,12 +209,6 @@ exchangesRepository.getAmountLimits = async (query) => {
     logger.info(`[${context}]: Getting exchange amount limits from db`);
     ObjLog.log(`[${context}]: Getting exchange amount limits from db`);
 
-    console.log('QUERYYY: ',`SELECT * FROM prc_mng.sp_get_exchange_limits(
-      ${query.id_operation_route === 'null' ? null : query.id_operation_route},
-      ${query.id_verification === 'null' ? null : query.id_verification},
-      ${query.id_exchange_type === 'null' ? null : query.id_exchange_type}
-    )`)
-
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_get_exchange_limits(
@@ -235,9 +228,12 @@ exchangesRepository.getExchangesByUser = async (query) => {
     logger.info(`[${context}]: Getting exchanges by user from db`);
     ObjLog.log(`[${context}]: Getting exchanges by user from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
+
+    let decodedValue = decodeURIComponent(query.email_user)
+
     const resp = await poolSM.query(
       `SELECT * FROM sp_get_last_exchanges_by_user(
-                                                      ${query.email_user === 'null' ? null : `'${query.email_user}'`},
+                                                      ${decodedValue === 'null' ? null : `'${decodedValue}'`},
                                                       ${query.limit === 'null' ? null : query.limit},
                                                       ${query.start_date === 'null' ? null : query.start_date},
                                                       ${query.end_date === 'null' ? null : query.end_date},
@@ -272,7 +268,7 @@ exchangesRepository.getTransactionByConfNum = async (confNum) => {
 
 exchangesRepository.getUnconfirmedTransactions = async () => {
   try {
-    logger.info(`[${context}]: Getting unconfirmed transactions from db`);
+    logger.debug(`[${context}]: Getting unconfirmed transactions from db`);
     ObjLog.log(`[${context}]: Getting unconfirmed transactions from db`);
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(
@@ -307,9 +303,6 @@ exchangesRepository.setExternalTransactionStatus = async (idExchangePub,status) 
     logger.info(`[${context}]: Setting ${status} status on db`);
     ObjLog.log(`[${context}]: Setting ${status} status on db`);
     
-    console.log('idExchangePub: ',idExchangePub)
-    console.log('status: ',status)
-
     await poolSM.query("SET SCHEMA 'prc_mng'");
     const resp = await poolSM.query(
       `SELECT * FROM prc_mng.sp_set_external_transaction_status(

@@ -11,7 +11,7 @@ resid_countriesService.getresid_countries = async (req, res, next) => {
     logger.info(`[${context}]: Getting resid countries`);
     ObjLog.log(`[${context}]: Getting resid countries`);
 
-    let data = await resid_countriesPGRepository.getresid_countries();
+    let data = await resid_countriesPGRepository.getresid_countries(req.query.countriesType);
     
     return {
       data,

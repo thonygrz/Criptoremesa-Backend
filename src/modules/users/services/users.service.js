@@ -9,6 +9,8 @@ import { env } from "../../../utils/enviroment";
 import mailSender from "../../../utils/mail";
 import { join, resolve } from "path";
 import axios from "axios";
+import whatsapp from "../../../utils/whatsapp";
+import fileNamer from "../../../utils/filesName";
 
 const client = require("twilio")(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
 
@@ -29,10 +31,12 @@ async function sendSMS(to, body) {
         to,
       })
       .then((message) => {
+        logger.silly(message)
         return message;
       })
       .catch((err) => {
-        next(error);
+        logger.silly(err)
+        next(err);
       });
     // const params = new url.URLSearchParams({
     //   To: to,
@@ -55,38 +59,49 @@ async function sendSMS(to, body) {
   }
 }
 
+async function sendWhatsappMessage(to, body) {
+  try {
+    return await whatsapp.sendWhatsappMessage(
+      to,
+      body
+    )
+  } catch (error) {
+    return error;
+  }
+}
+
 usersService.createNewClient = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Creating new Client`);
     ObjLog.log(`[${context}]: Creating new Client`);
-    if (!req.body.captcha) {
-      res.status(400).json({
-        captchaSuccess: false,
-        msg: "Ha ocurrido un error. Por favor completa el captcha",
-      });
-    } else {
-      // Secret key
-      const secretKey = env.reCAPTCHA_SECRET_KEY;
+    // if (!req.body.captcha) {
+    //   res.status(400).json({
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   });
+    // } else {
+    //   // Secret key
+    //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
-      console.log('ANTES DEL CAPTCHA: ')
+    //   console.log('ANTES DEL CAPTCHA: ')
 
-      // Verify URL
-      const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
-        req.body.captcha
-      }&remoteip=${req.header("Client-Ip")}`;
+    //   // Verify URL
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
+    //     req.body.captcha
+    //   }&remoteip=${req.header("Client-Ip")}`;
 
-      // Make a request to verifyURL
-      const body = await axios.get(verifyURL);
+    //   // Make a request to verifyURL
+    //   const body = await axios.get(verifyURL);
 
-      console.log('DESPUES DEL CAPTCHA: ')
+    //   console.log('DESPUES DEL CAPTCHA: ')
 
-      // // If not successful
-      if (body.data.success === false) {
-        res.status(500).json({
-          captchaSuccess: false,
-          msg: "Falló la verificación del Captcha",
-        });
-      } else {
+    //   // // If not successful
+    //   if (body.data.success === false) {
+    //     res.status(500).json({
+    //       captchaSuccess: false,
+    //       msg: "Falló la verificación del Captcha",
+    //     });
+    //   } else {
         // If successful
 
         let password = await bcrypt.hash(req.body.password, 10);
@@ -97,18 +112,22 @@ usersService.createNewClient = async (req, res, next) => {
 
         const response = await usersPGRepository.createNewClient(userObj);
 
+        console.log('REGISTRO: ',response)
+
         return {
           data: {
             msg: "User registred succesfully",
-            user: response,
+            user: {
+              cust_cr_cod_pub: response
+            },
             captchaSuccess: true,
           },
           status: 200,
           success: true,
           failed: false,
         };
-      }
-    }
+      // }
+    // }
   } catch (error) {
     if (error.code === "23505") {
       next({
@@ -219,17 +238,15 @@ usersService.files = async (req, res, next) => {
     });
 
     form.on("error", function (err) {
-      // console.log("An error has occured with form upload: ", err.message);
       fileError = true;
-      console.log("err::", err);
       next({
         message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
       });
     });
 
     form.on("field", (name, value) => {
-      console.log("field name: ", name);
-      console.log("field value: ", value);
+      // console.log("field name: ", name);
+      // console.log("field value: ", value);
     });
 
     form.on("file", function (field, file) {
@@ -237,9 +254,6 @@ usersService.files = async (req, res, next) => {
       filePath = file.path;
       fileSize = file.size;
       fileType = file.type;
-      console.log("filePath on", filePath);
-      console.log("fileSize on", fileSize);
-      console.log("fileType on", fileType);
     });
 
     // form.onPart = function (part) {
@@ -252,9 +266,6 @@ usersService.files = async (req, res, next) => {
     //   }
     // };
     form.parse(req, function (err, fields, files) {
-      console.log("fileError ", fileError);
-      console.log("fileType ", fileType);
-
       if (
         !fileError &&
         (fileType === "image/png" ||
@@ -278,9 +289,6 @@ usersService.files = async (req, res, next) => {
           }
         });
       } else {
-        console.log("filePath ", filePath);
-        console.log("fileSize ", fileSize);
-        console.log("fileType ", fileType);
         next({
           message: `El archivo subido no tiene un formato permitido`,
         });
@@ -338,7 +346,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 10 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -380,28 +388,50 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         let doc_path = createFile(files.doc, fields.email_user, "one");
         let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
-        if (!fileError) {
-          await usersPGRepository.requestLevelOne1stQ({
-            date_birth: fields.date_birth,
-            state_name: fields.state_name,
-            resid_city: fields.resid_city,
-            pol_exp_per: fields.pol_exp_per,
-            email_user: fields.email_user,
-            id_ident_doc_type: fields.id_ident_doc_type,
-            ident_doc_number: fields.ident_doc_number,
-            occupation: fields.occupation,
-            doc_path: doc_path,
-            selfie_path: selfie_path,
-            main_sn_platf: fields.main_sn_platf,
-            user_main_sn_platf: fields.user_main_sn_platf,
-          });
+        logger.silly(fields)
 
-          setfinalResp({
-            data: { message: "Request succesfuly uploaded." },
-            status: 200,
-            success: true,
-            failed: false,
-          });
+        if (!fileError) {
+          try {
+            await usersPGRepository.requestLevelOne1stQ({
+              state_name: fields.state_name ? fields.state_name : null,
+              resid_city: fields.resid_city ? fields.resid_city : null,
+              email_user: fields.email_user ? fields.email_user : null,
+              id_ident_doc_type: fields.id_ident_doc_type ? fields.id_ident_doc_type : null,
+              ident_doc_number: fields.ident_doc_number ? fields.ident_doc_number : null,
+              occupation: fields.occupation ? fields.occupation : null,
+              doc_path: doc_path ? doc_path : null,
+              selfie_path: selfie_path ? selfie_path : null,
+              main_sn_platf: fields.main_sn_platf ? fields.main_sn_platf : null,
+              user_main_sn_platf: fields.user_main_sn_platf ? fields.user_main_sn_platf : null,
+              address: fields.domicile_address ? fields.domicile_address : null,
+              gender: fields.gender ? fields.gender : null,
+              id_nationality_country: fields.id_nationality_country ? fields.id_nationality_country : null,
+              main_phone: fields.main_phone ? fields.main_phone : null,
+              main_phone_code: fields.main_phone_code ? fields.main_phone_code : null,
+              main_phone_full: fields.main_phone_full ? fields.main_phone_full : null,
+              pol_exp_per: fields.pol_exp_per ? fields.pol_exp_per : null,
+              truthful_information: fields.truthful_information ? fields.truthful_information : null,
+              lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
+              legal_terms: fields.legal_terms ? fields.legal_terms : null,
+              new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
+              new_email: fields.new_email ? fields.new_email : null
+            });
+
+            setfinalResp({
+              data: { message: "Request succesfuly uploaded." },
+              status: 200,
+              success: true,
+              failed: false,
+            });
+          } catch (error) {
+            setfinalResp({
+              data: { message: error.message },
+              status: 500,
+              success: false,
+              failed: true,
+            });
+          }
+                    
         } else
           setfinalResp({
             data: { message: "There was an error with the file." },
@@ -437,99 +467,121 @@ function getAnswersToRepo() {
 
 usersService.requestLevelOne2ndQ = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Requesting level one 2nd question`);
-    ObjLog.log(`[${context}]: Requesting level one 2nd question`);
+      logger.info(`[${context}]: Requesting level one 2nd question`);
+      ObjLog.log(`[${context}]: Requesting level one 2nd question`);
 
-    let fileError = false;
+  let fileError = false;
 
-    const form = formidable({
-      multiples: true,
-      uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
-      keepExtensions: true,
-    });
+  const form = formidable({
+    multiples: true,
+    uploadDir: env.FILES_DIR,
+    maxFileSize: 10 * 1024 * 1024,
+    keepExtensions: true,
+  });
 
-    form.onPart = (part) => {
-      if (
-        !fileError &&
-        !(
-          part.mime === "image/png" ||
-          part.mime === "image/jpg" ||
-          part.mime === "image/jpeg" ||
-          part.mime === "image/gif" ||
-          part.mime === "application/pdf" ||
-          part.mime === null
-        )
-      ) {
-        fileError = true;
-        form.emit("error");
-      } else {
-        form.handlePart(part);
-      }
-    };
+  form.onPart = (part) => {
+    if (
+      !fileError &&
+      !(
+        part.mime === "image/png" ||
+        part.mime === "image/jpg" ||
+        part.mime === "image/jpeg" ||
+        part.mime === "image/gif" ||
+        part.mime === "application/pdf" ||
+        part.mime === null
+      )
+    ) {
+      fileError = true;
+      form.emit("error");
+    } else {
+      form.handlePart(part);
+    }
+  };
 
-    form.on("error", function (err) {
-      if (fileError) {
-        next({
-          message: `Uno o varios archivos no tienen formato permitido`,
-        });
-      } else {
-        fileError = true;
+  form.on("error", function (err) {
+    if (fileError) {
+      next({
+        message: `Uno o varios archivos no tienen formato permitido`,
+      });
+    } else {
+      fileError = true;
 
-        next({
-          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
-        });
-      }
-    });
+      next({
+        message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+      });
+    }
+  });
 
-    await new Promise((resolve, reject) => {
-      form.parse(req, async function (err, fields, files) {
-        let doc_path = createFile(files.doc, fields.email_user, "one");
-        let selfie_path = createFile(files.selfie, fields.email_user, "one");
+  await new Promise((resolve, reject) => {
+    form.parse(req, async function (err, fields, files) {
+      let doc_path = createFile(files.doc, fields.email_user, "one");
+      let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
-        if (!fileError) {
+      logger.silly(fields)
+
+      if (!fileError) {
+        try {
           await usersPGRepository.requestLevelOne2ndQ({
-            date_birth: fields.date_birth,
-            state_name: fields.state_name,
-            resid_city: fields.resid_city,
-            pol_exp_per: fields.pol_exp_per,
-            email_user: fields.email_user,
-            id_country: fields.id_country,
-            ident_doc_number: fields.ident_doc_number,
-            occupation: fields.occupation,
-            doc_path: doc_path,
-            selfie_path: selfie_path,
-            main_sn_platf: fields.main_sn_platf,
-            user_main_sn_platf: fields.user_main_sn_platf,
+            state_name: fields.state_name ? fields.state_name : null,
+            resid_city: fields.resid_city ? fields.resid_city : null,
+            email_user: fields.email_user ? fields.email_user : null,
+            id_country: fields.id_country ? fields.id_country : null,
+            ident_doc_number: fields.ident_doc_number ? fields.ident_doc_number : null,
+            occupation: fields.occupation ? fields.occupation : null,
+            doc_path: doc_path ? doc_path : null,
+            selfie_path: selfie_path ? selfie_path : null,
+            main_sn_platf: fields.main_sn_platf ? fields.main_sn_platf : null,
+            user_main_sn_platf: fields.user_main_sn_platf ? fields.user_main_sn_platf : null,
+            address: fields.domicile_address ? fields.domicile_address : null,
+            gender: fields.gender ? fields.gender : null,
+            id_nationality_country: fields.id_nationality_country ? fields.id_nationality_country : null,
+            main_phone: fields.main_phone ? fields.main_phone : null,
+            main_phone_code: fields.main_phone_code ? fields.main_phone_code : null,
+            main_phone_full: fields.main_phone_full ? fields.main_phone_full : null,
+            pol_exp_per: fields.pol_exp_per ? fields.pol_exp_per : null,
+            truthful_information: fields.truthful_information ? fields.truthful_information : null,
+            lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
+            legal_terms: fields.legal_terms ? fields.legal_terms : null,
+            new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
+            new_email: fields.new_email ? fields.new_email : null
           });
 
           setfinalResp({
-            data: { message: "Request succesfuly uploaded." },
-            status: 200,
-            success: true,
-            failed: false,
+              data: { message: "Request succesfuly uploaded." },
+              status: 200,
+              success: true,
+              failed: false,
           });
-        } else
+        } catch (error) {
           setfinalResp({
-            data: { message: "There was an error with the file." },
+            data: { message: error.message },
             status: 500,
             success: false,
             failed: true,
           });
-        resolve();
-      });
-    });
-    return getfinalResp()
-      ? getfinalResp()
-      : {
-          data: { message: "There was an error." },
+        }
+          
+      } else
+      setfinalResp({
+          data: { message: "There was an error with the file." },
           status: 500,
           success: false,
           failed: true,
-        };
-  } catch (error) {
-    next(error);
-  }
+      });
+      resolve();
+  });
+  });
+  return getfinalResp()
+  ? getfinalResp()
+  : {
+      data: { message: "There was an error." },
+      status: 500,
+      success: false,
+      failed: true,
+      };
+} catch (error) {
+  next(error);
+}
 };
 
 usersService.requestLevelOne3rdQ = async (req, res, next) => {
@@ -542,7 +594,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 10 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -584,28 +636,49 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
         let doc_path = createFile(files.doc, fields.email_user, "one");
         let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
-        if (!fileError) {
-          await usersPGRepository.requestLevelOne3rdQ({
-            date_birth: fields.date_birth,
-            state_name: fields.state_name,
-            resid_city: fields.resid_city,
-            pol_exp_per: fields.pol_exp_per,
-            email_user: fields.email_user,
-            id_country: fields.id_country,
-            ident_doc_number: fields.ident_doc_number,
-            occupation: fields.occupation,
-            doc_path: doc_path,
-            selfie_path: selfie_path,
-            main_sn_platf: fields.main_sn_platf,
-            user_main_sn_platf: fields.user_main_sn_platf,
-          });
+        logger.silly(fields)
 
-          setfinalResp({
-            data: { message: "Request succesfuly uploaded." },
-            status: 200,
-            success: true,
-            failed: false,
-          });
+        if (!fileError) {
+          try {
+            await usersPGRepository.requestLevelOne3rdQ({
+              state_name: fields.state_name ? fields.state_name : null,
+              resid_city: fields.resid_city ? fields.resid_city : null,
+              email_user: fields.email_user ? fields.email_user : null,
+              id_country: fields.id_country ? fields.id_country : null,
+              ident_doc_number: fields.ident_doc_number ? fields.ident_doc_number : null,
+              occupation: fields.occupation ? fields.occupation : null,
+              doc_path: doc_path ? doc_path : null,
+              selfie_path: selfie_path ? selfie_path : null,
+              main_sn_platf: fields.main_sn_platf ? fields.main_sn_platf : null,
+              user_main_sn_platf: fields.user_main_sn_platf ? fields.user_main_sn_platf : null,
+              address: fields.domicile_address ? fields.domicile_address : null,
+              gender: fields.gender ? fields.gender : null,
+              id_nationality_country: fields.id_nationality_country ? fields.id_nationality_country : null,
+              main_phone: fields.main_phone ? fields.main_phone : null,
+              main_phone_code: fields.main_phone_code ? fields.main_phone_code : null,
+              main_phone_full: fields.main_phone_full ? fields.main_phone_full : null,
+              pol_exp_per: fields.pol_exp_per ? fields.pol_exp_per : null,
+              truthful_information: fields.truthful_information ? fields.truthful_information : null,
+              lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
+              legal_terms: fields.legal_terms ? fields.legal_terms : null,
+              new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
+              new_email: fields.new_email ? fields.new_email : null
+            });
+  
+            setfinalResp({
+                data: { message: "Request succesfuly uploaded." },
+                status: 200,
+                success: true,
+                failed: false,
+            });
+          } catch (error) {
+            setfinalResp({
+              data: { message: error.message },
+              status: 500,
+              success: false,
+              failed: true,
+            });
+          }
         } else
           setfinalResp({
             data: { message: "There was an error with the file." },
@@ -640,7 +713,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 10 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -694,8 +767,28 @@ usersService.requestLevelTwo = async (req, res, next) => {
           setAnswersToRepo(getAnswersToRepo() + "]::json[]");
           setAnswersToRepo(getAnswersToRepo().replace(",", ""));
 
+          logger.silly(fields)
+
+          let industryAnswer = JSON.parse(fields.answers).find(e => e.question_number === 5)
+
+          if(industryAnswer && industryAnswer.answers[0].alert && JSON.parse(fields.answers)[2].answers[0].alert === true){
+            let mailResp = mailSender.sendIndustryAlertMail({
+              email_user: fields.email_user,
+              from: 'no-reply@criptoremesa.com',
+              to: 'registro@criptoremesa.com',
+              subject: `Alerta de Industria`,
+              title: `Alerta de Industria`,
+              subtitle: `Alerta de Industria`,
+              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria ${JSON.parse(fields.answers)[2].answers[0].answer}`,
+              secondParagraph: 'Favor tomar las acciones necesarias.',
+              mailType: `Alerta`
+            })
+
+            logger.silly(mailResp)
+          }
+
           await usersPGRepository.requestLevelTwo({
-            funds_source: fields.funds_source,
+            job_title: fields.job_title,
             residency_proof_path: residency_proof_path,
             answers: getAnswersToRepo(),
             email_user: fields.email_user,
@@ -736,9 +829,8 @@ usersService.forgotPassword = async (req, res, next) => {
     ObjLog.log(`[${context}]: Forgot password request`);
 
     let user = await usersPGRepository.getusersClientByEmail(
-      `'${req.body.email_user}'`
+      `'${req.body.email_user.toLowerCase()}'`
     );
-
     let data = await usersPGRepository.generateCode(
       req.body.email_user,
       "email"
@@ -955,7 +1047,7 @@ usersService.getLevelQuestions = async (req, res, next) => {
     ObjLog.log(`[${context}]: Getting level questions`);
 
     let data = await usersPGRepository.getLevelQuestions();
-    let answers = await usersPGRepository.getLevelAnswers();
+    let answers = await usersPGRepository.getLevelAnswers(req.params.id_resid_country);
     let respArr = [];
 
     data = data.map(function (q) {
@@ -996,8 +1088,47 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
       if (
         sendSMS(
           req.body.main_phone_full,
-          `💰<CriptoRemesa>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
+          `💰<Bithonor>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
         )
+      )
+        return {
+          data: {
+            msg: data.msg,
+          },
+          status: 200,
+          success: true,
+          failed: false,
+        };
+    } else if (data.msg === "An error ocurred generating code.") {
+      return {
+        data: { msg: data.msg },
+        status: 400,
+        success: false,
+        failed: true,
+      };
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.sendVerificationCodeByWhatsApp = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending verification code by Whatsapp`);
+    ObjLog.log(`[${context}]: Sending verification code by Whatsapp`);
+
+    let data = await usersPGRepository.generateCode(
+      req.body.main_phone_full,
+      'whatsapp'
+    );
+
+    if (data.msg === "Code generated") {
+      const whaResp =  await sendWhatsappMessage(
+          req.body.main_phone_full,
+          `💰<Bithonor>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
+        )
+      if (
+        whaResp.status === 'Message sended'
       )
         return {
           data: {
@@ -1024,6 +1155,16 @@ usersService.sendSMS = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending SMS`);
     ObjLog.log(`[${context}]: Sending SMS`);
+    res.status(200).json(sendSMS(req.body.phone_number, req.body.msg));
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.sendWhatsApp = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Sending WhatsApp message`);
+    ObjLog.log(`[${context}]: Sending WhatsApp message`);
     res.status(200).json(sendSMS(req.body.phone_number, req.body.msg));
   } catch (error) {
     next(error);
@@ -1265,6 +1406,95 @@ usersService.deleteUserAccount = async (req, res, next) => {
         data: {
           mesage: data.message,
         },
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getFileName = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting file name`);
+    ObjLog.log(`[${context}]: Getting file name`);
+    let data = await fileNamer.getFileName(
+      req.body.email,
+      req.body.fileInfo
+    );
+    if (data)
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.getMigratedInfo = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting migrated info`);
+    ObjLog.log(`[${context}]: Getting migrated info`);
+    let data = await usersPGRepository.getMigratedInfo(
+      req.params.id
+    );
+
+    if (data)
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.validateEmail = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting migrated info`);
+    ObjLog.log(`[${context}]: Getting migrated info`);
+    let data = await usersPGRepository.validateEmail(
+      req.params.email
+    );
+
+    console.log('DATA: ',data)
+
+    if (data !== null && data !== undefined)
+      return {
+        data,
         status: 200,
         success: true,
         failed: false,

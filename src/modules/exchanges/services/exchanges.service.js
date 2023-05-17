@@ -303,7 +303,6 @@ exchangesService.insertExchange = async (req, res, next) => {
     let exchange = getFields().exchange
 
     let data
-    console.log("🚀 ~ file: exchanges.service.js ~ line 278 ~ exchangesService.insertExchange= ~ req.query", req.query)
 
     if (req.query.type === 'COMPRA') {
       
@@ -321,8 +320,8 @@ exchangesService.insertExchange = async (req, res, next) => {
       
       // se pasa el monto final en dólares y en la moneda local del usuario
 
-        exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97)).toFixed(2));
-        exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97)).toFixed(2));
+        exchange.netDollarOriginAmount = parseFloat((exchange.netOriginAmount * (dollarRateFromAPI * 0.97))).toFixed(2);
+        exchange.totalOriginRemittanceInLocalCurrency = parseFloat((exchange.netOriginAmount * (localRateFromAPI * 0.97))).toFixed(2);
       
       data = await exchangesRepository.insertBuyExchange(exchange);
     } 
@@ -340,11 +339,7 @@ exchangesService.insertExchange = async (req, res, next) => {
     else if (req.query.type === 'DEPOSITO') {
 
       let oldTransaction = await exchangesRepository.getTransactionByConfNum(exchange.captures[0].ref);
-      console.log("🚀 ~ oldTransaction", oldTransaction)
-      console.log('antes del if')
-
       if (oldTransaction.length > 0) {
-        console.log('ifffffffffff')
         setfinalResp({
           data: {message: 'Txid already used.'},
           status: 403,
@@ -358,12 +353,7 @@ exchangesService.insertExchange = async (req, res, next) => {
     }
     else if (req.query.type === 'CONVERSION') {
 
-      
-      // console.log('account RESP: ', await binanceClient.getAccountInfo())
-      // console.log('allOrders RESP: ', await binanceClient.myTrades())
-
       data = await exchangesRepository.insertConversionExchange(exchange);
-      console.log("🚀 ~ data", data)
 
       if (data.message === 'Exchange started') {
         let resp = await binanceClient.newOrder({
@@ -374,7 +364,6 @@ exchangesService.insertExchange = async (req, res, next) => {
                                                   price: exchange.limit,
                                                   quantity: parseFloat((getCryptoSide(exchange.route.origin_iso_code,exchange.route.destiny_iso_code) === 'BUY' ? exchange.destinyDepositedAmount : exchange.originDepositedAmount).toFixed(5))
                                                 })
-        console.log("🚀 ~ resp", resp)
         await exchangesRepository.insertExchangeResponse(data.id_exchange_pub,resp)
 
         if (!resp){
@@ -468,7 +457,6 @@ exchangesService.insertExchange = async (req, res, next) => {
                                                 failed: true
                                               }
   } catch (error) {
-    console.log(error)
     next(error);
   }
 };
