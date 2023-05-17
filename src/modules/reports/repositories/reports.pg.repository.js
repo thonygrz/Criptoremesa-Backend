@@ -10,8 +10,6 @@ reportsPGRepository.reportAmountSentByBenef = async (params, query) => {
     logger.info(`[${context}]: Getting report from db`);
     ObjLog.log(`[${context}]: Getting report from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log("params: ", params);
-    console.log("query: ", query);
     const resp = await poolSM.query(
       `SELECT * FROM report_amount_sent_by_benef(
                                                     ${

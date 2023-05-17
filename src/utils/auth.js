@@ -144,13 +144,13 @@ passport.use(
         // if (guard.getUsernameField() === "email")
         user = await authenticationPGRepository.getUserByEmail(email.toLowerCase());
 
-        // console.log('USER OBTENIDO🔴:',user)
+        console.log('USER OBTENIDO🔴:',user)
 
         if (user && user.wholesale_partner_info) {
           user.wholesale_partner_info.logo = fs.readFileSync(
             user.wholesale_partner_info.logo
           );
-          console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
+          // console.log('USER QUE SE MANDA EN EL LOGIN: ',user)
         }
 
         // else
@@ -328,6 +328,7 @@ export default {
             return next(err);
           }
         });
+        console.log('req.sessionID: ',req.sessionID)
       })(req, res, next);
     } catch (error) {
       expressObj.next(error);
@@ -335,8 +336,13 @@ export default {
   },
   logout: async (req, res, next) => {
     try {
+      console.log('req.isAuthenticated(): ',req.isAuthenticated())
+      console.log('req.sessionID: ',req.sessionID)
+      console.log('req.session.destroy(): ',req.session)
+
       log.is_auth = req.isAuthenticated();
       req.session.destroy();
+      await authenticationPGRepository.userHasAnActiveSession(req.params.email_user);
       log.success = true;
       log.failed = false;
       log.status = 200;

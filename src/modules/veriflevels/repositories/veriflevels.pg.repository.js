@@ -69,7 +69,6 @@ veriflevelsPGRepository.deactivateNotification = async (id_notification) => {
     logger.info(`[${context}]: Deactivating notification`);
     ObjLog.log(`[${context}]: Deactivating notification`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(id_notification);
     const resp = await poolSM.query(`SELECT * FROM sp_deactive_notification(
       ${id_notification}
     )`);
@@ -84,7 +83,6 @@ veriflevelsPGRepository.readNotification = async (id_notification) => {
     logger.info(`[${context}]: Deactivating notification`);
     ObjLog.log(`[${context}]: Deactivating notification`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(id_notification);
     const resp = await poolSM.query(`SELECT * FROM sp_read_notification(
       ${id_notification}
     )`);
@@ -102,7 +100,6 @@ veriflevelsPGRepository.getWholesalePartnerRequestsCountries = async (
     ObjLog.log(`[${context}]: Getting countries from DB`);
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user);
     const resp = await poolSM.query(
       `SELECT * FROM v_wholesale_partners_requests_countries()`
     );
@@ -118,7 +115,6 @@ veriflevelsPGRepository.getMigrationStatus = async (email_user) => {
     ObjLog.log(`[${context}]: Getting migration status from DB`);
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user);
     const resp = await poolSM.query(`SELECT * FROM v_migration_status()`);
     return resp.rows[0].v_migration_status;
   } catch (error) {
@@ -138,7 +134,6 @@ veriflevelsPGRepository.getDisapprovedVerifLevelsRequirements = async (
     );
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user);
     const resp = await poolSM.query(
       `SELECT * FROM v_verif_levels_requirements_disapproved('${email_user}')`
     );
@@ -160,7 +155,6 @@ veriflevelsPGRepository.getDisapprovedWholesalePartnersRequirements = async (
     );
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user);
     const resp = await poolSM.query(
       `SELECT * FROM v_wholesale_partners_requests_requirements_disapproved('${email_user}')`
     );
@@ -176,7 +170,6 @@ veriflevelsPGRepository.getLimitationsByCountry = async (id_country) => {
     ObjLog.log(`[${context}]: Getting Limitations from DB`);
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(id_country);
     const resp = await poolSM.query(
       `SELECT * FROM get_limitations_by_country(${id_country})`
     );
@@ -192,7 +185,6 @@ veriflevelsPGRepository.getVerifLevelRequirements = async (email_user) => {
     ObjLog.log(`[${context}]: Getting requirements from DB`);
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user);
     const resp = await poolSM.query(
       `SELECT * FROM v_verif_levels_requirements('${email_user}')`
     );
@@ -212,7 +204,6 @@ veriflevelsPGRepository.getWholesalePartnerRequestsRequirementsByEmail = async (
     ObjLog.log(`[${context}]: Getting requirements from DB`);
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log(email_user);
     const resp = await poolSM.query(
       `SELECT * FROM v_wholesale_partners_requests_requirements_by_email('${email_user}')`
     );
@@ -228,7 +219,6 @@ veriflevelsPGRepository.validateRemittance = async (remittance) => {
     ObjLog.log(`[${context}]: prooving from DB`);
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
-    console.log("remittance", remittance);
     const resp = await poolSM.query(
       `SELECT * FROM validate_remittance('${JSON.stringify(remittance)}')`
     );

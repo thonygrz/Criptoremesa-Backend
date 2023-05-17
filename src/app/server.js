@@ -28,50 +28,19 @@ const app = express();
 // si no se quiere enviar nunca 304
 // app.disable('etag');
 
-
 app.use(bodyParser.json({limit: '50mb'})); 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.set("port", env.PORT || 3000);
-// const opts = {
-//   multiples: true,
-//   uploadDir: env.FILES_DIR,
-//   maxFileSize: 2 * 1024 * 1024,
-//   keepExtensions: true,
-// };
 
 // MIDDLEWARES
 app.use(morgan("dev", { stream: logger.stream }));
 app.use(json());
-// app.use(express.json());
-// app.use(express.urlencoded({extended: true}));
+
 app.use(
   cors({
     origin: [
-      "http://186.185.29.75:8081",
-      "http://localhost:8081",
-      "http://186.185.29.75:8080",
-      "http://localhost:8080",
-      "http://186.185.127.134:8080",
-      "http://186.185.127.134:8081",
-      "https://localhost:3010",
-      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3011",
-      "https://localhost:3011",
-      "https://localhost:8081",
-      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3020",
-      "https://localhost:3020",
-      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3014",
-      "https://localhost:3014",
-      "https://ec2-18-216-25-44.us-east-2.compute.amazonaws.com",
-      "https://nimobot.com",
-      "https://www.nimobot.com",
-      "https://sixmap.nimobot.com",
-      "https://www.sixmap.nimobot.com",
-      "http://192.168.0.105:8080",
-      "http://186.167.250.194:8080",
-      "http://172.20.10.5:8081",
-      "http://localhost:8082",
-      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3004",
-      "https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3009"
+      "https://bithonor.com",
+      "https://www.bithonor.com"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
@@ -91,11 +60,9 @@ app.use(
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
     saveUninitialized: true,
     cookie: {
-      expires: 300000,
+      expires: 900000,
       secure: true,
-      // maxAge: 86400000,
     }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
-    // maxAge: 60
   })
 );
 app.use(passport.initialize());
@@ -126,8 +93,6 @@ app.use((req, res, next) => {
 app.use("/cr", routerIndex);
 
 app.use(async (req, res, next) => {
-  console.log('middleware despues de passport y todo el auth')
-
   try {
     ObjUserSessionData.set({
       session: {
@@ -136,8 +101,6 @@ app.use(async (req, res, next) => {
       },
       user: req.user,
     });
-    // res.status(200).send("prooving");
-  
     next();
   } catch (error) {
     next(error)

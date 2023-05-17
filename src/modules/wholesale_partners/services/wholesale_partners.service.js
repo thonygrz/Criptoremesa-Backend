@@ -9,7 +9,6 @@ wholesale_partnersService.insertWholesalePartnerInfo = async (req, res, next) =>
   try {
     logger.info(`[${context}]: Inserting wholesale_partner`);
     ObjLog.log(`[${context}]: Inserting wholesale_partner`);
-    console.log('req.file service: ',req.file)
     req.body.logo = req.file.path
     req.body.email_user = req.params.email_user
     let data = await wholesale_partnersRepository.insertWholesalePartnerInfo(req.body);

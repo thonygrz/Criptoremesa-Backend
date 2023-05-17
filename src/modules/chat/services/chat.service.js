@@ -21,7 +21,6 @@ chatService.sendMessage = async (req, res, next) => {
     });
 
     form.onPart = (part) => {
-      console.log("part: ", part.mime);
       if (
         !fileError &&
         !(
@@ -48,7 +47,6 @@ chatService.sendMessage = async (req, res, next) => {
         });
       } else {
         fileError = true;
-        console.log("error dentro del formerror: ", err);
 
         next({
           message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,

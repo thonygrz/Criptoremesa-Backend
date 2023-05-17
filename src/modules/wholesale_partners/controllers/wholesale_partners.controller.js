@@ -24,7 +24,6 @@ wholesale_partnersController.insertWholesalePartnerInfo = async (
   next
 ) => {
   try {
-    console.log("🚀 ~ req.file", req.file)
     // filling log object info
     let log = logConst;
 
