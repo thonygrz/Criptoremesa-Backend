@@ -1,133 +1,120 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import beneficiariesRepository from "../repositories/beneficiaries.pg.repository";
-import auth from "../../../utils/auth";
-import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-import {env,ENVIROMENTS} from '../../../utils/enviroment'
+
 const beneficiariesService = {};
 const context = "beneficiaries Service";
-const logConst = {
-  is_auth: undefined,
-  success: true,
-  failed: false,
-  ip: undefined,
-  country: undefined,
-  route: "/beneficiaries/",
-  session: null,
-};
 
-beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next,userEmail) => {
+beneficiariesService.getUserFrequentBeneficiaries = async (req, res, next) => {
   try {
-     let log  = logConst;
-     log.route = log.route + 'frequentBeneficiaries'; 
-     log.is_auth = req.isAuthenticated()
-     log.ip = req.connection.remoteAddress
-     const ipInfo = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-     if (ipInfo) log.country = ipInfo.country_name;
-     if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-     }else{
-        await authenticationPGRepository.insertLogMsg(log);
-        logger.info(`[${context}]: Get ${userEmail} frequent beneficiaries`);
-        ObjLog.log(`[${context}]: Get ${userEmail} frequent beneficiaries`);
-        let data = await beneficiariesRepository.getUserFrequentBeneficiaries(userEmail);
-        res.status(200).json(data);
-     }
+    logger.info(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
+    ObjLog.log(`[${context}]: Getting ${req.query.email_user} frequent beneficiaries`);
+    let data = await beneficiariesRepository.getUserFrequentBeneficiaries(req.params.email_user);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
   } catch (error) {
     next(error);
   }
 };
 
-beneficiariesService.createFrequentBeneficiary = async (req, res, next,userEmail) => {
+beneficiariesService.createFrequentBeneficiary = async (req, res, next) => {
   try {
+    logger.info(`[${context}]: Creating frequent beneficiary for ${req.query.email_user}`);
+    ObjLog.log(`[${context}]: Creating frequent beneficiary for ${req.query.email_user}`);
+    let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,req.body.email_user);
+    if (data.id_beneficiary !== '')
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false
+      }
+    else 
+      return {
+        data,
+        status: 500,
+        success: false,
+        failed: true
+      }
+  } catch (error) {
+    next(error);
+  }
+};
 
-    let log  = logConst;
-    log.route = log.route + 'frequentBeneficiaries'; 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      log.success = false;
-      log.failed = true;
-      await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
-      await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Create frequent beneficiary for ${userEmail}`);
-      ObjLog.log(`[${context}]: Create frequent beneficiary for ${userEmail}`);
-      let data = await beneficiariesRepository.createFrequentBeneficiary(req.body,userEmail);
-      if (data.id_beneficiary !== '')
-        res.status(200).json(true);
-      else 
-        res.status(500).json(false)
-    }
+beneficiariesService.deleteFrequentBeneficiary = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Deleting frequent beneficiary`);
+    ObjLog.log(`[${context}]: Deleting frequent beneficiary`);
+    let data = await beneficiariesRepository.deleteFrequentBeneficiary(req.params.beneficiaryId);
+    if (data.sp_ms_frequents_beneficiaries_delete === parseInt(req.params.beneficiaryId)) 
+      return {
+        data: true,
+        status: 200,
+        success: true,
+        failed: false
+      }
+    else 
+      return {
+        data: false,
+        status: 200,
+        success: false,
+        failed: true
+      }
   } catch (error) {
     next(error);
   }
 };
-beneficiariesService.deleteFrequentBeneficiary = async (req, res, next,beneficiaryId) => {
-  try {
 
-    let log  = logConst;
-    log.route = log.route + 'frequentBeneficiaries'; 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      log.failed = true;
-      log.success = false;
-      await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
-      await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Delete frequent beneficiary`);
-      ObjLog.log(`[${context}]: Delete frequent beneficiary`);
-      let data = await beneficiariesRepository.deleteFrequentBeneficiary(beneficiaryId);
-      if (data.sp_ms_frequents_beneficiaries_delete === parseInt(beneficiaryId)) res.status(200).json(true);
-      else res.status(200).json(false);
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-beneficiariesService.updateFrequentBeneficiary = async (req, res, next,beneficiaryId) => {
+beneficiariesService.updateFrequentBeneficiary = async (req, res, next) => {
   try {
-    let log  = logConst;
-    log.route = log.route + 'frequentBeneficiaries'; 
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      log.success = false;
-      log.failed = true;
-      await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
-    }
-    else{
-      await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Update frequent beneficiary`);
-      ObjLog.log(`[${context}]: Update frequent beneficiary`);
-      let data = await beneficiariesRepository.updateFrequentBeneficiary(req.body,beneficiaryId);
-      if (data[0].sp_ms_frequents_beneficiaries_update === '')
-        res.status(200).json(true);
-      else 
-        res.status(500).json(false);
-    }
+    logger.info(`[${context}]: Updating frequent beneficiary`);
+    ObjLog.log(`[${context}]: Updating frequent beneficiary`);
+    let data = await beneficiariesRepository.updateFrequentBeneficiary(req.body,req.params.beneficiaryId);
+    if (data[0].sp_ms_frequents_beneficiaries_update === '')
+      return {
+        data: true,
+        status: 200,
+        success: true,
+        failed: false
+      }
+    else 
+      return {
+        data: false,
+        status: 200,
+        success: false,
+        failed: true
+      }
   } catch (error) {
     next(error);
   }
 };
-//req.params.id
+
+beneficiariesService.contactRequired = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Updating frequent beneficiary`);
+    ObjLog.log(`[${context}]: Updating frequent beneficiary`);
+    let data = await beneficiariesRepository.contactRequired(req.params.id_country);
+    if (data.message)
+      return {
+        data,
+        status: 500,
+        success: true,
+        failed: true
+      }
+    else 
+      return {
+        data,
+        status: 200,
+        success: false,
+        failed: true
+      }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default beneficiariesService;

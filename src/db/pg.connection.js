@@ -2,51 +2,65 @@ import { Pool, Client } from 'pg';
 import { logger } from "../utils/logger";
 import ObjLog from "../utils/ObjLog";
 import { env } from "../utils/enviroment";
-import { notifyChanges } from "../modules/sockets/sockets.coordinator";
 
-const connectionData = {
-  user: env.PG_DB_USER,
-  host: env.PG_DB_HOST,
-  database: env.PG_DB_NAME,
-  password: env.PG_DB_PASSWORD,
-  port: env.PG_DB_PORT,
+const connectionDbSixmap = {
+  user: env.PG_DB_SM_USER,
+  host: env.PG_DB_SM_HOST,
+  database: env.PG_DB_SM_NAME,
+  password: env.PG_DB_SM_PASSWORD,
+  port: env.PG_DB_SM_PORT,
   //   currentSchema: "sec_sixmap_users",
 };
 
-const pool = new Pool(connectionData);
-const client = new Client(connectionData);
+const connectionDbCriptoremesa = {
+  user: env.PG_DB_CR_USER,
+  host: env.PG_DB_CR_HOST,
+  database: env.PG_DB_CR_NAME,
+  password: env.PG_DB_CR_PASSWORD,
+  port: env.PG_DB_CR_PORT,
+  //   currentSchema: "sec_sixmap_users",
+};
 
-pool
+export const poolSM = new Pool(connectionDbSixmap);
+const clientSM = new Client(connectionDbSixmap);
+
+poolSM
   .connect()
   .then((response) => {
-    logger.info("PG-DB is connected");
-    ObjLog.log("PG-DB is connected");
+    logger.info("PG-DB-SM is connected");
+    ObjLog.log("PG-DB-SM is connected");
+    poolSM.on(
+      'connect', clientSM => {
+        clientSM.on('notice', notice => {
+          console.log(notice.message)
+        })
+      }
+    )
   })
   .catch((err) => {
-    logger.error(`PGDB is not connected: ${err}`);
-    ObjLog.log(`PGDB is not connected: ${err}`);
-    client.end();
+    logger.error(`PGDBSM is not connected: ${err}`);
+    ObjLog.log(`PGDBSM is not connected: ${err}`);
+    clientSM.end();
   });
 
-// client.connect()
-// .then(response => {
-//   logger.info("PG-DB client-listener is connected");
-//   ObjLog.log("PG-DB client-listener is connected");
+export const poolCR = new Pool(connectionDbCriptoremesa);
+const clientCR = new Client(connectionDbCriptoremesa);
 
-//   // // Se escuchan los canales
-//   // client.query("listen level_upgrade");
-
-//   // Se recibe el evento y se envía al FE
-//   // client.on('notification', async (data) => {
-//   //     if (data.channel === "level_upgrade") {
-//   //         const level = JSON.parse(data.payload);
-//   //         notifyChanges(data.channel, level);
-//   //     }
-//   // });
-// })
-// .catch(err => {
-//     logger.error(`PG-DB client-listener is not connected: ${err}`);
-//     client.end();
-// });
-
-export default pool;
+poolCR
+  .connect()
+  .then((response) => {
+    logger.info("PG-DB-CR is connected");
+    ObjLog.log("PG-DB-CR is connected");
+    poolCR.on(
+      'connect', clientCR => {
+        clientCR.on('notice', notice => {
+          console.log(notice.message)
+        })
+      }
+    )
+  })
+  .catch((err) => {
+    logger.error(`PGDBCR is not connected: ${err}`);
+    ObjLog.log(`PGDBCR is not connected: ${err}`);
+    clientCR.end();
+  });

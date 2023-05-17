@@ -1,73 +1,72 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import payMethodsRepository from "../repositories/payMethods.pg.repository";
-import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
-import {env,ENVIROMENTS} from '../../../utils/enviroment'
+
 const payMethodsService = {};
 const context = "pay Methods Service";
-const logConst = {
-  is_auth: undefined,
-  success: true,
-  failed: false,
-  ip: undefined,
-  country: undefined,
-  route: "/pay_methods",
-  session: null,
-};
 
-payMethodsService.getPayMethodsByCountry = async (req, res, next,countryId,origin) => {
+payMethodsService.getPayMethodsByCountryAndCurrency = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      log.success = false;
-      log.failed = true;
-      await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
+    logger.info(`[${context}]: Getting Pay Methods by Country and Currency`);
+    ObjLog.log(`[${context}]: Getting Pay Methods by Country and Currency`);
+    let data = await payMethodsRepository.getPayMethodsByCountryAndCurrency(req.query.id_country,req.query.id_currency,req.query.only_pay);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
     }
-    else{
-      await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get Pay Methods by Country`);
-      ObjLog.log(`[${context}]: Get Pay Methods by Country`);
-      data = await payMethodsRepository.getPayMethodsByCountry(countryId);
-      res.status(200).json(data);
-    }
-    
   } catch (error) {
     next(error);
   }
 };
 
-payMethodsService.getPayMethodById = async (req, res, next,payMethodId) => {
+payMethodsService.getPayMethodById = async (req, res, next) => {
   try {
-
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    let data = {}
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      log.failed = true;
-      log.success = false
-      await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
-    }else{
-      await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get Pay Method by Id ${payMethodId}`);
-      ObjLog.log(`[${context}]: Get Pay Method by Id ${payMethodId}`);
-      data = await payMethodsRepository.getPayMethodById(payMethodId);
-      res.status(200).json(data);
+    logger.info(`[${context}]: Getting Pay Methods by Country`);
+    ObjLog.log(`[${context}]: Getting Pay Methods by Country`);
+    let data = await payMethodsRepository.getPayMethodById(req.params.pay_method_id);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
     }
   } catch (error) {
     next(error);
   }
 };
+
+payMethodsService.deposit_method_by_country = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting deposit Methods by Country`);
+    ObjLog.log(`[${context}]: Getting deposit Methods by Country`);
+    let data = await payMethodsRepository.deposit_method_by_country(req.params.id_country,req.params.id_bank);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+payMethodsService.depositMethodsByBank = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting Pay Method by bank`);
+    ObjLog.log(`[${context}]: Getting Pay Method by bank`);
+    let data = await payMethodsRepository.depositMethodsByBank(req.params.id_bank);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default payMethodsService;

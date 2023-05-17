@@ -3,12 +3,6 @@ import veriflevelsController from "./controllers/veriflevels.controller";
 import guard from "../../utils/guard";
 const veriflevelsRouter = Router();
 
-// IF YOU WERE USING cg/auth/login
-veriflevelsRouter.post(
-  "/getActive",
-  // guard.verifyAdmin("/login"),
-  veriflevelsController.getveriflevels
-);
 
 veriflevelsRouter.post(
   "/requestWholesalePartner",
@@ -74,12 +68,6 @@ veriflevelsRouter.get(
   "/getWholesalePartnerRequestsRequirementsByEmail/:id",
   // guard.verifyAdmin("/login"),
   veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail
-);
-
-veriflevelsRouter.get(
-  "/validateRemittance",
-  // guard.verifyAdmin("/login"),
-  veriflevelsController.validateRemittance
 );
 
 export default veriflevelsRouter;

@@ -1,4 +1,4 @@
-import pool from "../../../db/pg.connection";
+import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 
@@ -9,16 +9,31 @@ chatPGRepository.sendMessage = async (body) => {
   try {
     logger.info(`[${context}]: Sending message to db`);
     ObjLog.log(`[${context}]: Sending message to db`);
-    console.log('BODY EN REPOSITORY: ',body)
-    const resp = await pool.query(
-      `SELECT * FROM msg_app.sp_app_msg_insert(${body.email_user ? `'${body.email_user}'` : null},
+    const resp = await poolSM.query(
+      `SELECT * FROM msg_app.sp_app_msg_insert(${
+        body.email_user ? `'${body.email_user}'` : null
+      },
                                                null,
-                                               $$${JSON.stringify(body.message_body)}$$,
-                                               ${body.file ? `'${body.file}'` : null},
+                                               $$${JSON.stringify(
+                                                 body.message_body
+                                               )}$$,
+                                               ${
+                                                 body.file
+                                                   ? `'${body.file}'`
+                                                   : null
+                                               },
                                                '${body.msg_date}',
                                                ${body.is_sent},
-                                               ${body.uniq_id ? `'${body.uniq_id}'` : null},
-                                               ${body.time_zone ? `'${body.time_zone}'` : null}
+                                               ${
+                                                 body.uniq_id
+                                                   ? `'${body.uniq_id}'`
+                                                   : null
+                                               },
+                                               ${
+                                                 body.time_zone
+                                                   ? `'${body.time_zone}'`
+                                                   : null
+                                               }
                                                )`
     );
     return resp.rows;
@@ -31,7 +46,7 @@ chatPGRepository.getMessages = async (user_email) => {
   try {
     logger.info(`[${context}]: Getting messages from db`);
     ObjLog.log(`[${context}]: Getting messages from db`);
-    const resp = await pool.query(
+    const resp = await poolSM.query(
       `SELECT * FROM msg_app.sp_chat_msgs_get_by_email('${user_email}')`
     );
     return resp.rows[0].sp_chat_msgs_get_by_email;
@@ -44,7 +59,7 @@ chatPGRepository.getMessagesByUniqId = async (uniq_id) => {
   try {
     logger.info(`[${context}]: Getting messages from db`);
     ObjLog.log(`[${context}]: Getting messages from db`);
-    const resp = await pool.query(
+    const resp = await poolSM.query(
       `SELECT * FROM msg_app.sp_chat_msgs_get_by_uniq_id('${uniq_id}')`
     );
     return resp.rows[0].sp_chat_msgs_get_by_uniq_id;

@@ -1,75 +1,114 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import banksRepository from "../repositories/banks.pg.repository";
-import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import { env , ENVIROMENTS} from "../../../utils/enviroment"
 
 const banksService = {};
 const context = "banks Service";
-const logConst = {
-  is_auth: undefined,
-  success: true,
-  failed: false,
-  ip: undefined,
-  country: undefined,
-  route: "/banks",
-  session: null,
-};
 
-banksService.getBanks = async (req, res, next,countryId,payMethodId,currencyId,origin) => {
+banksService.getBanks = async (req, res, next) => {
   try {
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-      log.success = false;
-      log.failed = true;
-      await authenticationPGRepository.insertLogMsg(log);
-      res.status(401).json({ message: "Unauthorized" });
+    logger.info(`[${context}]: Getting ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
+    ObjLog.log(`[${context}]: Getting ${req.query.origin === 'true' ? 'origin' : 'destiny'} banks`);
 
-    }
-    else{
-      await authenticationPGRepository.insertLogMsg(log);
-      logger.info(`[${context}]: Get ${origin === true ? 'origin' : 'destiny'} banks`);
-      ObjLog.log(`[${context}]: Get ${origin === true ? 'origin' : 'destiny'} banks`);
-      let data = {}
-      if (origin === true)
-        data = await banksRepository.getOriginBanks(countryId,payMethodId,currencyId);
-      else 
-        data = await banksRepository.getDestinyBanks(countryId,payMethodId,currencyId);
-      res.status(200).json(data);
+    let data
+    if (req.query.origin === 'true')
+      data = await banksRepository.getOriginBanks(req.query.country_id,req.query.pay_method_id,req.query.currency_id);
+    else 
+      data = await banksRepository.getDestinyBanks(req.query.country_id,req.query.pay_method_id,req.query.currency_id);
+    
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
     }
   } catch (error) {
     next(error);
   }
 };
 
-banksService.getBankById = async (req, res, next,bankId) => {
+banksService.getBankById = async (req, res, next) => {
   try {
-    let log  = logConst;
-    log.is_auth = req.isAuthenticated()
-    log.ip = req.connection.remoteAddress;
-    const resp = await authenticationPGRepository.getIpInfo(req.connection.remoteAddress);
-    if (resp) log.country = resp.country_name;
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) log.session = req.sessionID;
-    if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION){
-        log.success = false;
-        log.failed = true;
-        await authenticationPGRepository.insertLogMsg(log);
-        res.status(401).json({ message: "Unauthorized" });
-    }else{
-        logger.info(`[${context}]: Get bank by id ${bankId}`);
-        ObjLog.log(`[${context}]: Get bank by id ${bankId}`);
-        await authenticationPGRepository.insertLogMsg(log);
-        let data = {}
-          data = await banksRepository.getBankById(bankId);
-        res.status(200).json(data);
+    logger.info(`[${context}]: Getting bank by id ${req.params.bank_id}`);
+    ObjLog.log(`[${context}]: Getting bank by id ${req.params.bank_id}`);
+    let data = await banksRepository.getBankById(req.params.bank_id);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
     }
   } catch (error) {
     next(error);
   }
 };
+
+banksService.getBankAccountsById = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting bank accounts by id_country and id_currency`);
+    ObjLog.log(`[${context}]: Getting bank accounts by id_country and id_currency`);
+    let data = await banksRepository.getBankAccountsById({ 
+                                                        id_country:  req.params.id_country,
+                                                        id_currency: req.params.id_currency
+                                                      });
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+banksService.getBankAccountById = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting bank account by id`);
+    ObjLog.log(`[${context}]: Getting bank account by id`);
+    let data = await banksRepository.getBankAccountById(req.params.id_bank_account);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+banksService.getBankAccountByPayMethod = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting bank account by pay method`);
+    ObjLog.log(`[${context}]: Getting bank account by pay method`);
+    let data = await banksRepository.getBankAccountByPayMethod(req.params.id_pay_method);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+banksService.getBanksByPayMethod = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Getting banks by pay method`);
+    ObjLog.log(`[${context}]: Getting banks by pay method`);
+    let data = await banksRepository.getBanksByPayMethod(req.params.id_pay_method);
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default banksService;

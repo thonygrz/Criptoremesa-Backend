@@ -1,13 +1,15 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import authenticationService from "../services/authentication.service";
+import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
 const authenticationController = {};
 const context = "Authentication Controller";
 
-//AUTENTICACION CON PASSPORT
-authenticationController.login = (req, res, next) => {
+//PASSPORT AUTHENTICATION
+authenticationController.login = async (req, res, next) => {
   try {
+    // calling service
     logger.info(`[${context}]: Sending service to login`);
     ObjLog.log(`[${context}]: Sending service to login`);
 
@@ -17,8 +19,9 @@ authenticationController.login = (req, res, next) => {
   }
 };
 
-authenticationController.logout = (req, res, next) => {
+authenticationController.logout = async (req, res, next) => {
   try {
+    // calling service
     logger.info(`[${context}]: Sending service to logout`);
     ObjLog.log(`[${context}]: Sending service to logout`);
 

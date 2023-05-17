@@ -21,7 +21,6 @@ guard.verifyAdmin = (uri) => {
 
       // IF YOU WANT TO RECEIVE A PARAM
       // console.log(uri);
-      console.log("BODY: ", req.body.usernameField);
       usernameField = req.body.usernameField;
 
       const user = ObjUserSessionData.get().user;

@@ -2,55 +2,106 @@ import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import authenticationPGRepository from "../repositories/authentication.pg.repository";
 import auth from "../../../utils/auth";
-import axios from "axios";
-import { response } from "express";
 import { env } from "../../../utils/enviroment";
+import axios from "axios";
 
 const authenticationService = {};
 const context = "Authentication Service";
 
+// declaring log object
+const logConst = {
+  is_auth: null,
+  success: true,
+  failed: false,
+  ip: null,
+  country: null,
+  route: null,
+  session: null,
+};
+
 authenticationService.login = async (req, res, next) => {
   try {
+    // filling log object info
+    let log = logConst;
+
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    log.params = req.params;
+    log.query = req.query;
+    log.body = req.body;
+
+    
+
     // logger.info(`[${context}]: Verifying captcha`);
     // ObjLog.log(`[${context}]: Verifying captcha`);
 
     // if (!req.body.captcha) {
+    //   log.success = false;
+    //   log.failed = true;
+    //   log.status = 500;
+    //   log.response = {
+    //     captchaSuccess: false,
+    //     msg: "Ha ocurrido un error. Por favor completa el captcha",
+    //   };
+    //   await authenticationPGRepository.insertLogMsg(log);
     //   res.status(500).json({
     //     captchaSuccess: false,
     //     msg: "Ha ocurrido un error. Por favor completa el captcha",
     //   });
     // } else {
-    //     // Secret key
+    //   // Secret key
     //   const secretKey = env.reCAPTCHA_SECRET_KEY;
 
     //   // Verify URL
-    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.connection.remoteAddress}`;
+    //   const verifyURL = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
+    //     req.body.captcha
+    //   }&remoteip=${req.header("Client-Ip")}`;
 
     //   // Make a request to verifyURL
     //   const body = await axios.get(verifyURL);
 
-    //   // // If not successful
+    //   // If not successful
     //   if (body.data.success === false) {
+    //     log.success = false;
+    //     log.failed = true;
+    //     log.status = 500;
+    //     log.response = {
+    //       captchaSuccess: false,
+    //       msg: "Falló la verificación del Captcha",
+    //     };
+    //     await authenticationPGRepository.insertLogMsg(log);
     //     res
     //       .status(500)
-    //       .json({ captchaSuccess: false, msg: "Falló la verificación del Captcha" });
+    //       .json({
+    //         captchaSuccess: false,
+    //         msg: "Falló la verificación del Captcha",
+    //       });
+    //   } else {
+        // If successful
+
+        logger.info(`[${context}]: Sending module to verify`);
+        ObjLog.log(`[${context}]: Sending module to verify`);
+
+        auth.verify(req, res, next);
     //   }
-    //   else{
-          // If successful
-
-          logger.info(`[${context}]: Sending module to verify`);
-          ObjLog.log(`[${context}]: Sending module to verify`);
-
-    auth.verify(req, res, next);
-    // }
     // }
   } catch (error) {
-    console.log(error)
     next(error);
   }
 };
 
-authenticationService.logout = (req, res, next) => {
+authenticationService.logout = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending module to logout`);
     ObjLog.log(`[${context}]: Sending module to logout`);
@@ -66,12 +117,9 @@ authenticationService.protected = async (req, res, next) => {
     ObjLog.log(`[${context}]: Protected`);
     let countryResp = null;
     let sess = null;
-    console.log('req.isAuthenticated(): ',req.isAuthenticated())
-    console.log('req.session: ',req.session)
-    console.log('req.user: ',req.user)
     if (req.isAuthenticated()) {
       const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
+        req.header("Client-Ip")
       );
       if (resp) countryResp = resp.country_name;
       if (await authenticationPGRepository.getSessionById(req.sessionID))
@@ -81,7 +129,7 @@ authenticationService.protected = async (req, res, next) => {
         is_auth: req.isAuthenticated(),
         success: true,
         failed: false,
-        ip: req.connection.remoteAddress,
+        ip: req.header("Client-Ip"),
         country: countryResp,
         route: "/protected-route",
         session: sess,
@@ -93,7 +141,7 @@ authenticationService.protected = async (req, res, next) => {
       req.session.destroy();
 
       const resp = authenticationPGRepository.getIpInfo(
-        req.connection.remoteAddress
+        req.header("Client-Ip")
       );
       let countryResp = null;
       sess = null;
@@ -107,7 +155,7 @@ authenticationService.protected = async (req, res, next) => {
         is_auth: req.isAuthenticated(),
         success: false,
         failed: true,
-        ip: req.connection.remoteAddress,
+        ip: req.header("Client-Ip"),
         country: countryResp,
         route: "/protected-route",
         session: sess,

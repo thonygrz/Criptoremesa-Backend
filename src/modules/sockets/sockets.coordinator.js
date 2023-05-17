@@ -4,6 +4,10 @@ import ObjLog from "../../utils/ObjLog";
 import redisClient from "../../utils/redis";
 import chatSocketService from "../chat/services/chat-socket.service";
 import chatPGRepository from "../chat/repositories/chat.pg.repository";
+import ratesPGRepository from "../rates/repositories/rates.pg.repository";
+import usersPGRepository from "../users/repositories/users.pg.repository";
+import remittancesPGRepository from "../remittances/repositories/remittances.pg.repository";
+// import {replaceOperationRoute} from '../../app/server'
 
 import fs from "fs";
 
@@ -21,100 +25,88 @@ export async function SocketServer(server) {
   socketServer = io;
 
   io.on("connection", (socket) => {
-    logger.info(`[${context}] New connection stablished`);
+    logger.debug(`[${context}] New connection stablished`);
     ObjLog.log(`[${context}] New connection stablished`);
-    // console.log('in connection: ', socket.id)
+
+    socket.on("disconnect", (reason) => {
+      logger.warn(`DISCONNECT REASON: ${reason}`);
+    });
 
     socket.on("connect_error", (err) => {
-      console.log(`connect_error due to ${err.message}`);
+      logger.error(`connect_error due to ${err.message}`);
     });
 
     socket.on("new_connection", async (val) => {
-      console.log('New id connection from FE: ',socket.id)
-      console.log('val from FE: ',val)
       redisClient.set(val, socket.id);
       redisClient.get(val, function (err, reply) {
         // reply is null when the key is missing
-        console.log("Redis id socket reply: ", reply);
+        // console.log("Redis id socket reply: ", reply);
       });
 
       let resp = await chatPGRepository.getMessages(val);
-      resp.messages.forEach((el) => {
-        if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
-          el.file = fs.readFileSync(el.file);
-        }
-      })
+      if (resp.messages) {
+        resp.messages.forEach((el) => {
+          if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
+            el.file = fs.readFileSync(el.file);
+          }
+        })
+      }
       notifyChanges(resp.socket_channel, resp);
       // redisClient.end(true);
     });
 
     socket.on("new_connection_basic_chat", async (val) => {
-      console.log('New id connection basic_chat from FE: ',socket.id)
-      console.log('val from FE: ',val)
       redisClient.set(val, socket.id);
       redisClient.get(val, function (err, reply) {
         // reply is null when the key is missing
-        console.log("Redis id socket reply: ", reply);
+        // console.log("Redis id socket reply: ", reply);
       });
 
       let resp = await chatPGRepository.getMessagesByUniqId(val);
-      resp.messages.forEach((el) => {
-        if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
-          el.file = fs.readFileSync(el.file);
-        }
-      })
+      if (resp.messages) {
+        resp.messages.forEach((el) => {
+          if (el.file !== 'null' && (el.type === 'image' || el.type === 'voice')) {
+            el.file = fs.readFileSync(el.file);
+          }
+        })
+      }
       notifyChanges(resp.socket_channel, resp);
       // redisClient.end(true);
     });
 
     socket.on("verif_code", async (val) => {
-      logger.info(`[${context}] Sending verif code notification`);
+      logger.debug(`[${context}] Sending verif code notification`);
       ObjLog.log(`[${context}] Sending verif code notification`);
 
-      // console.log('socket from FE',socket.id)
-      // console.log('val ofrom FE',val)
-        console.log('DEL FRONT: ',val)
         let data
         if (val.msg === 'Time started')
           data = val
         else 
           data = await usersPGRepository.verifCode(val.ident_user,val.code);
 
-        console.log('DATA:',data)
-
         redisClient.get(val.email_user, function (err, reply) {
           // reply is null when the key is missing
-          console.log("Redis id socket reply: ", reply);
           socketServer.sockets.to(reply).emit('verif_code_response', data);
         });
     });
 
     socket.on("level_upgrade", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
-      console.log('socket from Sixm',socket.id)
-      console.log('val from Sixm',val)
-      
       notifyChanges('level_upgrade', val);
     });
 
     socket.on("from_pro_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from frontend`);
+      logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
-
-      console.log('from_pro_chat from FE: ',socket.id)
-      console.log('val from FE: ',val)
 
       await chatSocketService.sendMessage(val);
     });
 
     socket.on("to_pro_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
-
-      console.log('socket from Sixm',socket.id)
-      console.log('val from Sixm',val)
 
       if (!val.messages && val.file !== 'null' && val.file !== null)
         val.file = fs.readFileSync(val.file);
@@ -129,53 +121,95 @@ export async function SocketServer(server) {
     });
 
     socket.on("chat_asign", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
-
-      console.log('socket from Sixm',socket.id)
-      console.log('val from Sixm',val)
 
       notifyChanges('chat_asign', val);
     });
 
     socket.on("from_basic_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from frontend`);
+      logger.debug(`[${context}] Receiving data from frontend`);
       ObjLog.log(`[${context}] Receiving data from frontend`);
-
-      console.log('from_basic_chat from FE: ',socket.id)
-      console.log('val from FE: ',val)
 
       await chatSocketService.sendMessage(val);
     });
 
     socket.on("to_basic_chat", async (val) => {
-      logger.info(`[${context}] Receiving data from another backend`);
+      logger.debug(`[${context}] Receiving data from another backend`);
       ObjLog.log(`[${context}] Receiving data from another backend`);
 
-      console.log('New id connection from FE: ',socket.id)
-      console.log('val from FE: ',val)
-
       notifyChanges('to_basic_chat', val);
+    });
+
+    socket.on("get_rate", async (val) => {
+      logger.debug(`[${context}] Receiving data from frontend`);
+      ObjLog.log(`[${context}] Receiving data from frontend`);
+
+      let rate = await ratesPGRepository.getRate(val);
+      rate.email_user = val.email_user
+      notifyChanges('get_rate', rate);
+    });
+
+    socket.on("get_bank_fee", async (val) => {
+      logger.debug(`[${context}] Receiving data from frontend`);
+      ObjLog.log(`[${context}] Receiving data from frontend`);
+
+      console.log('get_bank_fee: ',val)
+
+      let fee = await remittancesPGRepository.getBankFee(val);
+      fee.email_user = val.email_user
+
+      console.log('response: ',fee)
+
+      notifyChanges('get_bank_fee', fee);
+    });
+
+    socket.on("rate_change", async (val) => {
+      logger.debug(`[${context}] Receiving data from backend`);
+      ObjLog.log(`[${context}] Receiving data from backend`);
+
+      socketServer.emit('rate_change', val);
+    });
+
+    socket.on("operation_route_update", async (val) => {
+      logger.debug(`[${context}] Receiving data from another backend`);
+      ObjLog.log(`[${context}] Receiving data from another backend`);
+
+      // replaceOperationRoute(val)
+
+      routes.forEach((el,i) => {
+        if (el.id_operation_route === val.operationRoute.id_operation_route) 
+        routes[i].profit_margin = val.operationRoute.profit_margin
+        routes[i].percent_limit = val.operationRoute.percent_limit
+      })
     });
   });
 }
 
 export function notifyChanges(event, data) {
   try {
-    logger.info(`[${context}] Sending update notification to FE`);
-    ObjLog.log(`[${context}] Sending update notification to FE`);
+    if (!data.api) {
+      logger.debug(`[${context}] Sending update notification to FE`);
+      ObjLog.log(`[${context}] Sending update notification to FE`);
+    }
 
     let redisKey
 
     if (data.email_user) redisKey = data.email_user
     else if (data.uniq_id) redisKey = data.uniq_id  
 
-    redisClient.get(redisKey, function (err, reply) {
-      // reply is null when the key is missing
-      console.log("Redis id socket reply: ", reply);
-      console.log("socket sending to FE: ", data);
-      socketServer.sockets.to(reply).emit(event, data);
-    });
+    if (redisKey) {
+      redisClient.get(redisKey, function (err, reply) {
+        // reply is null when the key is missing
+        logger.debug(`Sendind socket to FE. Redis id: ${reply}. Data: ${data}`);
+        socketServer.sockets.to(reply).emit(event, data);
+      });
+    } else if (data.api) {
+      // logger.debug(`Sendind API socket to FE. Data: ${data}`)
+      socketServer.sockets.emit(event, data);
+    } else {
+      logger.error('Socket id not found in Redis')
+    }
       
     // socketServer.sockets.emit(event, data);
   } catch (error) {

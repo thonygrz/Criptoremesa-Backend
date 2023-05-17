@@ -4,112 +4,10 @@ import guard from "../../utils/guard";
 const usersRouter = Router();
 
 // IF YOU WERE USING cg/auth/login
-usersRouter.get(
-  "/getAll",
-  // guard.verifyAdmin("/login"),
-  usersController.getusers
-);
-
-usersRouter.get(
-  "/getAllClients",
-  // guard.verifyAdmin("/login"),
-  usersController.getusersClient
-);
-
-usersRouter.post(
-  "/create",
-  // guard.verifyAdmin("/login"),
-  usersController.createUser
-);
-
-usersRouter.post(
-  "/createClient",
-  // guard.verifyAdmin("/login"),
-  usersController.createUserClient
-);
-
 usersRouter.post(
   "/createNewClient",
   // guard.verifyAdmin("/login"),
   usersController.createNewClient
-);
-
-usersRouter.put(
-  "/updateClient",
-  // guard.verifyAdmin("/login"),
-  usersController.updateUserClient
-);
-
-usersRouter.put(
-  "/updateEmployee",
-  // guard.verifyAdmin("/login"),
-  usersController.updateUserEmployee
-);
-
-usersRouter.get(
-  "/getClientById/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.getusersClientById
-);
-
-usersRouter.get(
-  "/getEmployeeById/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.getusersEmployeeById
-);
-
-usersRouter.get(
-  "/getEmployeePhonesById/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.getEmployeePhonesById
-);
-
-usersRouter.get(
-  "/getClientPhonesById/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.getClientPhonesById
-);
-
-usersRouter.get(
-  "/getDepartmentsByUserId/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.getDepartmentsByUserId
-);
-
-usersRouter.delete(
-  "/blockClient/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.blockClient
-);
-
-usersRouter.delete(
-  "/blockEmployee/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.blockEmployee
-);
-
-usersRouter.delete(
-  "/unblockClient/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.unblockClient
-);
-
-usersRouter.delete(
-  "/unblockEmployee/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.unblockEmployee
-);
-
-usersRouter.get(
-  "/getDataFromSheetsClients",
-  // guard.verifyAdmin("/login"),
-  usersController.getDataFromSheetsClients
-);
-
-usersRouter.get(
-  "/getDataFromSheetsEmployees",
-  // guard.verifyAdmin("/login"),
-  usersController.getDataFromSheetsEmployees
 );
 
 usersRouter.get(
@@ -143,6 +41,12 @@ usersRouter.post(
 );
 
 usersRouter.post(
+  "/requestLevelTwo",
+  // guard.verifyAdmin("/login"),
+  usersController.requestLevelTwo
+);
+
+usersRouter.post(
   "/forgotPassword",
   // guard.verifyAdmin("/login"),
   usersController.forgotPassword
@@ -154,16 +58,16 @@ usersRouter.post(
   usersController.newPassword
 );
 
-usersRouter.get(
-  "/getClientByEmail/:id",
-  // guard.verifyAdmin("/login"),
-  usersController.getusersClientByEmail
-);
-
 usersRouter.post(
   "/sendVerificationCodeByEmail",
   // guard.verifyAdmin("/login"),
   usersController.sendVerificationCodeByEmail
+);
+
+usersRouter.post(
+  "/sendVerificationCodeByWhatsApp",
+  // guard.verifyAdmin("/login"),
+  usersController.sendVerificationCodeByWhatsApp
 );
 
 usersRouter.post(
@@ -178,22 +82,10 @@ usersRouter.post(
   usersController.sendVerificationCodeBySMS
 );
 
-usersRouter.post(
-  "/approveLevelOne",
-  // guard.verifyAdmin("/login"),
-  usersController.approveLevelOne
-);
-
 usersRouter.get(
-  "/getLevelQuestions",
+  "/getLevelQuestions/:id_resid_country",
   // guard.verifyAdmin("/login"),
   usersController.getLevelQuestions
-);
-
-usersRouter.post(
-  "/requestLevelTwo",
-  // guard.verifyAdmin("/login"),
-  usersController.requestLevelTwo
 );
 
 usersRouter.post(
@@ -206,6 +98,78 @@ usersRouter.post(
   "/deactivateUser",
   // guard.verifyAdmin("/login"),
   usersController.deactivateUser
+);
+
+usersRouter.get(
+  "/referrals",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferrals
+);
+
+usersRouter.get(
+  "/:email_user/referrals/operations",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsOperations
+);
+
+usersRouter.get(
+  "/:email_user/referrals/totalByCountry",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsByCountry
+);
+
+usersRouter.get(
+  "/:email_user/referrals/totalByStatus",
+  // guard.verifyAdmin("/login"),
+  usersController.getReferralsByStatus
+);
+
+usersRouter.post(
+  "/:email_user/ambassador/request",
+  // guard.verifyAdmin("/login"),
+  usersController.ambassadorRequest
+);
+
+usersRouter.head(
+  "/referrers/:cust_cr_cod_pub",
+  // guard.verifyAdmin("/login"),
+  usersController.verifReferrallByCodPub
+);
+
+usersRouter.post(
+  "/accounts/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.insertUserAccount
+);
+
+usersRouter.get(
+  "/accounts/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.getUserAccounts
+);
+
+usersRouter.delete(
+  "/accounts/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.deleteUserAccount
+);
+
+usersRouter.post(
+  "/fileName",
+  // guard.verifyAdmin("/login"),
+  usersController.getFileName
+);
+
+usersRouter.get(
+  "/migrated/:id",
+  // guard.verifyAdmin("/login"),
+  usersController.getMigratedInfo
+);
+
+usersRouter.get(
+  "/validate/:email",
+  // guard.verifyAdmin("/login"),
+  usersController.validateEmail
 );
 
 export default usersRouter;

@@ -15,9 +15,10 @@ const fs = require("fs");
 
 const httpsServer = https.createServer(
   {
-    key: fs.readFileSync(path.join(__dirname, "utils", "cert", "key.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "utils", "cert", "cert.pem")),
-    requestCert: false,
+    key: fs.readFileSync('/etc/ssl/certs/zero-ssl/bithonor/private.key'),
+    cert: fs.readFileSync('/etc/ssl/certs/zero-ssl/bithonor/certificate.crt'),
+    ca: fs.readFileSync('/etc/ssl/certs/zero-ssl/bithonor/ssl-bundle.crt'),
+    requestCert: true,
     rejectUnauthorized: false
   },
   app
@@ -49,7 +50,5 @@ httpsServer.listen(app.get("port"), "0.0.0.0", () => {
 //   logger.info(`Server on port ${app.get("port")}`);
 //   ObjLog.log(`Server on port ${app.get("port")}`);
 // });
-
-console.log(app.get('env'))
 
 SocketServer(httpsServer);

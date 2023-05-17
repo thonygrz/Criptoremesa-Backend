@@ -11,29 +11,37 @@ import cookieParser from "cookie-parser";
 import requestIP from "request-ip";
 import session from "express-session";
 let pgSession = require("connect-pg-simple")(session);
-import pgPool from "../db/pg.connection";
+import { poolCR } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
-// import { events } from "../modules/users/services/users.service";
+import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
+import ws from '../utils/websocketTradeAPIs'
+import bodyParser from "body-parser";
+import whatsapp from "../utils/whatsapp";
+
+//jobs
+import transactionsJob from '../utils/jobs/transactions'
 
 // SETTINGS
 const app = express();
+
+// si no se quiere enviar nunca 304
+// app.disable('etag');
+
+app.use(bodyParser.json({limit: '50mb'})); 
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.set("port", env.PORT || 3000);
-const opts = {
-  multiples: true,
-  uploadDir: env.FILES_DIR,
-  maxFileSize: 2 * 1024 * 1024,
-  keepExtensions: true,
-};
 
 // MIDDLEWARES
 app.use(morgan("dev", { stream: logger.stream }));
 app.use(json());
-// app.use(express.json());
-// app.use(express.urlencoded({extended: true}));
+
 app.use(
   cors({
-    origin: ["http://186.185.29.75:8081","http://localhost:8081","http://186.185.29.75:8080","http://localhost:8080","http://186.185.127.134:8080","http://186.185.127.134:8081","https://localhost:3010","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3011","https://localhost:3011","https://localhost:8081","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3020","https://localhost:3020","https://ec2-3-143-246-144.us-east-2.compute.amazonaws.com:3014","https://localhost:3014"],
+    origin: [
+      "https://bithonor.com",
+      "https://www.bithonor.com"
+    ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
@@ -44,22 +52,35 @@ app.use(helmet());
 app.use(
   session({
     store: new pgSession({
-      pool: pgPool,
+      pool: poolCR,
       tableName: "session_obj", // Use another table-name than the default "session" one
-      schemaName: "sec_cust",
+      schemaName: "basics",
     }),
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
     saveUninitialized: true,
-    cookie: { maxAge: 86400000 , secure: true}, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
-    // maxAge: 60
+    cookie: {
+      expires: 900000,
+      secure: true,
+    }, // 1 day (1000 ms / sec * 60 sec /1 min * 60 min /1 h * 24 h/1 day)
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
-  logger.info(`[Request]: ${req.method} ${req.originalUrl}`);
+  logger.debug(`[Request]: ${req.method} ${req.originalUrl}`);
   ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
+
+  if (req.session.views) {
+    // Increment the number of views.
+    req.session.views++;
+
+    // Session will expires after 1 min
+    // of in activity
+  } else {
+    req.session.views = 1;
+  }
+
   next();
 });
 
@@ -72,79 +93,108 @@ app.use((req, res, next) => {
 app.use("/cr", routerIndex);
 
 app.use(async (req, res, next) => {
-  // console.log('middleware despues de passport y todo el auth')
-
-  // console.log('middleware')
-  // console.log(req.session)
-  // console.log(req.user)
-  // console.log(req.isAuthenticated())
-  
-  ObjUserSessionData.set({
-    session: {
-      session_id: req.session.id,
-      cookie: req.session.cookie,
-    },
-    user: req.user,
-  });
-  // res.status(200).send("prooving");
-
-  // if (!req.isAuthenticated) {
-  //   let response = null;
-  //   if (req.user) {
-  //     console.log("email: ", req.user.email);
-  //     response = await authenticationPGRepository.loginFailed(req.user.email);
-  //     console.log("response: ", response);
-  //   }
-  //   console.log('response: ',response)
-  //   res.json({
-  //     isAuthenticated: false,
-  //     loginAttempts: response ? response.login_attempts : 'NA',
-  //     atcPhone: response ? response.atcPhone : 'NA',
-  //     userExists: expressObj.userExists,
-  //     captchaSuccess: true,
-  //   });
-  // }
-
-  next();
+  try {
+    ObjUserSessionData.set({
+      session: {
+        session_id: req.session ? req.session.id : null,
+        cookie: req.session ? req.session.cookie : null,
+      },
+      user: req.user,
+    });
+    next();
+  } catch (error) {
+    next(error)
+  }
 });
 
 // ERROR HANDLER
-app.use(async function (err, req, res, next) {
-  logger.error(err.message);
-  ObjLog.log(err.message);
+app.use(async function (err, req, res,next) {
 
-  const resp = await authenticationPGRepository.getIpInfo(
-    req.connection.remoteAddress
-  );
-  let countryResp = null;
-  let sess = null;
+  const context = "ERROR HANDLER";
 
-  if (resp) countryResp = resp.country_name;
-
-  if (await authenticationPGRepository.getSessionById(req.sessionID))
-    sess = req.sessionID;
-
-  const log = {
-    is_auth: req.isAuthenticated(),
-    success: false,
-    failed: true,
-    ip: req.connection.remoteAddress,
-    country: countryResp,
+  logger.error(`${context}: ${err.message}`);
+  ObjLog.log(`${context}: ${err.message}`);
+  
+  // declaring log object
+  const logConst = {
+    is_auth: null,
+    success: true,
+    failed: false,
+    ip: null,
+    country: null,
     route: null,
-    session: sess,
+    session: null,
   };
 
-  await authenticationPGRepository.insertLogMsg(log);
+  // filling log object info
+  let log = logConst;
 
-  if (
-    err.message ===
-    'duplicate key value violates unique constraint \\"ms_sixmap_users_email_user_key\\"'
-  )
-    res.status(500).send({
-      error: "BUSINESS_ERROR",
-      msg: "Esa dirección de correo ya está en uso. Prueba con otro.",
-    });
-  else res.status(500).send({ error: "SERVER_ERROR", msg: err.message });
+  const businessError = {
+                          error: "BUSINESS_ERROR",
+                          msg: "Esa dirección de correo ya está en uso. Prueba con otro.",
+                        }
+  const serverError = { 
+                        error: "SERVER_ERROR", 
+                        msg: err.message 
+                      }
+
+  log.success = false;
+  log.failed = true;
+  log.is_auth = req.isAuthenticated();
+  log.ip = req.header("Client-Ip");
+  log.route = req.method + " " + req.originalUrl;
+  log.params = req.params;
+  log.query = req.query;
+  log.body = req.body;
+  log.status = 500;
+  
+  const resp = await authenticationPGRepository.getIpInfo(
+    req.header("Client-Ip")
+  );
+  if (resp)
+    log.country = resp.country_name ? resp.country_name : "Probably Localhost";
+  if (await authenticationPGRepository.getSessionById(req.sessionID))
+    log.session = req.sessionID;
+
+  if ( err.message === 'duplicate key value violates unique constraint \\"ms_sixmap_users_email_user_key\\"') 
+  {
+    log.response = businessError;
+    await authenticationPGRepository.insertLogMsg(log);
+    res.status(500).send(businessError);
+  }
+  else {
+    log.response = serverError;
+    await authenticationPGRepository.insertLogMsg(log);
+    res.status(500).send(serverError);
+  }
 });
+
+// GLOBAL VARIABLES
+
+global.routes = []
+
+export function replaceOperationRoute(val){
+  routes.forEach((el,i) => {
+    if (el.id_operation_route === val.operationRoute.id_operation_route) 
+    el = val.operationRoute.id_operation_route
+  })
+}
+
+if (routes.length === 0) {
+  operationRoutesRepository.getoperation_routes().then((val) => {
+    routes = val
+  })
+}
+
+// ENV WHA MESSAGE
+
+if (env.NOTIFY_ENV === 'TRUE') {
+  let msg
+
+  if (env.PG_DB_SM_NAME === 'sixmap-tig') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧑🏻‍💻*DEV*\n\n⚠️NO UTILIZAR nimobot'
+  else if (env.PG_DB_SM_NAME === 'sixmap-cg') msg = '🔶_*Mensaje enviado desde CriptoRemesa*_🔶\n\nSistema corriendo en ambiente 🧪*TEST*\n\n✅Testers pueden utilizar nimobot'
+  
+  whatsapp.sendGroupWhatsappMessage(msg)
+}
 
 export default app;

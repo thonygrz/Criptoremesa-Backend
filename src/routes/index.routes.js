@@ -13,12 +13,20 @@ import payMethodRouter from '../modules/payMethods/payMethods.routes';
 import banksRouter from '../modules/banks/banks.routes';
 import allCountriesRouter from '../modules/all_countries/all_countries.routes'
 import chatRouter from '../modules/chat/chat.routes';
-import remittanceRouter from '../modules/remittance/remittance.routes';
-const router = Router();
+import remittancesRouter from '../modules/remittances/remittances.routes';
+import ratesRouter from '../modules/rates/rates.routes';
+import balancesRouter from '../modules/balances/balances.routes';
+import cryptomilesRouter from '../modules/cryptomiles/cryptomiles.routes';
+import reportsRouter from '../modules/reports/reports.routes';
+import operationRoutesRouter from '../modules/operation_routes/operation_routes.routes';
+import exchangesRouter from '../modules/exchanges/exchanges.routes';
+import walletsRouter from '../modules/wallets/wallets.routes';
+import wholesale_partnersRouter from '../modules/wholesale_partners/wholesale_partners.routes';
+const router = Router();  
 
 router.post("/login", authenticationController.login);
 
-router.get("/logout", authenticationController.logout);
+router.get("/logout/:email_user", authenticationController.logout);
 
 router.get("/", authenticationController.logout);
 
@@ -41,6 +49,14 @@ router.use("/pay_methods", payMethodRouter);
 router.use("/banks", banksRouter);
 router.use("/all_countries", allCountriesRouter);
 router.use("/chat", chatRouter);
-router.use("/remittance", remittanceRouter);
+router.use("/remittances", remittancesRouter);
+router.use("/rates", ratesRouter);
+router.use("/balances", balancesRouter);
+router.use("/cryptomiles", cryptomilesRouter);
+router.use("/reports", reportsRouter);
+router.use("/operation_routes", operationRoutesRouter);
+router.use("/exchanges", exchangesRouter);
+router.use("/wallets", walletsRouter);
+router.use("/wholesale_partners", wholesale_partnersRouter);
 
 export default router;
