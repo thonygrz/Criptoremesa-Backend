@@ -46,7 +46,9 @@ app.use(
       "https://localhost:8080",
       "https://www.bithonor.es",
       "https://bithonor.es",
-      "https://3.143.246.144:5011"
+      "https://3.143.246.144:5011",
+      "https://3.143.246.144:4053",
+      "https://bhtest.bithonor.com"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
