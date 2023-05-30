@@ -771,11 +771,15 @@ usersService.requestLevelTwo = async (req, res, next) => {
 
           let industryAnswer = JSON.parse(fields.answers).find(e => e.question_number === 5)
 
-          if(industryAnswer && industryAnswer.answers[0].alert && JSON.parse(fields.answers)[2].answers[0].alert === true){
+          console.log('industryAnswer: ',industryAnswer)
+          console.log('industryAnswer.answers[0].alert: ',industryAnswer.answers[0].alert)
+          console.log('JSON.parse(fields.answers)[2].answers[0].alert: ',JSON.parse(fields.answers)[2].answers[0].alert)
+
+          if(industryAnswer && industryAnswer.answers[0].alert){
             let mailResp = mailSender.sendIndustryAlertMail({
               email_user: fields.email_user,
-              from: 'no-reply@criptoremesa.com',
-              to: 'registro@criptoremesa.com',
+              from: 'no-reply@bithonor.com',
+              to: 'registro@bithonor.com',
               subject: `Alerta de Industria`,
               title: `Alerta de Industria`,
               subtitle: `Alerta de Industria`,

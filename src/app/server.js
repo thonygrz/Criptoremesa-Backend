@@ -11,7 +11,7 @@ import cookieParser from "cookie-parser";
 import requestIP from "request-ip";
 import session from "express-session";
 let pgSession = require("connect-pg-simple")(session);
-import { poolCR } from "../db/pg.connection";
+import { poolSM } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
@@ -42,11 +42,13 @@ app.use(
       "https://bithonor.com",
       "https://www.bithonor.com",
       "https://bhdev.bithonor.com",
+      "https://bhdev.bithonor.es",
       "http://localhost:8080",
       "https://localhost:8080",
       "https://www.bithonor.es",
       "https://bithonor.es",
-      "https://3.143.246.144:5011"
+      "https://3.143.246.144:5011",
+      "https://3.143.246.144:4053"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
@@ -58,9 +60,9 @@ app.use(helmet());
 app.use(
   session({
     store: new pgSession({
-      pool: poolCR,
+      pool: poolSM,
       tableName: "session_obj", // Use another table-name than the default "session" one
-      schemaName: "basics",
+      schemaName: "sec_cust",
     }),
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
