@@ -42,6 +42,7 @@ app.use(
       "https://bithonor.com",
       "https://www.bithonor.com",
       "https://bhdev.bithonor.com",
+      "https://bhtest.bithonor.es",
       "http://localhost:8080",
       "https://localhost:8080",
       "https://www.bithonor.es",
