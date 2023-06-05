@@ -7,17 +7,16 @@ import ObjLog from "../utils/ObjLog";
 import { env } from "../utils/enviroment";
 import routerIndex from "../routes/index.routes";
 import passport from "passport";
-import cookieParser from "cookie-parser";
-import requestIP from "request-ip";
 import session from "express-session";
 let pgSession = require("connect-pg-simple")(session);
-import { poolCR } from "../db/pg.connection";
+import { poolSM } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
 import operationRoutesRepository from '../modules/operation_routes/repositories/operation_routes.pg.repository'
 import ws from '../utils/websocketTradeAPIs'
 import bodyParser from "body-parser";
 import whatsapp from "../utils/whatsapp";
+import queue from 'express-queue';
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
@@ -42,6 +41,7 @@ app.use(
       "https://bithonor.com",
       "https://www.bithonor.com",
       "https://bhdev.bithonor.com",
+      "https://bhdev.bithonor.es",
       "https://bhtest.bithonor.es",
       "http://localhost:8080",
       "https://localhost:8080",
@@ -61,9 +61,9 @@ app.use(helmet());
 app.use(
   session({
     store: new pgSession({
-      pool: poolCR,
+      pool: poolSM,
       tableName: "session_obj", // Use another table-name than the default "session" one
-      schemaName: "basics",
+      schemaName: "sec_cust",
     }),
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
@@ -76,6 +76,9 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(queue({ activeLimit: 1, queuedLimit: -1, rejectHandler: (req, res) => { res.sendStatus(500); } }));
+
 app.use((req, res, next) => {
   logger.debug(`[Request]: ${req.method} ${req.originalUrl}`);
   ObjLog.log(`[Request]: ${req.method} ${req.originalUrl}`);
@@ -90,6 +93,8 @@ app.use((req, res, next) => {
     req.session.views = 1;
   }
 
+  logger.silly('ANTES DEL REQUEST SEGUN YO')
+
   next();
 });
 
@@ -102,6 +107,8 @@ app.use((req, res, next) => {
 app.use("/cr", routerIndex);
 
 app.use(async (req, res, next) => {
+  logger.silly('DESPUES DEL REQUEST SEGUN YO')
+
   try {
     ObjUserSessionData.set({
       session: {
@@ -117,6 +124,8 @@ app.use(async (req, res, next) => {
 });
 
 // ERROR HANDLER
+// app.use(queue.errorHandler());
+
 app.use(async function (err, req, res,next) {
 
   const context = "ERROR HANDLER";
