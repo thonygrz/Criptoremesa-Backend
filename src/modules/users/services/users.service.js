@@ -783,7 +783,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
               subject: `Alerta de Industria`,
               title: `Alerta de Industria`,
               subtitle: `Alerta de Industria`,
-              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria ${JSON.parse(fields.answers)[2].answers[0].answer}`,
+              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria: ${industryAnswer.answers[0].answer}`,
               secondParagraph: 'Favor tomar las acciones necesarias.',
               mailType: `Alerta`
             })
