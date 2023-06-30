@@ -192,6 +192,7 @@ console.log('REPO BODY: ', body)
 
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_1st_Q(
+        ${body.date_birth === null ? null : `'${body.date_birth}'`},
         ${body.state_name === null ? null : `'${body.state_name}'`},
         ${body.resid_city === null ? null : `'${body.resid_city}'`},
         ${body.email_user === null ? null : `'${body.email_user}'`},
@@ -234,6 +235,7 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
 
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_2nd_Q(
+        ${body.date_birth === null ? null : `'${body.date_birth}'`},
         ${body.state_name === null ? null : `'${body.state_name}'`},
         ${body.resid_city === null ? null : `'${body.resid_city}'`},
         ${body.email_user === null ? null : `'${body.email_user}'`},
@@ -273,6 +275,7 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_3rd_Q(
+        ${body.date_birth === null ? null : `'${body.date_birth}'`},
         ${body.state_name === null ? null : `'${body.state_name}'`},
         ${body.resid_city === null ? null : `'${body.resid_city}'`},
         ${body.email_user === null ? null : `'${body.email_user}'`},
