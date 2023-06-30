@@ -393,6 +393,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         if (!fileError) {
           try {
             await usersPGRepository.requestLevelOne1stQ({
+              date_birth: fields.date_birth ? fields.date_birth : null,
               state_name: fields.state_name ? fields.state_name : null,
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
@@ -522,6 +523,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
       if (!fileError) {
         try {
           await usersPGRepository.requestLevelOne2ndQ({
+            date_birth: fields.date_birth ? fields.date_birth : null,
             state_name: fields.state_name ? fields.state_name : null,
             resid_city: fields.resid_city ? fields.resid_city : null,
             email_user: fields.email_user ? fields.email_user : null,
@@ -641,6 +643,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
         if (!fileError) {
           try {
             await usersPGRepository.requestLevelOne3rdQ({
+              date_birth: fields.date_birth ? fields.date_birth : null,
               state_name: fields.state_name ? fields.state_name : null,
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
