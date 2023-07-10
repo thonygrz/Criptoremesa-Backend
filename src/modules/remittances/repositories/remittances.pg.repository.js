@@ -151,7 +151,7 @@ remittancesPGRepository.getBankFee = async (body) => {
                                           ${body.id_pay_method}
                                           )`
     );
-    if (resp.rows[0].sp_calculate_bank_fee[0])
+    if (resp.rows[0] && resp.rows[0].sp_calculate_bank_fee)
       return resp.rows[0].sp_calculate_bank_fee[0];
     else return null;
   } catch (error) {

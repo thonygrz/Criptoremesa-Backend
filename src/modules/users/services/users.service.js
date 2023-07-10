@@ -393,6 +393,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         if (!fileError) {
           try {
             await usersPGRepository.requestLevelOne1stQ({
+              date_birth: fields.date_birth ? fields.date_birth : null,
               state_name: fields.state_name ? fields.state_name : null,
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
@@ -522,6 +523,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
       if (!fileError) {
         try {
           await usersPGRepository.requestLevelOne2ndQ({
+            date_birth: fields.date_birth ? fields.date_birth : null,
             state_name: fields.state_name ? fields.state_name : null,
             resid_city: fields.resid_city ? fields.resid_city : null,
             email_user: fields.email_user ? fields.email_user : null,
@@ -641,6 +643,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
         if (!fileError) {
           try {
             await usersPGRepository.requestLevelOne3rdQ({
+              date_birth: fields.date_birth ? fields.date_birth : null,
               state_name: fields.state_name ? fields.state_name : null,
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
@@ -771,15 +774,19 @@ usersService.requestLevelTwo = async (req, res, next) => {
 
           let industryAnswer = JSON.parse(fields.answers).find(e => e.question_number === 5)
 
-          if(industryAnswer && industryAnswer.answers[0].alert && JSON.parse(fields.answers)[2].answers[0].alert === true){
+          console.log('industryAnswer: ',industryAnswer)
+          console.log('industryAnswer.answers[0].alert: ',industryAnswer.answers[0].alert)
+          console.log('JSON.parse(fields.answers)[2].answers[0].alert: ',JSON.parse(fields.answers)[2].answers[0].alert)
+
+          if(industryAnswer && industryAnswer.answers[0].alert){
             let mailResp = mailSender.sendIndustryAlertMail({
               email_user: fields.email_user,
-              from: 'no-reply@criptoremesa.com',
-              to: 'registro@criptoremesa.com',
+              from: 'no-reply@bithonor.com',
+              to: 'registro@bithonor.com',
               subject: `Alerta de Industria`,
               title: `Alerta de Industria`,
               subtitle: `Alerta de Industria`,
-              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria ${JSON.parse(fields.answers)[2].answers[0].answer}`,
+              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria: ${industryAnswer.answers[0].answer}`,
               secondParagraph: 'Favor tomar las acciones necesarias.',
               mailType: `Alerta`
             })
