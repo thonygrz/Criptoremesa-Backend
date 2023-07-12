@@ -99,10 +99,10 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
-// app.get("/", async (req, res) => {
-//   res.status(200).send("Server running");
-//   next();
-// });
+app.get("/", async (req, res) => {
+  res.status(200).send("Server running");
+  next();
+});
 
 app.use("/cr", routerIndex);
 
