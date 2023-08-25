@@ -172,4 +172,10 @@ usersRouter.get(
   usersController.validateEmail
 );
 
+usersRouter.post(
+  "/validate-code",
+  // guard.verifyAdmin("/login"),
+  usersController.validateCode
+);
+
 export default usersRouter;

@@ -1520,5 +1520,56 @@ usersService.validateEmail = async (req, res, next) => {
   }
 };
 
+usersService.validateCode = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Validating code`);
+    ObjLog.log(`[${context}]: Validating code`);
+    let data = await usersPGRepository.verifCode(req.body.ident_user,req.body.code);
+
+    console.log('DATA: ',data)
+
+    if (data && data.msg === 'Valid code')
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else if (data && data.msg === 'Invalid code')
+      return {
+        data,
+        status: 400,
+        success: false,
+        failed: true,
+      };
+    else if (data && data.msg === 'Expired code')
+      return {
+        data,
+        status: 403,
+        success: false,
+        failed: true,
+      };
+    else if (data && data.msg === 'Invalid user')
+      return {
+        data,
+        status: 400,
+        success: false,
+        failed: true,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 export default usersService;
 export { events };
