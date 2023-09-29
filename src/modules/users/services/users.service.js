@@ -1486,7 +1486,7 @@ usersService.getMigratedInfo = async (req, res, next) => {
   }
 };
 
-usersService.validateEmail = async (req, res, next) => {
+usersService.valicountriesCurrenciesEmail = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting migrated info`);
     ObjLog.log(`[${context}]: Getting migrated info`);
