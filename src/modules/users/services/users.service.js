@@ -393,6 +393,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         if (!fileError) {
           try {
             await usersPGRepository.requestLevelOne1stQ({
+              date_birth: fields.date_birth ? fields.date_birth : null,
               state_name: fields.state_name ? fields.state_name : null,
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
@@ -522,6 +523,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
       if (!fileError) {
         try {
           await usersPGRepository.requestLevelOne2ndQ({
+            date_birth: fields.date_birth ? fields.date_birth : null,
             state_name: fields.state_name ? fields.state_name : null,
             resid_city: fields.resid_city ? fields.resid_city : null,
             email_user: fields.email_user ? fields.email_user : null,
@@ -641,6 +643,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
         if (!fileError) {
           try {
             await usersPGRepository.requestLevelOne3rdQ({
+              date_birth: fields.date_birth ? fields.date_birth : null,
               state_name: fields.state_name ? fields.state_name : null,
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
@@ -783,7 +786,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
               subject: `Alerta de Industria`,
               title: `Alerta de Industria`,
               subtitle: `Alerta de Industria`,
-              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria ${JSON.parse(fields.answers)[2].answers[0].answer}`,
+              firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria: ${industryAnswer.answers[0].answer}`,
               secondParagraph: 'Favor tomar las acciones necesarias.',
               mailType: `Alerta`
             })
@@ -1516,6 +1519,57 @@ usersService.valicountriesCurrenciesEmail = async (req, res, next) => {
     next(error);
   }
 };
+
+usersService.validateCode = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Validating code`);
+    ObjLog.log(`[${context}]: Validating code`);
+    let data = await usersPGRepository.verifCode(req.body.ident_user,req.body.code);
+
+    console.log('DATA: ',data)
+
+    if (data && data.msg === 'Valid code')
+      return {
+        data,
+        status: 200,
+        success: true,
+        failed: false,
+      };
+    else if (data && data.msg === 'Invalid code')
+      return {
+        data,
+        status: 400,
+        success: false,
+        failed: true,
+      };
+    else if (data && data.msg === 'Expired code')
+      return {
+        data,
+        status: 403,
+        success: false,
+        failed: true,
+      };
+    else if (data && data.msg === 'Invalid user')
+      return {
+        data,
+        status: 400,
+        success: false,
+        failed: true,
+      };
+    else
+      return {
+        data: {
+          mesage: "An error has ocurred.",
+        },
+        status: 500,
+        success: false,
+        failed: true,
+      };
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export default usersService;
 export { events };

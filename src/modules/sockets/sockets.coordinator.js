@@ -157,11 +157,12 @@ export async function SocketServer(server) {
       console.log('get_bank_fee: ',val)
 
       let fee = await remittancesPGRepository.getBankFee(val);
-      fee.email_user = val.email_user
+      if (fee)
+        fee.email_user = val.email_user
 
       console.log('response: ',fee)
 
-      notifyChanges('get_bank_fee', fee);
+      notifyChanges('get_bank_fee', fee ? fee : {});
     });
 
     socket.on("rate_change", async (val) => {

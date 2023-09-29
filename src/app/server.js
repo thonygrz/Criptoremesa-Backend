@@ -45,6 +45,8 @@ app.use(
       "https://bhtest.bithonor.es",
       "http://localhost:8080",
       "https://localhost:8080",
+      "http://localhost:8081",
+      "https://localhost:8081",
       "https://www.bithonor.es",
       "https://bithonor.es",
       "https://3.143.246.144:5011",
@@ -99,10 +101,10 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
-// app.get("/", async (req, res) => {
-//   res.status(200).send("Server running");
-//   next();
-// });
+app.get("/", async (req, res) => {
+  res.status(200).send("Server running");
+  next();
+});
 
 app.use("/cr", routerIndex);
 

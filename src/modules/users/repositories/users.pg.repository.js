@@ -1,6 +1,7 @@
 import { poolSM } from "../../../db/pg.connection";
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
+import mailSender from "../../../utils/mail";
 
 const usersPGRepository = {};
 const context = "users PG Repository";
@@ -25,7 +26,17 @@ usersPGRepository.createNewClient = async (body) => {
         ${body.slug ? `'${body.slug}'` : null})
       ;`);
 
-    return resp.rows[0].sp_ms_sixmap_users_insert_new;
+    if (resp && resp.rows && resp.rows[0].sp_ms_sixmap_users_insert_new) {
+      if (resp.rows[0].sp_ms_sixmap_users_insert_new.includes('CR')) {
+        await mailSender.sendWelcomeMail({
+          email_user: body.email_user,
+          first_name: body.first_name,
+          last_name: body.last_name
+        });
+      }
+
+      return resp.rows[0].sp_ms_sixmap_users_insert_new;
+    }
   } catch (error) {
     throw error;
   }
@@ -192,6 +203,7 @@ console.log('REPO BODY: ', body)
 
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_1st_Q(
+        ${body.date_birth === null ? null : `'${body.date_birth}'`},
         ${body.state_name === null ? null : `'${body.state_name}'`},
         ${body.resid_city === null ? null : `'${body.resid_city}'`},
         ${body.email_user === null ? null : `'${body.email_user}'`},
@@ -234,6 +246,7 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
 
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_2nd_Q(
+        ${body.date_birth === null ? null : `'${body.date_birth}'`},
         ${body.state_name === null ? null : `'${body.state_name}'`},
         ${body.resid_city === null ? null : `'${body.resid_city}'`},
         ${body.email_user === null ? null : `'${body.email_user}'`},
@@ -273,6 +286,7 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM SP_REQUEST_LEVEL_ONE_3rd_Q(
+        ${body.date_birth === null ? null : `'${body.date_birth}'`},
         ${body.state_name === null ? null : `'${body.state_name}'`},
         ${body.resid_city === null ? null : `'${body.resid_city}'`},
         ${body.email_user === null ? null : `'${body.email_user}'`},

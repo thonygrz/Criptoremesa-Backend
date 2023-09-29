@@ -83,5 +83,16 @@ export default {
       log(req.body.email_user,url,req.body,error)
       return error;
     }
+  },
+  sendWelcomeMail: async (body) => {
+    let url = `${env.MAIL_SENDER}/welcome`
+    try {
+      let resp = await axios.post(url,body)
+      log(body.email_user,url,body,resp.data)
+      return resp.data;
+    } catch (error) {
+      log(body.email_user,url,body,error)
+      return error;
+    }
   }
 };
