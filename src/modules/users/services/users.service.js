@@ -233,7 +233,7 @@ usersService.files = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 2 * 1024 * 1024,
+      maxFileSize: 20 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -346,7 +346,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 10 * 1024 * 1024,
+      maxFileSize: 20 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -415,7 +415,8 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
               lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
               legal_terms: fields.legal_terms ? fields.legal_terms : null,
               new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
-              new_email: fields.new_email ? fields.new_email : null
+              new_email: fields.new_email ? fields.new_email : null,
+              id_resid_country: fields.id_resid_country ? fields.id_resid_country : null
             });
 
             setfinalResp({
@@ -476,7 +477,7 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
   const form = formidable({
     multiples: true,
     uploadDir: env.FILES_DIR,
-    maxFileSize: 10 * 1024 * 1024,
+    maxFileSize: 20 * 1024 * 1024,
     keepExtensions: true,
   });
 
@@ -545,7 +546,8 @@ usersService.requestLevelOne2ndQ = async (req, res, next) => {
             lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
             legal_terms: fields.legal_terms ? fields.legal_terms : null,
             new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
-            new_email: fields.new_email ? fields.new_email : null
+            new_email: fields.new_email ? fields.new_email : null,
+            id_resid_country: fields.id_resid_country ? fields.id_resid_country : null
           });
 
           setfinalResp({
@@ -596,7 +598,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 10 * 1024 * 1024,
+      maxFileSize: 20 * 1024 * 1024,
       keepExtensions: true,
     });
 
@@ -665,7 +667,8 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
               lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
               legal_terms: fields.legal_terms ? fields.legal_terms : null,
               new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
-              new_email: fields.new_email ? fields.new_email : null
+              new_email: fields.new_email ? fields.new_email : null,
+              id_resid_country: fields.id_resid_country ? fields.id_resid_country : null
             });
   
             setfinalResp({
@@ -716,7 +719,7 @@ usersService.requestLevelTwo = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 10 * 1024 * 1024,
+      maxFileSize: 20 * 1024 * 1024,
       keepExtensions: true,
     });
 

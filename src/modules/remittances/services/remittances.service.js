@@ -88,7 +88,7 @@ remittancesService.startRemittance = async (req, res, next) => {
     const form = formidable({
       multiples: true,
       uploadDir: env.FILES_DIR,
-      maxFileSize: 5 * 1024 * 1024,
+      maxFileSize: 20 * 1024 * 1024,
       keepExtensions: true,
     });
 
