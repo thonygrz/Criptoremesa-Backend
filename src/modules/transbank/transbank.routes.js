@@ -10,4 +10,10 @@ transbankRouter.get(
   transbankController.getWebpayTransaction
 );
 
+transbankRouter.get(
+  "/webpayplus/confirm",
+  // guard.verifyAdmin("/login"),
+  transbankController.confirmWebpayTransaction
+);
+
 export default transbankRouter;

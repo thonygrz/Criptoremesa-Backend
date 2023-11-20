@@ -14,11 +14,30 @@ transbankService.getWebpayTransaction = async (req, res, next) => {
 
     let buyOrder = '12345678';
     let sessionId = '12345678';
-    let amount = 1000; 
-    let returnUrl = 'https://bithonor.com/inicio-sesion';
+    let amount = req.query.amount; 
+    let returnUrl = 'https://bithonor.com/enviar-dinero/sin-comprobante';
 
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const data = await tx.create(buyOrder, sessionId, amount, returnUrl);
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+transbankService.confirmWebpayTransaction = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Creating transaction`);
+    ObjLog.log(`[${context}]: Creating transaction`);
+
+    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+    const data = await tx.commit(req.query.token);
 
     return {
       data,
