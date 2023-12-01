@@ -1098,7 +1098,7 @@ usersService.sendVerificationCodeBySMS = async (req, res, next) => {
       if (
         sendSMS(
           req.body.main_phone_full,
-          `💰<Bithonor>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
+          `<Bithonor> ${req.body.first_name}, tu código de verificación es ${data.code}`
         )
       )
         return {
