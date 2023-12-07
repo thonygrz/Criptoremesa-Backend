@@ -225,7 +225,8 @@ console.log('REPO BODY: ', body)
         ${body.lawful_funds},
         ${body.legal_terms},
         ${body.new_password === null ? null : `'${body.new_password}'`},
-        ${body.new_email === null ? null : `'${body.new_email}'`}
+        ${body.new_email === null ? null : `'${body.new_email}'`},
+        ${body.id_resid_country === null ? null : `${body.id_resid_country}`}
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -268,7 +269,8 @@ usersPGRepository.requestLevelOne2ndQ = async (body) => {
         ${body.lawful_funds},
         ${body.legal_terms},
         ${body.new_password === null ? null : `'${body.new_password}'`},
-        ${body.new_email === null ? null : `'${body.new_email}'`}
+        ${body.new_email === null ? null : `'${body.new_email}'`},
+        ${body.id_resid_country === null ? null : `${body.id_resid_country}`}
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
@@ -308,7 +310,8 @@ usersPGRepository.requestLevelOne3rdQ = async (body) => {
         ${body.lawful_funds},
         ${body.legal_terms},
         ${body.new_password === null ? null : `'${body.new_password}'`},
-        ${body.new_email === null ? null : `'${body.new_email}'`}
+        ${body.new_email === null ? null : `'${body.new_email}'`},
+        ${body.id_resid_country === null ? null : `${body.id_resid_country}`}
         )`
     );
     if (resp.rows[0]) return resp.rows[0];
