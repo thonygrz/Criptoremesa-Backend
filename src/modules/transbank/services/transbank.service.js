@@ -15,7 +15,7 @@ transbankService.getWebpayTransaction = async (req, res, next) => {
     let buyOrder = '12345678';
     let sessionId = '12345678';
     let amount = req.query.amount; 
-    let returnUrl = 'https://bithonor.com/enviar-dinero/sin-comprobante';
+    let returnUrl = 'https://bhdev.bithonor.com/enviar-dinero/sin-comprobante';
 
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const data = await tx.create(buyOrder, sessionId, amount, returnUrl);
@@ -33,8 +33,8 @@ transbankService.getWebpayTransaction = async (req, res, next) => {
 
 transbankService.confirmWebpayTransaction = async (req, res, next) => {
   try {
-    logger.info(`[${context}]: Creating transaction`);
-    ObjLog.log(`[${context}]: Creating transaction`);
+    logger.info(`[${context}]: Confirming transaction`);
+    ObjLog.log(`[${context}]: Confirming transaction`);
 
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const data = await tx.commit(req.query.token);
@@ -47,6 +47,25 @@ transbankService.confirmWebpayTransaction = async (req, res, next) => {
     }
   } catch (error) {
     next(error);
+  }
+};
+
+transbankService.confirmWebpayTransactionNoEndpoint = async (token) => {
+  try {
+    logger.info(`[${context}]: Confirming transaction`);
+    ObjLog.log(`[${context}]: Confirming transaction`);
+
+    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+    const data = await tx.commit(token);
+
+    return {
+      data,
+      status: 200,
+      success: true,
+      failed: false
+    }
+  } catch (error) {
+    throw(error);
   }
 };
 
