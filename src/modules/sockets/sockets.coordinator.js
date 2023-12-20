@@ -17,7 +17,7 @@ const context = "Socket Coordinator";
 export async function SocketServer(server) {
   const io = socketIO(server, {
     cors: {
-      origin: ['https://bhtest.bithonor.es','https://bhtest.bithonor.com'],
+      origin: "*",
       methods: ["GET", "POST"],
     },
     transports: ['websocket','flashsocket','htmlfile','xhr-polling','jsonp-polling','polling']
