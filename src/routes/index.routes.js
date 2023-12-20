@@ -22,6 +22,7 @@ import operationRoutesRouter from '../modules/operation_routes/operation_routes.
 import exchangesRouter from '../modules/exchanges/exchanges.routes';
 import walletsRouter from '../modules/wallets/wallets.routes';
 import wholesale_partnersRouter from '../modules/wholesale_partners/wholesale_partners.routes';
+import transbankRouter from '../modules/transbank/transbank.routes';
 import mail from '../utils/mail'
 
 const router = Router();  
@@ -62,6 +63,7 @@ router.use("/operation_routes", operationRoutesRouter);
 router.use("/exchanges", exchangesRouter);
 router.use("/wallets", walletsRouter);
 router.use("/wholesale_partners", wholesale_partnersRouter);
+router.use("/transbank", transbankRouter);
 
 
 export default router;
