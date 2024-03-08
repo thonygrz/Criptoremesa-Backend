@@ -26,6 +26,8 @@ usersPGRepository.createNewClient = async (body) => {
         ${body.slug ? `'${body.slug}'` : null})
       ;`);
 
+      console.log('SALI DE LA QUERY ')
+
     if (resp && resp.rows && resp.rows[0].sp_ms_sixmap_users_insert_new) {
       if (resp.rows[0].sp_ms_sixmap_users_insert_new.includes('CR')) {
         await mailSender.sendWelcomeMail({
