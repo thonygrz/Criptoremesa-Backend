@@ -20,7 +20,9 @@ usersPGRepository.createNewClient = async (body) => {
         '${body.second_last_name}',
         '${body.email_user}',
         '${body.password}',
-        '${body.referral_node}',
+        '${body.main_phone}',
+        '${body.main_phone_code}',
+        '${body.main_phone_full}',
         ${body.ok_legal_terms},
         ${body.id_resid_country}, 
         ${body.slug ? `'${body.slug}'` : null})
