@@ -720,4 +720,18 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (
   }
 };
 
+veriflevelsController.levelOneVerfificationSilt = (req, res, next) => {
+  try {
+    console.log("Parametros");
+    console.log(req.params);
+    console.log("Query");
+    console.log(req.query);
+    console.log("Body");
+    console.log(req.body);
+    res.status(finalResp.status).send("OK");
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default veriflevelsController;
