@@ -1185,10 +1185,18 @@ usersService.verifyIdentUser = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Verifying ident user`);
     ObjLog.log(`[${context}]: Verifying ident user`);
-    let data = await usersPGRepository.verifyIdentUser(
-      req.body.email_user,
-      req.body.phone_number
-    );
+    let data;
+    if (!req.body.except) {
+      data = await usersPGRepository.verifyIdentUser(
+        req.body.email_user,
+        req.body.phone_number
+      );
+    } else {
+      data = await usersPGRepository.verifyIdentUserExceptThemself(
+        req.body.except,
+        req.body.phone_number
+      );
+    }
     return {
       data,
       status: 200,

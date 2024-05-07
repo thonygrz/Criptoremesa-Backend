@@ -483,6 +483,24 @@ usersPGRepository.verifyIdentUser = async (email_user, phone_number) => {
   }
 };
 
+usersPGRepository.verifyIdentUserExceptThemself = async (email_user, phone_number) => {
+  try {
+    logger.info(`[${context}]: Verifying ident user on db`);
+    ObjLog.log(`[${context}]: Verifying ident user on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM verif_ident_user_except_themself(
+        '${phone_number}',
+        '${email_user}'
+        )`
+    );
+    if (resp.rows[0]) return resp.rows[0].verif_ident_user;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 usersPGRepository.deactivateUser = async (email_user) => {
   try {
     logger.info(`[${context}]: Deactivating user on db`);
