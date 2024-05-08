@@ -494,7 +494,7 @@ usersPGRepository.verifyIdentUserExceptThemself = async (email_user, phone_numbe
         '${email_user}'
         )`
     );
-    if (resp.rows[0]) return resp.rows[0].verif_ident_user;
+    if (resp.rows[0]) return resp.rows[0].verif_ident_user_except_themself;
     else return null;
   } catch (error) {
     throw error;
