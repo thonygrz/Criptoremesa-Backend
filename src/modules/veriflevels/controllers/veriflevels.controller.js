@@ -728,7 +728,7 @@ veriflevelsController.levelOneVerfificationSilt = (req, res, next) => {
     console.log(req.query);
     console.log("Body");
     console.log(req.body);
-    res.status(finalResp.status).send("OK");
+    res.status(200).send("OK");
   } catch (error) {
     next(error);
   }
