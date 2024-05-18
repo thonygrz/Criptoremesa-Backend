@@ -178,4 +178,16 @@ usersRouter.post(
   usersController.validateCode
 );
 
+usersRouter.patch(
+  "/edit-phone/:uuid_user",
+  // guard.verifyAdmin("/login"),
+  usersController.editPhone
+);
+
+usersRouter.patch(
+  "/edit-level-one-info/:email_user",
+  // guard.verifyAdmin("/login"),
+  usersController.editLevelOneInfo
+);
+
 export default usersRouter;
