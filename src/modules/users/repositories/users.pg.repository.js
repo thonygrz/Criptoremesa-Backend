@@ -708,7 +708,8 @@ usersPGRepository.editLevelOneInfo = async (body) => {
         '${body.state_name}',
         '${body.resid_city}',
         '${body.email_user}',
-        '${body.occupation}'
+        '${body.occupation}',
+        '${body.address}'
       )`
     );
   } catch (error) {
