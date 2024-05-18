@@ -70,4 +70,9 @@ veriflevelsRouter.get(
   veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail
 );
 
+veriflevelsRouter.post(
+  "/silt/webhook",
+  veriflevelsController.levelOneVerfificationSilt
+)
+
 export default veriflevelsRouter;

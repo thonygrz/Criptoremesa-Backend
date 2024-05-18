@@ -20,10 +20,14 @@ usersPGRepository.createNewClient = async (body) => {
         '${body.second_last_name}',
         '${body.email_user}',
         '${body.password}',
-        '${body.referral_node}',
+        '${body.main_phone}',
+        '${body.main_phone_code}',
+        '${body.main_phone_full}',
         ${body.ok_legal_terms},
         ${body.id_resid_country}, 
-        ${body.slug ? `'${body.slug}'` : null})
+        ${body.slug ? `'${body.slug}'` : null},
+        '${body.referral_node}'
+        )
       ;`);
 
       console.log('SALI DE LA QUERY ')
@@ -479,6 +483,24 @@ usersPGRepository.verifyIdentUser = async (email_user, phone_number) => {
   }
 };
 
+usersPGRepository.verifyIdentUserExceptThemself = async (email_user, phone_number) => {
+  try {
+    logger.info(`[${context}]: Verifying ident user on db`);
+    ObjLog.log(`[${context}]: Verifying ident user on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    const resp = await poolSM.query(
+      `SELECT * FROM verif_ident_user_except_themself(
+        '${phone_number}',
+        '${email_user}'
+        )`
+    );
+    if (resp.rows[0]) return resp.rows[0].verif_ident_user_except_themself;
+    else return null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 usersPGRepository.deactivateUser = async (email_user) => {
   try {
     logger.info(`[${context}]: Deactivating user on db`);
@@ -668,5 +690,49 @@ usersPGRepository.validateEmail = async (email) => {
     throw error;
   }
 };
+
+usersPGRepository.editPhone = async (uuid_user, main_phone, main_phone_code, main_phone_full) => {
+  try {
+    logger.info(`[${context}]: Editing phone on db`);
+    ObjLog.log(`[${context}]: Editing phone on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query(
+      `SELECT * FROM sp_ms_phone_insert(
+                                      '${uuid_user}',
+                                      'main_phone',
+                                      '${main_phone_code}',
+                                      '${main_phone}',
+                                      '${main_phone_full}',
+                                      true,
+                                      false,
+                                      false,
+                                      false,
+                                      false
+                                    )`
+    );
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
+usersPGRepository.editLevelOneInfo = async (body) => {
+  try {
+    logger.info(`[${context}]: Editing level one info on db`);
+    ObjLog.log(`[${context}]: Editing level one info on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query(
+      `SELECT * FROM update_level_one_info(
+        '${body.state_name}',
+        '${body.resid_city}',
+        '${body.email_user}',
+        '${body.occupation}',
+        '${body.address}'
+      )`
+    );
+  } catch (error) {
+    throw error;
+  }
+};  
 
 export default usersPGRepository;
