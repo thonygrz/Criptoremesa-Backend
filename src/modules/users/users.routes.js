@@ -184,8 +184,8 @@ usersRouter.patch(
   usersController.editPhone
 );
 
-usersRouter.patch(
-  "/edit-level-one-info/:email_user",
+usersRouter.post(
+  "/edit-level-one-info",
   // guard.verifyAdmin("/login"),
   usersController.editLevelOneInfo
 );

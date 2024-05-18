@@ -698,7 +698,7 @@ usersPGRepository.editPhone = async (uuid_user, main_phone, main_phone_code, mai
   }
 }
 
-usersPGRepository.editLevelOneInfo = async (email_user, body) => {
+usersPGRepository.editLevelOneInfo = async (body) => {
   try {
     logger.info(`[${context}]: Editing level one info on db`);
     ObjLog.log(`[${context}]: Editing level one info on db`);

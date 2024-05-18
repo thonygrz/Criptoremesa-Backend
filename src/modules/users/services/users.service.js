@@ -1646,7 +1646,7 @@ usersService.editLevelOneInfo = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Editing level one info`);
     ObjLog.log(`[${context}]: Editing level one info`);
-    await usersPGRepository.editLevelOneInfo(req.params.email_user,req.body);
+    await usersPGRepository.editLevelOneInfo(req.body);
 
     return {
       data: {
