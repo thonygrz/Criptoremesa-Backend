@@ -691,4 +691,48 @@ usersPGRepository.validateEmail = async (email) => {
   }
 };
 
+usersPGRepository.editPhone = async (uuid_user, main_phone, main_phone_code, main_phone_full) => {
+  try {
+    logger.info(`[${context}]: Editing phone on db`);
+    ObjLog.log(`[${context}]: Editing phone on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query(
+      `SELECT * FROM sp_ms_phone_insert(
+                                      '${uuid_user}',
+                                      'main_phone',
+                                      '${main_phone_code}',
+                                      '${main_phone}',
+                                      '${main_phone_full}',
+                                      true,
+                                      false,
+                                      false,
+                                      false,
+                                      false
+                                    )`
+    );
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
+usersPGRepository.editLevelOneInfo = async (body) => {
+  try {
+    logger.info(`[${context}]: Editing level one info on db`);
+    ObjLog.log(`[${context}]: Editing level one info on db`);
+    await poolSM.query("SET SCHEMA 'sec_cust'");
+    await poolSM.query(
+      `SELECT * FROM update_level_one_info(
+        '${body.state_name}',
+        '${body.resid_city}',
+        '${body.email_user}',
+        '${body.occupation}',
+        '${body.address}'
+      )`
+    );
+  } catch (error) {
+    throw error;
+  }
+};  
+
 export default usersPGRepository;

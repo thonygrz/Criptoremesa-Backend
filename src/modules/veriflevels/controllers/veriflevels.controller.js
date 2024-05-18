@@ -720,4 +720,50 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (
   }
 };
 
+veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
+  try {
+    const dateBirth = req.body.user.birth_date;
+    const emailUser = req.body.user_meta.email_user;
+    const selfie = req.body.user.selfie.file_url;
+    const gender = req.body.user.sex;
+    const nationalityCountry = req.body.user.nationality;
+    const siltID = req.body.user.id;
+    const siltStatus = req.body.status;
+    let docType;
+    let countryDoc;
+    let identDocNumber;
+    let docPath;
+    if (req.body.user.national_id) {
+      docType = 1;
+      countryDoc = req.body.user.national_id.country;
+      identDocNumber = req.body.user.national_id.document_number;
+      docPath = req.body.user.national_id.files[0].file_url;
+    }
+    else if (req.body.user.passport) {
+      docType = 2;
+      countryDoc = req.body.user.passport.country;
+      identDocNumber = req.body.user.passport.personal_number;
+      docPath = req.body.user.passport.files[0].file_url;
+    }
+    else if (req.body.user.driving_license) {
+      docType = 3;
+      countryDoc = req.body.user.driving_license.country;
+      identDocNumber = req.body.user.driving_license.personal_number;
+      docPath = req.body.user.driving_license.files[0].file_url;
+    }
+    
+    logger.info(`[${context}]: Sending service to request level one SILT`);
+    ObjLog.log(`[${context}]: Sending service to request level one SILT`);
+
+    await veriflevelsService.levelOneVerfificationSilt(dateBirth, emailUser, docType, countryDoc, identDocNumber, docPath, selfie, gender, nationalityCountry, siltID, siltStatus);
+
+    res.status(200).send({
+      message: "OK"
+    });
+    
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default veriflevelsController;
