@@ -720,7 +720,7 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (
   }
 };
 
-veriflevelsController.levelOneVerfificationSilt = (req, res, next) => {
+veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
   try {
     const dateBirth = req.body.user.birth_date;
     const emailUser = req.body.user_meta.email_user;
@@ -751,10 +751,16 @@ veriflevelsController.levelOneVerfificationSilt = (req, res, next) => {
       identDocNumber = req.body.user.driving_license.personal_number;
       docPath = req.body.user.driving_license.files[0].file_url;
     }
+    
+    logger.info(`[${context}]: Sending service to request level one SILT`);
+    ObjLog.log(`[${context}]: Sending service to request level one SILT`);
 
-    logger.info(`[${context}]: Sending service to request level one`);
-    ObjLog.log(`[${context}]: Sending service to request level one`);
-    res.status(200).send("OK");
+    await veriflevelsService.levelOneVerfificationSilt(dateBirth, emailUser, docType, countryDoc, identDocNumber, docPath, selfie, gender, nationalityCountry, siltID, siltStatus);
+
+    res.status(200).send({
+      message: "OK"
+    });
+    
   } catch (error) {
     next(error);
   }
