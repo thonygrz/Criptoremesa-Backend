@@ -727,6 +727,8 @@ veriflevelsController.levelOneVerfificationSilt = (req, res, next) => {
     const selfie = req.body.user.selfie.file_url;
     const gender = req.body.user.sex;
     const nationalityCountry = req.body.user.country;
+    const siltID = req.body.user.id;
+    const siltStatus = req.body.user.status;
     let docType;
     let countryDoc;
     let identDocNumber;
