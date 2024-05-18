@@ -726,9 +726,9 @@ veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
     const emailUser = req.body.user_meta.email_user;
     const selfie = req.body.user.selfie.file_url;
     const gender = req.body.user.sex;
-    const nationalityCountry = req.body.user.country;
+    const nationalityCountry = req.body.user.nationality;
     const siltID = req.body.user.id;
-    const siltStatus = req.body.user.status;
+    const siltStatus = req.body.status;
     let docType;
     let countryDoc;
     let identDocNumber;
@@ -736,7 +736,7 @@ veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
     if (req.body.user.national_id) {
       docType = 1;
       countryDoc = req.body.user.national_id.country;
-      identDocNumber = req.body.user.national_id.personal_number;
+      identDocNumber = req.body.user.national_id.document_number;
       docPath = req.body.user.national_id.files[0].file_url;
     }
     else if (req.body.user.passport) {
