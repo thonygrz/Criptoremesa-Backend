@@ -742,13 +742,13 @@ veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
     else if (req.body.user.passport) {
       docType = 2;
       countryDoc = req.body.user.passport.country;
-      identDocNumber = req.body.user.passport.personal_number;
+      identDocNumber = req.body.user.passport.document_number;
       docPath = req.body.user.passport.files[0].file_url;
     }
     else if (req.body.user.driving_license) {
       docType = 3;
       countryDoc = req.body.user.driving_license.country;
-      identDocNumber = req.body.user.driving_license.personal_number;
+      identDocNumber = req.body.user.driving_license.document_number;
       docPath = req.body.user.driving_license.files[0].file_url;
     }
     
