@@ -270,6 +270,9 @@ veriflevelsService.levelOneVerfificationSilt = async (dateBirth, emailUser, docT
   const countryIsoCodeDoc = await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(countryDoc);
   const nationalityCountryIsoCode = await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(nationalityCountry);
 
+  console.log(`countryIsoCodeDoc: ${countryIsoCodeDoc}`);
+  console.log(`nationalityCountryIsoCode: ${nationalityCountryIsoCode}`);
+
   logger.info(`[${context}]: storing silt request in BD`);
   ObjLog.log(`[${context}]: storing silt request in BD`);
 
