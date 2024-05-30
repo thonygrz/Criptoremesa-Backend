@@ -737,19 +737,19 @@ veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
       docType = 1;
       countryDoc = req.body.user.national_id.country;
       identDocNumber = req.body.user.national_id.document_number;
-      docPath = req.body.user.national_id.files[0].file_url;
+      docPath = req.body.user.national_id.files ? req.body.user.national_id.files[0].file_url : "";
     }
     else if (req.body.user.passport) {
       docType = 2;
       countryDoc = req.body.user.passport.country;
       identDocNumber = req.body.user.passport.document_number;
-      docPath = req.body.user.passport.files[0].file_url;
+      docPath = req.body.user.passport.files ? req.body.user.passport.files[0].file_url : "";
     }
     else if (req.body.user.driving_license) {
       docType = 3;
       countryDoc = req.body.user.driving_license.country;
       identDocNumber = req.body.user.driving_license.document_number;
-      docPath = req.body.user.driving_license.files[0].file_url;
+      docPath = req.body.user.driving_license.files ? req.body.user.driving_license.files[0].file_url : "";
     }
     
     logger.info(`[${context}]: Sending service to request level one SILT`);
