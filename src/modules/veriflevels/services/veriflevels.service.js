@@ -267,8 +267,11 @@ veriflevelsService.levelOneVerfificationSilt = async (dateBirth, emailUser, docT
   logger.info(`[${context}]: getting iso codes`);
   ObjLog.log(`[${context}]: getting iso codes`);
 
-  const countryIsoCodeDoc = await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(countryDoc);
-  const nationalityCountryIsoCode = await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(nationalityCountry);
+  const countryIsoCodeDoc = countryDoc ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(countryDoc) : null;
+  const nationalityCountryIsoCode = nationalityCountry ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(nationalityCountry) : null;
+
+  console.log(`countryIsoCodeDoc: ${countryIsoCodeDoc}`);
+  console.log(`nationalityCountryIsoCode: ${nationalityCountryIsoCode}`);
 
   logger.info(`[${context}]: storing silt request in BD`);
   ObjLog.log(`[${context}]: storing silt request in BD`);
