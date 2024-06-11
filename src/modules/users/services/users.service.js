@@ -1004,7 +1004,7 @@ usersService.newPassword = async (req, res, next) => {
         let newPass = await bcrypt.hash(req.body.new_password, 10);
 
         let data = await usersPGRepository.newPassword({
-          email_user: req.body.email_user,
+          email_user: req.body.email_user.toLowerCase(),
           new_password: newPass,
         });
         setfinalResp({
