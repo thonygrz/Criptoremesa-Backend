@@ -31,11 +31,11 @@ async function sendSMS(to, body) {
         to,
       })
       .then((message) => {
-        logger.silly(message)
+        logger.silly(message);
         return message;
       })
       .catch((err) => {
-        logger.silly(err)
+        logger.silly(err);
         next(err);
       });
     // const params = new url.URLSearchParams({
@@ -61,10 +61,7 @@ async function sendSMS(to, body) {
 
 async function sendWhatsappMessage(to, body) {
   try {
-    return await whatsapp.sendWhatsappMessage(
-      to,
-      body
-    )
+    return await whatsapp.sendWhatsappMessage(to, body);
   } catch (error) {
     return error;
   }
@@ -102,31 +99,31 @@ usersService.createNewClient = async (req, res, next) => {
     //       msg: "Falló la verificación del Captcha",
     //     });
     //   } else {
-        // If successful
+    // If successful
 
-        let password = await bcrypt.hash(req.body.password, 10);
-        let userObj = req.body;
+    let password = await bcrypt.hash(req.body.password, 10);
+    let userObj = req.body;
 
-        userObj.password = password;
-        userObj.last_ip_registred = req.header("Client-Ip");
+    userObj.password = password;
+    userObj.last_ip_registred = req.header("Client-Ip");
 
-        const response = await usersPGRepository.createNewClient(userObj);
+    const response = await usersPGRepository.createNewClient(userObj);
 
-        console.log('REGISTRO: ',response)
+    console.log("REGISTRO: ", response);
 
-        return {
-          data: {
-            msg: "User registred succesfully",
-            user: {
-              cust_cr_cod_pub: response
-            },
-            captchaSuccess: true,
-          },
-          status: 200,
-          success: true,
-          failed: false,
-        };
-      // }
+    return {
+      data: {
+        msg: "User registred succesfully",
+        user: {
+          cust_cr_cod_pub: response,
+        },
+        captchaSuccess: true,
+      },
+      status: 200,
+      success: true,
+      failed: false,
+    };
+    // }
     // }
   } catch (error) {
     if (error.code === "23505") {
@@ -388,7 +385,7 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
         let doc_path = createFile(files.doc, fields.email_user, "one");
         let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
-        logger.silly(fields)
+        logger.silly(fields);
 
         if (!fileError) {
           try {
@@ -397,26 +394,44 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
               state_name: fields.state_name ? fields.state_name : null,
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
-              id_ident_doc_type: fields.id_ident_doc_type ? fields.id_ident_doc_type : null,
-              ident_doc_number: fields.ident_doc_number ? fields.ident_doc_number : null,
+              id_ident_doc_type: fields.id_ident_doc_type
+                ? fields.id_ident_doc_type
+                : null,
+              ident_doc_number: fields.ident_doc_number
+                ? fields.ident_doc_number
+                : null,
               occupation: fields.occupation ? fields.occupation : null,
               doc_path: doc_path ? doc_path : null,
               selfie_path: selfie_path ? selfie_path : null,
               main_sn_platf: fields.main_sn_platf ? fields.main_sn_platf : null,
-              user_main_sn_platf: fields.user_main_sn_platf ? fields.user_main_sn_platf : null,
+              user_main_sn_platf: fields.user_main_sn_platf
+                ? fields.user_main_sn_platf
+                : null,
               address: fields.domicile_address ? fields.domicile_address : null,
               gender: fields.gender ? fields.gender : null,
-              id_nationality_country: fields.id_nationality_country ? fields.id_nationality_country : null,
+              id_nationality_country: fields.id_nationality_country
+                ? fields.id_nationality_country
+                : null,
               main_phone: fields.main_phone ? fields.main_phone : null,
-              main_phone_code: fields.main_phone_code ? fields.main_phone_code : null,
-              main_phone_full: fields.main_phone_full ? fields.main_phone_full : null,
+              main_phone_code: fields.main_phone_code
+                ? fields.main_phone_code
+                : null,
+              main_phone_full: fields.main_phone_full
+                ? fields.main_phone_full
+                : null,
               pol_exp_per: fields.pol_exp_per ? fields.pol_exp_per : null,
-              truthful_information: fields.truthful_information ? fields.truthful_information : null,
+              truthful_information: fields.truthful_information
+                ? fields.truthful_information
+                : null,
               lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
               legal_terms: fields.legal_terms ? fields.legal_terms : null,
-              new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
+              new_password: fields.new_password
+                ? await bcrypt.hash(fields.new_password, 10)
+                : null,
               new_email: fields.new_email ? fields.new_email : null,
-              id_resid_country: fields.id_resid_country ? fields.id_resid_country : null
+              id_resid_country: fields.id_resid_country
+                ? fields.id_resid_country
+                : null,
             });
 
             setfinalResp({
@@ -433,7 +448,6 @@ usersService.requestLevelOne1stQ = async (req, res, next) => {
               failed: true,
             });
           }
-                    
         } else
           setfinalResp({
             data: { message: "There was an error with the file." },
@@ -469,123 +483,138 @@ function getAnswersToRepo() {
 
 usersService.requestLevelOne2ndQ = async (req, res, next) => {
   try {
-      logger.info(`[${context}]: Requesting level one 2nd question`);
-      ObjLog.log(`[${context}]: Requesting level one 2nd question`);
+    logger.info(`[${context}]: Requesting level one 2nd question`);
+    ObjLog.log(`[${context}]: Requesting level one 2nd question`);
 
-  let fileError = false;
+    let fileError = false;
 
-  const form = formidable({
-    multiples: true,
-    uploadDir: env.FILES_DIR,
-    maxFileSize: 20 * 1024 * 1024,
-    keepExtensions: true,
-  });
+    const form = formidable({
+      multiples: true,
+      uploadDir: env.FILES_DIR,
+      maxFileSize: 20 * 1024 * 1024,
+      keepExtensions: true,
+    });
 
-  form.onPart = (part) => {
-    if (
-      !fileError &&
-      !(
-        part.mime === "image/png" ||
-        part.mime === "image/jpg" ||
-        part.mime === "image/jpeg" ||
-        part.mime === "image/gif" ||
-        part.mime === "application/pdf" ||
-        part.mime === null
-      )
-    ) {
-      fileError = true;
-      form.emit("error");
-    } else {
-      form.handlePart(part);
-    }
-  };
+    form.onPart = (part) => {
+      if (
+        !fileError &&
+        !(
+          part.mime === "image/png" ||
+          part.mime === "image/jpg" ||
+          part.mime === "image/jpeg" ||
+          part.mime === "image/gif" ||
+          part.mime === "application/pdf" ||
+          part.mime === null
+        )
+      ) {
+        fileError = true;
+        form.emit("error");
+      } else {
+        form.handlePart(part);
+      }
+    };
 
-  form.on("error", function (err) {
-    if (fileError) {
-      next({
-        message: `Uno o varios archivos no tienen formato permitido`,
-      });
-    } else {
-      fileError = true;
+    form.on("error", function (err) {
+      if (fileError) {
+        next({
+          message: `Uno o varios archivos no tienen formato permitido`,
+        });
+      } else {
+        fileError = true;
 
-      next({
-        message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
-      });
-    }
-  });
+        next({
+          message: `El archivo subido ha excedido el límite, vuelve a intentar con uno menor a ${form.maxFileSize} B`,
+        });
+      }
+    });
 
-  await new Promise((resolve, reject) => {
-    form.parse(req, async function (err, fields, files) {
-      let doc_path = createFile(files.doc, fields.email_user, "one");
-      let selfie_path = createFile(files.selfie, fields.email_user, "one");
+    await new Promise((resolve, reject) => {
+      form.parse(req, async function (err, fields, files) {
+        let doc_path = createFile(files.doc, fields.email_user, "one");
+        let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
-      logger.silly(fields)
+        logger.silly(fields);
 
-      if (!fileError) {
-        try {
-          await usersPGRepository.requestLevelOne2ndQ({
-            date_birth: fields.date_birth ? fields.date_birth : null,
-            state_name: fields.state_name ? fields.state_name : null,
-            resid_city: fields.resid_city ? fields.resid_city : null,
-            email_user: fields.email_user ? fields.email_user : null,
-            id_country: fields.id_country ? fields.id_country : null,
-            ident_doc_number: fields.ident_doc_number ? fields.ident_doc_number : null,
-            occupation: fields.occupation ? fields.occupation : null,
-            doc_path: doc_path ? doc_path : null,
-            selfie_path: selfie_path ? selfie_path : null,
-            main_sn_platf: fields.main_sn_platf ? fields.main_sn_platf : null,
-            user_main_sn_platf: fields.user_main_sn_platf ? fields.user_main_sn_platf : null,
-            address: fields.domicile_address ? fields.domicile_address : null,
-            gender: fields.gender ? fields.gender : null,
-            id_nationality_country: fields.id_nationality_country ? fields.id_nationality_country : null,
-            main_phone: fields.main_phone ? fields.main_phone : null,
-            main_phone_code: fields.main_phone_code ? fields.main_phone_code : null,
-            main_phone_full: fields.main_phone_full ? fields.main_phone_full : null,
-            pol_exp_per: fields.pol_exp_per ? fields.pol_exp_per : null,
-            truthful_information: fields.truthful_information ? fields.truthful_information : null,
-            lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
-            legal_terms: fields.legal_terms ? fields.legal_terms : null,
-            new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
-            new_email: fields.new_email ? fields.new_email : null,
-            id_resid_country: fields.id_resid_country ? fields.id_resid_country : null
-          });
+        if (!fileError) {
+          try {
+            await usersPGRepository.requestLevelOne2ndQ({
+              date_birth: fields.date_birth ? fields.date_birth : null,
+              state_name: fields.state_name ? fields.state_name : null,
+              resid_city: fields.resid_city ? fields.resid_city : null,
+              email_user: fields.email_user ? fields.email_user : null,
+              id_country: fields.id_country ? fields.id_country : null,
+              ident_doc_number: fields.ident_doc_number
+                ? fields.ident_doc_number
+                : null,
+              occupation: fields.occupation ? fields.occupation : null,
+              doc_path: doc_path ? doc_path : null,
+              selfie_path: selfie_path ? selfie_path : null,
+              main_sn_platf: fields.main_sn_platf ? fields.main_sn_platf : null,
+              user_main_sn_platf: fields.user_main_sn_platf
+                ? fields.user_main_sn_platf
+                : null,
+              address: fields.domicile_address ? fields.domicile_address : null,
+              gender: fields.gender ? fields.gender : null,
+              id_nationality_country: fields.id_nationality_country
+                ? fields.id_nationality_country
+                : null,
+              main_phone: fields.main_phone ? fields.main_phone : null,
+              main_phone_code: fields.main_phone_code
+                ? fields.main_phone_code
+                : null,
+              main_phone_full: fields.main_phone_full
+                ? fields.main_phone_full
+                : null,
+              pol_exp_per: fields.pol_exp_per ? fields.pol_exp_per : null,
+              truthful_information: fields.truthful_information
+                ? fields.truthful_information
+                : null,
+              lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
+              legal_terms: fields.legal_terms ? fields.legal_terms : null,
+              new_password: fields.new_password
+                ? await bcrypt.hash(fields.new_password, 10)
+                : null,
+              new_email: fields.new_email ? fields.new_email : null,
+              id_resid_country: fields.id_resid_country
+                ? fields.id_resid_country
+                : null,
+            });
 
-          setfinalResp({
+            setfinalResp({
               data: { message: "Request succesfuly uploaded." },
               status: 200,
               success: true,
               failed: false,
-          });
-        } catch (error) {
+            });
+          } catch (error) {
+            setfinalResp({
+              data: { message: error.message },
+              status: 500,
+              success: false,
+              failed: true,
+            });
+          }
+        } else
           setfinalResp({
-            data: { message: error.message },
+            data: { message: "There was an error with the file." },
             status: 500,
             success: false,
             failed: true,
           });
-        }
-          
-      } else
-      setfinalResp({
-          data: { message: "There was an error with the file." },
+        resolve();
+      });
+    });
+    return getfinalResp()
+      ? getfinalResp()
+      : {
+          data: { message: "There was an error." },
           status: 500,
           success: false,
           failed: true,
-      });
-      resolve();
-  });
-  });
-  return getfinalResp()
-  ? getfinalResp()
-  : {
-      data: { message: "There was an error." },
-      status: 500,
-      success: false,
-      failed: true,
-      };
-} catch (error) {
-  next(error);
-}
+        };
+  } catch (error) {
+    next(error);
+  }
 };
 
 usersService.requestLevelOne3rdQ = async (req, res, next) => {
@@ -640,7 +669,7 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
         let doc_path = createFile(files.doc, fields.email_user, "one");
         let selfie_path = createFile(files.selfie, fields.email_user, "one");
 
-        logger.silly(fields)
+        logger.silly(fields);
 
         if (!fileError) {
           try {
@@ -650,32 +679,48 @@ usersService.requestLevelOne3rdQ = async (req, res, next) => {
               resid_city: fields.resid_city ? fields.resid_city : null,
               email_user: fields.email_user ? fields.email_user : null,
               id_country: fields.id_country ? fields.id_country : null,
-              ident_doc_number: fields.ident_doc_number ? fields.ident_doc_number : null,
+              ident_doc_number: fields.ident_doc_number
+                ? fields.ident_doc_number
+                : null,
               occupation: fields.occupation ? fields.occupation : null,
               doc_path: doc_path ? doc_path : null,
               selfie_path: selfie_path ? selfie_path : null,
               main_sn_platf: fields.main_sn_platf ? fields.main_sn_platf : null,
-              user_main_sn_platf: fields.user_main_sn_platf ? fields.user_main_sn_platf : null,
+              user_main_sn_platf: fields.user_main_sn_platf
+                ? fields.user_main_sn_platf
+                : null,
               address: fields.domicile_address ? fields.domicile_address : null,
               gender: fields.gender ? fields.gender : null,
-              id_nationality_country: fields.id_nationality_country ? fields.id_nationality_country : null,
+              id_nationality_country: fields.id_nationality_country
+                ? fields.id_nationality_country
+                : null,
               main_phone: fields.main_phone ? fields.main_phone : null,
-              main_phone_code: fields.main_phone_code ? fields.main_phone_code : null,
-              main_phone_full: fields.main_phone_full ? fields.main_phone_full : null,
+              main_phone_code: fields.main_phone_code
+                ? fields.main_phone_code
+                : null,
+              main_phone_full: fields.main_phone_full
+                ? fields.main_phone_full
+                : null,
               pol_exp_per: fields.pol_exp_per ? fields.pol_exp_per : null,
-              truthful_information: fields.truthful_information ? fields.truthful_information : null,
+              truthful_information: fields.truthful_information
+                ? fields.truthful_information
+                : null,
               lawful_funds: fields.lawful_funds ? fields.lawful_funds : null,
               legal_terms: fields.legal_terms ? fields.legal_terms : null,
-              new_password: fields.new_password ? await bcrypt.hash(fields.new_password,10) : null,
+              new_password: fields.new_password
+                ? await bcrypt.hash(fields.new_password, 10)
+                : null,
               new_email: fields.new_email ? fields.new_email : null,
-              id_resid_country: fields.id_resid_country ? fields.id_resid_country : null
+              id_resid_country: fields.id_resid_country
+                ? fields.id_resid_country
+                : null,
             });
-  
+
             setfinalResp({
-                data: { message: "Request succesfuly uploaded." },
-                status: 200,
-                success: true,
-                failed: false,
+              data: { message: "Request succesfuly uploaded." },
+              status: 200,
+              success: true,
+              failed: false,
             });
           } catch (error) {
             setfinalResp({
@@ -773,28 +818,36 @@ usersService.requestLevelTwo = async (req, res, next) => {
           setAnswersToRepo(getAnswersToRepo() + "]::json[]");
           setAnswersToRepo(getAnswersToRepo().replace(",", ""));
 
-          logger.silly(fields)
+          logger.silly(fields);
 
-          let industryAnswer = JSON.parse(fields.answers).find(e => e.question_number === 5)
+          let industryAnswer = JSON.parse(fields.answers).find(
+            (e) => e.question_number === 5
+          );
 
-          console.log('industryAnswer: ',industryAnswer)
-          console.log('industryAnswer.answers[0].alert: ',industryAnswer.answers[0].alert)
-          console.log('JSON.parse(fields.answers)[2].answers[0].alert: ',JSON.parse(fields.answers)[2].answers[0].alert)
+          console.log("industryAnswer: ", industryAnswer);
+          console.log(
+            "industryAnswer.answers[0].alert: ",
+            industryAnswer.answers[0].alert
+          );
+          console.log(
+            "JSON.parse(fields.answers)[2].answers[0].alert: ",
+            JSON.parse(fields.answers)[2].answers[0].alert
+          );
 
-          if(industryAnswer && industryAnswer.answers[0].alert){
+          if (industryAnswer && industryAnswer.answers[0].alert) {
             let mailResp = mailSender.sendIndustryAlertMail({
               email_user: fields.email_user,
-              from: 'no-reply@bithonor.com',
-              to: 'registro@bithonor.com',
+              from: "no-reply@bithonor.com",
+              to: "registro@bithonor.com",
               subject: `Alerta de Industria`,
               title: `Alerta de Industria`,
               subtitle: `Alerta de Industria`,
               firstParagraph: `Se ha levantado una alerta en la solicitud al Nivel Avanzado por parte del usuario ${fields.email_user}. Ha marcado que trabaja en la industria: ${industryAnswer.answers[0].answer}`,
-              secondParagraph: 'Favor tomar las acciones necesarias.',
-              mailType: `Alerta`
-            })
+              secondParagraph: "Favor tomar las acciones necesarias.",
+              mailType: `Alerta`,
+            });
 
-            logger.silly(mailResp)
+            logger.silly(mailResp);
           }
 
           await usersPGRepository.requestLevelTwo({
@@ -1057,7 +1110,9 @@ usersService.getLevelQuestions = async (req, res, next) => {
     ObjLog.log(`[${context}]: Getting level questions`);
 
     let data = await usersPGRepository.getLevelQuestions();
-    let answers = await usersPGRepository.getLevelAnswers(req.params.id_resid_country);
+    let answers = await usersPGRepository.getLevelAnswers(
+      req.params.id_resid_country
+    );
     let respArr = [];
 
     data = data.map(function (q) {
@@ -1129,17 +1184,15 @@ usersService.sendVerificationCodeByWhatsApp = async (req, res, next) => {
 
     let data = await usersPGRepository.generateCode(
       req.body.main_phone_full,
-      'whatsapp'
+      "whatsapp"
     );
 
     if (data.msg === "Code generated") {
-      const whaResp =  await sendWhatsappMessage(
-          req.body.main_phone_full,
-          `💰<Bithonor>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
-        )
-      if (
-        whaResp.status === 'Message sended'
-      )
+      const whaResp = await sendWhatsappMessage(
+        req.body.main_phone_full,
+        `💰<Bithonor>💰 ${req.body.first_name}, tu código de verificación es ${data.code}. No lo compartas con nadie.`
+      );
+      if (whaResp.status === "Message sended")
         return {
           data: {
             msg: data.msg,
@@ -1388,9 +1441,7 @@ usersService.getUserAccounts = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting user account`);
     ObjLog.log(`[${context}]: Getting user account`);
-    let data = await usersPGRepository.getUserAccounts(
-      req.params.email_user
-    );
+    let data = await usersPGRepository.getUserAccounts(req.params.email_user);
     if (data)
       return {
         data,
@@ -1416,9 +1467,7 @@ usersService.deleteUserAccount = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting user account`);
     ObjLog.log(`[${context}]: Getting user account`);
-    let data = await usersPGRepository.deleteUserAccount(
-      req.params.email_user
-    );
+    let data = await usersPGRepository.deleteUserAccount(req.params.email_user);
     if (data && data.message)
       return {
         data: {
@@ -1446,10 +1495,7 @@ usersService.getFileName = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting file name`);
     ObjLog.log(`[${context}]: Getting file name`);
-    let data = await fileNamer.getFileName(
-      req.body.email,
-      req.body.fileInfo
-    );
+    let data = await fileNamer.getFileName(req.body.email, req.body.fileInfo);
     if (data)
       return {
         data,
@@ -1475,9 +1521,7 @@ usersService.getMigratedInfo = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting migrated info`);
     ObjLog.log(`[${context}]: Getting migrated info`);
-    let data = await usersPGRepository.getMigratedInfo(
-      req.params.id
-    );
+    let data = await usersPGRepository.getMigratedInfo(req.params.id);
 
     if (data)
       return {
@@ -1504,11 +1548,9 @@ usersService.validateEmail = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting migrated info`);
     ObjLog.log(`[${context}]: Getting migrated info`);
-    let data = await usersPGRepository.validateEmail(
-      req.params.email
-    );
+    let data = await usersPGRepository.validateEmail(req.params.email);
 
-    console.log('DATA: ',data)
+    console.log("DATA: ", data);
 
     if (data !== null && data !== undefined)
       return {
@@ -1535,32 +1577,35 @@ usersService.validateCode = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Validating code`);
     ObjLog.log(`[${context}]: Validating code`);
-    let data = await usersPGRepository.verifCode(req.body.ident_user,req.body.code);
+    let data = await usersPGRepository.verifCode(
+      req.body.ident_user,
+      req.body.code
+    );
 
-    console.log('DATA: ',data)
+    console.log("DATA: ", data);
 
-    if (data && data.msg === 'Valid code')
+    if (data && data.msg === "Valid code")
       return {
         data,
         status: 200,
         success: true,
         failed: false,
       };
-    else if (data && data.msg === 'Invalid code')
+    else if (data && data.msg === "Invalid code")
       return {
         data,
         status: 400,
         success: false,
         failed: true,
       };
-    else if (data && data.msg === 'Expired code')
+    else if (data && data.msg === "Expired code")
       return {
         data,
         status: 403,
         success: false,
         failed: true,
       };
-    else if (data && data.msg === 'Invalid user')
+    else if (data && data.msg === "Invalid user")
       return {
         data,
         status: 400,
@@ -1581,6 +1626,48 @@ usersService.validateCode = async (req, res, next) => {
   }
 };
 
+usersService.editPhone = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Editing phone`);
+    ObjLog.log(`[${context}]: Editing phone`);
+    await usersPGRepository.editPhone(
+      req.params.uuid_user,
+      req.body.main_phone,
+      req.body.main_phone_code,
+      req.body.main_phone_full,
+    );
+
+    return {
+      data: {
+        msg: "Phone edited successfully.",
+      },
+      status: 200,
+      success: true,
+      failed: false,
+    };
+  } catch (error) {
+    next(error);
+  }
+};
+
+usersService.editLevelOneInfo = async (req, res, next) => {
+  try {
+    logger.info(`[${context}]: Editing level one info`);
+    ObjLog.log(`[${context}]: Editing level one info`);
+    await usersPGRepository.editLevelOneInfo(req.body);
+
+    return {
+      data: {
+        msg: "Level one info edited successfully.",
+      },
+      status: 200,
+      success: true,
+      failed: false,
+    };
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default usersService;
 export { events };

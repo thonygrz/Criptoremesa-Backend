@@ -53,6 +53,7 @@ authenticationPGRepository.getUserByEmail = async (email) => {
     const resp = await poolSM.query(
       `SELECT * FROM get_all_users_by_email('${email}')`
     );
+    console.log(resp.rows[0]);
     return resp.rows[0];
   } catch (error) {
     throw error;
@@ -342,7 +343,7 @@ authenticationPGRepository.getIpInfo = async (ip) => {
 
     let resp = await poolSM.query(
       `SELECT *
-        FROM get_ip_info('${ip}')`
+        FROM get_ip_info('${ip ? ip : '0.0.0.0'}')`
     );
     if (resp.rows[0] === undefined) return "Probably localhost";
     return resp.rows[0];

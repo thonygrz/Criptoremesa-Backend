@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import veriflevelsPGRepository from "../repositories/veriflevels.pg.repository";
+import veriflevelsHTTPRepository from "../repositories/veriflevels.http.repository";
 import fs from "fs";
 import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 
@@ -261,5 +262,21 @@ veriflevelsService.getWholesalePartnerRequestsRequirementsByEmail = async (
     next(error);
   }
 };
+
+veriflevelsService.levelOneVerfificationSilt = async (dateBirth, emailUser, docType, countryDoc, identDocNumber, docPath, selfie, gender, nationalityCountry, siltID, siltStatus) => {
+  logger.info(`[${context}]: getting iso codes`);
+  ObjLog.log(`[${context}]: getting iso codes`);
+
+  const countryIsoCodeDoc = countryDoc ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(countryDoc) : null;
+  const nationalityCountryIsoCode = nationalityCountry ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(nationalityCountry) : null;
+
+  console.log(`countryIsoCodeDoc: ${countryIsoCodeDoc}`);
+  console.log(`nationalityCountryIsoCode: ${nationalityCountryIsoCode}`);
+
+  logger.info(`[${context}]: storing silt request in BD`);
+  ObjLog.log(`[${context}]: storing silt request in BD`);
+
+  await veriflevelsPGRepository.levelOneVerfificationSilt(dateBirth, emailUser, docType, countryIsoCodeDoc, identDocNumber, docPath, selfie, gender, nationalityCountryIsoCode, siltID, siltStatus);
+}
 
 export default veriflevelsService;
