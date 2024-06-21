@@ -720,6 +720,31 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (
   }
 };
 
+getEvaluatedStatus = (globalStatus, userStatus, verifications) => {
+  if (globalStatus === 'SUCCESS' && userStatus === 'SUCCESS') {
+    const hasAllVerifications = verifications.every(
+      (v) => v.verification_type === "AML" || v.verification_type === "PEP" || v.verification_type === "MISCONDUCT"
+    );
+    if (!hasAllVerifications) {
+      return "PENDING";
+    }
+    return "SUCCESS";
+  } else if (
+    globalStatus === "SUCCESS" &&
+    (userStatus === "MANUAL_REVIEW" ||
+      userStatus === "PENDING" ||
+      userStatus === "BLOCKED" ||
+      userStatus === "RUNNING" ||
+      userStatus === "CREATING")
+  ) {
+    return "PENDING";
+  } else if (globalStatus === 'ERROR' || globalStatus === 'VERIFICATION_ERROR' || userStatus === 'ERROR' || userStatus === 'VERIFICATION_ERROR') {
+    return "ERROR";
+  } else {
+    return "PENDING";
+  }
+}
+
 veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
   try {
     const dateBirth = req.body.user.birth_date;
@@ -728,7 +753,7 @@ veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
     const gender = req.body.user.sex;
     const nationalityCountry = req.body.user.nationality;
     const siltID = req.body.user.id;
-    const siltStatus = req.body.manual_review_status ? req.body.manual_review_status : req.body.status;
+    const siltStatus = getEvaluatedStatus(req.body.status, req.body.user.status, req.body.user.verifications);
     let docType;
     let countryDoc;
     let identDocNumber;
