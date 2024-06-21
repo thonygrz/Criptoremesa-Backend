@@ -720,7 +720,7 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (
   }
 };
 
-getEvaluatedStatus = (globalStatus, userStatus, verifications) => {
+const getEvaluatedStatus = (globalStatus, userStatus, verifications) => {
   if (globalStatus === 'SUCCESS' && userStatus === 'SUCCESS') {
     const hasAllVerifications = verifications.every(
       (v) => v.verification_type === "AML" || v.verification_type === "PEP" || v.verification_type === "MISCONDUCT"
