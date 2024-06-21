@@ -721,11 +721,14 @@ veriflevelsController.getWholesalePartnerRequestsRequirementsByEmail = async (
 };
 
 const getEvaluatedStatus = (globalStatus, userStatus, verifications) => {
-  if (globalStatus === 'SUCCESS' && userStatus === 'SUCCESS') {
-    const hasAllVerifications = verifications.every(
-      (v) => v.verification_type === "AML" || v.verification_type === "PEP" || v.verification_type === "MISCONDUCT"
+  if (globalStatus === "SUCCESS" && userStatus === "SUCCESS") {
+    const hasAML = verifications.some((v) => v.verification_type === "AML");
+    const hasPEP = verifications.some((v) => v.verification_type === "PEP");
+    const hasMisconduct = verifications.some(
+      (v) => v.verification_type === "MISCONDUCT"
     );
-    if (!hasAllVerifications) {
+
+    if (!hasAML || !hasPEP || !hasMisconduct) {
       return "PENDING";
     }
     return "SUCCESS";
@@ -738,7 +741,12 @@ const getEvaluatedStatus = (globalStatus, userStatus, verifications) => {
       userStatus === "CREATING")
   ) {
     return "PENDING";
-  } else if (globalStatus === 'ERROR' || globalStatus === 'VERIFICATION_ERROR' || userStatus === 'ERROR' || userStatus === 'VERIFICATION_ERROR') {
+  } else if (
+    globalStatus === "ERROR" ||
+    globalStatus === "VERIFICATION_ERROR" ||
+    userStatus === "ERROR" ||
+    userStatus === "VERIFICATION_ERROR"
+  ) {
     return "ERROR";
   } else {
     return "PENDING";
