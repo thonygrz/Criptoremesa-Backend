@@ -743,7 +743,8 @@ const getEvaluatedStatus = (globalStatus, userStatus, verifications) => {
     return "PENDING";
   } else if (
     globalStatus === "ERROR" ||
-    globalStatus === "VERIFICATION_ERROR"
+    globalStatus === "VERIFICATION_ERROR" ||
+    (userStatus === "ERROR" && globalStatus === "SUCCESS")
   ) {
     return "ERROR";
   } else {
