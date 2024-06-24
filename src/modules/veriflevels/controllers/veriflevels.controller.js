@@ -763,7 +763,7 @@ veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
     const gender = req.body.user.sex;
     const nationalityCountry = req.body.user.nationality;
     const siltID = req.body.user.id;
-    const siltStatus = getEvaluatedStatus(req.body.status, req.body.user.status, req.body.user.verifications);
+    const siltStatus = getEvaluatedStatus(req.body.status, req.body.user.status, req.body.user.verifications, req.body.manual_review_status);
     let docType;
     let countryDoc;
     let identDocNumber;
