@@ -724,7 +724,7 @@ const getEvaluatedStatus = (globalStatus, userStatus, verifications, manualRevie
   if (manualReviewStatus) {
     return manualReviewStatus;
   }
-  else if (globalStatus === "SUCCESS" && userStatus === "SUCCESS") {
+  else if (userStatus === "SUCCESS") {
     const hasAML = verifications.some((v) => v.verification_type === "AML");
     const hasPEP = verifications.some((v) => v.verification_type === "PEP");
     const hasMisconduct = verifications.some(
