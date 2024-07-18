@@ -228,14 +228,40 @@ veriflevelsPGRepository.validateRemittance = async (remittance) => {
   }
 };
 
-veriflevelsPGRepository.levelOneVerfificationSilt = async (dateBirth, emailUser, docType, countryIsoCodeDoc, identDocNumber, docPath, selfie, gender, nationalityCountryIsoCode, siltID, siltStatus) => {
+veriflevelsPGRepository.levelOneVerfificationSilt = async (
+  dateBirth,
+  emailUser,
+  docType,
+  countryIsoCodeDoc,
+  identDocNumber,
+  docPath,
+  selfie,
+  gender,
+  nationalityCountryIsoCode,
+  siltID,
+  siltStatus,
+  manualReviewStatus
+) => {
   logger.info(`[${context}]: prooving from DB`);
   ObjLog.log(`[${context}]: prooving from DB`);
 
   await poolSM.query({
-    text: `select sec_cust.sp_request_level_one_silt($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-    values: [dateBirth, emailUser, docType, countryIsoCodeDoc, identDocNumber, docPath, selfie, gender, nationalityCountryIsoCode, siltID, siltStatus]    
+    text: `select sec_cust.sp_request_level_one_silt($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+    values: [
+      dateBirth,
+      emailUser,
+      docType,
+      countryIsoCodeDoc,
+      identDocNumber,
+      docPath,
+      selfie,
+      gender,
+      nationalityCountryIsoCode,
+      siltID,
+      siltStatus,
+      manualReviewStatus,
+    ],
   });
-}
+};
 
 export default veriflevelsPGRepository;
