@@ -738,12 +738,13 @@ const getEvaluatedStatus = (globalStatus, userStatus, verifications, manualRevie
   } else if (
     globalStatus === "SUCCESS" &&
     (userStatus === "MANUAL_REVIEW" ||
-      userStatus === "PENDING" ||
-      userStatus === "BLOCKED" ||
-      userStatus === "RUNNING" ||
-      userStatus === "CREATING")
+      userStatus === "BLOCKED" )
   ) {
     return "PENDING";
+  } else if (
+    globalStatus === "SUCCESS"
+  ) {
+    return "SUCCESS";
   } else if (
     globalStatus === "ERROR" ||
     globalStatus === "VERIFICATION_ERROR" ||
