@@ -263,12 +263,29 @@ veriflevelsService.getWholesalePartnerRequestsRequirementsByEmail = async (
   }
 };
 
-veriflevelsService.levelOneVerfificationSilt = async (dateBirth, emailUser, docType, countryDoc, identDocNumber, docPath, selfie, gender, nationalityCountry, siltID, siltStatus) => {
+veriflevelsService.levelOneVerfificationSilt = async (
+  dateBirth,
+  emailUser,
+  docType,
+  countryDoc,
+  identDocNumber,
+  docPath,
+  selfie,
+  gender,
+  nationalityCountry,
+  siltID,
+  siltStatus,
+  manualReviewStatus
+) => {
   logger.info(`[${context}]: getting iso codes`);
   ObjLog.log(`[${context}]: getting iso codes`);
 
-  const countryIsoCodeDoc = countryDoc ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(countryDoc) : null;
-  const nationalityCountryIsoCode = nationalityCountry ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(nationalityCountry) : null;
+  const countryIsoCodeDoc = countryDoc
+    ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(countryDoc)
+    : null;
+  const nationalityCountryIsoCode = nationalityCountry
+    ? await veriflevelsHTTPRepository.getCountryIsoCodeCCA2(nationalityCountry)
+    : null;
 
   console.log(`countryIsoCodeDoc: ${countryIsoCodeDoc}`);
   console.log(`nationalityCountryIsoCode: ${nationalityCountryIsoCode}`);
@@ -276,7 +293,20 @@ veriflevelsService.levelOneVerfificationSilt = async (dateBirth, emailUser, docT
   logger.info(`[${context}]: storing silt request in BD`);
   ObjLog.log(`[${context}]: storing silt request in BD`);
 
-  await veriflevelsPGRepository.levelOneVerfificationSilt(dateBirth, emailUser, docType, countryIsoCodeDoc, identDocNumber, docPath, selfie, gender, nationalityCountryIsoCode, siltID, siltStatus);
-}
+  await veriflevelsPGRepository.levelOneVerfificationSilt(
+    dateBirth,
+    emailUser,
+    docType,
+    countryIsoCodeDoc,
+    identDocNumber,
+    docPath,
+    selfie,
+    gender,
+    nationalityCountryIsoCode,
+    siltID,
+    siltStatus,
+    manualReviewStatus
+  );
+};
 
 export default veriflevelsService;
