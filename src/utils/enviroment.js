@@ -33,3 +33,11 @@ export const ENVIROMENTS = {
     PRODUCTION: 'prod',
     DEVELOPMENT: 'dev'
 }
+
+export const SENTRY_ENVS = {
+    DEVELOPMENT: 'development',
+    PRODUCTION: 'production',
+    LOCAL: 'local',
+  };
+
+  export const VALID_SENTRY_ENVS = [SENTRY_ENVS.DEVELOPMENT, SENTRY_ENVS.PRODUCTION, SENTRY_ENVS.LOCAL];
