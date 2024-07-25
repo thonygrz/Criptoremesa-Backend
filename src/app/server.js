@@ -5,6 +5,7 @@ import morgan from "morgan";
 import { logger } from "../utils/logger";
 import ObjLog from "../utils/ObjLog";
 import { env } from "../utils/enviroment";
+import "../utils/sentry";
 import routerIndex from "../routes/index.routes";
 import passport from "passport";
 import session from "express-session";
@@ -17,12 +18,15 @@ import ws from '../utils/websocketTradeAPIs'
 import bodyParser from "body-parser";
 import whatsapp from "../utils/whatsapp";
 import queue from 'express-queue';
+import * as Sentry from "@sentry/node";
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
 
 // SETTINGS
 const app = express();
+
+Sentry.setupExpressErrorHandler(app);
 
 // si no se quiere enviar nunca 304
 // app.disable('etag');
