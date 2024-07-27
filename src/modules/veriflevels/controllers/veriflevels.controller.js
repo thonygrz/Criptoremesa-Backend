@@ -793,7 +793,7 @@ veriflevelsController.levelOneVerfificationSilt = async (req, res, next) => {
 
     console.log(`Doc Country ${countryDoc} - nationality ${nationalityCountry}`);
 
-    await veriflevelsService.levelOneVerfificationSilt(dateBirth, emailUser, docType, countryDoc, identDocNumber, docPath, selfie, gender, nationalityCountry, siltID, siltStatus, req.body.manual_review_status);
+    await veriflevelsService.levelOneVerfificationSilt(dateBirth, emailUser, docType, countryDoc, identDocNumber, docPath, selfie, gender, nationalityCountry, siltID, siltStatus, req.body.manual_review_status ? true : false);
 
     res.status(200).send({
       message: "OK"
