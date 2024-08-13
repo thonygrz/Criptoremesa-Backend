@@ -26,8 +26,6 @@ import transactionsJob from '../utils/jobs/transactions'
 // SETTINGS
 const app = express();
 
-Sentry.setupExpressErrorHandler(app);
-
 // si no se quiere enviar nunca 304
 // app.disable('etag');
 
@@ -128,6 +126,8 @@ app.use(async (req, res, next) => {
     next(error)
   }
 });
+
+Sentry.setupExpressErrorHandler(app);
 
 // ERROR HANDLER
 // app.use(queue.errorHandler());
