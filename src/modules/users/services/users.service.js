@@ -1669,5 +1669,11 @@ usersService.editLevelOneInfo = async (req, res, next) => {
   }
 };
 
+usersService.saveExtraInfoThirdModal = async (idUser, industry, range) => {
+  logger.info(`[${context}]: Saving extra info info on db`);
+  ObjLog.log(`[${context}]: Saving extra info info on db`);
+  await usersPGRepository.saveExtraInfoThirdModal(idUser, industry, range);
+};
+
 export default usersService;
 export { events };

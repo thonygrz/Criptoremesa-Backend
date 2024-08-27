@@ -1542,4 +1542,42 @@ usersController.editLevelOneInfo = async (req, res, next) => {
   }
 };
 
+usersController.saveExtraInfoThirdModal = async (req, res, next) => {
+  try {
+    // filling log object info
+    let log = logConst;
+
+    log.is_auth = req.isAuthenticated();
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    const resp = await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );
+    if (resp)
+      log.country = resp.country_name
+        ? resp.country_name
+        : "Probably Localhost";
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
+      log.session = req.sessionID;
+
+    // calling service
+    logger.info(`[${context}]: Saving extra info info on db`);
+    ObjLog.log(`[${context}]: Saving extra info info on db`);
+
+    const idUser = req.body.id_user;
+    const industry = req.body.industry;
+    const range = req.body.salary_range;
+
+    await usersService.saveExtraInfoThirdModal(idUser, industry, range);
+
+    return {
+      msg: "Extra data saved successfully"
+    }
+
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default usersController;

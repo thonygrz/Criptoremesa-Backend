@@ -735,4 +735,16 @@ usersPGRepository.editLevelOneInfo = async (body) => {
   }
 };  
 
+usersPGRepository.saveExtraInfoThirdModal = async (idUser, industry, range) => {
+  logger.info(`[${context}]: Saving extra info info on db`);
+  ObjLog.log(`[${context}]: Saving extra info info on db`);
+  await poolSM.query("SET SCHEMA 'sec_cust'");
+  await poolSM.query({
+    text: `
+        select sec_cust.sp_create_user_extra_data_third_modal($1, $2, $3);
+    `,
+    values: [idUser, industry, range]
+  });
+};  
+
 export default usersPGRepository;
