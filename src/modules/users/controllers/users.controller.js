@@ -1568,10 +1568,11 @@ usersController.saveExtraInfoThirdModal = async (req, res, next) => {
     const industry = req.body.industry;
     const range = req.body.salary_range;
 
-    await usersService.saveExtraInfoThirdModal(idUser, industry, range);
+    const extraData = await usersService.saveExtraInfoThirdModal(idUser, industry, range);
 
     res.status(200).json({
-      msg: "Extra data saved successfully"
+      msg: "Extra data saved successfully",
+      extra_data: extraData
     });
 
 
