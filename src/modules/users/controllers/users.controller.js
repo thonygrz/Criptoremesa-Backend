@@ -1570,9 +1570,9 @@ usersController.saveExtraInfoThirdModal = async (req, res, next) => {
 
     await usersService.saveExtraInfoThirdModal(idUser, industry, range);
 
-    return {
+    res.status(finalResp.status).json({
       msg: "Extra data saved successfully"
-    }
+    });
 
 
   } catch (error) {
