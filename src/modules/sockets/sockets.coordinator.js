@@ -18,7 +18,22 @@ export async function SocketServer(server) {
   try {
     const io = socketIO(server, {
       cors: {
-        origin: ['https://bhtest.bithonor.es','https://bhtest.bithonor.com','https://bithonor.es','https://bithonor.com','http://bithonor.es','http://bithonor.com'],
+        origin: [
+      "https://bithonor.com",
+      "https://www.bithonor.com",
+      "https://bhdev.bithonor.com",
+      "https://bhdev.bithonor.es",
+      "https://bhtest.bithonor.es",
+      "http://localhost:8080",
+      "https://localhost:8080",
+      "http://localhost:8081",
+      "https://localhost:8081",
+      "https://www.bithonor.es",
+      "https://bithonor.es",
+      "https://3.143.246.144:5011",
+      "https://3.143.246.144:4053",
+      "https://bhtest.bithonor.com"
+    ],
         methods: ["GET", "POST"],
       },
       transports: ['websocket','flashsocket','htmlfile','xhr-polling','jsonp-polling','polling']
