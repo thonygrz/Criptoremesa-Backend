@@ -245,19 +245,6 @@ veriflevelsPGRepository.levelOneVerfificationSilt = async (
   logger.info(`[${context}]: prooving from DB`);
   ObjLog.log(`[${context}]: prooving from DB`);
 
-  console.log("dateBirth", dateBirth);
-  console.log("emailUser", emailUser);
-  console.log("docType", docType);
-  console.log("countryIsoCodeDoc", countryIsoCodeDoc);
-  console.log("identDocNumber", identDocNumber);
-  console.log("docPath", docPath);
-  console.log("selfie", selfie);
-  console.log("gender", gender)
-  console.log("nationalityCountryIsoCode", nationalityCountryIsoCode);
-  console.log("siltID", siltID);
-  console.log("siltStatus", siltStatus);
-  console.log("manualReviewStatus", manualReviewStatus);
-
   await poolSM.query({
     text: `select sec_cust.sp_request_level_one_silt($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
     values: [

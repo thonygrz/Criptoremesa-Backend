@@ -200,23 +200,23 @@ veriflevelsService.getVerifLevelRequirements = async (req, res, next) => {
     const bdResp = await veriflevelsPGRepository.getVerifLevelRequirements(
       req.params.id
     );
-    // if (bdResp.level_one && bdResp.level_one.length > 0) {
+    if (bdResp.level_one.length > 0) {
 
-    //   let doc
-    //   if (bdResp.level_one[0] && bdResp.level_one[0].req_use_path)
-    //     doc = fs.readFileSync(bdResp.level_one[0].req_use_path)
+      let doc
+      if (bdResp.level_one[0] && bdResp.level_one[0].req_use_path)
+        doc = fs.readFileSync(bdResp.level_one[0].req_use_path)
 
-    //   let selfie
-    //   if (bdResp.level_one[1] && bdResp.level_one[1].req_use_path)
-    //     selfie = fs.readFileSync(bdResp.level_one[1].req_use_path)
+      let selfie
+      if (bdResp.level_one[1] && bdResp.level_one[1].req_use_path)
+        selfie = fs.readFileSync(bdResp.level_one[1].req_use_path)
 
-    //   if(doc && selfie)
-    //   bdResp.level_one.forEach((el) => {
-    //     if (el.req_type === "doc") el.req_use_path = doc;
-    //     else if (el.req_type === "selfie") el.req_use_path = selfie;
-    //   });
+      if(doc && selfie)
+      bdResp.level_one.forEach((el) => {
+        if (el.req_type === "doc") el.req_use_path = doc;
+        else if (el.req_type === "selfie") el.req_use_path = selfie;
+      });
 
-    // }
+    }
     if (bdResp.level_two && bdResp.level_two.length > 0) {
 
       let residency_proof

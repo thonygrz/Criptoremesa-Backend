@@ -190,4 +190,10 @@ usersRouter.post(
   usersController.editLevelOneInfo
 );
 
+usersRouter.post(
+  "/save-extra-info-third-modal",
+  // guard.verifyAdmin("/login"),
+  usersController.saveExtraInfoThirdModal
+);
+
 export default usersRouter;
