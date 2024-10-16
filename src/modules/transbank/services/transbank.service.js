@@ -3,6 +3,7 @@ import ObjLog from "../../../utils/ObjLog";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import { WebpayPlus } from "transbank-sdk";
 import { Options, IntegrationApiKeys, Environment, IntegrationCommerceCodes } from "transbank-sdk"
+const { v4: uuidv4 } = require('uuid');
 
 const transbankService = {};
 const context = "transbank Service";
@@ -12,10 +13,10 @@ transbankService.getWebpayTransaction = async (req, res, next) => {
     logger.info(`[${context}]: Creating transaction`);
     ObjLog.log(`[${context}]: Creating transaction`);
 
-    let buyOrder = '12345678';
+    let buyOrder = uuidv4().replace(/-/g, '').substring(0, 26);
     let sessionId = '12345678';
     let amount = req.query.amount; 
-    let returnUrl = 'https://bhdev.bithonor.com/enviar-dinero/sin-comprobante';
+    let returnUrl = 'http://localhost:8080/enviar-dinero/sin-comprobante';
 
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const data = await tx.create(buyOrder, sessionId, amount, returnUrl);
