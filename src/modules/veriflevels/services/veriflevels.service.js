@@ -200,7 +200,7 @@ veriflevelsService.getVerifLevelRequirements = async (req, res, next) => {
     const bdResp = await veriflevelsPGRepository.getVerifLevelRequirements(
       req.params.id
     );
-    if (bdResp.level_one.length > 0) {
+    if (bdResp.level_one && bdResp.level_one.length > 0) {
 
       let doc
       if (bdResp.level_one[0] && bdResp.level_one[0].req_use_path)
