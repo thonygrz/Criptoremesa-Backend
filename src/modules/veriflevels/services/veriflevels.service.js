@@ -203,11 +203,11 @@ veriflevelsService.getVerifLevelRequirements = async (req, res, next) => {
     if (bdResp.level_one && bdResp.level_one.length > 0) {
 
       let doc
-      if (bdResp.level_one[0] && bdResp.level_one[0].req_use_path)
+      if (bdResp.level_one[0] && bdResp.level_one[0].req_use_path && !bdResp.level_one[0].req_use_path.includes('http'))
         doc = fs.readFileSync(bdResp.level_one[0].req_use_path)
 
       let selfie
-      if (bdResp.level_one[1] && bdResp.level_one[1].req_use_path)
+      if (bdResp.level_one[1] && bdResp.level_one[1].req_use_path && !bdResp.level_one[1].req_use_path.includes('http'))
         selfie = fs.readFileSync(bdResp.level_one[1].req_use_path)
 
       if(doc && selfie)
