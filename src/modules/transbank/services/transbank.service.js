@@ -7,6 +7,18 @@ import { Options, IntegrationApiKeys, Environment, IntegrationCommerceCodes } fr
 const transbankService = {};
 const context = "transbank Service";
 
+const getCurrentDomain = () => {
+  if(env.PG_DB_SM_NAME === 'dev-cg'){
+    return "https://bhdev.bithonor.com";
+  }else if (env.PG_DB_SM_NAME === 'test-cg'){
+    return "https://bhtest.bithonor.com";
+  } else if (env.PG_DB_SM_NAME === 'PROD-cg') {
+    return "https://bithonor.com";
+  } else {
+    return "https://bhdev.bithonor.com";
+  }
+}
+
 transbankService.getWebpayTransaction = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Creating transaction`);
@@ -15,7 +27,7 @@ transbankService.getWebpayTransaction = async (req, res, next) => {
     let buyOrder = '12345678';
     let sessionId = '12345678';
     let amount = req.query.amount; 
-    let returnUrl = 'https://bhdev.bithonor.com/enviar-dinero/sin-comprobante';
+    let returnUrl = `${getCurrentDomain()}/enviar-dinero/sin-comprobante`;
 
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const data = await tx.create(buyOrder, sessionId, amount, returnUrl);
