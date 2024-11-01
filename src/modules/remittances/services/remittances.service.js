@@ -384,7 +384,7 @@ remittancesService.webpayRemittance = async (req, res, next) => {
         // se asigna la respuesta al FE
       
         setfinalResp({
-          data,
+          data: {...data,transbankRes},
           status: 200,
           success: true,
           failed: false
@@ -401,7 +401,7 @@ remittancesService.webpayRemittance = async (req, res, next) => {
     }
     else {
       setfinalResp({
-        data: {message: 'Testing error'},
+        data: {message: 'Testing error', transbankRes},
         status: 403,
         success: true,
         failed: false

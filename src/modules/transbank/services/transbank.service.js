@@ -3,14 +3,18 @@ import ObjLog from "../../../utils/ObjLog";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import { WebpayPlus } from "transbank-sdk";
 import { Options, IntegrationApiKeys, Environment, IntegrationCommerceCodes } from "transbank-sdk"
+const { v4: uuidv4 } = require('uuid');
 
 const transbankService = {};
 const context = "transbank Service";
 
 const getCurrentDomain = () => {
-  if(env.PG_DB_SM_NAME === 'dev-cg'){
+  if(env.PG_DB_SM_NAME === 'dev-cg' && env.ENVIROMENT === 'local'){
+    return "http://localhost:8080";
+  }
+  else if(env.PG_DB_SM_NAME === 'dev-cg'){
     return "https://bhdev.bithonor.com";
-  }else if (env.PG_DB_SM_NAME === 'test-cg'){
+  } else if (env.PG_DB_SM_NAME === 'test-cg'){
     return "https://bhtest.bithonor.com";
   } else if (env.PG_DB_SM_NAME === 'PROD-cg') {
     return "https://bithonor.com";
@@ -24,7 +28,7 @@ transbankService.getWebpayTransaction = async (req, res, next) => {
     logger.info(`[${context}]: Creating transaction`);
     ObjLog.log(`[${context}]: Creating transaction`);
 
-    let buyOrder = '12345678';
+    let buyOrder = uuidv4().replace(/-/g, '').substring(0, 26);
     let sessionId = '12345678';
     let amount = req.query.amount; 
     let returnUrl = `${getCurrentDomain()}/enviar-dinero/sin-comprobante`;
