@@ -77,4 +77,10 @@ remittancesRouter.get(
   remittancesController.getMinAmounts
 );
 
+remittancesRouter.post(
+  "/tumipay",
+  // guard.verifyAdmin("/login"),
+  remittancesController.tumipayRemittance
+);
+
 export default remittancesRouter;
