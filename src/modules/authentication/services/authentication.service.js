@@ -27,9 +27,15 @@ authenticationService.login = async (req, res, next) => {
     log.is_auth = req.isAuthenticated();
     log.ip = req.header("Client-Ip");
     log.route = req.method + " " + req.originalUrl;
+    
+    /*
     const resp = await authenticationPGRepository.getIpInfo(
       req.header("Client-Ip")
     );
+    */
+    const resp = {};/*await authenticationPGRepository.getIpInfo(
+      req.header("Client-Ip")
+    );*/
     if (resp)
       log.country = resp.country_name
         ? resp.country_name
