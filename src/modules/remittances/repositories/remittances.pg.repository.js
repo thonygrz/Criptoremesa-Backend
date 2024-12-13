@@ -213,4 +213,22 @@ remittancesPGRepository.getInfoForRateApi = async (emailUser) => {
   }
 };
 
+remittancesPGRepository.getInfoByOriginAndDestination = async (countryIsoCodOrigin, countryIsoCodDestiny) => {
+  try {
+    logger.info(`[${context}]: Getting remittance info by origin and destination from db`);
+    ObjLog.log(`[${context}]: Getting remittance info by origin and destination from db`);
+
+    await poolSM.query("SET SCHEMA 'prc_mng'");
+    const resp = await poolSM.query(
+      `SELECT * FROM sp_get_remittance_data_to_third('${countryIsoCodOrigin}', '${countryIsoCodDestiny}')`
+    );
+    if (resp.rows[0].sp_get_remittance_data_to_third)
+      return resp.rows[0].sp_get_remittance_data_to_third;
+    else return null;
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
 export default remittancesPGRepository;
