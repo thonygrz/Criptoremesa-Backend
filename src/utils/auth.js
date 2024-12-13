@@ -41,9 +41,9 @@ async function resp(user) {
     let countryResp = null;
     let sess = null;
 
-    const resp = await authenticationPGRepository.getIpInfo(
+    const resp = null /*await authenticationPGRepository.getIpInfo(
       expressObj.req.header("Client-Ip")
-    );
+    );*/
     if (resp) countryResp = resp.country_name;
 
     if (

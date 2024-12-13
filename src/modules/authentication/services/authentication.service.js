@@ -33,7 +33,7 @@ authenticationService.login = async (req, res, next) => {
       req.header("Client-Ip")
     );
     */
-    const resp = {};/*await authenticationPGRepository.getIpInfo(
+    const resp = null;/*await authenticationPGRepository.getIpInfo(
       req.header("Client-Ip")
     );*/
     if (resp)

@@ -81,7 +81,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(queue({ activeLimit: 1, queuedLimit: -1, rejectHandler: (req, res) => { res.sendStatus(500); } }));
+// app.use(queue({ activeLimit: 1, queuedLimit: -1, rejectHandler: (req, res) => { res.sendStatus(500); } }));
 
 app.use((req, res, next) => {
   logger.debug(`[Request]: ${req.method} ${req.originalUrl}`);
