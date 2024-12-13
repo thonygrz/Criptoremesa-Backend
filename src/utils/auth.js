@@ -133,10 +133,12 @@ passport.use(
         expressObj.userExists = false;
         blockedOrNotVerified = false;
 
+        /* Comento actualizacion de IP
         await authenticationPGRepository.updateIPSession(
           req.sessionID,
           req.header("Client-Ip")
         );
+        */
 
         logger.info(`[${context}]: Checking user`);
         ObjLog.log(`[${context}]: Checking user`);
@@ -180,11 +182,13 @@ passport.use(
             expressObj.userExists = true;
             globalUser = user;
 
+            /*
             await authenticationPGRepository.updateIPUser(
               user.id_uuid,
               req.header("Client-Ip"),
               req.sessionID
             );
+            */
 
             let match = await bcrypt.compare(password, user.password);
 
@@ -267,9 +271,9 @@ export default {
       log.is_auth = req.isAuthenticated();
       log.ip = req.header("Client-Ip");
       log.route = req.method + " " + req.originalUrl;
-      const resp = await authenticationPGRepository.getIpInfo(
+      const resp = {};/*await authenticationPGRepository.getIpInfo(
         req.header("Client-Ip")
-      );
+      );*/
       if (resp)
         log.country = resp.country_name
           ? resp.country_name
