@@ -648,22 +648,17 @@ remittancesService.tumipayRemittance = async (req, res, next) => {
   }
 };
 
-remittancesService.getInfoByOriginAndDestination = async (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Getting remittance info by origin and destination`);
-    ObjLog.log(`[${context}]: Getting remittance info by origin and destination`);
+remittancesService.getInfoByOriginAndDestination = async (countryIsoCodOrigin, countryIsoCodDestiny) => {
+  logger.info(`[${context}]: Getting remittance info by origin and destination`);
+  ObjLog.log(`[${context}]: Getting remittance info by origin and destination`);
 
-    let data = await remittancesPGRepository.getInfoByOriginAndDestination(req.params.countryIsoCodOrigin,req.params.countryIsoCodDestiny);
+  let data = await remittancesPGRepository.getInfoByOriginAndDestination(countryIsoCodOrigin, countryIsoCodDestiny);
 
-    return {
-      data,
-      status: 200,
-      success: true,
-      failed: false
-    }
-  }
-  catch (error) {
-    next(error);
+  return {
+    data,
+    status: 200,
+    success: true,
+    failed: false
   }
 }
 
