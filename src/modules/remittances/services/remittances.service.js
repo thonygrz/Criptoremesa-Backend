@@ -662,7 +662,7 @@ remittancesService.getInfoByOriginAndDestination = async (countryIsoCodOrigin, c
   ObjLog.log(`[${context}]: Getting remittance info by origin and destination`);
 
   let data = await remittancesPGRepository.getInfoByOriginAndDestination(countryIsoCodOrigin, countryIsoCodDestiny);
-  const pairInfo = req.params.countryIsoCodOrigin + req.params.countryIsoCodDestiny
+  const pairInfo = countryIsoCodOrigin + countryIsoCodDestiny
   const redisInfo = await getFromRedis(pairInfo)
 
   if (redisInfo) {
