@@ -21,6 +21,15 @@ function between(min, max) {
   )
 }
 
+function getFromRedis(key) {
+  return new Promise((resolve, reject) => {
+    redisClient.get(key, (err, reply) => {
+      if (err) return reject(err);
+      return resolve(reply);
+    });
+  });
+}
+
 remittancesService.notificationTypes = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Getting notification types`);
@@ -653,7 +662,17 @@ remittancesService.getInfoByOriginAndDestination = async (req, res, next) => {
     logger.info(`[${context}]: Getting remittance info by origin and destination`);
     ObjLog.log(`[${context}]: Getting remittance info by origin and destination`);
 
-    let data = await remittancesPGRepository.getInfoByOriginAndDestination(req.params.countryIsoCodOrigin,req.params.countryIsoCodDestiny);
+    let data
+    const pairInfo = req.params.countryIsoCodOrigin + req.params.countryIsoCodDestiny
+    const redisInfo = await getFromRedis(pairInfo)
+
+    if (redisInfo) {
+      // redisClient.del(pairInfo);
+      data = JSON.parse(redisInfo)
+    } else {
+      data =  await remittancesPGRepository.getInfoByOriginAndDestination(req.params.countryIsoCodOrigin, req.params.countryIsoCodDestiny);
+      redisClient.set(pairInfo, JSON.stringify(data));
+    }
 
     return {
       data,
