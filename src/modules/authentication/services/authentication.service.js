@@ -98,7 +98,7 @@ authenticationService.login = async (req, res, next) => {
         // If successful
 
         logger.info(`[${context}]: Sending module to verify`);
-        ObjLog.log(`[${context}]: Sending module to verify`);
+        //ObjLog.log(`[${context}]: Sending module to verify`);
 
         auth.verify(req, res, next);
     //   }
@@ -111,7 +111,7 @@ authenticationService.login = async (req, res, next) => {
 authenticationService.logout = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending module to logout`);
-    ObjLog.log(`[${context}]: Sending module to logout`);
+    //ObjLog.log(`[${context}]: Sending module to logout`);
     auth.logout(req, res, next);
   } catch (error) {
     next(error);
