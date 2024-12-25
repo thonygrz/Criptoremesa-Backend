@@ -8,8 +8,7 @@ import { env } from "../utils/enviroment";
 import "../utils/sentry";
 import routerIndex from "../routes/index.routes";
 import passport from "passport";
-import session from "express-session";
-let pgSession = require("connect-pg-simple")(session);
+const session = require('express-session');
 import { poolSM } from "../db/pg.connection";
 import ObjUserSessionData from "../utils/ObjUserSessionData";
 import authenticationPGRepository from "../modules/authentication/repositories/authentication.pg.repository";
@@ -19,6 +18,14 @@ import bodyParser from "body-parser";
 import whatsapp from "../utils/whatsapp";
 import queue from 'express-queue';
 import * as Sentry from "@sentry/node";
+const redis = require('redis');
+const redisClient = redis.createClient({
+  db: env.REDIS_DB_SESSION,
+  read_timeout: env.REDIS_READ_TIMEOUT
+}); 
+
+const connectRedis = require("connect-redis");
+const RedisStore = connectRedis(session);
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
@@ -64,10 +71,10 @@ app.use(
 app.use(helmet());
 app.use(
   session({
-    store: new pgSession({
-      pool: poolSM,
-      tableName: "session_obj", // Use another table-name than the default "session" one
-      schemaName: "sec_cust",
+    store: new RedisStore({ 
+      client: redisClient, 
+      host: env.REDIS_HOST, 
+      port: env.REDIS_PORT
     }),
     secret: process.env.COOKIE_SECRET,
     resave: true, // true: inserta el usuario en la sesion despues de hacer login / false: solo lo hace cuando la tabla de sesion está vacía
