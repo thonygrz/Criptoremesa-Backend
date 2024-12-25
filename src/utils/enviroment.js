@@ -32,7 +32,8 @@ export const env = {
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     REDIS_DB: process.env.REDIS_DB,
     REDIS_DB_SESSION: process.env.REDIS_DB_SESSION,
-    REDIS_READ_TIMEOUT: process.env.REDIS_READ_TIMEOUT
+    REDIS_READ_TIMEOUT: process.env.REDIS_READ_TIMEOUT,
+    REDIS_DB_REM_QUEUE: process.env.REDIS_DB_REM_QUEUE,
 };
 
 export const ENVIROMENTS = {
