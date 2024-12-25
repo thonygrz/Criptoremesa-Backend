@@ -59,7 +59,7 @@ async function resp(user) {
                         message: 
                         "There is already an active session with this user. Try again in a few minutes.",
                       };
-      await authenticationPGRepository.insertLogMsg(log);
+      //await authenticationPGRepository.insertLogMsg(log);
 
       expressObj.res.status(401).send({
         message:
@@ -84,7 +84,7 @@ async function resp(user) {
                         verif_level_apb: user.verif_level_apb,
                         atcPhone: response ? response.atcPhone : "NA",
                       };
-      await authenticationPGRepository.insertLogMsg(log);
+      //await authenticationPGRepository.insertLogMsg(log);
 
       expressObj.res.status(400).send({
         user_blocked: user.user_blocked,
@@ -101,7 +101,7 @@ async function resp(user) {
                         user,
                         captchaSuccess: true,
                       };
-      await authenticationPGRepository.insertLogMsg(log);
+      //await authenticationPGRepository.insertLogMsg(log);
 
       expressObj.res.status(200).send({
         isAuthenticated: expressObj.isAuthenticated,
@@ -351,7 +351,7 @@ export default {
       log.failed = false;
       log.status = 200;
       log.response = { message: "Logged out succesfully" };
-      await authenticationPGRepository.insertLogMsg(log);
+      //await authenticationPGRepository.insertLogMsg(log);
 
       res.status(200).json({ message: "Logged out succesfully" });
       next();

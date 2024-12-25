@@ -207,19 +207,6 @@ remittancesController.startRemittance = async (req, res, next) => {
     // filling log object info
     let log = logConst;
 
-    log.is_auth = req.isAuthenticated();
-    log.ip = req.header("Client-Ip");
-    log.route = req.method + " " + req.originalUrl;
-    /*const resp = await authenticationPGRepository.getIpInfo(
-      req.header("Client-Ip")
-    );
-    if (resp)
-      log.country = resp.country_name
-        ? resp.country_name
-        : "Probably Localhost";*/
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      log.session = req.sessionID;
-
     // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
@@ -230,7 +217,7 @@ remittancesController.startRemittance = async (req, res, next) => {
       log.body = req.body;
       log.status = 401;
       log.response = { message: "Unauthorized" };
-      await authenticationPGRepository.insertLogMsg(log);
+      //await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
     } else {
       // calling service
@@ -670,19 +657,6 @@ remittancesController.getInfoByOriginAndDestination = async (req, res, next) => 
     // filling log object info
     let log = logConst;
 
-    log.is_auth = req.isAuthenticated();
-    log.ip = req.header("Client-Ip");
-    log.route = req.method + " " + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(
-      req.header("Client-Ip")
-    );
-    if (resp)
-      log.country = resp.country_name
-        ? resp.country_name
-        : "Probably Localhost";
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      log.session = req.sessionID;
-
     // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
       req.session.destroy();
@@ -693,7 +667,7 @@ remittancesController.getInfoByOriginAndDestination = async (req, res, next) => 
       log.body = req.body;
       log.status = 401;
       log.response = { message: "Unauthorized" };
-      await authenticationPGRepository.insertLogMsg(log);
+      //await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
     } else {
       // calling service
