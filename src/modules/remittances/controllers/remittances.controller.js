@@ -88,13 +88,13 @@ remittancesController.getRemittances = async (req, res, next) => {
     log.is_auth = req.isAuthenticated();
     log.ip = req.header("Client-Ip");
     log.route = req.method + " " + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(
+    /*const resp = await authenticationPGRepository.getIpInfo(
       req.header("Client-Ip")
     );
     if (resp)
       log.country = resp.country_name
         ? resp.country_name
-        : "Probably Localhost";
+        : "Probably Localhost";*/
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       log.session = req.sessionID;
 
@@ -210,13 +210,13 @@ remittancesController.startRemittance = async (req, res, next) => {
     log.is_auth = req.isAuthenticated();
     log.ip = req.header("Client-Ip");
     log.route = req.method + " " + req.originalUrl;
-    const resp = await authenticationPGRepository.getIpInfo(
+    /*const resp = await authenticationPGRepository.getIpInfo(
       req.header("Client-Ip")
     );
     if (resp)
       log.country = resp.country_name
         ? resp.country_name
-        : "Probably Localhost";
+        : "Probably Localhost";*/
     if (await authenticationPGRepository.getSessionById(req.sessionID))
       log.session = req.sessionID;
 
@@ -235,24 +235,15 @@ remittancesController.startRemittance = async (req, res, next) => {
     } else {
       // calling service
       logger.info(`[${context}]: Sending service to start remittance`);
-      ObjLog.log(`[${context}]: Sending service to start remittance`);
+      //ObjLog.log(`[${context}]: Sending service to start remittance`);
 
-      let finalResp = await remittancesService.startRemittance(req, res, next);
+      remittancesService.startRemittance(req, res, next);
 
-      if (finalResp) {
-        //logging on DB
-        log.success = finalResp.success;
-        log.failed = finalResp.failed;
-        log.params = req.params;
-        log.query = req.query;
-        log.body = null;
-        log.status = finalResp.status;
-        log.response = finalResp.data;
-        await authenticationPGRepository.insertLogMsg(log);
-
-        //sendind response to FE
-        res.status(finalResp.status).json(finalResp.data);
-      }
+      //sendind response to FE
+      res.status(200).json({
+        message: "Creating remitance"
+      });
+      
     }
   } catch (error) {
     next(error);
@@ -713,26 +704,11 @@ remittancesController.getInfoByOriginAndDestination = async (req, res, next) => 
         `[${context}]: Sending service to get info by origin and destination`
       );
 
-      let finalResp = await remittancesService.getInfoByOriginAndDestination(
-        req,
-        res,
-        next
-      );
+      const countryIsoCodOrigin = req.params.countryIsoCodOrigin;
+      const countryIsoCodDestiny = req.params.countryIsoCodDestiny;
 
-      if (finalResp) {
-        //logging on DB
-        log.success = finalResp.success;
-        log.failed = finalResp.failed;
-        log.params = req.params;
-        log.query = req.query;
-        log.body = null;
-        log.status = finalResp.status;
-        log.response = finalResp.data;
-        await authenticationPGRepository.insertLogMsg(log);
-
-        //sendind response to FE
-        res.status(finalResp.status).json(finalResp.data);
-      }
+      let finalResp = await remittancesService.getInfoByOriginAndDestination(countryIsoCodOrigin, countryIsoCodDestiny);
+      res.status(200).json(finalResp.data);
     }
   } catch (error) {
     next(error);

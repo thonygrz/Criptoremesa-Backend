@@ -141,7 +141,7 @@ passport.use(
         */
 
         logger.info(`[${context}]: Checking user`);
-        ObjLog.log(`[${context}]: Checking user`);
+        //ObjLog.log(`[${context}]: Checking user`);
 
         // if (guard.getUsernameField() === "email")
         user = await authenticationPGRepository.getUserByEmail(email.toLowerCase());
@@ -160,14 +160,14 @@ passport.use(
 
         if (user) {
           logger.info(`[${context}]: User found, checking password`);
-          ObjLog.log(`[${context}]: User found, checking password`);
+          //ObjLog.log(`[${context}]: User found, checking password`);
 
           if (
             user.user_blocked ||
             (user.id_verif_level === 0 && !user.verif_level_apb)
           ) {
             logger.error(`[${context}]: User is blocked or not verified`);
-            ObjLog.log(`[${context}]: User is blocked or not verified`);
+            //ObjLog.log(`[${context}]: User is blocked or not verified`);
 
             blockedOrNotVerified = true;
 
@@ -194,7 +194,7 @@ passport.use(
 
             if (match) {
               logger.info(`[${context}]: Successful login`);
-              ObjLog.log(`[${context}]: Successful login`);
+              //ObjLog.log(`[${context}]: Successful login`);
 
               expressObj.userActiveSession =
                 await authenticationPGRepository.userHasAnActiveSession(email);
@@ -278,14 +278,14 @@ export default {
         log.country = resp.country_name
           ? resp.country_name
           : "Probably Localhost";
-      if (await authenticationPGRepository.getSessionById(req.sessionID))
+      if (await authenticationPGRepository.getSessionById(req.sessionID)) // si cambiamos de postgres a redis lo de las sesiones, esto se puede optimizar
         log.session = req.sessionID;
 
       log.params = req.params;
       log.query = req.query;
       log.body = req.body;
 
-      passport.authenticate("local", async function (err, user, info) {
+      passport.authenticate("local", async (err, user, info) => {
         if (err) {
           return expressObj.next(err);
         }
@@ -310,7 +310,7 @@ export default {
                           userExists: expressObj.userExists,
                           captchaSuccess: true,
                         };
-          await authenticationPGRepository.insertLogMsg(log);
+          //await authenticationPGRepository.insertLogMsg(log); Comentado para optimizar
 
           res.json({
             isAuthenticated: false,
