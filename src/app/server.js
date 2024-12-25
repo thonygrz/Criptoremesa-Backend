@@ -20,6 +20,9 @@ import queue from 'express-queue';
 import * as Sentry from "@sentry/node";
 const redis = require('redis');
 const redisClient = redis.createClient({
+  host: env.REDIS_HOST,
+  port: env.REDIS_PORT,
+  password: env.REDIS_PASSWORD,
   db: env.REDIS_DB_SESSION,
   read_timeout: env.REDIS_READ_TIMEOUT
 }); 
