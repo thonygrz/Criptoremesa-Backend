@@ -235,24 +235,15 @@ remittancesController.startRemittance = async (req, res, next) => {
     } else {
       // calling service
       logger.info(`[${context}]: Sending service to start remittance`);
-      ObjLog.log(`[${context}]: Sending service to start remittance`);
+      //ObjLog.log(`[${context}]: Sending service to start remittance`);
 
-      let finalResp = await remittancesService.startRemittance(req, res, next);
+      remittancesService.startRemittance(req, res, next);
 
-      if (finalResp) {
-        //logging on DB
-        log.success = finalResp.success;
-        log.failed = finalResp.failed;
-        log.params = req.params;
-        log.query = req.query;
-        log.body = null;
-        log.status = finalResp.status;
-        log.response = finalResp.data;
-        await authenticationPGRepository.insertLogMsg(log);
-
-        //sendind response to FE
-        res.status(finalResp.status).json(finalResp.data);
-      }
+      //sendind response to FE
+      res.status(200).json({
+        message: "Creating remitance"
+      });
+      
     }
   } catch (error) {
     next(error);
