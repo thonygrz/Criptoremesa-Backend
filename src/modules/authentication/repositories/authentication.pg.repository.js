@@ -8,7 +8,7 @@ const context = "Authentication PG Repository";
 authenticationPGRepository.getUserById = async (id) => {
   try {
     logger.info(`[${context}]: Getting user by id from db`);
-    //ObjLog.log(`[${context}]: Getting user by id from db`);
+    ObjLog.log(`[${context}]: Getting user by id from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(`SELECT * FROM get_user_by_id('${id}')`);
     return resp.rows[0];
@@ -20,7 +20,7 @@ authenticationPGRepository.getUserById = async (id) => {
 authenticationPGRepository.loginFailed = async (email_user) => {
   try {
     logger.info(`[${context}]: Checking login failed in db`);
-    //ObjLog.log(`[${context}]: Checking login failed in db`);
+    ObjLog.log(`[${context}]: Checking login failed in db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM sp_login_failed('${email_user}')`
@@ -34,7 +34,7 @@ authenticationPGRepository.loginFailed = async (email_user) => {
 authenticationPGRepository.getUserByUsername = async (username) => {
   try {
     logger.info(`[${context}]: Getting user by username from db`);
-    //ObjLog.log(`[${context}]: Getting user by username from db`);
+    ObjLog.log(`[${context}]: Getting user by username from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM get_user_by_username('${username}')`
@@ -48,7 +48,7 @@ authenticationPGRepository.getUserByUsername = async (username) => {
 authenticationPGRepository.getUserByEmail = async (email) => {
   try {
     logger.info(`[${context}]: Getting user by email from db`);
-    //ObjLog.log(`[${context}]: Getting user by email from db`);
+    ObjLog.log(`[${context}]: Getting user by email from db`);
     await poolSM.query("SET SCHEMA 'sec_cust'");
     const resp = await poolSM.query(
       `SELECT * FROM get_all_users_by_email('${email}')`
@@ -65,7 +65,7 @@ authenticationPGRepository.getUserByEmail = async (email) => {
 authenticationPGRepository.insert = async (body) => {
   try {
     logger.info(`[${context}]: Inserting in pg`);
-    //ObjLog.log(`[${context}]: Inserting in pg`);
+    ObjLog.log(`[${context}]: Inserting in pg`);
 
     await poolSM.query("SET SCHEMA 'sec_cust'");
     await poolSM.query(
@@ -110,7 +110,7 @@ authenticationPGRepository.insert = async (body) => {
 authenticationPGRepository.updateIPSession = async (sessionID, ip) => {
   try {
     logger.info(`[${context}]: Updating IP in pg`);
-    //ObjLog.log(`[${context}]: Updating IP in pg`);
+    ObjLog.log(`[${context}]: Updating IP in pg`);
 
     let ipInfo = {
       network: null,
@@ -167,7 +167,7 @@ authenticationPGRepository.updateIPSession = async (sessionID, ip) => {
 authenticationPGRepository.updateIPUser = async (uuid_user, ip, sessionID) => {
   try {
     logger.info(`[${context}]: Updating IP in pg`);
-    //ObjLog.log(`[${context}]: Updating IP in pg`);
+    ObjLog.log(`[${context}]: Updating IP in pg`);
 
     let ipInfo = {
       network: null,
@@ -338,7 +338,7 @@ authenticationPGRepository.insertLogMsg = async (log) => {
 authenticationPGRepository.getIpInfo = async (ip) => {
   try {
     logger.info(`[${context}]: Getting ipInfo from DB`);
-    //ObjLog.log(`[${context}]: Getting ipInfo from DB`);
+    ObjLog.log(`[${context}]: Getting ipInfo from DB`);
     await poolSM.query("SET SCHEMA 'sec_emp'");
 
     let resp = await poolSM.query(
@@ -355,7 +355,7 @@ authenticationPGRepository.getIpInfo = async (ip) => {
 authenticationPGRepository.getSomeSession = async () => {
   try {
     logger.info(`[${context}]: Getting session from db`);
-    //ObjLog.log(`[${context}]: Getting session from db`);
+    ObjLog.log(`[${context}]: Getting session from db`);
     await poolSM.query("SET SCHEMA 'basics'");
     const resp = await poolSM.query(`SELECT * FROM get_some_session()`);
     return resp.rows[0];
@@ -367,7 +367,7 @@ authenticationPGRepository.getSomeSession = async () => {
 authenticationPGRepository.getSessionById = async (id) => {
   try {
     logger.info(`[${context}]: Getting session from db`);
-    //ObjLog.log(`[${context}]: Getting session from db`);
+    ObjLog.log(`[${context}]: Getting session from db`);
     await poolSM.query("SET SCHEMA 'basics'");
     const resp = await poolCR.query(`SELECT * FROM basics.get_session_by_id('${id}')`);
     return resp.rows[0];
@@ -379,7 +379,7 @@ authenticationPGRepository.getSessionById = async (id) => {
 authenticationPGRepository.userHasAnActiveSession = async (email) => {
   try {
     logger.info(`[${context}]: Checking session on db`);
-    //ObjLog.log(`[${context}]: Checking session on db`);
+    ObjLog.log(`[${context}]: Checking session on db`);
     await poolSM.query("SET SCHEMA 'basics'");
     const resp = await poolCR.query(`SELECT * FROM basics.user_has_an_active_session('${email}')`);
     return resp.rows[0].user_has_an_active_session;
