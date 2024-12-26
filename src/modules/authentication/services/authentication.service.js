@@ -21,7 +21,6 @@ const logConst = {
 
 authenticationService.login = async (req, res, next) => {
   try {
-    /* Todo esto se comenta porque es innecesario hacerlo si no se está usando el catcha
     // filling log object info
     let log = logConst;
 
@@ -33,21 +32,21 @@ authenticationService.login = async (req, res, next) => {
     const resp = await authenticationPGRepository.getIpInfo(
       req.header("Client-Ip")
     );
-  
+    */
     const resp = null;/*await authenticationPGRepository.getIpInfo(
       req.header("Client-Ip")
-    );
+    );*/
     if (resp)
       log.country = resp.country_name
         ? resp.country_name
         : "Probably Localhost";
-    if (await authenticationPGRepository.getSessionById(req.sessionID)) // si cambiamos de postgres a redis lo de las sesiones, esto se puede optimizar
+    if (await authenticationPGRepository.getSessionById(req.sessionID))
       log.session = req.sessionID;
 
     log.params = req.params;
     log.query = req.query;
     log.body = req.body;
-    */
+
     
 
     // logger.info(`[${context}]: Verifying captcha`);
@@ -98,7 +97,7 @@ authenticationService.login = async (req, res, next) => {
         // If successful
 
         logger.info(`[${context}]: Sending module to verify`);
-        //ObjLog.log(`[${context}]: Sending module to verify`);
+        ObjLog.log(`[${context}]: Sending module to verify`);
 
         auth.verify(req, res, next);
     //   }
@@ -111,7 +110,7 @@ authenticationService.login = async (req, res, next) => {
 authenticationService.logout = async (req, res, next) => {
   try {
     logger.info(`[${context}]: Sending module to logout`);
-    //ObjLog.log(`[${context}]: Sending module to logout`);
+    ObjLog.log(`[${context}]: Sending module to logout`);
     auth.logout(req, res, next);
   } catch (error) {
     next(error);

@@ -11,7 +11,7 @@ authenticationController.login = async (req, res, next) => {
   try {
     // calling service
     logger.info(`[${context}]: Sending service to login`);
-    //ObjLog.log(`[${context}]: Sending service to login`);
+    ObjLog.log(`[${context}]: Sending service to login`);
 
     authenticationService.login(req, res, next);
   } catch (error) {
@@ -23,7 +23,7 @@ authenticationController.logout = async (req, res, next) => {
   try {
     // calling service
     logger.info(`[${context}]: Sending service to logout`);
-    //ObjLog.log(`[${context}]: Sending service to logout`);
+    ObjLog.log(`[${context}]: Sending service to logout`);
 
     authenticationService.logout(req, res, next);
   } catch (error) {
