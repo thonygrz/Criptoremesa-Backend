@@ -1,7 +1,6 @@
 import { logger } from "../../../utils/logger";
 import ObjLog from "../../../utils/ObjLog";
 import remittancesPGRepository from "../repositories/remittances.pg.repository";
-import authenticationPGRepository from "../../authentication/repositories/authentication.pg.repository";
 import {env,ENVIROMENTS} from '../../../utils/enviroment'
 import redisClient from "../../../utils/redis";
 import { notifyChanges } from "../../../modules/sockets/sockets.coordinator";
@@ -10,6 +9,7 @@ import fs from 'fs'
 import formidable from "formidable";
 import axios from 'axios'
 import transbankService from "../../transbank/services/transbank.service";
+import { addRemittanceToQueue } from "../queue/createRemittance.queue";
 
 const remittancesService = {};
 const context = "remittances Service";
@@ -264,21 +264,17 @@ remittancesService.startRemittance = async (req, res, next) => {
               }
             // se inicia la remesa en bd
             
-              let data = await remittancesPGRepository.startRemittance(remittance);
+            try {
+              addRemittanceToQueue(remittance)
+            } catch (error) {
+              console.log(error);
+            }
             
             // se detiene la preremesa si la hay
-
-              if (data.message === 'Remittance started' && data.id_pre_remittance) {
-                redisClient.get(data.id_pre_remittance, function (err, reply) {
-                  // reply is null when the key is missing
-                  clearTimeout(parseInt(reply))
-                });
-              }
         
             // se asigna la respuesta al FE
 
               setfinalResp({
-                            data,
                             status: 200,
                             success: true,
                             failed: false
@@ -657,29 +653,20 @@ remittancesService.tumipayRemittance = async (req, res, next) => {
   }
 };
 
-remittancesService.getInfoByOriginAndDestination = async (req, res, next) => {
-  try {
-    logger.info(`[${context}]: Getting remittance info by origin and destination`);
-    ObjLog.log(`[${context}]: Getting remittance info by origin and destination`);
+remittancesService.getInfoByOriginAndDestination = async (countryIsoCodOrigin, countryIsoCodDestiny) => {
+  logger.info(`[${context}]: Getting remittance info by origin and destination`);
+  ObjLog.log(`[${context}]: Getting remittance info by origin and destination`);
 
-    let data
-    const pairInfo = req.params.countryIsoCodOrigin + req.params.countryIsoCodDestiny
-    const redisInfo = await getFromRedis(pairInfo)
+  let data = await remittancesPGRepository.getInfoByOriginAndDestination(countryIsoCodOrigin, countryIsoCodDestiny);
+  const pairInfo = countryIsoCodOrigin + countryIsoCodDestiny
+  const redisInfo = await getFromRedis(pairInfo)
 
-    if (redisInfo) {
-      // redisClient.del(pairInfo);
-      data = JSON.parse(redisInfo)
-    } else {
-      data =  await remittancesPGRepository.getInfoByOriginAndDestination(req.params.countryIsoCodOrigin, req.params.countryIsoCodDestiny);
-      redisClient.set(pairInfo, JSON.stringify(data));
-    }
-
-    return {
-      data,
-      status: 200,
-      success: true,
-      failed: false
-    }
+  if (redisInfo) {
+    // redisClient.del(pairInfo);
+    data = JSON.parse(redisInfo)
+  } else {
+    data =  await remittancesPGRepository.getInfoByOriginAndDestination(req.params.countryIsoCodOrigin, req.params.countryIsoCodDestiny);
+    redisClient.set(pairInfo, JSON.stringify(data));
   }
   catch (error) {
     throw error;
