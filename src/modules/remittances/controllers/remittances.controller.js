@@ -108,7 +108,7 @@ remittancesController.getRemittances = async (req, res, next) => {
       log.body = req.body;
       log.status = 401;
       log.response = { message: "Unauthorized" };
-      await authenticationPGRepository.insertLogMsg(log);
+      // await authenticationPGRepository.insertLogMsg(log);
       res.status(401).json({ message: "Unauthorized" });
     } else {
       // calling service
@@ -130,7 +130,7 @@ remittancesController.getRemittances = async (req, res, next) => {
         log.body = req.body;
         log.status = finalResp.status;
         log.response = finalResp.data;
-        await authenticationPGRepository.insertLogMsg(log);
+        // await authenticationPGRepository.insertLogMsg(log);
 
         //sendind response to FE
         res.status(finalResp.status).json(finalResp.data);
@@ -678,10 +678,7 @@ remittancesController.getInfoByOriginAndDestination = async (req, res, next) => 
         `[${context}]: Sending service to get info by origin and destination`
       );
 
-      const countryIsoCodOrigin = req.params.countryIsoCodOrigin;
-      const countryIsoCodDestiny = req.params.countryIsoCodDestiny;
-
-      let finalResp = await remittancesService.getInfoByOriginAndDestination(countryIsoCodOrigin, countryIsoCodDestiny);
+      let finalResp = await remittancesService.getInfoByOriginAndDestination(req, res, next);
       res.status(200).json(finalResp.data);
     }
   } catch (error) {

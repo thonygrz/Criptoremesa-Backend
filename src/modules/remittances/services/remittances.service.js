@@ -668,12 +668,8 @@ remittancesService.getInfoByOriginAndDestination = async (countryIsoCodOrigin, c
     data =  await remittancesPGRepository.getInfoByOriginAndDestination(req.params.countryIsoCodOrigin, req.params.countryIsoCodDestiny);
     redisClient.set(pairInfo, JSON.stringify(data));
   }
-
-  return {
-    data,
-    status: 200,
-    success: true,
-    failed: false
+  catch (error) {
+    throw error;
   }
 }
 
