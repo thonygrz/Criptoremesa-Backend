@@ -46,10 +46,10 @@ async function resp(user) {
     );*/
     if (resp) countryResp = resp.country_name;
 
-    if (
-      await authenticationPGRepository.getSessionById(expressObj.req.sessionID)
-    )
-      sess = expressObj.req.sessionID;
+    // if (
+    //   await authenticationPGRepository.getSessionById(expressObj.req.sessionID)
+    // )
+    //   sess = expressObj.req.sessionID;
 
     if (user.expired) {
       log.success = false;
@@ -60,8 +60,11 @@ async function resp(user) {
                         "There is already an active session with this user. Try again in a few minutes.",
                       };
       //await authenticationPGRepository.insertLogMsg(log);
-
-      expressObj.res.status(401).send({
+      console.log('SE VA A ENVIAR ESTO 5', {
+        message:
+          "There is already an active session with this user. Try again in a few minutes.",
+      });
+      return expressObj.res.status(401).send({
         message:
           "There is already an active session with this user. Try again in a few minutes.",
       });
@@ -85,8 +88,13 @@ async function resp(user) {
                         atcPhone: response ? response.atcPhone : "NA",
                       };
       //await authenticationPGRepository.insertLogMsg(log);
-
-      expressObj.res.status(400).send({
+      console.log('SE VA A ENVIAR ESTO 3', {
+        user_blocked: user.user_blocked,
+        id_verif_level: user.id_verif_level,
+        verif_level_apb: user.verif_level_apb,
+        atcPhone: response ? response.atcPhone : "NA",
+      });
+      return expressObj.res.status(400).send({
         user_blocked: user.user_blocked,
         id_verif_level: user.id_verif_level,
         verif_level_apb: user.verif_level_apb,
@@ -102,16 +110,21 @@ async function resp(user) {
                         captchaSuccess: true,
                       };
       //await authenticationPGRepository.insertLogMsg(log);
-
-      expressObj.res.status(200).send({
+      console.log('SE VA A ENVIAR ESTO 21', {
+        isAuthenticated: expressObj.isAuthenticated,
+        user,
+        captchaSuccess: true,
+      });
+      return expressObj.res.status(200).send({
         isAuthenticated: expressObj.isAuthenticated,
         user,
         captchaSuccess: true,
       });
     }
-    expressObj.next();
+    // expressObj.next();
   } catch (error) {
-    expressObj.next(error);
+    console.error('SE VA A ENVIAR ESTE ERROR 1', error);
+    return expressObj.next(error);
   }
 }
 
@@ -146,7 +159,7 @@ passport.use(
         // if (guard.getUsernameField() === "email")
         user = await authenticationPGRepository.getUserByEmail(email.toLowerCase());
 
-        console.log('USER OBTENIDO🔴:',user)
+        // console.log('USER OBTENIDO🔴:',user)
 
         if (user && user.wholesale_partner_info) {
           user.wholesale_partner_info.logo = fs.readFileSync(
@@ -171,13 +184,13 @@ passport.use(
 
             blockedOrNotVerified = true;
 
-            if (await authenticationPGRepository.getSessionById(req.sessionID))
-              sess = req.sessionID;
-
-            await resp(user);
+            // if (await authenticationPGRepository.getSessionById(req.sessionID))
+            //   sess = req.sessionID;
+            expressObj.req = req;
 
             done(null, false);
-            expressObj.req = req;
+            return await resp(user);
+
           } else {
             expressObj.userExists = true;
             globalUser = user;
@@ -196,33 +209,33 @@ passport.use(
               logger.info(`[${context}]: Successful login`);
               //ObjLog.log(`[${context}]: Successful login`);
 
-              expressObj.userActiveSession =
-                await authenticationPGRepository.userHasAnActiveSession(email);
+              // expressObj.userActiveSession =
+              //   await authenticationPGRepository.userHasAnActiveSession(email);
 
-              if (expressObj.userActiveSession) {
-                req.session = null;
+              // if (expressObj.userActiveSession) {
+              //   req.session = null;
 
-                user.expired = true;
+              //   user.expired = true;
 
-                notifyChanges("login_attempt", {
-                  email_user: email,
-                });
+              //   notifyChanges("login_attempt", {
+              //     email_user: email,
+              //   });
 
-                await resp(user);
+              //   await resp(user);
 
-                return done(null, false);
-              } else {
+              //   return done(null, false);
+              // } else {
                 expressObj.isAuthenticated = true;
 
-                await resp(user);
+                done(null, user);
+                return await resp(user);
 
-                return done(null, user);
-              }
+              // }
             }
             logger.error(`[${context}]: User and password do not match`);
             ObjLog.log(`[${context}]: User and password do not match`);
-            if (await authenticationPGRepository.getSessionById(req.sessionID))
-              sess = req.sessionID;
+            // if (await authenticationPGRepository.getSessionById(req.sessionID))
+            //   sess = req.sessionID;
 
             return done(null, false);
           }
@@ -230,13 +243,14 @@ passport.use(
           logger.error(`[${context}]: User and password do not match`);
           ObjLog.log(`[${context}]: User and password do not match`);
 
-          if (await authenticationPGRepository.getSessionById(req.sessionID))
-            sess = req.sessionID;
+          // if (await authenticationPGRepository.getSessionById(req.sessionID))
+          //   sess = req.sessionID;
 
           return done(null, false);
         }
       } catch (error) {
-        throw error;
+        console.error('SE VA A ENVIAR ESTE ERROR 2', error);
+        return expressObj.res.status(500).json({ error: error.message });
       }
     }
   )
@@ -278,8 +292,8 @@ export default {
         log.country = resp.country_name
           ? resp.country_name
           : "Probably Localhost";
-      if (await authenticationPGRepository.getSessionById(req.sessionID)) // si cambiamos de postgres a redis lo de las sesiones, esto se puede optimizar
-        log.session = req.sessionID;
+      // if (await authenticationPGRepository.getSessionById(req.sessionID)) // si cambiamos de postgres a redis lo de las sesiones, esto se puede optimizar
+      //   log.session = req.sessionID;
 
       log.params = req.params;
       log.query = req.query;
@@ -287,6 +301,7 @@ export default {
 
       passport.authenticate("local", async (err, user, info) => {
         if (err) {
+          console.error('SE VA A ENVIAR ESTE ERROR 3', err);
           return expressObj.next(err);
         }
         let response = null;
@@ -312,37 +327,45 @@ export default {
                         };
           //await authenticationPGRepository.insertLogMsg(log); Comentado para optimizar
 
-          res.json({
+          console.log('SE VA A ENVIAR ESTO 2', {
             isAuthenticated: false,
             loginAttempts: response ? response.login_attempts : "NA",
             atcPhone: response ? response.atcPhone : "NA",
             userExists: expressObj.userExists,
             captchaSuccess: true,
           });
-          expressObj.next();
-          req.logIn(user, function (err) {
-            if (err) {
-              return next(err);
-            }
+          return res.json({
+            isAuthenticated: false,
+            loginAttempts: response ? response.login_attempts : "NA",
+            atcPhone: response ? response.atcPhone : "NA",
+            userExists: expressObj.userExists,
+            captchaSuccess: true,
           });
+          // expressObj.next();
+          // req.logIn(user, function (err) {
+          //   if (err) {
+          //     return next(err);
+          //   }
+          // });
         }
-        expressObj.next();
+        // expressObj.next();
         req.login(user, function (err) {
           if (err) {
             return next(err);
           }
         });
-        console.log('req.sessionID: ',req.sessionID)
+        // console.log('req.sessionID: ',req.sessionID)
       })(req, res, next);
     } catch (error) {
-      expressObj.next(error);
+      console.error('SE VA A ENVIAR ESTE ERROR 4', error);
+      return expressObj.next(error);
     }
   },
   logout: async (req, res, next) => {
     try {
-      console.log('req.isAuthenticated(): ',req.isAuthenticated())
-      console.log('req.sessionID: ',req.sessionID)
-      console.log('req.session.destroy(): ',req.session)
+      // console.log('req.isAuthenticated(): ',req.isAuthenticated())
+      // console.log('req.sessionID: ',req.sessionID)
+      // console.log('req.session.destroy(): ',req.session)
 
       log.is_auth = req.isAuthenticated();
       req.session.destroy();

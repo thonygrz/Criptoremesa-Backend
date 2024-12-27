@@ -40,8 +40,8 @@ authenticationService.login = async (req, res, next) => {
       log.country = resp.country_name
         ? resp.country_name
         : "Probably Localhost";
-    if (await authenticationPGRepository.getSessionById(req.sessionID))
-      log.session = req.sessionID;
+    // if (await authenticationPGRepository.getSessionById(req.sessionID))
+    //   log.session = req.sessionID;
 
     log.params = req.params;
     log.query = req.query;

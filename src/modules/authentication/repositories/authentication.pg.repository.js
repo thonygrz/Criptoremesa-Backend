@@ -53,7 +53,7 @@ authenticationPGRepository.getUserByEmail = async (email) => {
     const resp = await poolSM.query(
       `SELECT * FROM get_all_users_by_email('${email}')`
     );
-    console.log(resp.rows[0]);
+    // console.log(resp.rows[0]);
     return resp.rows[0];
   } catch (error) {
     throw error;

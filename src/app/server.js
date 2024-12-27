@@ -5,7 +5,7 @@ import morgan from "morgan";
 import { logger } from "../utils/logger";
 import ObjLog from "../utils/ObjLog";
 import { env } from "../utils/enviroment";
-import "../utils/sentry";
+// import "../utils/sentry";
 import routerIndex from "../routes/index.routes";
 import passport from "passport";
 import session from "express-session";
@@ -18,7 +18,7 @@ import ws from '../utils/websocketTradeAPIs'
 import bodyParser from "body-parser";
 import whatsapp from "../utils/whatsapp";
 import queue from 'express-queue';
-import * as Sentry from "@sentry/node";
+// import * as Sentry from "@sentry/node";
 
 //jobs
 import transactionsJob from '../utils/jobs/transactions'
@@ -53,7 +53,8 @@ app.use(
       "https://bithonor.es",
       "https://3.143.246.144:5011",
       "https://3.143.246.144:4053",
-      "https://bhtest.bithonor.com"
+      "https://bhtest.bithonor.com",
+      "https://qa.bithonor.com"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
@@ -105,7 +106,7 @@ app.use((req, res, next) => {
 // ROUTES
 app.get("/", async (req, res) => {
   res.status(200).send("Server running");
-  next();
+  // next();
 });
 
 app.use("/cr", routerIndex);
@@ -127,7 +128,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-Sentry.setupExpressErrorHandler(app);
+// Sentry.setupExpressErrorHandler(app);
 
 // ERROR HANDLER
 // app.use(queue.errorHandler());
@@ -138,6 +139,12 @@ app.use(async function (err, req, res,next) {
 
   logger.error(`${context}: ${err.message}`);
   ObjLog.log(`${context}: ${err.message}`);
+
+    // Evita responder dos veces
+  if (res.headersSent) {
+    // Ya se envió respuesta en algún lado (Sentry, etc.)
+    return next(err);
+  }
   
   // declaring log object
   const logConst = {
@@ -172,23 +179,23 @@ app.use(async function (err, req, res,next) {
   log.body = req.body;
   log.status = 500;
   
-  const resp = await authenticationPGRepository.getIpInfo(
-    req.header("Client-Ip")
-  );
-  if (resp)
-    log.country = resp.country_name ? resp.country_name : "Probably Localhost";
-  if (await authenticationPGRepository.getSessionById(req.sessionID))
-    log.session = req.sessionID;
+  // const resp = await authenticationPGRepository.getIpInfo(
+  //   req.header("Client-Ip")
+  // );
+  // if (resp)
+  //   log.country = resp.country_name ? resp.country_name : "Probably Localhost";
+  // if (await authenticationPGRepository.getSessionById(req.sessionID))
+  //   log.session = req.sessionID;
 
   if ( err.message === 'duplicate key value violates unique constraint \\"ms_sixmap_users_email_user_key\\"') 
   {
     log.response = businessError;
-    await authenticationPGRepository.insertLogMsg(log);
+    // await authenticationPGRepository.insertLogMsg(log);
     res.status(500).send(businessError);
   }
   else {
     log.response = serverError;
-    await authenticationPGRepository.insertLogMsg(log);
+    // await authenticationPGRepository.insertLogMsg(log);
     res.status(500).send(serverError);
   }
 });
