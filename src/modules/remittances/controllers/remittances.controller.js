@@ -224,7 +224,10 @@ remittancesController.startRemittance = async (req, res, next) => {
       logger.info(`[${context}]: Sending service to start remittance`);
       //ObjLog.log(`[${context}]: Sending service to start remittance`);
 
-      remittancesService.startRemittance(req, res, next);
+      let remittance = JSON.parse(req.body.remittance);
+      remittance.captures[0].path = req.file.filename;
+
+      remittancesService.startRemittance(remittance);
 
       //sendind response to FE
       res.status(200).json({
