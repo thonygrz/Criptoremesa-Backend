@@ -53,7 +53,8 @@ app.use(
       "https://bithonor.es",
       "https://3.143.246.144:5011",
       "https://3.143.246.144:4053",
-      "https://bhtest.bithonor.com"
+      "https://bhtest.bithonor.com",
+      "https://qa.bithonor.com"
     ],
     methods: "GET,PUT,PATCH,POST,DELETE",
     preflightContinue: false,

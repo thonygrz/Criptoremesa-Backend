@@ -17,10 +17,11 @@ const messageQueue = new Queue('createRemittances', {
 messageQueue.process(async (remittance, done) => {
     try {
         logger.debug(`[${context}] Creating remittance`);
-        await remittancesPGRepository.startRemittance(remittance);
+        await remittancesPGRepository.startRemittance(remittance.data);
         logger.info(`[${context}] Remittance created`);
         done();
     } catch (error) {
+        logger.error(`[${context}] Remittance not created: ${error}`);
         done(error);
     }
 })
