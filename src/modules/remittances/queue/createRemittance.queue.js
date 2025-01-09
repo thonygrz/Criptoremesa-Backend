@@ -14,7 +14,7 @@ const messageQueue = new Queue('createRemittances', {
     }
 })
 
-messageQueue.process(async (remittance, done) => {
+messageQueue.process(20, async (remittance, done) => {
     try {
         logger.debug(`[${context}] Creating remittance`);
         await remittancesPGRepository.startRemittance(remittance.data);
