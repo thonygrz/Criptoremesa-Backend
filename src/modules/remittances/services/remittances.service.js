@@ -492,12 +492,12 @@ remittancesService.tumipayRemittance = async (req, res, next) => {
   }
 };
 
-remittancesService.getInfoByOriginAndDestination = async (countryIsoCodOrigin, countryIsoCodDestiny) => {
+remittancesService.getInfoByOriginAndDestination = async (req, res, next) => {
   logger.info(`[${context}]: Getting remittance info by origin and destination`);
   ObjLog.log(`[${context}]: Getting remittance info by origin and destination`);
 
-  let data = await remittancesPGRepository.getInfoByOriginAndDestination(countryIsoCodOrigin, countryIsoCodDestiny);
-  const pairInfo = countryIsoCodOrigin + countryIsoCodDestiny
+  let data = await remittancesPGRepository.getInfoByOriginAndDestination(req.params.countryIsoCodOrigin, req.params.countryIsoCodDestiny);
+  const pairInfo = req.params.countryIsoCodOrigin + req.params.countryIsoCodDestiny
   const redisInfo = await getFromRedis(pairInfo)
 
   if (redisInfo) {
