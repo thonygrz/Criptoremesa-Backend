@@ -206,6 +206,11 @@ remittancesController.startRemittance = async (req, res, next) => {
   try {
     // filling log object info
     let log = logConst;
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    log.is_auth = req.isAuthenticated();
+    log.params = req.params;
+    log.query = req.query;
 
     // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
@@ -233,6 +238,8 @@ remittancesController.startRemittance = async (req, res, next) => {
       res.status(200).json({
         message: "Creating remitance"
       });
+
+      await authenticationPGRepository.insertLogMsg(log);
       
     }
   } catch (error) {
@@ -659,6 +666,11 @@ remittancesController.getInfoByOriginAndDestination = async (req, res, next) => 
   try {
     // filling log object info
     let log = logConst;
+    log.ip = req.header("Client-Ip");
+    log.route = req.method + " " + req.originalUrl;
+    log.is_auth = req.isAuthenticated();
+    log.params = req.params;
+    log.query = req.query;
 
     // protecting route in production but not in development
     if (!req.isAuthenticated() && env.ENVIROMENT === ENVIROMENTS.PRODUCTION) {
@@ -683,6 +695,7 @@ remittancesController.getInfoByOriginAndDestination = async (req, res, next) => 
 
       let finalResp = await remittancesService.getInfoByOriginAndDestination(req, res, next);
       res.status(200).json(finalResp.data);
+      await authenticationPGRepository.insertLogMsg(log);
     }
   } catch (error) {
     next(error);
